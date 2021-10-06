@@ -41,7 +41,7 @@ export default function Landing() {
 
   useEffect(() => {
       subscribeToEvents
-  }, [connector]);
+  }, []);
   
   return (
     <div className={styles.container}>
@@ -62,7 +62,7 @@ export default function Landing() {
         <RainbowButton
           chainId={1}
           connectorOptions={{ bridge: 'https://bridge.walletconnect.org' }}
-          onConnectorInitialized={onConnectorInitialized}
+          onConnectorInitialized={() => onConnectorInitialized}
         />
       </main>
 
