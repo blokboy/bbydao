@@ -3,7 +3,7 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { RainbowButton } from '@rainbow-me/rainbow-button';
 
-export default async function Landing() {
+export default function Landing() {
   return (
     <div className={styles.container}>
       <Head>
