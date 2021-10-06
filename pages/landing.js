@@ -1,10 +1,9 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import MetaMaskLoginButton from 'react-metamask-login-button';
 import { RainbowButton } from '@rainbow-me/rainbow-button';
 
-export default function Landing() {
+export default async function Landing() {
   return (
     <div className={styles.container}>
       <Head>
@@ -21,7 +20,6 @@ export default function Landing() {
         <p className={styles.description}>
           Get started by connecting your wallet{' '}
         </p>    
-        <MetaMaskLoginButton />
         <RainbowButton
           chainId={1}
           connectorOptions={{ bridge: 'https://bridge.walletconnect.org' }}
