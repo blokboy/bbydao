@@ -38,6 +38,10 @@ export default function Landing() {
       setConnector(null);
     });
   }, [connector]);
+
+  useEffect(() => {
+      subscribeToEvents
+  }, [connector]);
   
   return (
     <div className={styles.container}>
