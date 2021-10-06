@@ -10,7 +10,9 @@ export default function Landing() {
 
   const onConnectorInitialized = useCallback(
     (connector) => {
+      console.log(connector);
       setConnector(connector);
+      Router.push('/dashboard');
     },
     [setConnector]
   );
