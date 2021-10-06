@@ -2,8 +2,43 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { RainbowButton } from '@rainbow-me/rainbow-button';
+import { useState, useEffect, useCallback } from 'react';
+import Router from 'next/router';
 
 export default function Landing() {
+  const [connector, setConnector] = useState({});
+
+  const onConnectorInitialized = useCallback(
+    (connector) => {
+      setConnector(connector);
+    },
+    [setConnector]
+  );
+  // Subscribe to connection events and update your app accordingly 
+  const subscribeToEvents = useCallback(() => {
+    connector.on('connect', (error, payload) => {
+      if (error) {
+        throw error;
+      }
+      // Get provided accounts and chainId
+      const { accounts, chainId } = payload.params[0];
+    });
+    connector.on('session_update', (error, payload) => {
+      if (error) {
+        throw error;
+      }
+      // Get updated accounts and chainId
+      const { accounts, chainId } = payload.params[0];
+    });
+    connector.on('disconnect', (error, payload) => {
+      if (error) {
+        throw error;
+      }
+      // Delete connector
+      setConnector(null);
+    });
+  }, [connector]);
+  
   return (
     <div className={styles.container}>
       <Head>
@@ -23,7 +58,7 @@ export default function Landing() {
         <RainbowButton
           chainId={1}
           connectorOptions={{ bridge: 'https://bridge.walletconnect.org' }}
-          onConnectorInitialized={(connector) => console.log(connector)}
+          onConnectorInitialized={onConnectorInitialized}
         />
       </main>
 
