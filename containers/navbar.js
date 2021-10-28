@@ -9,15 +9,15 @@ export default function Navbar({ children }) {
             <input className="p-3 mx-auto bg-white w-1/3 rounded-xl m-2 shadow-md border border-black text-center">
                 { children }
             </input>
-            <div className="flex justify-around w-48">
+            <div className="flex justify-between w-48">
                 <div className="cursor-pointer">
-                    <BiMessageAlt size={32}/>
+                    <BiMessageAlt size={36}/>
                 </div>
                 <div className="cursor-pointer">
-                    <IoIosNotificationsOutline size={32}/>
+                    <IoIosNotificationsOutline size={36}/>
                 </div>
                 <div className="cursor-pointer">
-                <Image src={`/../public/babydao.png`} width={32} height={32} />
+                    <Image src={`/../public/babydao.png`} width={32} height={32} />
                 </div>
             </div>    
         </div>  

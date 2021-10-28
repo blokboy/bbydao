@@ -10,14 +10,12 @@ export default function Dashboard() {
         
         <div>
             <Navbar />
-            <hr />
-            <div>
+            
+            <div className="border border-black w-full h-3/4 flex flex-col ">
                 <Profile />
                 <Profile />
             </div>
-            <div className="float-right">
-                <Daos />
-            </div>  
+            
         </div>
     );
 }
