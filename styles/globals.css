@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-100 text-gray-800;
+  }
+
+  h1 {
+    @apply font-sans font-extrabold
+  }
+
+  p {
+    @apply font-sans
+  }
+}
