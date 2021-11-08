@@ -1,21 +1,18 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import Navbar from '../containers/navbar';
-import Profile from '../containers/profile';
-import Daos from '../containers/daos';
+import Profile from '../components/profile';
+import Splash from '../components/Splash';
 
-export default function Dashboard() {
+const Dashboard = () => {
     return(
-        
-        <div>
-            <Navbar />
-            
-            <div className="border border-black w-full h-3/4 flex flex-col ">
+        <div className="flex flex-col w-full">
+            <Splash />
+            <div className="flex flex-row w-full">
+                <Profile />
+                <Profile />
                 <Profile />
                 <Profile />
             </div>
-            
         </div>
     );
 }
+
+export default Dashboard
