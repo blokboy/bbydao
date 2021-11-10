@@ -2041,6 +2041,7 @@
   "version" "5.2.2"
 
 "bignumber.js@git+https://github.com/debris/bignumber.js.git#94d7146671b9719e00a09c29b01a691bc85048c2":
+  "integrity" "sha512-k55rLoPK7DNCwjO/+Esh5n3lNF+lKwzfIIak1alqxXhrXsInC69JJKwEjAyCB8+IehSFkObzxzzu9URR+Q4pyA=="
   "resolved" "git+ssh://git@github.com/debris/bignumber.js.git#94d7146671b9719e00a09c29b01a691bc85048c2"
   "version" "2.0.7"
 
@@ -5238,7 +5239,12 @@
   "resolved" "https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz"
   "version" "2.6.2"
 
-"next@>=10.2.0", "next@11.1.2":
+"next-themes@^0.0.15":
+  "integrity" "sha512-LTmtqYi03c4gMTJmWwVK9XkHL7h0/+XrtR970Ujvtu3s0kZNeJN24aJsi4rkZOI8i19+qq6f8j+8Duwy5jqcrQ=="
+  "resolved" "https://registry.npmjs.org/next-themes/-/next-themes-0.0.15.tgz"
+  "version" "0.0.15"
+
+"next@*", "next@>=10.2.0", "next@11.1.2":
   "integrity" "sha512-azEYL0L+wFjv8lstLru3bgvrzPvK0P7/bz6B/4EJ9sYkXeW8r5Bjh78D/Ol7VOg0EIPz0CXoe72hzAlSAXo9hw=="
   "resolved" "https://registry.npmjs.org/next/-/next-11.1.2.tgz"
   "version" "11.1.2"
@@ -6432,7 +6438,7 @@
     "uncontrollable" "^7.2.1"
     "warning" "^4.0.3"
 
-"react-dom@^15.0.0 || ^16.0.0", "react-dom@^17.0.2", "react-dom@>= 16.8.0", "react-dom@>=16.3.0", "react-dom@>=16.6.0", "react-dom@>=16.8 || ^17.0.0", "react-dom@>=16.8.0", "react-dom@17.0.2":
+"react-dom@*", "react-dom@^15.0.0 || ^16.0.0", "react-dom@^17.0.2", "react-dom@>= 16.8.0", "react-dom@>=16.3.0", "react-dom@>=16.6.0", "react-dom@>=16.8 || ^17.0.0", "react-dom@>=16.8.0", "react-dom@17.0.2":
   "integrity" "sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA=="
   "resolved" "https://registry.npmjs.org/react-dom/-/react-dom-17.0.2.tgz"
   "version" "17.0.2"

@@ -1,7 +1,7 @@
 
-function Profile({ children }){
+const Profile = ({ children }) => {
     return (
-        <div className="bg-gray-300 h-80 w-3/12 ml-5 mr-5 rounded-xl">
+        <div className="bg-gray-200 h-80 w-300 rounded-3xl dark:bg-gray-900">
             {children}
         </div>
     )
