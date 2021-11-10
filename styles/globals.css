@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-gray-100 text-gray-800;
+    @apply bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100;
   }
 
   h1 {

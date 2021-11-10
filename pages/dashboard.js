@@ -1,16 +1,11 @@
-import Profile from '../components/profile';
 import Splash from '../components/Splash';
+import ProfilesContainer from '../components/ProfilesContainer';
 
 const Dashboard = () => {
     return(
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-screen">
             <Splash />
-            <div className="flex flex-row w-full">
-                <Profile />
-                <Profile />
-                <Profile />
-                <Profile />
-            </div>
+            <ProfilesContainer />
         </div>
     );
 }
