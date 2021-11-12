@@ -1,10 +1,9 @@
-
 const Profile = ({ children }) => {
-    return (
-        <div className="bg-gray-200 h-80 w-300 rounded-3xl dark:bg-gray-900">
-            {children}
-        </div>
-    )
+  return (
+    <div className="bg-gray-200 h-80 w-300 rounded-3xl dark:bg-gray-900">
+      {children}
+    </div>
+  )
 }
 
 export default Profile

@@ -1,48 +1,57 @@
-import Head from 'next/head'
-import { RainbowButton } from '@rainbow-me/rainbow-button';
-import { useState, useEffect, useCallback } from 'react';
-import Router from 'next/router';
+import Head from "next/head"
+import { RainbowButton } from "@rainbow-me/rainbow-button"
+import { useState, useEffect, useCallback } from "react"
+import Router from "next/router"
 
 export default function Landing() {
-  const [connector, setConnector] = useState({});
+  const [connector, setConnector] = useState({})
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onConnectorInitialized = useCallback(
-    (connector) => {
-      console.log(connector);
-      setConnector(connector);
-      Router.push('/dashboard');
+    connector => {
+      console.log("connected")
+      console.log(connector)
+      // setConnector(connector)
     },
-    [setConnector]
-  );
-  // Subscribe to connection events and update your app accordingly 
+    []
+    // [setConnector]
+  )
+  // Subscribe to connection events and update your app accordingly
   const subscribeToEvents = useCallback(() => {
-    connector.on('connect', (error, payload) => {
+    connector.on("connect", (error, payload) => {
       if (error) {
-        throw error;
+        console.log("Error when connecting  " + error)
+        throw error
       }
       // Get provided accounts and chainId
-      const { accounts, chainId } = payload.params[0];
-    });
-    connector.on('session_update', (error, payload) => {
+      console.log("We have connected")
+      const { accounts, chainId } = payload.params[0]
+      Router.push("/dashboard")
+    })
+    connector.on("session_update", (error, payload) => {
       if (error) {
-        throw error;
+        console.log("Error in session_update " + error)
+        throw error
       }
       // Get updated accounts and chainId
-      const { accounts, chainId } = payload.params[0];
-    });
-    connector.on('disconnect', (error, payload) => {
+      console.log("Session has updated")
+      const { accounts, chainId } = payload.params[0]
+    })
+    connector.on("disconnect", (error, payload) => {
       if (error) {
-        throw error;
+        console.log("Error in disconnection " + error)
+        throw error
       }
       // Delete connector
-      setConnector(null);
-    });
-  }, [connector]);
+      console.log("Connection deleted")
+      setConnector(null)
+    })
+  }, [connector])
 
   useEffect(() => {
-      subscribeToEvents
-  }, []);
-  
+    subscribeToEvents
+  }, [])
+
   return (
     <>
       <Head>
@@ -51,13 +60,15 @@ export default function Landing() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className='flex flex-col items-center justify-center min-h-screen'>
-        <h1 className='text-3xl sm:text-5xl mb-3'>Welcome to babydao</h1>
-        <p className='mb-3'>Get started by connecting your wallet{' '}</p>    
+      <main className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-3xl sm:text-5xl mb-3">Welcome to babydao</h1>
+        <p className="mb-3">Get started by connecting your wallet </p>
         <RainbowButton
           chainId={1}
-          connectorOptions={{ bridge: 'https://bridge.walletconnect.org' }}
-          onConnectorInitialized={() => onConnectorInitialized}
+          connectorOptions={{ bridge: "https://bridge.walletconnect.org" }}
+          onConnectorInitialized={connector =>
+            onConnectorInitialized(connector)
+          }
         />
       </main>
     </>
