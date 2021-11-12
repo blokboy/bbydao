@@ -1,7 +1,6 @@
 import React from "react"
 import { useTheme } from "next-themes"
 import NavDropDown from "./NavDropDown"
-import { useRouter } from "next/router"
 import Link from "next/link"
 import Image from "next/image"
 import { GiHamburgerMenu } from "react-icons/gi"
@@ -12,9 +11,6 @@ import { BsFillMoonStarsFill, BsFillSunFill } from "react-icons/bs"
 const Nav = ({ children }) => {
   const { theme, setTheme } = useTheme()
   const [navDropDownToggle, setNavDropDownToggle] = React.useState(false)
-  const router = useRouter()
-
-  if (router.pathname === "/") return <></>
 
   return (
     <>
