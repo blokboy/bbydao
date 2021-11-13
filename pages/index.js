@@ -1,7 +1,7 @@
 import React from "react"
 import Head from "next/head"
 import { RainbowButton } from "@rainbow-me/rainbow-button"
-// import Dashboard from "../components/Dashboard"
+import Dashboard from "../components/Dashboard"
 
 const Home = () => {
   const [connector, setConnector] = React.useState(undefined)
@@ -80,8 +80,7 @@ const Home = () => {
 
   //render if connected
   const renderConnected = React.useMemo(() => {
-    //return <Dashboard accounts={accounts} />
-    return <h1>connected: {accounts}</h1>
+    return <Dashboard accounts={accounts} />
   }, [accounts]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   return (
