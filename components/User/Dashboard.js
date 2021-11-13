@@ -1,4 +1,4 @@
-import Splash from "./Splash"
+import Splash from "../Layout/Splash"
 import ProfilesContainer from "./ProfilesContainer"
 
 const Dashboard = props => {

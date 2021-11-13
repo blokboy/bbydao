@@ -1,7 +1,7 @@
 import React from "react"
 import { useTheme } from "next-themes"
 import NavDropDown from "./NavDropDown"
-import Link from "next/link"
+// import Link from "next/link"
 import Image from "next/image"
 import { GiHamburgerMenu } from "react-icons/gi"
 import { MdClose } from "react-icons/md"
@@ -50,20 +50,7 @@ const Nav = ({ children }) => {
             </button>
           </div>
           {/* desktop & large view */}
-          <div className="hidden md:flex md:flex-row w-2/3 justify-end place-items-center">
-            <ul className="hidden md:flex flex-row space-x-6 mr-2">
-              <li className="cursor-pointer hover:text-gray-500">
-                <Link href="/">
-                  <a>how it works</a>
-                </Link>
-              </li>
-              <li className="cursor-pointer hover:text-gray-500">
-                <Link href="/">
-                  <a>about us</a>
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* LOGIN BUTTON */}
         </div>
 
         {/* lightmode darkmode toggle & babydao icon - both views */}
