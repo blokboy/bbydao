@@ -1,11 +1,11 @@
 import React from "react"
 import Head from "next/head"
 import { RainbowButton } from "@rainbow-me/rainbow-button"
-import Dashboard from "../components/Dashboard"
+// import Dashboard from "../components/Dashboard"
 
 const Home = () => {
-  const [connector, setConnector] = React.useState
-  const [accounts, setAccounts] = React.useState
+  const [connector, setConnector] = React.useState(undefined)
+  const [accounts, setAccounts] = React.useState(undefined)
 
   const onConnectorInitialized = React.useCallback(
     connector => setConnector(connector),
@@ -80,7 +80,8 @@ const Home = () => {
 
   //render if connected
   const renderConnected = React.useMemo(() => {
-    return <Dashboard accounts={accounts} />
+    //return <Dashboard accounts={accounts} />
+    return <h1>connected: {accounts}</h1>
   }, [accounts]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   return (
