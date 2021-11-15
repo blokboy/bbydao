@@ -9,8 +9,11 @@ export const useRainbowButton = () => {
     [] /* eslint-disable-line react-hooks/exhaustive-deps */
   )
 
+  /* 
+  useEffect hook that will be called everytime there is a change to 'connector' 
+  Sign-in and Disconnect logic
+  */
   React.useEffect(() => {
-    console.log("onConnectorInitialized from hook:", connector)
     if (!connector) return
 
     // Capture initial connector state
@@ -22,8 +25,10 @@ export const useRainbowButton = () => {
         throw error
       }
 
-      // Get provided accounts and chainId
+      // Get provided accounts
       const { accounts } = payload.params[0]
+
+      // set accounts into state useState hook
       setAccounts(accounts)
     })
 
@@ -47,12 +52,17 @@ export const useRainbowButton = () => {
       // IMPORTANT if users reject the session request you have to
       // create a new session from scratch. `disconnect` will trigger
       // in that case
-      setConnector(null)
-      setAccounts(null)
+      setConnector(undefined)
+      setAccounts(undefined)
       //setChainId(null)
       // setSelectedChain(null)
     })
   }, [connector]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
-  return [connector, accounts, onConnectorInitialized]
+  const disconnect = React.useCallback(
+    async () => connector?.killSession(),
+    [connector]
+  )
+
+  return [connector, accounts, onConnectorInitialized, disconnect]
 }
