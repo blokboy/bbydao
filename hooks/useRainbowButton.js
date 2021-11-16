@@ -1,4 +1,5 @@
 import React from "react"
+import axios from "axios"
 
 export const useRainbowButton = () => {
   const [connector, setConnector] = React.useState(undefined)
@@ -27,6 +28,20 @@ export const useRainbowButton = () => {
 
       // Get provided accounts
       const { accounts } = payload.params[0]
+
+      // axios POST request to heroku API
+      axios
+        .post(`${process.env.accounts_api}`, {
+          account: accounts,
+        })
+        .then(
+          response => {
+            console.log("RESPONSE:", response)
+          },
+          error => {
+            console.log(error)
+          }
+        )
 
       // set accounts into state useState hook
       setAccounts(accounts)
