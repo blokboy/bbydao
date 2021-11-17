@@ -1,12 +1,14 @@
 import React from "react"
 import Head from "next/head"
+import Dashboard from "../components/User/Dashboard"
 import { RainbowButton } from "@rainbow-me/rainbow-button"
 import { useRainbowButton } from "../hooks/useRainbowButton"
-import Dashboard from "../components/User/Dashboard"
+import { useAccountStore } from "../stores/useAccountStore"
 
 const Home = () => {
-  const [rainbowConnector, rainbowAccount, onConnectorInitialized, disconnect] =
-    useRainbowButton()
+  const { onConnectorInitialized } = useRainbowButton()
+  const rainbowAccount = useAccountStore(state => state.rainbowAccount)
+  const rainbowConnector = useAccountStore(state => state.rainbowConnector)
 
   const renderNotConnected = React.useMemo(() => {
     return (
@@ -32,7 +34,7 @@ const Home = () => {
 
   //render if connected
   const renderConnected = React.useMemo(() => {
-    return <Dashboard rainbowAccount={rainbowAccount} disconnect={disconnect} />
+    return <Dashboard />
   }, [rainbowAccount]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   return (

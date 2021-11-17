@@ -1,9 +1,12 @@
 import React from "react"
 import axios from "axios"
+import { useAccountStore } from "../stores/useAccountStore"
 
 export const useRainbowButton = () => {
-  const [rainbowConnector, setRainbowConnector] = React.useState(undefined)
-  const [rainbowAccount, setRainbowAccount] = React.useState(undefined)
+  const setRainbowAccount = useAccountStore(state => state.setRainbowAccount)
+  const rainbowConnector = useAccountStore(state => state.rainbowConnector)
+  // prettier-ignore
+  const setRainbowConnector = useAccountStore(state => state.setRainbowConnector)
 
   const onConnectorInitialized = React.useCallback(
     rainbowConnector => setRainbowConnector(rainbowConnector),
@@ -77,5 +80,5 @@ export const useRainbowButton = () => {
   // signPersonalMessage
   // signTypedData
 
-  return [rainbowConnector, rainbowAccount, onConnectorInitialized, disconnect]
+  return { onConnectorInitialized, disconnect }
 }
