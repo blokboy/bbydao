@@ -2,63 +2,58 @@ import React from "react"
 import axios from "axios"
 
 export const useRainbowButton = () => {
-  const [connector, setConnector] = React.useState(undefined)
-  const [accounts, setAccounts] = React.useState(undefined)
+  const [rainbowConnector, setRainbowConnector] = React.useState(undefined)
+  const [rainbowAccount, setRainbowAccount] = React.useState(undefined)
 
   const onConnectorInitialized = React.useCallback(
-    connector => setConnector(connector),
+    rainbowConnector => setRainbowConnector(rainbowConnector),
     [] /* eslint-disable-line react-hooks/exhaustive-deps */
   )
 
-  /* 
-  useEffect hook that will be called everytime there is a change to 'connector' 
-  Sign-in and Disconnect logic
-  */
+  // useEffect hook that will be called everytime there is a change to 'connector'
+  // Sign-in and Disconnect logic
   React.useEffect(() => {
-    if (!connector) return
-
-    // Capture initial connector state
-    setAccounts(connector.accounts)
+    if (!rainbowConnector) return
 
     // Subscribe to connection events
-    connector.on("connect", (error, payload) => {
+    rainbowConnector.on("connect", (error, payload) => {
       if (error) {
         throw error
       }
 
-      // Get provided accounts
-      const { accounts } = payload.params[0]
+      // Get provided accounts from payload object
+      // destructure payload.params[0] --> accounts, reassigning variable name to rainbowAccount
+      const { accounts: rainbowAccount } = payload.params[0]
 
       // axios POST request to heroku API
-      axios
-        .post(`${process.env.accounts_api}`, {
-          account: accounts,
-        })
-        .then(
-          response => {
-            console.log("RESPONSE:", response)
-          },
-          error => {
-            console.log(error)
-          }
-        )
+      // axios
+      //   .post(`${process.env.accounts_api}`, {
+      //     account: rainbowAccount,
+      //   })
+      //   .then(
+      //     response => {
+      //       console.log("RESPONSE:", response)
+      //     },
+      //     error => {
+      //       console.log(error)
+      //     }
+      //   )
 
       // set accounts into state useState hook
-      setAccounts(accounts)
+      setRainbowAccount(rainbowAccount)
     })
 
-    connector.on("session_update", (error, payload) => {
+    rainbowConnector.on("session_update", (error, payload) => {
       if (error) {
         throw error
       }
 
-      // Get updated accounts and chainId
-      const { accounts, chainId } = payload.params[0]
-      setAccounts(accounts)
-      //setChainId(chainId)
+      // Get updated rainbowAccount
+      const { rainbowAccount } = payload.params[0]
+      setRainbowAccount(rainbowAccount)
     })
 
-    connector.on("disconnect", (error, payload) => {
+    rainbowConnector.on("disconnect", (error, payload) => {
       if (error) {
         throw error
       }
@@ -67,17 +62,20 @@ export const useRainbowButton = () => {
       // IMPORTANT if users reject the session request you have to
       // create a new session from scratch. `disconnect` will trigger
       // in that case
-      setConnector(undefined)
-      setAccounts(undefined)
-      //setChainId(null)
-      // setSelectedChain(null)
+      setRainbowConnector(undefined)
+      setRainbowAccount(undefined)
     })
-  }, [connector]) /* eslint-disable-line react-hooks/exhaustive-deps */
+  }, [rainbowConnector]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const disconnect = React.useCallback(
-    async () => connector?.killSession(),
-    [connector]
+    async () => rainbowConnector?.killSession(),
+    [rainbowConnector]
   )
 
-  return [connector, accounts, onConnectorInitialized, disconnect]
+  // TODO
+  // sendTransaction
+  // signPersonalMessage
+  // signTypedData
+
+  return [rainbowConnector, rainbowAccount, onConnectorInitialized, disconnect]
 }
