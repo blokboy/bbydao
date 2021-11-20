@@ -4,7 +4,7 @@ const index = ({ children }) => {
   return (
     <>
       <Nav />
-      <main>{children}</main>
+      <main className="w-screen">{children}</main>
     </>
   )
 }

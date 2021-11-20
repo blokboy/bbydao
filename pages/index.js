@@ -1,6 +1,7 @@
 import React from "react"
 import Head from "next/head"
-import Dashboard from "../components/Dashboard"
+// import Explore from "../components/Explore"
+import UserDashboard from "../components/UserDashboard"
 import { RainbowButton } from "@rainbow-me/rainbow-button"
 import { useRainbowButton } from "../hooks/useRainbowButton"
 import { useAccountStore } from "../stores/useAccountStore"
@@ -19,7 +20,7 @@ const Home = () => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <main className="flex flex-col items-center justify-center min-h-screen">
+        <main className="flex flex-col items-center justify-center w- full min-h-screen">
           <h1 className="text-3xl sm:text-5xl mb-3">Welcome to babydao</h1>
           <p className="mb-3">Get started by connecting your wallet </p>
           <RainbowButton
@@ -34,15 +35,15 @@ const Home = () => {
 
   //render if connected
   const renderConnected = React.useMemo(() => {
-    return <Dashboard />
+    return <UserDashboard />
   }, [rainbowAccount]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   return (
-    <div>
+    <>
       {rainbowConnector?.connected && rainbowAccount?.length
         ? renderConnected
         : renderNotConnected}
-    </div>
+    </>
   )
 }
 

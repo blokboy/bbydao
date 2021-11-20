@@ -1,8 +1,10 @@
 import create from "zustand"
 
 export const useAccountStore = create(set => ({
-  rainbowAccount: undefined,
+  userData: null,
+  rainbowAccount: null,
+  rainbowConnector: null,
+  setUserData: u => set({ userData: u }),
   setRainbowAccount: a => set({ rainbowAccount: a }),
-  rainbowConnector: undefined,
   setRainbowConnector: c => set({ rainbowConnector: c }),
 }))

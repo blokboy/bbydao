@@ -1,7 +1,7 @@
 import Splash from "./Splash"
 import ProfilesContainer from "./ProfilesContainer"
 
-const Dashboard = () => {
+const Explore = () => {
   return (
     <div className="flex flex-col w-screen">
       <Splash />
@@ -10,4 +10,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default Explore

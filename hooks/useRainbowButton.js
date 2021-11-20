@@ -7,6 +7,7 @@ export const useRainbowButton = () => {
   const rainbowConnector = useAccountStore(state => state.rainbowConnector)
   // prettier-ignore
   const setRainbowConnector = useAccountStore(state => state.setRainbowConnector)
+  const setUserData = useAccountStore(state => state.setUserData)
 
   const onConnectorInitialized = React.useCallback(
     rainbowConnector => setRainbowConnector(rainbowConnector),
@@ -29,18 +30,19 @@ export const useRainbowButton = () => {
       const { accounts: rainbowAccount } = payload.params[0]
 
       // axios POST request to heroku API
-      // axios
-      //   .post(`${process.env.accounts_api}`, {
-      //     account: rainbowAccount,
-      //   })
-      //   .then(
-      //     response => {
-      //       console.log("RESPONSE:", response)
-      //     },
-      //     error => {
-      //       console.log(error)
-      //     }
-      //   )
+      axios
+        .post(`${process.env.accounts_api}`, {
+          account: rainbowAccount,
+        })
+        .then(
+          response => {
+            const { data } = response
+            setUserData(data)
+          },
+          error => {
+            console.log(error)
+          }
+        )
 
       // set accounts into state useState hook
       setRainbowAccount(rainbowAccount)
@@ -65,8 +67,9 @@ export const useRainbowButton = () => {
       // IMPORTANT if users reject the session request you have to
       // create a new session from scratch. `disconnect` will trigger
       // in that case
-      setRainbowConnector(undefined)
-      setRainbowAccount(undefined)
+      setUserData(null)
+      setRainbowConnector(null)
+      setRainbowAccount(null)
     })
   }, [rainbowConnector]) /* eslint-disable-line react-hooks/exhaustive-deps */
 

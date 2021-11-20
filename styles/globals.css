@@ -4,14 +4,14 @@
 
 @layer base {
   body {
-    @apply bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100;
+    @apply w-screen bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100;
   }
 
   h1 {
-    @apply font-sans font-extrabold
+    @apply font-sans font-extrabold;
   }
 
   p {
-    @apply font-sans
+    @apply font-sans;
   }
 }
