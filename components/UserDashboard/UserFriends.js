@@ -12,7 +12,7 @@ const UserFriends = () => {
         <div className="w-12 h-12 rounded-full border border-white -ml-3 bg-gray-200 dark:bg-gray-900"></div>
         <div className="w-12 h-12 rounded-full border border-white -ml-3 bg-gray-200 dark:bg-gray-900"></div>
       </div>
-      <span>view all</span>
+      <button className="mt-4">view all</button>
     </div>
   )
 }

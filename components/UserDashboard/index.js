@@ -16,9 +16,9 @@ const UserDashboard = () => {
         <UserBio />
       </div>
       <div className="flex flex-col md:w-9/12 px-10">
-        {/* <UserDaos /> */}
-        <DaoForm />
+        <UserDaos />
       </div>
+      {/* <DaoForm /> */}
     </div>
   )
 }
