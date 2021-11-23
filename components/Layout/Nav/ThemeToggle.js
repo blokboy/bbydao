@@ -6,10 +6,9 @@ const ThemeToggle = () => {
   const { theme, setTheme } = useTheme()
 
   return (
-    <div className="flex flex-row items-center justify-center">
-      {/* lightmode darkmode toggle & babydao icon - both views */}
+    <div className="hidden md:flex flex-row items-center justify-center mx-2">
       <button
-        className="flex items-center justify-center h-10 w-10 ml-2 p-2 rounded-full bg-white dark:bg-gray-900"
+        className="flex items-center justify-center h-10 w-10 p-2 rounded-full bg-white dark:bg-gray-900"
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       >
         {theme === "light" ? (
@@ -24,14 +23,6 @@ const ThemeToggle = () => {
           />
         )}
       </button>
-      {/* <div className="hidden md:flex self-center ml-4">
-            <Image
-              src={`/../public/babydao.png`}
-              alt="babydao logo"
-              width={38}
-              height={38}
-            />
-          </div> */}
     </div>
   )
 }

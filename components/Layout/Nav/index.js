@@ -11,9 +11,8 @@ const Nav = () => {
 
   return (
     <>
-      <nav className="flex w-screen py-6 px-8">
+      <nav className="flex w-screen p-2 md:p-6">
         <div className="flex flex-row w-screen justify-between items-center">
-          <div className="block md:hidden text-2xl font-extrabold">babydao</div>
           <SearchBar />
         </div>
         {rainbowAccount ? <AccountDisplay /> : <></>}

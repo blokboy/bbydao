@@ -3,7 +3,7 @@ import { GoSearch } from "react-icons/go"
 
 const SearchBar = ({ children }) => {
   return (
-    <div className="hidden md:relative md:block w-1/3 text-gray-600 focus-within:text-gray-400 dark:focus-within:text-gray-100">
+    <div className="relative w-full sm:w-4/5 md:w-3/5 mr-2 text-gray-600 focus-within:text-gray-400 dark:focus-within:text-gray-100">
       <span className="absolute left-0 top-1.5 flex items-center pl-2">
         <GoSearch size={24} />
       </span>
