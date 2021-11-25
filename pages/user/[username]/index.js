@@ -1,15 +1,10 @@
 import React from "react"
+import UserDashboard from "../../../components/UserDashboard/index"
 
 const UserPage = ({ data }) => {
   return (
     <>
-      {/* render userdashboard, passing data down as a prop?
-    conditionally render within components that make up
-    the userdashboard to distinguish between user profile 
-    and friends/other users profiles */}
-
-      <div>{data.username}</div>
-      <div>{data.address}</div>
+      <UserDashboard data={data} />
     </>
   )
 }

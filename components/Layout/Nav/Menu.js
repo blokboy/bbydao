@@ -1,9 +1,12 @@
 import React from "react"
+import Link from "next/link"
 import { HiDotsHorizontal } from "react-icons/hi"
 import ClickAwayListener from "react-click-away-listener"
+import { useAccountStore } from "../../../stores/useAccountStore"
 
 const Menu = () => {
   const [menuOpen, setMenuOpen] = React.useState(false)
+  const userData = useAccountStore(state => state.userData)
 
   const clickAway = () => {
     if (!menuOpen) {
@@ -29,12 +32,11 @@ const Menu = () => {
         >
           <ul className="py-1">
             <li>
-              <a
-                href="#"
-                className="flex flex-row text-md text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2"
-              >
-                Dashboard
-              </a>
+              <Link href={userData ? `/user/${userData.username}` : "/"}>
+                <a className="flex flex-row text-md text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2">
+                  Dashboard
+                </a>
+              </Link>
             </li>
             <li>
               <a
@@ -45,12 +47,11 @@ const Menu = () => {
               </a>
             </li>
             <li>
-              <a
-                href="#"
-                className="flex flex-row text-md text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2"
-              >
-                Explore
-              </a>
+              <Link href={"/"}>
+                <a className="flex flex-row text-md text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2">
+                  Explore
+                </a>
+              </Link>
             </li>
             <li>
               <a

@@ -1,6 +1,6 @@
 import React from "react"
 import Head from "next/head"
-// import Explore from "../components/Explore"
+import Explore from "../components/Explore"
 import UserDashboard from "../components/UserDashboard"
 import { RainbowButton } from "@rainbow-me/rainbow-button"
 import { useRainbowButton } from "../hooks/useRainbowButton"
@@ -35,7 +35,8 @@ const Home = () => {
 
   //render if connected
   const renderConnected = React.useMemo(() => {
-    return <UserDashboard />
+    // return <UserDashboard />
+    return <Explore />
   }, [rainbowAccount]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   return (
