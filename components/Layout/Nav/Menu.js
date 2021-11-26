@@ -30,7 +30,7 @@ const Menu = () => {
             "text-gray-800 bg-gray-200 dark:text-white dark:bg-gray-900 z-50 rounded border shadow -ml-20 mt-4 px-4 py-2"
           }
         >
-          <ul className="py-1">
+          <ul className="py-1" onClick={clickAway}>
             <li>
               <Link href={userData ? `/user/${userData.username}` : "/"}>
                 <a className="flex flex-row text-md text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2">
