@@ -1,8 +1,10 @@
 import React from "react"
 import { useAccountStore } from "../../../stores/useAccountStore"
 import SearchBar from "./SearchBar"
-import ThemeToggle from "./ThemeToggle"
+import NotificationsIcon from "./NotificationsIcon"
+import MessagesIcon from "./MessagesIcon"
 import Menu from "./Menu"
+import ThemeToggle from "./ThemeToggle"
 import AccountDisplay from "./AccountDisplay"
 import DisconnectButton from "./DisconnectButton"
 
@@ -15,8 +17,17 @@ const Nav = () => {
         <div className="flex flex-row w-screen justify-between items-center">
           <SearchBar />
         </div>
-        {rainbowAccount ? <AccountDisplay /> : <></>}
-        {rainbowAccount ? <DisconnectButton /> : <></>}
+        {rainbowAccount ? (
+          <>
+            <AccountDisplay />
+            <DisconnectButton />
+            <NotificationsIcon />
+            <MessagesIcon />
+          </>
+        ) : (
+          <></>
+        )}
+
         <Menu />
         <ThemeToggle />
       </nav>
