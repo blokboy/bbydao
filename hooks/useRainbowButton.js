@@ -10,7 +10,9 @@ export const useRainbowButton = () => {
   const setUserData = useAccountStore(state => state.setUserData)
 
   const onConnectorInitialized = React.useCallback(
-    rainbowConnector => setRainbowConnector(rainbowConnector),
+    rainbowConnector => {
+      setRainbowConnector(rainbowConnector)
+    },
     [] /* eslint-disable-line react-hooks/exhaustive-deps */
   )
 
