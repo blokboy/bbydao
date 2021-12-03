@@ -7,8 +7,13 @@ import { useAccountStore } from "../../../stores/useAccountStore"
 
 const Menu = () => {
   const [menuOpen, setMenuOpen] = React.useState(false)
+  const [userLogged, setUserLogged] = React.useState(false)
   const { theme, setTheme } = useTheme()
   const userData = useAccountStore(state => state.userData)
+
+  React.useEffect(() => {
+    setUserLogged(userData ? true : false)
+  }, [userData])
 
   const clickAway = () => {
     if (!menuOpen) {
@@ -34,7 +39,11 @@ const Menu = () => {
         >
           <ul className="py-1" onClick={clickAway}>
             <li>
-              <Link href={userData ? `/user/${userData.username}` : "/"}>
+              <Link
+                href={
+                  userLogged && userData ? `/user/${userData.username}` : "/"
+                }
+              >
                 <a className="flex flex-row text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2">
                   Dashboard
                 </a>
@@ -42,22 +51,22 @@ const Menu = () => {
             </li>
 
             <li>
-              <a
-                href="#"
-                className="md:hidden flex flex-row text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              >
-                {theme === "light" ? <>Dark Mode</> : <>Light Mode</>}
-              </a>
+              <Link href={"/"}>
+                <a
+                  className="md:hidden flex flex-row text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2"
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                >
+                  {theme === "light" ? <>Dark Mode</> : <>Light Mode</>}
+                </a>
+              </Link>
             </li>
 
             <li>
-              <a
-                href="#"
-                className="flex flex-row text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2"
-              >
-                Activity
-              </a>
+              <Link href={"/"}>
+                <a className="flex flex-row text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2">
+                  Activity
+                </a>
+              </Link>
             </li>
 
             <li>
@@ -69,21 +78,19 @@ const Menu = () => {
             </li>
 
             <li>
-              <a
-                href="#"
-                className="flex flex-row text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2"
-              >
-                Feed
-              </a>
+              <Link href={"/"}>
+                <a className="flex flex-row text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2">
+                  Feed
+                </a>
+              </Link>
             </li>
 
             <li>
-              <a
-                href="#"
-                className="flex flex-row text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2"
-              >
-                About
-              </a>
+              <Link href={"/"}>
+                <a className="flex flex-row text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2">
+                  About
+                </a>
+              </Link>
             </li>
           </ul>
         </div>

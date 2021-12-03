@@ -9,7 +9,12 @@ import AccountDisplay from "./AccountDisplay"
 import DisconnectButton from "./DisconnectButton"
 
 const Nav = () => {
+  const [userLogged, setUserLogged] = React.useState(false)
   const rainbowAccount = useAccountStore(state => state.rainbowAccount)
+
+  React.useEffect(() => {
+    setUserLogged(rainbowAccount ? true : false)
+  }, [rainbowAccount])
 
   return (
     <>
@@ -17,17 +22,10 @@ const Nav = () => {
         <div className="flex flex-row w-screen justify-between items-center">
           <SearchBar />
         </div>
-        {rainbowAccount ? (
-          <>
-            <AccountDisplay />
-            <DisconnectButton />
-            <NotificationsIcon />
-            <MessagesIcon />
-          </>
-        ) : (
-          <></>
-        )}
-
+        {userLogged ? <AccountDisplay /> : <></>}
+        {userLogged ? <DisconnectButton /> : <></>}
+        {userLogged ? <NotificationsIcon /> : <></>}
+        {userLogged ? <MessagesIcon /> : <></>}
         <Menu />
         <ThemeToggle />
       </nav>
