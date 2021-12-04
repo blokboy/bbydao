@@ -9,7 +9,7 @@ const SearchBar = ({ children }) => {
       </span>
       <input
         type="search"
-        className="w-full py-2 text-sm text-white bg-gray-200 rounded-full pl-10 focus:outline-none focus:bg-white focus:text-gray-900 dark:bg-gray-900 dark:focus:text-gray-100"
+        className="w-full py-2 text-sm text-white bg-gray-200 rounded-full shadow pl-10 focus:outline-none focus:bg-white focus:text-gray-900 dark:bg-gray-900 dark:focus:text-gray-100"
         placeholder="Search..."
         autoComplete="off"
       >

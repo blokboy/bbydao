@@ -27,7 +27,7 @@ const Menu = () => {
       <div>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="relative z-10 rounded-xl border border-gray-400 text-xl text-gray-800 bg-gray-200 hover:bg-gray-100 dark:text-white dark:bg-gray-900 dark:hover:bg-gray-700 px-3 py-2"
+          className="relative z-10 rounded-xl border border-gray-400 shadow text-xl text-gray-800 bg-gray-200 hover:bg-gray-100 dark:text-white dark:bg-gray-900 dark:hover:bg-gray-700 h-10 px-3 py-2"
         >
           <HiDotsHorizontal />
         </button>

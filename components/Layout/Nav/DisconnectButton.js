@@ -6,7 +6,7 @@ const DisconnectButton = () => {
 
   return (
     <button
-      className="w-max px-4 mr-3 py-2 justify-center rounded-full bg-gray-200 hover:bg-white dark:bg-gray-900 dark:hover:bg-gray-700 dark:text-gray-100"
+      className="flex flex-row mr-3 rounded-full shadow bg-gray-200 dark:bg-gray-900 hover:bg-white dark:hover:bg-gray-700 px-4 py-2 w-max"
       onClick={disconnect}
     >
       disconnect

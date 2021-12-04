@@ -6,7 +6,7 @@ const NotificationsIcon = () => {
 
   return (
     <div className="hidden md:flex flex-row items-center justify-center mr-3">
-      <button className="flex items-center justify-center h-10 w-10 p-1 rounded-full border border-gray-400 text-gray-800 bg-gray-200 hover:bg-gray-100 dark:text-white dark:bg-gray-900 dark:hover:bg-gray-700">
+      <button className="flex rounded-full border border-gray-400 shadow bg-gray-200 hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-700 p-1 h-10 w-10 justify-center items-center text-gray-800 dark:text-white">
         <FiBell />
       </button>
       {count > 0 ? (
