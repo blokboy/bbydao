@@ -22,7 +22,7 @@ const ModalLayout = () => {
           onClick={e => closeModal(e)}
         >
           <div
-            className="flex flex-col z-50 mt-16 mx-auto rounded-xl shadow bg-gray-200 dark:bg-gray-900 px-4 py-2 w-11/12 md:w-6/12"
+            className="flex flex-col z-50 mt-24 mx-auto rounded-xl shadow bg-gray-200 dark:bg-gray-900 px-4 py-2 w-11/12 md:w-6/12"
             onClick={e => closeModal(e)}
           >
             <SearchForm />
