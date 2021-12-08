@@ -1,6 +1,6 @@
 import create from "zustand"
 
-export const useAppModalStore = create(set => ({
+export const useUiStore = create(set => ({
   modalOpen: false,
   setModalOpen: () => set(state => ({ modalOpen: !state.modalOpen })),
 }))

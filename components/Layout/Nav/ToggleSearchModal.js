@@ -1,9 +1,10 @@
 import React from "react"
-import { useAppModalStore } from "../../../stores/useAppModalStore"
+import { GoSearch } from "react-icons/go"
+import { useUiStore } from "../../../stores/useUiStore"
 
 const ToggleSearchModal = () => {
-  const modalOpen = useAppModalStore(state => state.modalOpen)
-  const setModalOpen = useAppModalStore(state => state.setModalOpen)
+  const modalOpen = useUiStore(state => state.modalOpen)
+  const setModalOpen = useUiStore(state => state.setModalOpen)
 
   const handleKeyDown = event => {
     if (!modalOpen && event.keyCode === 75 && event.metaKey) {
@@ -18,15 +19,18 @@ const ToggleSearchModal = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [])
+  }, []) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   return (
     <button
-      className="hidden md:flex flex-row mr-3 rounded-lg border border-gray-400 shadow bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-800 px-4 py-2 w-max"
+      className="flex flex-row rounded-full border border-gray-400 shadow bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-800 px-4 py-2 md:w-96 w-max"
       onClick={setModalOpen}
     >
-      Search
-      <span className="ml-3 rounded-lg border text-sm dark:text-white px-2">
+      <span className="mr-4">
+        <GoSearch size={24} />
+      </span>
+      <span>Search</span>
+      <span className="ml-3 rounded-lg border px-2 text-sm dark:text-white">
         &#8984; K
       </span>
     </button>

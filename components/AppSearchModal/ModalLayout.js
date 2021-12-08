@@ -1,11 +1,11 @@
 import React from "react"
 import SearchForm from "./SearchForm"
 import ResultsDropdown from "./ResultsDropdown"
-import { useAppModalStore } from "../../stores/useAppModalStore"
+import { useUiStore } from "../../stores/useUiStore"
 
 const ModalLayout = () => {
-  const modalOpen = useAppModalStore(state => state.modalOpen)
-  const setModalOpen = useAppModalStore(state => state.setModalOpen)
+  const modalOpen = useUiStore(state => state.modalOpen)
+  const setModalOpen = useUiStore(state => state.setModalOpen)
 
   const closeModal = e => {
     if (!modalOpen && e.target) {

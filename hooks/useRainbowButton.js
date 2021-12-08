@@ -34,7 +34,7 @@ export const useRainbowButton = () => {
       // axios POST request to heroku API
       axios
         .post(`${process.env.accounts_api}`, {
-          account: rainbowAccount,
+          address: rainbowAccount[0],
         })
         .then(
           response => {
@@ -42,7 +42,7 @@ export const useRainbowButton = () => {
             setUserData(data)
           },
           error => {
-            console.log(error)
+            console.log("Accounts API error:", error)
           }
         )
 

@@ -1,10 +1,10 @@
 import React from "react"
 import { GoSearch } from "react-icons/go"
-import { useAppModalStore } from "../../stores/useAppModalStore"
+import { useUiStore } from "../../stores/useUiStore"
 
 const SearchForm = () => {
-  const modalOpen = useAppModalStore(state => state.setModalOpen)
-  const setModalOpen = useAppModalStore(state => state.setModalOpen)
+  const modalOpen = useUiStore(state => state.setModalOpen)
+  const setModalOpen = useUiStore(state => state.setModalOpen)
 
   const handleKeyDown = event => {
     if (event.keyCode === 27) {
@@ -21,7 +21,7 @@ const SearchForm = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [])
+  }, []) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   return (
     <div className="relative w-full py-3 border-b-2 text-gray-600 focus-within:text-gray-400 dark:focus-within:text-gray-100">
