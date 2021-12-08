@@ -8,7 +8,7 @@ import UserDaos from "./UserDaos"
 import DaoForm from "./DaoForm"
 
 const UserDashboard = ({ data }) => {
-  const { username } = data
+  const { id, username } = data
 
   return (
     <>
@@ -21,7 +21,7 @@ const UserDashboard = ({ data }) => {
       <div className="flex flex-col md:flex-row w-full mt-10">
         <div className="flex flex-col flex-start md:w-3/12 px-4 md:px-10">
           <UserImage />
-          <UserDetails username={username} />
+          <UserDetails id={id} username={username} />
           <UserFriends />
           <UserBio />
         </div>
