@@ -1,15 +1,21 @@
 import React from "react"
+import Link from "next/link"
 import { useAccountStore } from "../../stores/useAccountStore"
 import { useMutation } from "react-query"
 import * as api from "../../query"
 
 const UserDetails = ({ id, username }) => {
   const userData = useAccountStore(state => state.userData)
-
   const { status, mutate } = useMutation(api.reqRelationship)
 
   const handleRequest = () => {
-    mutate({ initiatorId: userData.id, targetId: id, status: 3 })
+    const req = {
+      initiatorId: userData.id,
+      targetId: id,
+      status: 3,
+    }
+
+    mutate(req)
   }
 
   return (
@@ -24,9 +30,11 @@ const UserDetails = ({ id, username }) => {
       )}
 
       {userData?.username === username ? (
-        <button className="mt-4 rounded-full shadow bg-gray-200 dark:bg-gray-900 hover:bg-white dark:hover:bg-gray-700 px-4 py-2 w-max">
-          edit profile
-        </button>
+        <Link href={"/user/settings"} passHref>
+          <button className="mt-4 rounded-full shadow bg-gray-200 dark:bg-gray-900 hover:bg-white dark:hover:bg-gray-700 px-4 py-2 w-max">
+            <a>edit profile</a>
+          </button>
+        </Link>
       ) : status === "success" ? (
         // style and persist through validating relationship status
         <span className="mt-4 rounded-full shadow bg-gray-200 dark:bg-gray-900 hover:bg-white dark:hover:bg-gray-700 px-4 py-2 w-max">

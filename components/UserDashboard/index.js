@@ -5,7 +5,6 @@ import UserDetails from "./UserDetails"
 import UserFriends from "./UserFriends"
 import UserBio from "./UserBio"
 import UserDaos from "./UserDaos"
-import DaoForm from "./DaoForm"
 
 const UserDashboard = ({ data }) => {
   const { id, username } = data
@@ -28,7 +27,6 @@ const UserDashboard = ({ data }) => {
         <div className="flex flex-col md:w-9/12 px-10">
           <UserDaos />
         </div>
-        {/* <DaoForm /> */}
       </div>
     </>
   )

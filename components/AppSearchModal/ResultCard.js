@@ -2,16 +2,19 @@ import React from "react"
 import { useAccountStore } from "../../stores/useAccountStore"
 import { useMutation } from "react-query"
 import * as api from "../../query"
-import { IoMdAddCircle } from "react-icons/io"
 
 const ResultCard = ({ username, targetId }) => {
-  const userData = useAccountStore(state => state.userData)
-  const { id: initiatorId } = userData
-
+  const { id: initiatorId } = useAccountStore.getState().userData
   const { status, mutate } = useMutation(api.reqRelationship)
 
   const handleRequest = () => {
-    mutate({ initiatorId: initiatorId, targetId: targetId, status: 3 })
+    const req = {
+      initiatorId: initiatorId,
+      targetId: targetId,
+      status: 3,
+    }
+
+    mutate(req)
   }
 
   return (
@@ -20,10 +23,15 @@ const ResultCard = ({ username, targetId }) => {
       {status === "loading" ? (
         <span className="mr-4 border rounded-lg text-xs p-1">loading</span>
       ) : status === "success" ? (
-        <span className="mr-4 border rounded-lg text-xs p-1">requested</span>
+        <span className="mr-4 border border-green-400 rounded-lg text-xs text-green-400 p-1">
+          requested
+        </span>
       ) : (
-        <button className="mr-4" onClick={handleRequest}>
-          <IoMdAddCircle size={24} />
+        <button
+          className="border rounded-lg text-xs mr-4 p-1"
+          onClick={handleRequest}
+        >
+          request
         </button>
       )}
     </div>

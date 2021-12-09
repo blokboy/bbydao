@@ -7,6 +7,14 @@ const api = axios.create({
 // get all users
 export const getUsers = () => api.get("/accounts").then(res => res.data)
 
+// update user
+export const updateUser = req => {
+  api.put("/accounts", req).then(res => {
+    console.log("updateUser response:", res.data)
+    res.data
+  })
+}
+
 // request relationship
 export const reqRelationship = req => {
   api.post("/relationship/create", req).then(res => {
