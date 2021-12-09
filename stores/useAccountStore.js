@@ -8,6 +8,8 @@ export const useAccountStore = create(
       rainbowAccount: null,
       rainbowConnector: null,
       setUserData: u => set({ userData: u }),
+      setUpdateUserData: update =>
+        set(state => Object.assign(state.userData, update)),
       setRainbowAccount: a => set({ rainbowAccount: a }),
       setRainbowConnector: c => set({ rainbowConnector: c }),
     }),

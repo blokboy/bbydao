@@ -11,7 +11,7 @@ export const getUsers = () => api.get("/accounts").then(res => res.data)
 export const updateUser = req => {
   api.put("/accounts", req).then(res => {
     console.log("updateUser response:", res.data)
-    res.data
+    return res.data
   })
 }
 

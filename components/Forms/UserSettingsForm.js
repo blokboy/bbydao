@@ -1,12 +1,18 @@
 import React from "react"
 import useForm from "../../hooks/useForm"
+import { useRouter } from "next/router"
 import { useAccountStore } from "../../stores/useAccountStore"
 import { useMutation } from "react-query"
 import * as api from "../../query"
 
 const UserSettingsForm = () => {
-  const userData = useAccountStore(state => state.userData)
+  const router = useRouter()
+
   const { state, handleChange } = useForm()
+
+  const userData = useAccountStore(state => state.userData)
+  const setUpdateUserData = useAccountStore(state => state.setUpdateUserData)
+
   const { status, mutate } = useMutation(api.updateUser)
 
   const handleUpdateRequest = event => {
@@ -17,7 +23,13 @@ const UserSettingsForm = () => {
       ...state,
     }
 
-    mutate(req)
+    // review
+    mutate(req, {
+      onSuccess: () => {
+        setUpdateUserData(req)
+        router.push(`/user/${userData.username}`)
+      },
+    })
   }
 
   if (!userData) {
