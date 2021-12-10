@@ -1,8 +1,8 @@
 import React from "react"
+import ClickAwayListener from "react-click-away-listener"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { HiDotsHorizontal } from "react-icons/hi"
-import ClickAwayListener from "react-click-away-listener"
 import { useAccountStore } from "../../../stores/useAccountStore"
 
 const Menu = () => {

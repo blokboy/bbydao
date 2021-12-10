@@ -1,9 +1,8 @@
 import React from "react"
 import { useMutation, useQueryClient } from "react-query"
-import { updateRelationship, deleteNotification } from "../../query"
+import { updateRelationship, deleteNotification } from "../../../query"
 
-// friend request card
-const FriendRequest = ({ body, id, relationshipRef }) => {
+const NotificationCard = ({ body, id, relationshipRef }) => {
   const queryClient = useQueryClient()
   const accept = useMutation(updateRelationship)
   const reject = useMutation(deleteNotification, {
@@ -33,24 +32,24 @@ const FriendRequest = ({ body, id, relationshipRef }) => {
   }
 
   return (
-    <div className="flex flex-row mb-3 mx-auto rounded-lg bg-gray-50 dark:bg-gray-900 justify-between py-4 px-3 w-11/12 md:w-6/12">
+    <li className="flex flex-row mb-1 rounded-lg bg-gray-50 dark:bg-gray-900 text-sm justify-between p-1 w-full">
       <span>{body}</span>
       <div>
         <button
-          className="border rounded-lg text-xs mr-4 p-1"
+          className="border rounded-lg text-xs mr-2 px-1"
           onClick={handleAccept}
         >
           accept
         </button>
         <button
-          className="border rounded-lg text-xs mr-4 p-1"
+          className="border rounded-lg text-xs px-1"
           onClick={handleReject}
         >
           reject
         </button>
       </div>
-    </div>
+    </li>
   )
 }
 
-export default FriendRequest
+export default NotificationCard
