@@ -4,6 +4,7 @@ import { useRouter } from "next/router"
 import { useAccountStore } from "../../stores/useAccountStore"
 import { useMutation } from "react-query"
 import * as api from "../../query"
+import { data } from "autoprefixer"
 
 const UserSettingsForm = () => {
   const router = useRouter()
@@ -13,7 +14,7 @@ const UserSettingsForm = () => {
   const userData = useAccountStore(state => state.userData)
   const setUpdateUserData = useAccountStore(state => state.setUpdateUserData)
 
-  const { status, mutate } = useMutation(api.updateUser)
+  const { status, mutateAsync } = useMutation(api.updateUser)
 
   const handleUpdateRequest = event => {
     event.preventDefault()
@@ -24,14 +25,20 @@ const UserSettingsForm = () => {
     }
 
     // review
-    mutate(req, {
+    mutateAsync(req, {
       onSuccess: () => {
-        setUpdateUserData(req)
-        router.push(`/user/${userData.username}`)
+        if (status === "success") {
+          setUpdateUserData(req)
+          router.push(`/user/${userData.username}`)
+        }
+        if (status === "error") {
+          console.log(error)
+        }
       },
     })
   }
 
+  // route to 404 with suggestions
   if (!userData) {
     return <h1>no user</h1>
   }
@@ -62,7 +69,7 @@ const UserSettingsForm = () => {
         </div>
 
         <div className="mb-8">
-          <label className="block text-sm font-bold mb-2" htmlFor="name">
+          <label className="block text-sm font-bold mb-2" htmlFor="email">
             email
           </label>
           <input
@@ -71,7 +78,7 @@ const UserSettingsForm = () => {
             className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 dark:bg-gray-800"
             id="email"
             name="email"
-            type="text"
+            type="email"
             placeholder="email"
           />
         </div>

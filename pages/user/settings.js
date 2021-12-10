@@ -1,4 +1,3 @@
-import React from "react"
 import UserSettingsForm from "../../components/Forms/UserSettingsForm"
 
 const settings = () => {

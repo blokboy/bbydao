@@ -5,7 +5,7 @@ import * as api from "../../query"
 
 const ResultCard = ({ username, targetId }) => {
   const { id: initiatorId } = useAccountStore.getState().userData
-  const { status, mutate } = useMutation(api.reqRelationship)
+  const { status, mutateAsync } = useMutation(api.reqRelationship)
 
   const handleRequest = () => {
     const req = {
@@ -14,7 +14,7 @@ const ResultCard = ({ username, targetId }) => {
       status: 3,
     }
 
-    mutate(req)
+    mutateAsync(req)
   }
 
   return (

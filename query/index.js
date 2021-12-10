@@ -7,12 +7,13 @@ const api = axios.create({
 // get all users
 export const getUsers = () => api.get("/accounts").then(res => res.data)
 
+// get users notifications
+export const userNotifications = req =>
+  api.post("/notification/account", req).then(res => res.data)
+
 // update user
 export const updateUser = req => {
-  api.put("/accounts", req).then(res => {
-    console.log("updateUser response:", res.data)
-    return res.data
-  })
+  api.put("/accounts", req).then(res => res.data)
 }
 
 // request relationship
