@@ -55,13 +55,14 @@ const NotificationsIcon = () => {
           }
         >
           <ul className="py-1" onClick={clickAway}>
-            {/*  */}
             {data?.parsedNotifs.FRIEND_REQUESTS.map(notif => (
               <NotificationCard
                 key={notif.id}
                 id={notif.id}
                 relationshipRef={notif.ref}
                 body={notif.body}
+                seen={notif.seen}
+                notificationsOpen={notificationsOpen}
               />
             ))}
           </ul>

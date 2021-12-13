@@ -6378,7 +6378,7 @@
   "resolved" "https://registry.npmjs.org/react-click-away-listener/-/react-click-away-listener-2.0.5.tgz"
   "version" "2.0.5"
 
-"react-dom@*", "react-dom@^15.0.0 || ^16.0.0", "react-dom@^17.0.2", "react-dom@>= 16.8.0", "react-dom@>=16.3.0", "react-dom@>=16.6.0", "react-dom@>=16.8 || ^17.0.0", "react-dom@>=16.8.0", "react-dom@17.0.2":
+"react-dom@*", "react-dom@^15.0.0 || ^16.0.0", "react-dom@^16.8.0 || ^17.0.0", "react-dom@^17.0.2", "react-dom@>= 16.8.0", "react-dom@>=16.3.0", "react-dom@>=16.6.0", "react-dom@>=16.8 || ^17.0.0", "react-dom@>=16.8.0", "react-dom@17.0.2":
   "integrity" "sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA=="
   "resolved" "https://registry.npmjs.org/react-dom/-/react-dom-17.0.2.tgz"
   "version" "17.0.2"
@@ -6396,6 +6396,11 @@
     "object-assign" "^4.1.1"
     "prop-types" "^15.6.2"
     "scheduler" "^0.19.1"
+
+"react-hook-inview@^4.3.11":
+  "integrity" "sha512-z3PyANU37v6rMVRXrA0IybKdGQCxlM+UVxPeyjCIaAHJKctSxcz0HvurR/j/FxDz85Kp32wsQp4SIAKrfiRNfQ=="
+  "resolved" "https://registry.npmjs.org/react-hook-inview/-/react-hook-inview-4.3.11.tgz"
+  "version" "4.3.11"
 
 "react-icons@^4.3.1":
   "integrity" "sha512-cB10MXLTs3gVuXimblAdI71jrJx8njrJZmNMEMC+sQu5B/BIOmlsAjskdqpn81y8UBVEGuHODd7/ci5DvoSzTQ=="

@@ -1,12 +1,26 @@
 import React from "react"
+import { useInViewEffect } from "react-hook-inview"
 import { useMutation, useQueryClient } from "react-query"
-import { updateRelationship, deleteNotification } from "../../query"
+import * as api from "../../query"
 
 // friend request card
-const FriendRequest = ({ body, id, relationshipRef }) => {
+const FriendRequest = ({ body, id, relationshipRef, seen }) => {
+  const [isVisible, setIsVisible] = React.useState(false)
+
   const queryClient = useQueryClient()
-  const accept = useMutation(updateRelationship)
-  const reject = useMutation(deleteNotification, {
+  const acceptRelationship = useMutation(api.updateRelationship)
+
+  const updateNotif = useMutation(api.updateNotification, {
+    onSuccess: async () => {
+      // this updates the query, seen: true
+      // call less frequently
+      await queryClient.invalidateQueries("notifications", {
+        refetchActive: true,
+      })
+    },
+  })
+
+  const rejectRelationship = useMutation(api.deleteNotification, {
     onSuccess: async () => {
       await queryClient.invalidateQueries("notifications", {
         refetchActive: true,
@@ -14,37 +28,72 @@ const FriendRequest = ({ body, id, relationshipRef }) => {
     },
   })
 
-  const handleAccept = () => {
-    const req = {
-      id: relationshipRef,
-      status: 2,
-    }
+  const ref = useInViewEffect(
+    ([entry], observer) => {
+      if (entry.isIntersecting) {
+        observer.unobserve(entry.target)
+      }
+      setIsVisible(entry.isIntersecting)
+    },
+    { threshold: 0.5 }
+  )
 
-    accept.mutateAsync(req)
-  }
+  React.useEffect(() => {
+    if (seen) return
+    console.log("is visible")
 
-  const handleReject = () => {
+    updateNotifSeen()
+  }, [isVisible]) /* eslint-disable-line react-hooks/exhaustive-deps */
+
+  const updateNotifSeen = () => {
     const req = {
       id: id,
       seen: true,
     }
 
-    reject.mutateAsync(req)
+    console.log("mutate func:", req)
+
+    // updateNotif.mutateAsync(req)
+  }
+
+  const handleAcceptRelationship = () => {
+    if (!relationshipRef) return
+
+    const req = {
+      id: relationshipRef,
+      status: 2,
+    }
+
+    acceptRelationship.mutateAsync(req)
+  }
+
+  const handleRejectRelationship = () => {
+    if (!id) return
+
+    const req = {
+      id: id,
+      seen: true,
+    }
+
+    rejectRelationship.mutateAsync(req)
   }
 
   return (
-    <div className="flex flex-row mb-3 mx-auto rounded-lg bg-gray-50 dark:bg-gray-900 justify-between py-4 px-3 w-11/12 md:w-6/12">
+    <div
+      className="flex flex-row mb-3 mx-auto rounded-lg bg-gray-50 dark:bg-gray-900 justify-between py-4 px-3 w-11/12 md:w-6/12"
+      ref={ref}
+    >
       <span>{body}</span>
       <div>
         <button
           className="border rounded-lg text-xs mr-4 p-1"
-          onClick={handleAccept}
+          onClick={handleAcceptRelationship}
         >
           accept
         </button>
         <button
           className="border rounded-lg text-xs mr-4 p-1"
-          onClick={handleReject}
+          onClick={handleRejectRelationship}
         >
           reject
         </button>

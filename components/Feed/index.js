@@ -13,6 +13,10 @@ const Feed = () => {
     api.userNotifications({ target: id })
   )
 
+  if (!id) {
+    return
+  }
+
   if (data) {
     setNotificationCount(data.notificationCount)
   }
@@ -25,6 +29,7 @@ const Feed = () => {
           id={notif.id}
           relationshipRef={notif.ref}
           body={notif.body}
+          seen={notif.seen}
         />
       ))}
     </div>
