@@ -1,7 +1,7 @@
 import React from "react"
 import { useInViewEffect } from "react-hook-inview"
 import { useMutation, useQueryClient } from "react-query"
-import * as api from "../../../query"
+import * as api from "../../../../query"
 
 const NotificationCard = ({ ...props }) => {
   const { body, id, relationshipRef, seen, notificationsOpen } = props

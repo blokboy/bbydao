@@ -1,6 +1,5 @@
 import React from "react"
 import { useAccountStore } from "../../../stores/useAccountStore"
-import SearchBar from "./SearchBar"
 import NotificationsIcon from "./NotificationsIcon"
 import MessagesIcon from "./MessagesIcon"
 import Menu from "./Menu"

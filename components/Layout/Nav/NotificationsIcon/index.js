@@ -1,9 +1,9 @@
 import React from "react"
 import ClickAwayListener from "react-click-away-listener"
 import { useQuery } from "react-query"
-import * as api from "../../../query"
-import { useAccountStore } from "../../../stores/useAccountStore"
-import { useUiStore } from "../../../stores/useUiStore"
+import * as api from "../../../../query"
+import { useAccountStore } from "../../../../stores/useAccountStore"
+import { useUiStore } from "../../../../stores/useUiStore"
 import { FiBell } from "react-icons/fi"
 import NotificationCard from "./NotificationCard"
 
@@ -16,14 +16,16 @@ const NotificationsIcon = () => {
     api.userNotifications({ target: id })
   )
 
-  if (data) {
+  React.useEffect(() => {
+    if (!data) return
     setNotificationCount(data.notificationCount)
-  }
+  }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
-  const clickAway = () => {
-    if (!notificationsOpen) {
-      return
-    }
+  const clickAway = event => {
+    if (!notificationsOpen) return
+    // if (event.target.id === "notification-menu") return
+    console.log(event)
+
     setNotificationsOpen(false)
   }
 
