@@ -1,6 +1,6 @@
 import React from "react"
 import { GoSearch } from "react-icons/go"
-import { useUiStore } from "../../../stores/useUiStore"
+import { useUiStore } from "stores/useUiStore"
 
 const ToggleSearchModal = () => {
   const modalOpen = useUiStore(state => state.modalOpen)

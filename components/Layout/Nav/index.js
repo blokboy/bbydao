@@ -1,5 +1,5 @@
 import React from "react"
-import { useAccountStore } from "../../../stores/useAccountStore"
+import { useAccountStore } from "stores/useAccountStore"
 import NotificationsIcon from "./NotificationsIcon"
 import MessagesIcon from "./MessagesIcon"
 import Menu from "./Menu"

@@ -1,9 +1,9 @@
 import React from "react"
-import useForm from "../../hooks/useForm"
+import useForm from "hooks/useForm"
 import { useRouter } from "next/router"
-import { useAccountStore } from "../../stores/useAccountStore"
+import { useAccountStore } from "stores/useAccountStore"
 import { useMutation } from "react-query"
-import * as api from "../../query"
+import * as api from "query"
 import { data } from "autoprefixer"
 
 const UserSettingsForm = () => {

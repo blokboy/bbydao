@@ -1,9 +1,9 @@
 import React from "react"
 import ClickAwayListener from "react-click-away-listener"
 import { useQuery } from "react-query"
-import * as api from "../../../../query"
-import { useAccountStore } from "../../../../stores/useAccountStore"
-import { useUiStore } from "../../../../stores/useUiStore"
+import * as api from "query"
+import { useAccountStore } from "stores/useAccountStore"
+import { useUiStore } from "stores/useUiStore"
 import { FiBell } from "react-icons/fi"
 import NotificationCard from "./NotificationCard"
 

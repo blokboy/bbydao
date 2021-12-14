@@ -1,9 +1,9 @@
 import React from "react"
 import Head from "next/head"
-import Explore from "../components/Explore"
+import Explore from "components/Explore"
 import { RainbowButton } from "@rainbow-me/rainbow-button"
-import { useRainbowButton } from "../hooks/useRainbowButton"
-import { useAccountStore } from "../stores/useAccountStore"
+import { useRainbowButton } from "hooks/useRainbowButton"
+import { useAccountStore } from "stores/useAccountStore"
 
 const Home = () => {
   const { onConnectorInitialized } = useRainbowButton()

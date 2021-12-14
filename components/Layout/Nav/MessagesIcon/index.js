@@ -1,6 +1,6 @@
 import React from "react"
 import ClickAwayListener from "react-click-away-listener"
-import { useUiStore } from "../../../../stores/useUiStore"
+import { useUiStore } from "stores/useUiStore"
 import { FiMail } from "react-icons/fi"
 
 const MessagesIcon = () => {

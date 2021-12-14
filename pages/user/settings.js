@@ -1,4 +1,4 @@
-import UserSettingsForm from "../../components/Forms/UserSettingsForm"
+import UserSettingsForm from "components/Forms/UserSettingsForm"
 
 const settings = () => {
   return <UserSettingsForm />

@@ -3,7 +3,7 @@ import ClickAwayListener from "react-click-away-listener"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { HiDotsHorizontal } from "react-icons/hi"
-import { useAccountStore } from "../../../stores/useAccountStore"
+import { useAccountStore } from "stores/useAccountStore"
 
 const Menu = () => {
   const [menuOpen, setMenuOpen] = React.useState(false)

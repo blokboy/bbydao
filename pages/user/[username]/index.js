@@ -1,5 +1,5 @@
 import axios from "axios"
-import UserDashboard from "../../../components/UserDashboard/index"
+import UserDashboard from "components/UserDashboard/index"
 
 const UserPage = ({ data }) => {
   return (

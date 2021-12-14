@@ -1,7 +1,7 @@
 import React from "react"
 import { useInViewEffect } from "react-hook-inview"
 import { useMutation, useQueryClient } from "react-query"
-import * as api from "../../query"
+import * as api from "query"
 
 // friend request card
 const FriendRequest = ({ body, id, relationshipRef, seen }) => {
@@ -86,13 +86,13 @@ const FriendRequest = ({ body, id, relationshipRef, seen }) => {
       <span>{body}</span>
       <div>
         <button
-          className="border rounded-lg text-xs mr-4 p-1"
+          className="border rounded-lg bg-green-500 hover:bg-green-400 text-xs mr-4 p-1"
           onClick={handleAcceptRelationship}
         >
           accept
         </button>
         <button
-          className="border rounded-lg text-xs mr-4 p-1"
+          className="border rounded-lg bg-red-500 hover:bg-red-400 text-xs mr-4 p-1"
           onClick={handleRejectRelationship}
         >
           reject

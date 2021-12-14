@@ -1,7 +1,7 @@
 import React from "react"
-import { useAccountStore } from "../../stores/useAccountStore"
+import { useAccountStore } from "stores/useAccountStore"
 import { useMutation } from "react-query"
-import * as api from "../../query"
+import * as api from "query"
 
 const ResultCard = ({ username, targetId }) => {
   const { id: initiatorId } = useAccountStore.getState().userData

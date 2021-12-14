@@ -1,6 +1,6 @@
 import React from "react"
 import { useQuery } from "react-query"
-import * as api from "../../query"
+import * as api from "query"
 import ResultCard from "./ResultCard"
 
 const ResultsDropdown = () => {

@@ -1,5 +1,5 @@
 import React from "react"
-import { useAccountStore } from "../../../stores/useAccountStore"
+import { useAccountStore } from "stores/useAccountStore"
 
 const AccountDisplay = () => {
   const rainbowAccount = useAccountStore(state => state.rainbowAccount)

@@ -1,7 +1,7 @@
 import React from "react"
 import SearchForm from "./SearchForm"
 import ResultsDropdown from "./ResultsDropdown"
-import { useUiStore } from "../../stores/useUiStore"
+import { useUiStore } from "stores/useUiStore"
 
 const ModalLayout = () => {
   const modalOpen = useUiStore(state => state.modalOpen)

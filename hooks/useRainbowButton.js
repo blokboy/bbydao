@@ -1,6 +1,6 @@
 import React from "react"
 import axios from "axios"
-import { useAccountStore } from "../stores/useAccountStore"
+import { useAccountStore } from "stores/useAccountStore"
 
 export const useRainbowButton = () => {
   const setRainbowAccount = useAccountStore(state => state.setRainbowAccount)

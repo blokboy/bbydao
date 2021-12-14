@@ -1,6 +1,6 @@
 import React from "react"
 import { GoSearch } from "react-icons/go"
-import { useUiStore } from "../../stores/useUiStore"
+import { useUiStore } from "stores/useUiStore"
 
 const SearchForm = () => {
   const modalOpen = useUiStore(state => state.setModalOpen)

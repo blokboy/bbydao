@@ -1,5 +1,5 @@
 import React from "react"
-import { useRainbowButton } from "../../../hooks/useRainbowButton"
+import { useRainbowButton } from "hooks/useRainbowButton"
 
 const DisconnectButton = () => {
   const { disconnect } = useRainbowButton()

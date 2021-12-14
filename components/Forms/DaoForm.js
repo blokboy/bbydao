@@ -1,12 +1,12 @@
 import React from "react"
-import useForm from "../../hooks/useForm"
+import useForm from "hooks/useForm"
 
 const DaoForm = () => {
   const { state, handleChange } = useForm()
 
   return (
     <div className="w-full flex justify-center">
-      <form className="shadow-xl w-full md:w-3/6 rounded-xl px-8 pt-6 pb-8 mb-4 bg-gray-100 dark:bg-gray-900">
+      <form className="shadow-xl w-full md:w-3/6 md:rounded-xl px-8 pt-6 pb-8 mb-4 bg-gray-100 dark:bg-gray-900">
         <div className="w-full text-xl text-center font-bold mb-8">
           create your dao
         </div>
