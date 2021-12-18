@@ -2,6 +2,7 @@ import React from "react"
 import ClickAwayListener from "react-click-away-listener"
 import { useUiStore } from "stores/useUiStore"
 import { FiMail } from "react-icons/fi"
+import MessagesDropdown from "./MessagesDropdown"
 
 const MessagesIcon = () => {
   const [messagesOpen, setMessagesOpen] = React.useState(false)
@@ -37,16 +38,9 @@ const MessagesIcon = () => {
         ) : (
           <></>
         )}
-        <div
-          className={
-            (messagesOpen ? "absolute " : "hidden ") +
-            "z-50 rounded border shadow -ml-96 mt-32 px-4 py-2 text-gray-800 bg-gray-200 dark:text-white dark:bg-gray-900 w-4/12"
-          }
-        >
-          <ul className="py-1" onClick={clickAway}>
-            <li>test</li>
-          </ul>
-        </div>
+
+        {/* && messagesCount */}
+        <MessagesDropdown messagesOpen={messagesOpen} />
       </div>
     </ClickAwayListener>
   )

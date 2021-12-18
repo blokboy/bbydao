@@ -4,19 +4,19 @@ import ResultsDropdown from "./ResultsDropdown"
 import { useUiStore } from "stores/useUiStore"
 
 const ModalLayout = () => {
-  const modalOpen = useUiStore(state => state.modalOpen)
-  const setModalOpen = useUiStore(state => state.setModalOpen)
+  const appModalOpen = useUiStore(state => state.appModalOpen)
+  const setAppModalOpen = useUiStore(state => state.setAppModalOpen)
 
   const closeModal = e => {
-    if (!modalOpen && e.target) {
+    if (!appModalOpen && e.target) {
       return
     }
-    setModalOpen()
+    setAppModalOpen()
   }
 
   return (
     <>
-      {modalOpen ? (
+      {appModalOpen ? (
         <div
           className="fixed z-40 inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
           onClick={e => closeModal(e)}

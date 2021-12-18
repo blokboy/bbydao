@@ -3,12 +3,12 @@ import { GoSearch } from "react-icons/go"
 import { useUiStore } from "stores/useUiStore"
 
 const ToggleSearchModal = () => {
-  const modalOpen = useUiStore(state => state.modalOpen)
-  const setModalOpen = useUiStore(state => state.setModalOpen)
+  const appModalOpen = useUiStore(state => state.appModalOpen)
+  const setAppModalOpen = useUiStore(state => state.setAppModalOpen)
 
   const handleKeyDown = event => {
-    if (!modalOpen && event.keyCode === 75 && event.metaKey) {
-      setModalOpen()
+    if (!appModalOpen && event.keyCode === 75 && event.metaKey) {
+      setAppModalOpen()
     }
     return
   }
@@ -24,7 +24,7 @@ const ToggleSearchModal = () => {
   return (
     <button
       className="flex flex-row rounded-full border border-gray-400 shadow bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-800 px-4 py-2 md:w-96 w-max"
-      onClick={setModalOpen}
+      onClick={setAppModalOpen}
     >
       <span className="mr-4">
         <GoSearch size={24} />

@@ -20,7 +20,6 @@ const Nav = () => {
     <>
       <nav className="flex w-screen p-2 md:p-6">
         <div className="flex flex-row w-screen justify-between items-center">
-          {/* <SearchBar /> */}
           <ToggleSearchModal />
         </div>
         {userLogged ? <AccountDisplay /> : <></>}

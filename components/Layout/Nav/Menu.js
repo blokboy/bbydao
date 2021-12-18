@@ -34,7 +34,7 @@ const Menu = () => {
         <div
           className={
             (menuOpen ? "absolute " : "hidden ") +
-            "z-50 rounded border shadow -ml-20 mt-4 px-4 py-2 text-gray-800 bg-gray-200 dark:text-white dark:bg-gray-900"
+            "top-0 right-0 md:-translate-x-20 translate-y-20 z-50 rounded border shadow px-4 py-2 text-gray-800 bg-gray-200 dark:text-white dark:bg-gray-900"
           }
         >
           <ul className="py-1" onClick={clickAway}>

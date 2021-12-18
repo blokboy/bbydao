@@ -3,13 +3,13 @@ import { GoSearch } from "react-icons/go"
 import { useUiStore } from "stores/useUiStore"
 
 const SearchForm = () => {
-  const modalOpen = useUiStore(state => state.setModalOpen)
-  const setModalOpen = useUiStore(state => state.setModalOpen)
+  const appModalOpen = useUiStore(state => state.setAppModalOpen)
+  const setAppModalOpen = useUiStore(state => state.setAppModalOpen)
 
   const handleKeyDown = event => {
     if (event.keyCode === 27) {
-      if (modalOpen) {
-        setModalOpen()
+      if (appModalOpen) {
+        setAppModalOpen()
       }
       return
     }
@@ -36,7 +36,7 @@ const SearchForm = () => {
       />
       <button
         className="absolute right-2 top-3 rounded-lg border dark:text-white px-2 py-1"
-        onClick={setModalOpen}
+        onClick={setAppModalOpen}
       >
         esc
       </button>

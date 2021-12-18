@@ -5,13 +5,14 @@ import * as api from "query"
 import { useAccountStore } from "stores/useAccountStore"
 import { useUiStore } from "stores/useUiStore"
 import { FiBell } from "react-icons/fi"
-import NotificationCard from "./NotificationCard"
+import NotificationsDropdown from "./NotificationsDropdown"
 
 const NotificationsIcon = () => {
   const [notificationsOpen, setNotificationsOpen] = React.useState(false)
   const notificationCount = useUiStore(state => state.notificationCount)
   const setNotificationCount = useUiStore(state => state.setNotificationCount)
   const { id } = useAccountStore.getState().userData
+
   const { data } = useQuery(["notifications", id], () =>
     api.userNotifications({ target: id })
   )
@@ -50,25 +51,12 @@ const NotificationsIcon = () => {
         ) : (
           <></>
         )}
-        <div
-          className={
-            (notificationsOpen ? "absolute " : "hidden ") +
-            "z-50 rounded border shadow -ml-96 mt-32 px-4 py-2 text-gray-800 bg-gray-200 dark:text-white dark:bg-gray-900 w-4/12"
-          }
-        >
-          <ul className="py-1" onClick={clickAway}>
-            {data?.parsedNotifs.FRIEND_REQUESTS.map(notif => (
-              <NotificationCard
-                key={notif.id}
-                id={notif.id}
-                relationshipRef={notif.ref}
-                body={notif.body}
-                seen={notif.seen}
-                notificationsOpen={notificationsOpen}
-              />
-            ))}
-          </ul>
-        </div>
+
+        <NotificationsDropdown
+          data={data}
+          notificationsOpen={notificationsOpen}
+          notificationCount={notificationCount}
+        />
       </div>
     </ClickAwayListener>
   )

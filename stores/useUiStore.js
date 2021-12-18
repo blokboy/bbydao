@@ -1,10 +1,10 @@
 import create from "zustand"
 
 export const useUiStore = create(set => ({
-  modalOpen: false,
+  appModalOpen: false,
   notificationCount: null,
   messagesCount: null,
-  setModalOpen: () => set(state => ({ modalOpen: !state.modalOpen })),
+  setAppModalOpen: () => set(state => ({ appModalOpen: !state.appModalOpen })),
   setNotificationCount: count => set({ notificationCount: count }),
   setMessagesCount: count => set({ messagesCount: count }),
 }))
