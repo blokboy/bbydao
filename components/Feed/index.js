@@ -1,4 +1,5 @@
 import React from "react"
+import Head from "next/head"
 import { useQuery } from "react-query"
 import * as api from "query"
 import { useAccountStore } from "stores/useAccountStore"
@@ -22,17 +23,25 @@ const Feed = () => {
   }
 
   return (
-    <div className="flex flex-col py-2 my-2 w-full">
-      {data?.parsedNotifs.FRIEND_REQUESTS.map(notif => (
-        <FriendRequest
-          key={notif.id}
-          id={notif.id}
-          relationshipRef={notif.ref}
-          body={notif.body}
-          seen={notif.seen}
-        />
-      ))}
-    </div>
+    <>
+      <Head>
+        <title>{"babydao | feed"}</title>
+        <meta name="description" content="" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <div className="flex flex-col py-2 my-2 w-full">
+        {data?.parsedNotifs.FRIEND_REQUESTS.map(notif => (
+          <FriendRequest
+            key={notif.id}
+            id={notif.id}
+            relationshipRef={notif.ref}
+            body={notif.body}
+            seen={notif.seen}
+          />
+        ))}
+      </div>
+    </>
   )
 }
 
