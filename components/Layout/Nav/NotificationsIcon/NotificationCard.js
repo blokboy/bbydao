@@ -3,6 +3,9 @@ import { useInViewEffect } from "react-hook-inview"
 import { useMutation, useQueryClient } from "react-query"
 import * as api from "query"
 
+import { HiOutlineCheckCircle } from "react-icons/hi"
+import { HiOutlineXCircle } from "react-icons/hi"
+
 const NotificationCard = ({ ...props }) => {
   const { body, id, relationshipRef, seen, notificationsOpen } = props
 
@@ -81,22 +84,22 @@ const NotificationCard = ({ ...props }) => {
 
   return (
     <li
-      className="flex flex-row mb-1 rounded-lg bg-gray-50 dark:bg-gray-900 text-sm justify-between w-full"
+      className="flex flex-row rounded-lg bg-gray-100 dark:bg-gray-800 text-sm justify-between w-full p-3 mb-2"
       ref={ref}
     >
       <span>{body}</span>
       <div>
         <button
-          className="border rounded-lg bg-green-500 hover:bg-green-400 text-xs mr-2 px-1"
+          className="text-green-500 hover:text-green-400 px-1"
           onClick={handleAcceptRelationship}
         >
-          accept
+          <HiOutlineCheckCircle size={22} />
         </button>
         <button
-          className="border rounded-lg bg-red-500 hover:bg-red-400 text-xs px-1"
+          className="text-red-500 hover:text-red-400 px-1"
           onClick={handleRejectRelationship}
         >
-          reject
+          <HiOutlineXCircle size={22} />
         </button>
       </div>
     </li>
