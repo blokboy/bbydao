@@ -5,7 +5,7 @@ import React from "react"
 
 const MessageViewCard = () => {
   return (
-    <li className="flex flex-row mb-2 rounded-lg bg-gray-50 dark:bg-gray-900 w-full p-3">
+    <li className="flex flex-row mb-2 rounded-lg bg-gray-200 dark:bg-gray-900 w-full p-3">
       <div className="w-1/12">
         <div className="rounded-full border border-white bg-gray-200 dark:bg-gray-900 h-10 w-10"></div>
       </div>

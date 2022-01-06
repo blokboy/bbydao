@@ -24,7 +24,7 @@ const SearchForm = () => {
   }, []) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   return (
-    <div className="relative w-full py-3 border-b-2 text-gray-600 focus-within:text-gray-400 dark:focus-within:text-gray-100">
+    <div className="relative w-full py-3 border-b-2 border-gray-300 text-gray-600 focus-within:text-gray-400 dark:focus-within:text-gray-100">
       <span className="absolute left-0 top-4 flex items-center pl-2">
         <GoSearch size={24} />
       </span>

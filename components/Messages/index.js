@@ -1,6 +1,7 @@
 import React from "react"
 import Head from "next/head"
 import MessageView from "./MessageView"
+import ListView from "./ListView"
 
 const Messages = () => {
   return (
@@ -12,7 +13,8 @@ const Messages = () => {
       </Head>
 
       <div className="w-full h-screen flex justify-center">
-        <MessageView />
+        {/* <MessageView /> */}
+        <ListView />
       </div>
     </>
   )
