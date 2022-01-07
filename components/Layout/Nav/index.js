@@ -10,7 +10,7 @@ import ToggleSearchModal from "./ToggleSearchModal"
 
 const Nav = () => {
   const [userLogged, setUserLogged] = React.useState(false)
-  const rainbowAccount = useAccountStore.getState().rainbowAccount
+  const rainbowAccount = useAccountStore(state => state.rainbowAccount)
 
   React.useEffect(() => {
     setUserLogged(rainbowAccount ? true : false)
