@@ -30,6 +30,10 @@ const NotificationsIcon = () => {
     setNotificationsOpen(false)
   }
 
+  if (!id) {
+    return
+  }
+
   return (
     <ClickAwayListener onClickAway={clickAway}>
       <div className="hidden md:flex flex-row items-center justify-center mr-3">

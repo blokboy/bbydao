@@ -13,8 +13,8 @@ const Messages = () => {
       </Head>
 
       <div className="w-full h-screen flex justify-center">
-        {/* <MessageView /> */}
         <ListView />
+        <MessageView />
       </div>
     </>
   )

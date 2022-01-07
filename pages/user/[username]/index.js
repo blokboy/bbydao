@@ -13,7 +13,7 @@ export default UserPage
 
 UserPage.getInitialProps = async ({ query }) => {
   const res = await axios.post(`${process.env.accounts_api}`, {
-    username: query.username,
+    account: query.address,
   })
   const user = await res.data
   return { data: user }

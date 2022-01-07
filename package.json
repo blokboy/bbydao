@@ -14,6 +14,7 @@
     "axios": "^0.22.0",
     "classnames": "^2.3.1",
     "cookie": "^0.4.1",
+    "ethers": "^5.5.3",
     "jsonwebtoken": "^8.5.1",
     "next": "11.1.2",
     "next-themes": "^0.0.15",
@@ -28,6 +29,7 @@
     "react-query": "^3.34.0",
     "swr": "^1.0.1",
     "typescript": "^4.4.3",
+    "wagmi": "^0.0.17",
     "zustand": "^3.6.5"
   },
   "devDependencies": {

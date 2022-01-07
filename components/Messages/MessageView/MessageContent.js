@@ -10,6 +10,9 @@ const MessageContent = () => {
       <MessageViewCard />
       <MessageViewCard />
       <MessageViewCard />
+      <MessageViewCard />
+      <MessageViewCard />
+      <MessageViewCard />
     </div>
   )
 }

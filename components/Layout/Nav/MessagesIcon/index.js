@@ -17,6 +17,8 @@ const MessagesIcon = () => {
     setMessagesOpen(false)
   }
 
+  // Link to /messages instead of dropdown
+
   return (
     <ClickAwayListener onClickAway={clickAway}>
       <div className="hidden md:flex flex-row items-center justify-center mr-3">
