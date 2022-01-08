@@ -3,7 +3,6 @@ import Link from "next/link"
 import { BsPersonCircle } from "react-icons/bs"
 
 const DashboardLink = ({ data }) => {
-  console.log(data)
   return (
     <li className="w-full">
       <Link href={data ? `/user/${data.address}` : "/"}>

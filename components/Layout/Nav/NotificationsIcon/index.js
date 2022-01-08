@@ -14,12 +14,12 @@ const NotificationsIcon = () => {
   const userData = useAccountStore(state => state.userData)
 
   const { data } = useQuery(["notifications", userData.id], () => {
-    if (!userData.id) return
     api.userNotifications({ target: userData.id })
   })
 
   React.useEffect(() => {
     if (!data) return
+    console.log("notification useEffect")
     setNotificationCount(data.notificationCount)
   }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
 

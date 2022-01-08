@@ -4,7 +4,6 @@ import { useRouter } from "next/router"
 import { useAccountStore } from "stores/useAccountStore"
 import { useMutation } from "react-query"
 import * as api from "query"
-import { data } from "autoprefixer"
 
 const UserSettingsForm = () => {
   const router = useRouter()

@@ -4,6 +4,13 @@ const api = axios.create({
   baseURL: "https://minidao.herokuapp.com/",
 })
 
+// get user
+// { address: 0x... , ens: string || null, ensAvatar: string || null }
+export const getUser = req =>
+  api.post("/accounts/account", req).then(res => {
+    return res.data
+  })
+
 // get all users
 export const getUsers = () => api.get("/accounts").then(res => res.data)
 

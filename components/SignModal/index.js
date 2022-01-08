@@ -23,30 +23,32 @@ const SignModal = () => {
   // button to skip?
 
   return (
-    <div
-      onSubmit={event => {
-        event.preventDefault()
-        previousMessage.current = message
-        signMessage({ message })
-      }}
-    >
-      <label htmlFor="message">Enter a message to sign</label>
-      <textarea
-        id="message"
-        placeholder="The quick brown fox…"
-        onChange={event => setMessage(event.target.value)}
-      />
-      <button disabled={loading || !message.length}>
-        {loading ? "Check Wallet" : "Sign Message"}
-      </button>
+    <div className="fixed z-40 inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+      <div
+        onSubmit={event => {
+          event.preventDefault()
+          previousMessage.current = message
+          signMessage({ message })
+        }}
+      >
+        <label htmlFor="message">Enter a message to sign</label>
+        <textarea
+          id="message"
+          placeholder="The quick brown fox…"
+          onChange={event => setMessage(event.target.value)}
+        />
+        <button disabled={loading || !message.length}>
+          {loading ? "Check Wallet" : "Sign Message"}
+        </button>
 
-      {data && (
-        <div>
-          <div>Recovered Address: {recoveredAddress}</div>
-          <div>Signature: {data}</div>
-        </div>
-      )}
-      {error && <div>{error?.message ?? "Error signing message"}</div>}
+        {data && (
+          <div>
+            <div>Recovered Address: {recoveredAddress}</div>
+            <div>Signature: {data}</div>
+          </div>
+        )}
+        {error && <div>{error?.message ?? "Error signing message"}</div>}
+      </div>
     </div>
   )
 }
