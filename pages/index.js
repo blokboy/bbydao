@@ -31,10 +31,10 @@ const Home = () => {
       })
       .then(
         response => {
-          console.log(response)
-          // const { data } = response
-          // setUserData(data)
-          // setRainbowAccount(data.address)
+          // console.log(response)
+          const { data } = response
+          setUserData(data)
+          setRainbowAccount(data.address)
         },
         error => {
           console.log("Accounts API error:", error)
