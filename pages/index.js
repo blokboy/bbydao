@@ -26,12 +26,15 @@ const Home = () => {
     axios
       .post(`${process.env.accounts_api}`, {
         address: accountData.address,
+        ens: accountData.ens?.name ? accountData.ens.name : null,
+        ensAvatar: accountData.ens?.avatar ? accountData.ens.avatar : null,
       })
       .then(
         response => {
-          const { data } = response
-          setUserData(data)
-          setRainbowAccount(data.address)
+          console.log(response)
+          // const { data } = response
+          // setUserData(data)
+          // setRainbowAccount(data.address)
         },
         error => {
           console.log("Accounts API error:", error)

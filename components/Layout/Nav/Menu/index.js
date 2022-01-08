@@ -43,9 +43,9 @@ const Menu = () => {
           <ul className="py-1" onClick={clickAway}>
             {userLogged ? <DashboardLink data={userData} /> : <></>}
             <MenuThemeToggle />
-            <MessagesLink />
+            {userLogged ? <MessagesLink /> : <></>}
             <ExploreLink />
-            <FeedLink />
+            {userLogged ? <FeedLink /> : <></>}
             <AboutLink />
           </ul>
         </div>
