@@ -30,9 +30,9 @@ const Home = () => {
         ensAvatar: accountData.ens?.avatar ? accountData.ens.avatar : null,
       })
       .then(
-        response => {
+        async response => {
           // console.log(response)
-          const { data } = response
+          const { data } = await response
           setUserData(data)
           setRainbowAccount(data.address)
         },
