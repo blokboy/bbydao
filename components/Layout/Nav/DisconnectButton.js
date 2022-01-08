@@ -6,8 +6,18 @@ import { useAccountStore } from "stores/useAccountStore"
 const DisconnectButton = () => {
   const [{ data, error, loading }, disconnect] = useAccount()
 
+  const setRainbowAccount = useAccountStore(state => state.setRainbowAccount)
+  const setRainbowConnector = useAccountStore(state => state.setRainbowAccount)
+  const setUserData = useAccountStore(state => state.setRainbowAccount)
+
   const handleDisconnect = () => {
-    useAccountStore.destroy()
+    // set to initial state
+    // useAccountStore.destroy()
+
+    // there should better way ?
+    setRainbowAccount(null)
+    setRainbowConnector(null)
+    setUserData(null)
     useAccountStore.persist.clearStorage()
     disconnect()
   }

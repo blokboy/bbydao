@@ -11,11 +11,12 @@ const NotificationsIcon = () => {
   const [notificationsOpen, setNotificationsOpen] = React.useState(false)
   const notificationCount = useUiStore(state => state.notificationCount)
   const setNotificationCount = useUiStore(state => state.setNotificationCount)
-  const { id } = useAccountStore.getState().userData
+  const userData = useAccountStore(state => state.userData)
 
-  const { data } = useQuery(["notifications", id], () =>
-    api.userNotifications({ target: id })
-  )
+  const { data } = useQuery(["notifications", userData.id], () => {
+    if (!userData.id) return
+    api.userNotifications({ target: userData.id })
+  })
 
   React.useEffect(() => {
     if (!data) return
@@ -28,10 +29,6 @@ const NotificationsIcon = () => {
     console.log(event)
 
     setNotificationsOpen(false)
-  }
-
-  if (!id) {
-    return
   }
 
   return (
