@@ -9,12 +9,7 @@ import DisconnectButton from "./DisconnectButton"
 import ToggleSearchModal from "./ToggleSearchModal"
 
 const Nav = () => {
-  const [userLogged, setUserLogged] = React.useState(false)
-  const rainbowAccount = useAccountStore(state => state.rainbowAccount)
-
-  React.useEffect(() => {
-    setUserLogged(rainbowAccount ? true : false)
-  }, [rainbowAccount])
+  const userData = useAccountStore(state => state.userData)
 
   return (
     <>
@@ -22,10 +17,10 @@ const Nav = () => {
         <div className="flex flex-row w-screen justify-between items-center">
           <ToggleSearchModal />
         </div>
-        {userLogged ? <AccountDisplay /> : <></>}
-        {userLogged ? <DisconnectButton /> : <></>}
-        {userLogged ? <NotificationsIcon /> : <></>}
-        {userLogged ? <MessagesIcon /> : <></>}
+        {userData ? <AccountDisplay /> : <></>}
+        {userData ? <DisconnectButton /> : <></>}
+        {userData ? <NotificationsIcon id={userData.id} /> : <></>}
+        {userData ? <MessagesIcon /> : <></>}
         <Menu />
         <ThemeToggle />
       </nav>

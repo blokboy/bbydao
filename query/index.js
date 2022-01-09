@@ -6,50 +6,59 @@ const api = axios.create({
 
 // get user
 // { address: 0x... , ens: string || null, ensAvatar: string || null }
-export const getUser = req =>
-  api.post("/accounts/account", req).then(res => {
-    return res.data
-  })
+export const getUser = async req => {
+  const data = await api.post("/accounts/account", req)
+  return data
+}
 
 // get all users
-export const getUsers = () => api.get("/accounts").then(res => res.data)
+export const getUsers = async () => {
+  const data = await api.get("/accounts")
+  return data
+}
 
 // update user
 // { id: id, username: string, email: string }
-export const updateUser = req => {
-  api.put("/accounts", req).then(res => res.data)
+export const updateUser = async req => {
+  const data = await api.put("/accounts", req)
+  console.log("query: Update User", data)
+  return data
 }
 
 // request relationship
 // { initiatorId: id, targetId: id, status: enum }
-export const reqRelationship = req => {
-  api.post("/relationship/create", req).then(res => {
-    console.log("reqRelationship response:", res.data)
-    return res.data
-  })
+export const reqRelationship = async req => {
+  const data = await api.post("/relationship/create", req)
+  console.log("reqRelationship response:", data)
+  return data
 }
 
 // update relationship
 // { id: id, status: enum }
-export const updateRelationship = req => {
-  api.put("/relationship", req).then(res => {
-    console.log(res.data)
-    res.data
-  })
+export const updateRelationship = async req => {
+  const data = await api.put("/relationship", req)
+  // console.log(res.data)
+  return data
 }
 
 // get users notifications
 // { target: id }
-export const userNotifications = req =>
-  api.post("/notification/account", req).then(res => res.data)
+export const userNotifications = async req => {
+  const data = await api.post("/notification/account", req)
+  // console.log("notifications in query:", data)
+  return data
+}
 
 // update notification status
 // { seen: true }
-export const updateNotification = req => {
-  api.put("/notification", req).then(res => res.data)
+export const updateNotification = async req => {
+  const data = await api.put("/notification", req)
+  return data
 }
 
 // delete notification
 // { id: id }
-export const deleteNotification = req =>
-  api.post("/notification/delete", req).then(res => res.data)
+export const deleteNotification = async req => {
+  const data = await api.post("/notification/delete", req)
+  return data
+}

@@ -2,34 +2,36 @@ import React from "react"
 import ClickAwayListener from "react-click-away-listener"
 import { useQuery } from "react-query"
 import * as api from "query"
-import { useAccountStore } from "stores/useAccountStore"
+// import { useAccountStore } from "stores/useAccountStore"
 import { useUiStore } from "stores/useUiStore"
 import { FiBell } from "react-icons/fi"
 import NotificationsDropdown from "./NotificationsDropdown"
 
-const NotificationsIcon = () => {
+const NotificationsIcon = ({ id }) => {
   const [notificationsOpen, setNotificationsOpen] = React.useState(false)
   const notificationCount = useUiStore(state => state.notificationCount)
   const setNotificationCount = useUiStore(state => state.setNotificationCount)
-  const userData = useAccountStore(state => state.userData)
 
-  const { data } = useQuery(["notifications", userData.id], () => {
-    api.userNotifications({ target: userData.id })
-  })
+  const { data } = useQuery(
+    ["notifications", id],
+    () => api.userNotifications({ target: id })
+    // { onSettled: data => console.log("settled data", data) }
+  )
 
   React.useEffect(() => {
     if (!data) return
-    console.log("notification useEffect")
     setNotificationCount(data.notificationCount)
   }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const clickAway = event => {
     if (!notificationsOpen) return
     // if (event.target.id === "notification-menu") return
-    console.log(event)
+    // console.log(event)
 
     setNotificationsOpen(false)
   }
+
+  if (!id) return <></>
 
   return (
     <ClickAwayListener onClickAway={clickAway}>
