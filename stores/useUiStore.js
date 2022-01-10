@@ -5,6 +5,11 @@ export const useUiStore = create(set => ({
   appModalOpen: false,
   setAppModalOpen: () => set(state => ({ appModalOpen: !state.appModalOpen })),
 
+  // create dao modal display
+  createDaoModalOpen: false,
+  setCreateDaoModalOpen: () =>
+    set(state => ({ createDaoModalOpen: !state.createDaoModalOpen })),
+
   // notification count on nav
   notificationCount: null,
   setNotificationCount: count => set({ notificationCount: count }),

@@ -20,10 +20,10 @@ const Explore = ({ accountData }) => {
 
   const handleRequest = req => {
     mutateAsync(req, {
-      onSuccess: res => {
-        const { address, id, confirmed } = res.data
-        setUserData(res.data)
-        console.log("Explore res.data user:", res.data)
+      onSuccess: data => {
+        const { address, id, confirmed } = data
+        setUserData(data)
+        console.log("Explore data user:", data)
 
         setIncomingUser({ id: id, confirmed: confirmed })
       },

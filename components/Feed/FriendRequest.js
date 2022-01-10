@@ -61,7 +61,8 @@ const FriendRequest = ({ body, id, relationshipRef, seen }) => {
 
     const req = {
       id: relationshipRef,
-      status: 2,
+      notificationId: id,
+      status: 1,
     }
 
     acceptRelationship.mutateAsync(req)

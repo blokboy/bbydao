@@ -65,7 +65,8 @@ const NotificationCard = ({ ...props }) => {
 
     const req = {
       id: relationshipRef,
-      status: 2,
+      notificationId: id,
+      status: 1,
     }
 
     acceptRelationship.mutateAsync(req)

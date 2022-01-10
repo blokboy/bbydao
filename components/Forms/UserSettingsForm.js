@@ -25,9 +25,9 @@ const UserSettingsForm = () => {
 
     // review
     mutateAsync(req, {
-      onSettled: res => {
-        console.log(res)
-        setUpdateUserData(res.data)
+      onSettled: data => {
+        console.log("settings form", data)
+        setUpdateUserData(data)
         router.push(`/user/${userData.address}`)
       },
     })
@@ -48,7 +48,7 @@ const UserSettingsForm = () => {
           user settings
         </div>
 
-        <div className="mb-8">
+        {/* <div className="mb-8">
           <label className="block text-sm font-bold mb-2" htmlFor="name">
             username
           </label>
@@ -61,7 +61,7 @@ const UserSettingsForm = () => {
             type="text"
             placeholder="username"
           />
-        </div>
+        </div> */}
 
         <div className="mb-8">
           <label className="block text-sm font-bold mb-2" htmlFor="email">

@@ -20,7 +20,7 @@ const NotificationsIcon = ({ id }) => {
 
   React.useEffect(() => {
     if (!data) return
-    setNotificationCount(data.data?.notificationCount)
+    setNotificationCount(data?.notificationCount)
   }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const clickAway = event => {

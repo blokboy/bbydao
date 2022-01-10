@@ -1,16 +1,32 @@
 import React from "react"
 import useForm from "hooks/useForm"
+import { useUiStore } from "stores/useUiStore"
 import { useConnect } from "wagmi"
 
 const DaoForm = () => {
   const { state, handleChange } = useForm()
-
   const [{ data, error }, connect] = useConnect()
 
+  const createDaoModalOpen = useUiStore(state => state.createDaoModalOpen)
+  const setCreateDaoModalOpen = useUiStore(state => state.setCreateDaoModalOpen)
+
+  const closeModal = e => {
+    if (!createDaoModalOpen && e.target) {
+      return
+    }
+    setCreateDaoModalOpen()
+  }
+
+  if (!createDaoModalOpen) return <></>
+
   return (
-    <div className="w-full flex justify-center">
+    <div
+      className="fixed z-40 inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+      onClick={e => closeModal(e)}
+    >
+      {/* <div className="w-full flex justify-center"> */}
       {data.connected ? (
-        <form className="shadow-xl w-full md:w-3/6 md:rounded-xl px-8 pt-6 pb-8 mb-4 bg-gray-100 dark:bg-gray-900">
+        <form className="flex flex-col mt-24 mx-auto z-50 rounded shadow-xl w-full md:w-3/6 md:rounded-xl px-8 pt-6 pb-8 mb-4 bg-gray-100 dark:bg-gray-900">
           <div className="w-full text-xl text-center font-bold mb-8">
             create your dao
           </div>
@@ -75,6 +91,7 @@ const DaoForm = () => {
       ) : (
         <></>
       )}
+      {/* </div> */}
     </div>
   )
 }

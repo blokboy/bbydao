@@ -6,7 +6,7 @@ import * as api from "../../query"
 
 const UserDetails = ({ id, address }) => {
   const userData = useAccountStore(state => state.userData)
-  const { status, mutate } = useMutation(api.reqRelationship)
+  const { status, mutateAsync } = useMutation(api.reqRelationship)
 
   const handleRequest = () => {
     const req = {
@@ -15,7 +15,7 @@ const UserDetails = ({ id, address }) => {
       status: 3,
     }
 
-    mutate(req)
+    mutateAsync(req)
   }
 
   return (

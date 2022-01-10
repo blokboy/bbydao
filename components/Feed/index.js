@@ -10,16 +10,17 @@ import FriendRequest from "./FriendRequest"
 const Feed = () => {
   const userData = useAccountStore(state => state.userData)
   const setNotificationCount = useUiStore(state => state.setNotificationCount)
+
   const { data } = useQuery(["notifications", userData.id], () =>
     api.userNotifications({ target: userData.id })
   )
 
   if (!userData) {
-    return
+    return <></>
   }
 
   if (data) {
-    setNotificationCount(data.data?.notificationCount)
+    setNotificationCount(data?.notificationCount)
   }
 
   return (
@@ -31,7 +32,7 @@ const Feed = () => {
       </Head>
 
       <div className="flex flex-col py-2 my-2 w-full">
-        {data?.data.parsedNotifs.FRIEND_REQUESTS.map(notif => (
+        {data?.parsedNotifs.FRIEND_REQUESTS.map(notif => (
           <FriendRequest
             key={notif.id}
             id={notif.id}

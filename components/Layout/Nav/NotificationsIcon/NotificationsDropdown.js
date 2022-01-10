@@ -15,7 +15,7 @@ const NotificationsDropdown = ({ ...props }) => {
         <h1>Notifications</h1>
       </div>
       <ul>
-        {data?.data.parsedNotifs.FRIEND_REQUESTS.map(notif => (
+        {data?.parsedNotifs.FRIEND_REQUESTS.map(notif => (
           <NotificationCard
             key={notif.id}
             id={notif.id}
