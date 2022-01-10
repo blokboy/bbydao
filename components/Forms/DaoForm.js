@@ -2,6 +2,9 @@ import React from "react"
 import useForm from "hooks/useForm"
 import { useUiStore } from "stores/useUiStore"
 import { useConnect } from "wagmi"
+import { ethers } from 'ethers'
+import { EthersAdapter } from '@gnosis.pm/safe-core-sdk'
+import { Safe, SafeFactory, SafeAccountConfig } from '@gnosis.pm/safe-core-sdk'
 
 const DaoForm = () => {
   const { state, handleChange } = useForm()
@@ -9,6 +12,33 @@ const DaoForm = () => {
 
   const createDaoModalOpen = useUiStore(state => state.createDaoModalOpen)
   const setCreateDaoModalOpen = useUiStore(state => state.setCreateDaoModalOpen)
+
+  const createBabyDao = async (e, owners, threshold) => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner(0);
+
+    const ethAdapter = new EthersAdapter({
+      ethers,
+      signer
+    });
+
+    const safeFactory = await SafeFactory.create({ ethAdapter })
+
+    for(let owner of owners) {
+      owner = ethers.utils.getAddress(owner);
+    }
+    
+    const owners = owners; // addresses must be checksummed
+    const threshold = threshold;
+    const safeAccountConfig = {
+      owners,
+      threshold,
+    }
+
+    const safeSdk = await safeFactory.deploySafe(safeAccountConfig)
+    console.log('safe sdk ', safeSdk);
+    return safeSdk;
+  }
 
   const closeModal = e => {
     if (!createDaoModalOpen && e.target) {
