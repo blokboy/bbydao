@@ -9,7 +9,7 @@ const Home = () => {
     fetchEns: true,
   })
 
-  if (accountData) {
+  if (accountData && data?.connected) {
     return <Explore accountData={accountData} />
   }
 

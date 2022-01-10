@@ -12,7 +12,6 @@ const Explore = ({ accountData }) => {
 
   const userData = useAccountStore(state => state.userData)
   const setUserData = useAccountStore(state => state.setUserData)
-  const setRainbowAccount = useAccountStore(state => state.setRainbowAccount)
 
   const [incomingUser, setIncomingUser] = React.useState({
     id: null,
@@ -24,7 +23,6 @@ const Explore = ({ accountData }) => {
       onSuccess: res => {
         const { address, id, confirmed } = res.data
         setUserData(res.data)
-        setRainbowAccount(address)
         console.log("explore logged in:", res.data)
 
         setIncomingUser({ id: id, confirmed: confirmed })

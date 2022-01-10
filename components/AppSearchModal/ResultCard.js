@@ -8,6 +8,7 @@ const ResultCard = ({ username, targetId }) => {
   const { status, mutateAsync } = useMutation(api.reqRelationship)
 
   const handleRequest = () => {
+    if (!id) return
     const req = {
       initiatorId: initiatorId,
       targetId: targetId,

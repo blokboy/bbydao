@@ -9,7 +9,7 @@ const ResultsDropdown = () => {
 
   return (
     <div className="flex flex-col py-2 my-2">
-      {data?.map(user => (
+      {data?.data.map(user => (
         <ResultCard key={user.id} username={user.username} targetId={user.id} />
       ))}
     </div>

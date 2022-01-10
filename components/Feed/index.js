@@ -19,7 +19,7 @@ const Feed = () => {
   }
 
   if (data) {
-    setNotificationCount(data.notificationCount)
+    setNotificationCount(data.data?.notificationCount)
   }
 
   return (
@@ -31,7 +31,7 @@ const Feed = () => {
       </Head>
 
       <div className="flex flex-col py-2 my-2 w-full">
-        {data?.parsedNotifs.FRIEND_REQUESTS.map(notif => (
+        {data?.data.parsedNotifs.FRIEND_REQUESTS.map(notif => (
           <FriendRequest
             key={notif.id}
             id={notif.id}

@@ -8,18 +8,11 @@ export const useAccountStore = create(
       setUserData: u => set({ userData: u }),
       setUpdateUserData: update =>
         set(state => Object.assign(state.userData, update)),
-
-      rainbowAccount: null,
-      setRainbowAccount: a => set({ rainbowAccount: a }),
-
-      rainbowConnector: null,
-      setRainbowConnector: c => set({ rainbowConnector: c }),
     }),
     {
       name: "account-storage", // name of item in the storage (must be unique)
       partialize: state => ({
         userData: state.userData,
-        rainbowAccount: state.rainbowAccount,
       }),
     }
   )
