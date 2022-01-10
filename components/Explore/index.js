@@ -23,7 +23,7 @@ const Explore = ({ accountData }) => {
       onSuccess: res => {
         const { address, id, confirmed } = res.data
         setUserData(res.data)
-        console.log("explore logged in:", res.data)
+        console.log("Explore res.data user:", res.data)
 
         setIncomingUser({ id: id, confirmed: confirmed })
       },

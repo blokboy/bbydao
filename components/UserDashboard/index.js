@@ -9,6 +9,8 @@ import UserDaos from "./UserDaos"
 const UserDashboard = ({ data }) => {
   const { id, address } = data
 
+  console.log("UserDashboard user:", data)
+
   return (
     <>
       <Head>

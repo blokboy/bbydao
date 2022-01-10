@@ -25,14 +25,10 @@ const UserSettingsForm = () => {
 
     // review
     mutateAsync(req, {
-      onSuccess: () => {
-        if (status === "success") {
-          setUpdateUserData(req)
-          router.push(`/user/${userData.username}`)
-        }
-        if (status === "error") {
-          console.log(error)
-        }
+      onSettled: res => {
+        console.log(res)
+        setUpdateUserData(res.data)
+        router.push(`/user/${userData.address}`)
       },
     })
   }

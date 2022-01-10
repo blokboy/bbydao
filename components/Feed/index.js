@@ -8,13 +8,13 @@ import FriendRequest from "./FriendRequest"
 
 // render notifications
 const Feed = () => {
-  const { id } = useAccountStore.getState().userData
+  const userData = useAccountStore(state => state.userData)
   const setNotificationCount = useUiStore(state => state.setNotificationCount)
-  const { data } = useQuery(["notifications", id], () =>
-    api.userNotifications({ target: id })
+  const { data } = useQuery(["notifications", userData.id], () =>
+    api.userNotifications({ target: userData.id })
   )
 
-  if (!id) {
+  if (!userData) {
     return
   }
 
