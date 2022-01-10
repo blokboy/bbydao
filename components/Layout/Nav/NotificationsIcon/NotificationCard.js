@@ -88,6 +88,7 @@ const NotificationCard = ({ ...props }) => {
       ref={ref}
     >
       <span>{body}</span>
+
       <div>
         <button
           className="text-green-500 hover:text-green-400 px-1"

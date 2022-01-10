@@ -3,7 +3,7 @@ import { useAccountStore } from "stores/useAccountStore"
 import { useMutation } from "react-query"
 import * as api from "query"
 
-const ResultCard = ({ username, targetId }) => {
+const ResultCard = ({ address, targetId }) => {
   const { id: initiatorId } = useAccountStore.getState().userData
   const { status, mutateAsync } = useMutation(api.reqRelationship)
 
@@ -20,7 +20,7 @@ const ResultCard = ({ username, targetId }) => {
 
   return (
     <div className="flex flex-row mb-3 rounded-lg bg-gray-50 dark:bg-gray-800 justify-between py-2 px-1 w-full">
-      <span>{username}</span>
+      <span>{address}</span>
       {status === "loading" ? (
         <span className="mr-4 border rounded-lg text-xs p-1">loading</span>
       ) : status === "success" ? (

@@ -5,11 +5,19 @@ import UserDetails from "./UserDetails"
 import UserFriends from "./UserFriends"
 import UserBio from "./UserBio"
 import UserDaos from "./UserDaos"
+import { useConnect } from "wagmi"
 
 const UserDashboard = ({ data }) => {
   const { id, address } = data
+  const [{ data: connectData, error, loading }, connect] = useConnect()
 
   console.log("UserDashboard user:", data)
+  console.log("UserDashboard useConnect:", connectData)
+
+  if (!connectData.connected) {
+    console.log("prompt connect")
+    return <div>prompt connect</div>
+  }
 
   return (
     <>

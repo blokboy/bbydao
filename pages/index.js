@@ -25,21 +25,25 @@ const Home = () => {
         <h1 className="text-3xl sm:text-5xl mb-3">Welcome to babydao</h1>
         <p className="mb-3">Get started by connecting your wallet </p>
 
-        <div className="flex flex-col">
-          {data.connectors.map(x => (
-            <button
-              className="border rounded-xl my-2 py-3 px-6"
-              disabled={!x.ready}
-              key={x.id}
-              onClick={() => connect(x)}
-            >
-              {x.name}
-              {!x.ready && " (unsupported)"}
-            </button>
-          ))}
+        {data ? (
+          <div className="flex flex-col">
+            {data.connectors.map(x => (
+              <button
+                className="border rounded-xl my-2 py-3 px-6"
+                disabled={!x.ready}
+                key={x.id}
+                onClick={() => connect(x)}
+              >
+                {x.name}
+                {!x.ready && " (unsupported)"}
+              </button>
+            ))}
 
-          {error && <div>{error?.message ?? "Failed to connect"}</div>}
-        </div>
+            {error && <div>{error?.message ?? "Failed to connect"}</div>}
+          </div>
+        ) : (
+          <></>
+        )}
       </main>
     </>
   )
