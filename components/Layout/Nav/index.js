@@ -10,8 +10,8 @@ import ToggleSearchModal from "./ToggleSearchModal"
 import { useConnect } from "wagmi"
 
 const Nav = () => {
-  const userData = useAccountStore(state => state.userData)
   const [{ data, error }, connect] = useConnect()
+  const userData = useAccountStore(state => state.userData)
 
   console.log("nav userData:", userData)
   console.log("nav data:", data)
