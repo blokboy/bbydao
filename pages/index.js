@@ -13,6 +13,8 @@ const Home = () => {
     return <Explore accountData={accountData} />
   }
 
+  console.log("index data", data)
+
   return (
     <>
       <Head>

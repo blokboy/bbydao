@@ -2,42 +2,63 @@ import React from "react"
 import useForm from "hooks/useForm"
 import { useUiStore } from "stores/useUiStore"
 import { useConnect } from "wagmi"
-import { ethers } from 'ethers'
-import { EthersAdapter } from '@gnosis.pm/safe-core-sdk'
-import { Safe, SafeFactory, SafeAccountConfig } from '@gnosis.pm/safe-core-sdk'
+import { ethers } from "ethers"
+import { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
+import { Safe, SafeFactory, SafeAccountConfig } from "@gnosis.pm/safe-core-sdk"
 
-const DaoForm = () => {
+const DaoForm = ({ address }) => {
+  console.log("form user address", address)
+  console.log("form user window", window)
   const { state, handleChange } = useForm()
   const [{ data, error }, connect] = useConnect()
 
   const createDaoModalOpen = useUiStore(state => state.createDaoModalOpen)
   const setCreateDaoModalOpen = useUiStore(state => state.setCreateDaoModalOpen)
 
-  const createBabyDao = async (e, owners, threshold) => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner(0);
+  const createBabyDao = async (e, ownerList, userThreshold = 2) => {
+    await window.ethereum.enable()
+    console.log("ethers.providers", ethers.providers)
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    console.log("provider", provider)
+    // const provider = new ethers.getDefaultProvider("homestead", {
+    //   projectId: process.env.INFURA_ID,
+    //   projectSecret: process.env.INFURA_SECRET,
+    // })
+
+    const owner1 = provider.getSigner(0)
+    console.log("owner1", owner1)
 
     const ethAdapter = new EthersAdapter({
       ethers,
-      signer
-    });
+      signer: owner1,
+    })
+
+    console.log("ethAdapter", ethAdapter)
 
     const safeFactory = await SafeFactory.create({ ethAdapter })
 
-    for(let owner of owners) {
-      owner = ethers.utils.getAddress(owner);
-    }
-    
-    const owners = owners; // addresses must be checksummed
-    const threshold = threshold;
+    // ownerList.forEach(async owner => {
+    //   return owner ? ethers.utils.getAddress(owner) : owner
+    // })
+
+    const owners = ownerList // addresses must be checksummed
+    const threshold = ownerList.length
     const safeAccountConfig = {
       owners,
       threshold,
     }
 
     const safeSdk = await safeFactory.deploySafe(safeAccountConfig)
-    console.log('safe sdk ', safeSdk);
-    return safeSdk;
+    console.log("safe sdk ", safeSdk)
+    return safeSdk
+  }
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+    const ownerList = [address, state.invite]
+    console.log(ownerList)
+    await createBabyDao(e, ownerList)
   }
 
   const closeModal = e => {
@@ -56,7 +77,11 @@ const DaoForm = () => {
     >
       {/* <div className="w-full flex justify-center"> */}
       {data.connected ? (
-        <form className="flex flex-col mt-24 mx-auto z-50 rounded shadow-xl w-full md:w-3/6 md:rounded-xl px-8 pt-6 pb-8 mb-4 bg-gray-100 dark:bg-gray-900">
+        <form
+          className="flex flex-col mt-24 mx-auto z-50 rounded shadow-xl w-full md:w-3/6 md:rounded-xl px-8 pt-6 pb-8 mb-4 bg-gray-100 dark:bg-gray-900"
+          onSubmit={handleSubmit}
+          onClick={e => closeModal(e)}
+        >
           <div className="w-full text-xl text-center font-bold mb-8">
             create your dao
           </div>
@@ -112,7 +137,7 @@ const DaoForm = () => {
           <div className="flex items-center justify-between">
             <button
               className="w-full font-bold py-3 px-4 rounded-xl focus:outline-none focus:shadow-outline shadow-xl bg-gray-200 dark:bg-gray-800"
-              type="button"
+              type="submit"
             >
               save
             </button>

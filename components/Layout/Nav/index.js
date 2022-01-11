@@ -10,24 +10,26 @@ import ToggleSearchModal from "./ToggleSearchModal"
 import { useConnect } from "wagmi"
 
 const Nav = () => {
+  const userData = useAccountStore(state => state.userData)
   const [{ data, error }, connect] = useConnect()
 
-  const userData = useAccountStore(state => state.userData)
+  console.log("nav userData:", userData)
+  console.log("nav data:", data)
 
   return (
     <>
       <nav className="flex w-screen p-2 md:p-6">
         <div className="flex flex-row w-screen justify-between items-center">
-          {userData && data?.connected ? <ToggleSearchModal /> : <></>}
+          {data?.connected && userData ? <ToggleSearchModal /> : <></>}
         </div>
-        {userData && data?.connected ? <AccountDisplay /> : <></>}
-        {userData && data?.connected ? <DisconnectButton /> : <></>}
-        {userData && data?.connected ? (
+        {data?.connected && userData ? <AccountDisplay /> : <></>}
+        {data?.connected && userData ? <DisconnectButton /> : <></>}
+        {data?.connected && userData ? (
           <NotificationsIcon id={userData.id} />
         ) : (
           <></>
         )}
-        {userData && data?.connected ? <MessagesIcon /> : <></>}
+        {data?.connected && userData ? <MessagesIcon /> : <></>}
         <Menu />
         <ThemeToggle />
       </nav>
