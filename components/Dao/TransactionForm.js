@@ -4,6 +4,7 @@ import { ethers } from "ethers"
 import { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
 import Safe, { SafeFactory, SafeAccountConfig } from "@gnosis.pm/safe-core-sdk"
 import { SafeTransactionDataPartial } from "@gnosis.pm/safe-core-sdk-types"
+import SafeServiceClient from "@gnosis.pm/safe-service-client"
 
 const TransactionForm = ({ safeAddress }) => {
   const { state, setState, handleChange } = useForm()
@@ -29,11 +30,13 @@ const TransactionForm = ({ safeAddress }) => {
       console.log("no safe address")
       return
     }
+    console.log("safeAddress", safeAddress)
 
     await window.ethereum.enable()
 
     const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const owner1 = provider.getSigner(0)
+    const owner1 = provider.getSigner(provider.provider.selectedAddress)
+    console.log("owner1", owner1)
 
     const ethAdapter = new EthersAdapter({
       ethers,
@@ -43,22 +46,44 @@ const TransactionForm = ({ safeAddress }) => {
 
     const safeSdk = await Safe.create({
       ethAdapter: ethAdapter,
-      safeAddress,
+      safeAddress: safeAddress,
+      isL1SafeMasterCopy: true,
     })
 
     console.log("safeSdk", safeSdk)
 
-    const parsed = ethers.utils.formatEther(BigInt(state.value * 10 ** 18))
+    let wei = ethers.utils.parseEther(state.value)
+    let weiString = wei.toString()
+    console.log("weiString", weiString)
 
     const transaction = {
       to: state.to,
-      value: parsed,
+      value: weiString,
       data: state.data,
     }
+    console.log("transaction", transaction)
 
-    //const safeTransaction = await safeSdk.createTransaction(transaction)
-    //console.log("safeTransaction", safeTransaction)
-    //return safeTransaction
+    const safeTransaction = await safeSdk.createTransaction(transaction)
+    console.log("safeTransaction", safeTransaction)
+    const txHash = await safeSdk.getTransactionHash(safeTransaction)
+    console.log("txHash", txHash)
+
+    const safeService = new SafeServiceClient(
+      "https://safe-transaction.gnosis.io"
+    )
+
+    const transactionConfig = {
+      safeAddress: safeAddress,
+      safeTransaction: safeTransaction,
+      safeTxHash: txHash,
+      senderAddress: provider.provider.selectedAddress,
+    }
+    await safeService.proposeTransaction(transactionConfig)
+    // console.log("proposed", proposed)
+
+    // const owner1Signature = await safeSdk.signTransaction(safeTransaction)
+    // console.log("owner1Signature", owner1Signature)
+    // return txHash
   }
 
   const handleSubmit = e => {
