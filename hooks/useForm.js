@@ -8,7 +8,7 @@ const useForm = () => {
     setState(state => ({ ...state, [e.target.name]: e.target.value }))
   }
 
-  return { state, handleChange }
+  return { state, setState, handleChange }
 }
 
 export default useForm

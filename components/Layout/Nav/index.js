@@ -7,13 +7,18 @@ import ThemeToggle from "./ThemeToggle"
 import AccountDisplay from "./AccountDisplay"
 import DisconnectButton from "./DisconnectButton"
 import ToggleSearchModal from "./ToggleSearchModal"
-import { useConnect } from "wagmi"
+import { useConnect, useAccount } from "wagmi"
 
 const Nav = () => {
   const [{ data, error }, connect] = useConnect()
+  const [{ data: accountData }, disconnect] = useAccount({
+    fetchEns: true,
+  })
+
   const userData = useAccountStore(state => state.userData)
 
   console.log("nav userData:", userData)
+  console.log("nav accountData:", accountData)
   console.log("nav data:", data)
 
   return (

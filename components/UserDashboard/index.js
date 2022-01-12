@@ -10,7 +10,7 @@ import { useUiStore } from "stores/useUiStore"
 import { useConnect } from "wagmi"
 
 const UserDashboard = ({ data }) => {
-  const { id, address } = data
+  const { id, address } = data.user
   const [{ data: connectData, error, loading }, connect] = useConnect()
   const createDaoModalOpen = useUiStore(state => state.createDaoModalOpen)
 
@@ -41,7 +41,7 @@ const UserDashboard = ({ data }) => {
               <UserBio />
             </div>
             <div className="flex flex-col md:w-9/12 px-10">
-              <UserDaos />
+              <UserDaos safes={[data.safes]} />
             </div>
           </div>
         </>
