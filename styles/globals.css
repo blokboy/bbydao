@@ -4,7 +4,9 @@
 
 @layer base {
   body {
-    @apply w-screen bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100;
+    @apply w-screen text-gray-800 dark:text-gray-100;
+    @apply bg-gradient-to-b from-gray-300 to-gray-200;
+    @apply dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800;
   }
 
   h1 {
