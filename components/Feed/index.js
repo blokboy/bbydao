@@ -6,12 +6,12 @@ import { useAccountStore } from "stores/useAccountStore"
 import { useUiStore } from "stores/useUiStore"
 import FriendRequest from "./FriendRequest"
 
-// render notifications
 const Feed = () => {
   const userData = useAccountStore(state => state.userData)
   const setNotificationCount = useUiStore(state => state.setNotificationCount)
 
-  const { data } = useQuery(["notifications", userData.id], () =>
+  //error on disconnect
+  const { data } = useQuery(["notifications"], () =>
     api.userNotifications({ target: userData.id })
   )
 

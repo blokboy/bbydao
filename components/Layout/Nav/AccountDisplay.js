@@ -1,20 +1,17 @@
 import React from "react"
-import { useAccountStore } from "stores/useAccountStore"
+import { useAccount } from "wagmi"
 
 const AccountDisplay = () => {
-  const userData = useAccountStore(state => state.userData)
+  const [{ data, error, loading }, disconnect] = useAccount()
 
-  if (!userData) return
+  if (!data) return
 
   return (
     <div className="hidden md:flex flex-row mr-3 rounded-full border border-gray-400 shadow bg-gray-200 dark:bg-gray-900 px-4 py-2 w-max">
-      {userData.address ? (
-        userData.address.substring(0, 6) +
+      {data?.address ? (
+        data.address.substring(0, 6) +
         "..." +
-        userData.address.substring(
-          userData.address.length - 5,
-          userData.address.length - 1
-        )
+        data.address.substring(data.address.length - 5, data.address.length - 1)
       ) : (
         <></>
       )}

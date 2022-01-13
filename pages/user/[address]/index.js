@@ -2,7 +2,17 @@ import axios from "axios"
 import UserDashboard from "components/UserDashboard/index"
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
 
+import { useRouter } from "next/router"
+import { useConnect } from "wagmi"
+
 const UserPage = ({ data }) => {
+  const router = useRouter()
+  const [{ data: connectData, error, loading }, connect] = useConnect()
+
+  if (!connectData.connected) {
+    router.push("/")
+  }
+
   return <UserDashboard data={data} />
 }
 

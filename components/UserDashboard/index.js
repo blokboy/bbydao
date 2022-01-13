@@ -12,16 +12,13 @@ import { useConnect } from "wagmi"
 
 const UserDashboard = ({ data }) => {
   const { id, address } = data.user
+  const { safes } = data.safes
   const [{ data: connectData, error, loading }, connect] = useConnect()
   const createDaoModalOpen = useUiStore(state => state.createDaoModalOpen)
 
-  console.log("UserDashboard user:", data)
+  console.log("UserDashboard user:", data.user)
+  console.log("UserDashboard safes:", data.safes)
   console.log("UserDashboard useConnect:", connectData)
-
-  if (!connectData.connected) {
-    console.log("prompt connect")
-    return <div>prompt connect</div>
-  }
 
   return (
     <>
@@ -42,7 +39,7 @@ const UserDashboard = ({ data }) => {
               <UserBio />
             </div>
             <div className="flex flex-col md:w-9/12 px-10">
-              {data.safes.length ? (
+              {safes.length ? (
                 <UserDaos safes={[data.safes]} />
               ) : (
                 <CreateDaoPrompt />

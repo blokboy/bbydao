@@ -1,22 +1,17 @@
 import React from "react"
 import ClickAwayListener from "react-click-away-listener"
 import { HiDotsHorizontal } from "react-icons/hi"
-import { useAccountStore } from "stores/useAccountStore"
 import DashboardLink from "./DashboardLink"
 import MenuThemeToggle from "./MenuThemeToggle"
 import MessagesLink from "./MessagesLink"
 import ExploreLink from "./ExploreLink"
 import FeedLink from "./FeedLink"
 import AboutLink from "./AboutLink"
+import { useConnect } from "wagmi"
 
 const Menu = () => {
   const [menuOpen, setMenuOpen] = React.useState(false)
-  const [userLogged, setUserLogged] = React.useState(false)
-  const userData = useAccountStore(state => state.userData)
-
-  React.useEffect(() => {
-    setUserLogged(userData ? true : false)
-  }, [userData])
+  const [{ data }, connect] = useConnect()
 
   const clickAway = () => {
     if (!menuOpen) {
@@ -41,11 +36,11 @@ const Menu = () => {
           }
         >
           <ul className="py-1" onClick={clickAway}>
-            {userLogged ? <DashboardLink data={userData} /> : <></>}
+            {data.connected ? <DashboardLink /> : <></>}
             <MenuThemeToggle />
-            {userLogged ? <MessagesLink /> : <></>}
+            {data.connected ? <MessagesLink /> : <></>}
             <ExploreLink />
-            {userLogged ? <FeedLink /> : <></>}
+            {data.connected ? <FeedLink /> : <></>}
             <AboutLink />
           </ul>
         </div>
