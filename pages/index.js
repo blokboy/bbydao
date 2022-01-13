@@ -35,11 +35,14 @@ const Home = () => {
             </button>
           ) : (
             <button
-              className="border rounded-xl bg-zinc-500 my-2 py-3 px-6"
+              className="shadow p-0.5 rounded-full bg-zinc-500 mb-4"
               key={connector.id}
+              disabled={true}
             >
-              {connector.name}
-              {!connector.ready && " (unsupported)"}
+              <span className="block px-8 py-3 font-medium text-black dark:text-white bg-gray-400 dark:bg-zinc-700 rounded-full">
+                {connector.name}
+                {!connector.ready && " (unsupported)"}
+              </span>
             </button>
           )
         )}

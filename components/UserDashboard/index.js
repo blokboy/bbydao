@@ -4,6 +4,7 @@ import UserImage from "./UserImage"
 import UserDetails from "./UserDetails"
 import UserFriends from "./UserFriends"
 import UserBio from "./UserBio"
+import CreateDaoPrompt from "./CreateDaoPrompt"
 import UserDaos from "./UserDaos"
 import DaoForm from "../Forms/DaoForm"
 import { useUiStore } from "stores/useUiStore"
@@ -41,7 +42,11 @@ const UserDashboard = ({ data }) => {
               <UserBio />
             </div>
             <div className="flex flex-col md:w-9/12 px-10">
-              <UserDaos safes={[data.safes]} />
+              {data.safes.length ? (
+                <UserDaos safes={[data.safes]} />
+              ) : (
+                <CreateDaoPrompt />
+              )}
             </div>
           </div>
         </>

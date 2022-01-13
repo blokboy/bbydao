@@ -1,5 +1,4 @@
 import React from "react"
-import Link from "next/link"
 import { useUiStore } from "stores/useUiStore"
 import { MdAdd } from "react-icons/md"
 
@@ -11,7 +10,6 @@ const CreateDaoPrompt = () => {
       <span className="font-bold text-2xl">
         you havent joined any daos yet.
       </span>
-      {/* <Link href={"/dao/create"} passHref> */}
       <button
         className="flex flex-row mt-4 rounded-full shadow bg-gray-200 dark:bg-gray-900 hover:bg-white dark:hover:bg-gray-700 px-4 py-2 w-max"
         onClick={setCreateDaoModalOpen}
@@ -21,7 +19,6 @@ const CreateDaoPrompt = () => {
         </span>
         <a>create</a>
       </button>
-      {/* </Link> */}
     </div>
   )
 }

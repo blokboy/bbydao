@@ -12,13 +12,20 @@ UserPage.getInitialProps = async ({ query }) => {
   const safeService = new SafeServiceClient(
     "https://safe-transaction.gnosis.io"
   )
-
   const safes = await safeService.getSafesByOwner(query.address)
-  const safeCreationInfo = await safeService.getSafeCreationInfo(safes.safes[0])
 
   const res = await axios.post(`${process.env.accounts_api}`, {
     address: query.address,
   })
   const user = res.data
-  return { data: { user, safes, safeCreationInfo } }
+
+  if (safes.length) {
+    const safeCreationInfo = await safeService.getSafeCreationInfo(
+      safes.safes[0]
+    )
+
+    return { data: { user, safes, safeCreationInfo } }
+  }
+
+  return { data: { user, safes } }
 }
