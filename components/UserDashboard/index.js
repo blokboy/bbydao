@@ -33,7 +33,7 @@ const UserDashboard = ({ data }) => {
           {createDaoModalOpen ? <DaoForm address={address} /> : <></>}
           <div className="flex flex-col md:flex-row w-full mt-10">
             <div className="flex flex-col flex-start md:w-3/12 px-4 md:px-10">
-              <UserImage />
+              <UserImage address={address} />
               <UserDetails id={id} address={address} />
               <UserFriends id={id} />
               <UserBio />

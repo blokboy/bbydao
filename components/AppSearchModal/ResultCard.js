@@ -2,10 +2,16 @@ import React from "react"
 import { useAccountStore } from "stores/useAccountStore"
 import { useMutation } from "react-query"
 import * as api from "query"
+import Link from "next/link"
+import { useEnsLookup } from "wagmi"
 
 const ResultCard = ({ address, targetId }) => {
   const { id: initiatorId } = useAccountStore.getState().userData
   const { status, mutateAsync } = useMutation(api.reqRelationship)
+
+  const [{ data, error, loading }, lookupAddress] = useEnsLookup({
+    address: address,
+  })
 
   const handleRequest = () => {
     if (!id) return
@@ -20,7 +26,11 @@ const ResultCard = ({ address, targetId }) => {
 
   return (
     <div className="flex flex-row mb-3 rounded-lg bg-gray-50 dark:bg-gray-800 justify-between py-2 px-1 w-full">
-      <span>{address}</span>
+      <Link href={`/user/${address}`}>
+        <a>
+          <span>{data ? data : address}</span>
+        </a>
+      </Link>
       {status === "loading" ? (
         <span className="mr-4 border rounded-lg text-xs p-1">loading</span>
       ) : status === "success" ? (

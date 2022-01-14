@@ -1,16 +1,30 @@
 import React from "react"
 import Link from "next/link"
+import Avatar from "boring-avatars"
 
 const DaoDetail = ({ safe }) => {
   if (!safe) {
     return <></>
   }
 
+  console.log(safe)
+
   return (
     <>
       <Link href={safe ? `/dao/${safe}` : "/"}>
         <a>
-          <div className="bg-gray-200 h-36 w-36 md:h-40 md:w-40 rounded-full dark:bg-gray-900"></div>
+          <div className="flex flex-col text-center">
+            <Avatar
+              size={"9rem"}
+              name={`${safe}`}
+              variant="pixel"
+              colors={["#0DB2AC", "#F5DD7E", "#FC8D4D", "#FC694D", "#FABA32"]}
+            />
+            {/* or collectible ? */}
+            <span className="text-sm text-transparent bg-clip-text bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] mt-2">
+              {safe[0].substring(0, 12) + "..."}
+            </span>
+          </div>
         </a>
       </Link>
     </>

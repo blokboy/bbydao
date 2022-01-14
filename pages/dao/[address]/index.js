@@ -28,5 +28,6 @@ DaoPage.getInitialProps = async ({ query }) => {
   const allTxs = await safeService.getMultisigTransactions(query.address)
   const pendingTxs = await safeService.getPendingTransactions(query.address)
   const collectibles = await safeService.getCollectibles(query.address)
+
   return { data: { safeInfo, usd, allTxs, pendingTxs, collectibles } }
 }

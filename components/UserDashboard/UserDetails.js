@@ -3,10 +3,15 @@ import Link from "next/link"
 import { useAccountStore } from "../../stores/useAccountStore"
 import { useMutation } from "react-query"
 import * as api from "../../query"
+import { useEnsLookup } from "wagmi"
 
 const UserDetails = ({ id, address }) => {
   const userData = useAccountStore(state => state.userData)
   const { status, mutateAsync } = useMutation(api.reqRelationship)
+
+  const [{ data, error, loading }, lookupAddress] = useEnsLookup({
+    address: address,
+  })
 
   const handleRequest = () => {
     const req = {
@@ -20,9 +25,10 @@ const UserDetails = ({ id, address }) => {
 
   return (
     <div className="flex flex-col mt-4 items-center md:items-start">
+      {/* ens ? */}
       {address ? (
-        <span className="text-3xl text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-pink-500 to-yellow-600">
-          @{address.substring(0, 6) + "..." || "address"}
+        <span className="text-3xl text-transparent bg-clip-text bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32]">
+          {data || `@${address.substring(0, 6) + "..."}` || address}
         </span>
       ) : (
         <></>
