@@ -24,7 +24,7 @@ const Home = () => {
         {data.connectors.map(connector =>
           connector.ready ? (
             <button
-              className="shadow p-0.5 rounded-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 mb-4"
+              className="shadow p-0.5 rounded-full bg-gradient-to-r hover:bg-gradient-to-l from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] mb-4"
               key={connector.id}
               onClick={() => connect(connector)}
             >
@@ -35,14 +35,11 @@ const Home = () => {
             </button>
           ) : (
             <button
-              className="shadow p-0.5 rounded-full bg-zinc-500 mb-4"
+              className="border rounded-xl bg-zinc-500 my-2 py-3 px-6"
               key={connector.id}
-              disabled={true}
             >
-              <span className="block px-8 py-3 font-medium text-black dark:text-white bg-gray-400 dark:bg-zinc-700 rounded-full">
-                {connector.name}
-                {!connector.ready && " (unsupported)"}
-              </span>
+              {connector.name}
+              {!connector.ready && " (unsupported)"}
             </button>
           )
         )}

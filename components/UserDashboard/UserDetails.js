@@ -25,10 +25,9 @@ const UserDetails = ({ id, address }) => {
 
   return (
     <div className="flex flex-col mt-4 items-center md:items-start">
-      {/* ens ? */}
       {address ? (
         <span className="text-3xl text-transparent bg-clip-text bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32]">
-          {data || `@${address.substring(0, 6) + "..."}` || address}
+          @{data || `${address.substring(0, 6) + "..."}` || "address"}
         </span>
       ) : (
         <></>
