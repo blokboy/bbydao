@@ -7,7 +7,7 @@ const DaoDetail = ({ safe }) => {
     return <></>
   }
 
-  console.log(safe)
+  console.log("dao detail", safe)
 
   return (
     <>
@@ -22,7 +22,7 @@ const DaoDetail = ({ safe }) => {
             />
             {/* or collectible ? */}
             <span className="text-sm text-transparent bg-clip-text bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] mt-2">
-              {safe[0].substring(0, 12) + "..."}
+              {safe.substring(0, 12) + "..."}
             </span>
           </div>
         </a>

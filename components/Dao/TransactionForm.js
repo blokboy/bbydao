@@ -133,10 +133,6 @@ const TransactionForm = ({ safeAddress }) => {
         to: state.to,
         value: weiString,
         data: ethers.utils.hexlify([1]),
-        // data: contract.interface.encodeFunctionData('updateChampion', [
-        //   this.state.newChampion,
-        // ])
-        // safeTxGas: 0,
       },
     ]
     const safeTransaction = await safeSdk.createTransaction(...transactions)
@@ -250,7 +246,7 @@ const TransactionForm = ({ safeAddress }) => {
   // }
 
   return (
-    <div className="flex flex-col mt-24 mx-auto z-50 rounded shadow-xl w-full md:w-3/6 md:rounded-xl px-8 pt-6 pb-8 mb-4 bg-gray-100 dark:bg-gray-900">
+    <div className="flex flex-col mx-auto rounded shadow-xl w-full md:rounded-xl px-8 pt-6 pb-8 mb-3 bg-gray-100 dark:bg-gray-900">
       <div className="w-full text-xl text-center font-bold mb-8">
         transaction
       </div>
@@ -294,14 +290,6 @@ const TransactionForm = ({ safeAddress }) => {
           onClick={sign}
         >
           sign
-        </button>
-        <button
-          // change color & disabled based on safe threshold vs signers (in state)
-          className="w-full font-bold py-3 px-4 mx-1 rounded-xl focus:outline-none focus:shadow-outline shadow-xl bg-gray-200 dark:bg-gray-800"
-          // type="submit"
-          // onClick={execute}
-        >
-          execute
         </button>
       </div>
     </div>

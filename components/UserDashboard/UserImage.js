@@ -1,25 +1,17 @@
 import React from "react"
 import Avatar from "boring-avatars"
-import Image from "next/image"
 import { useEnsAvatar } from "wagmi"
 
 const UserImage = ({ address }) => {
   const [{ data, error, loading }, getEnsAvatar] = useEnsAvatar({
     addressOrName: address,
   })
-
   console.log("getEnsAvatar data", data)
 
   return (
     <div className="flex w-full justify-center md:justify-start">
       {data ? (
-        <Image
-          //loader={myLoader}
-          src={data}
-          alt="Picture of the author"
-          width={"13rem"}
-          height={"13rem"}
-        />
+        <img src={data} alt="alt" width={"13rem"} />
       ) : (
         <Avatar
           size={"13rem"}

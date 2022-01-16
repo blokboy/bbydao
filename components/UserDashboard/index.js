@@ -40,7 +40,7 @@ const UserDashboard = ({ data }) => {
             </div>
             <div className="flex flex-col md:w-9/12 px-10">
               {safes.length ? (
-                <UserDaos safes={[data.safes]} />
+                <UserDaos safes={data.safes} />
               ) : (
                 <CreateDaoPrompt />
               )}

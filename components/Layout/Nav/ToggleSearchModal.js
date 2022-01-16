@@ -23,7 +23,7 @@ const ToggleSearchModal = () => {
 
   return (
     <button
-      className="hidden md:flex flex-row rounded-full border border-gray-400 shadow bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-800 px-4 py-2 md:w-96 w-max"
+      className="md:flex flex-row rounded-full border border-gray-400 shadow bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-800 px-4 py-2 md:w-96 w-full"
       onClick={setAppModalOpen}
     >
       <span className="mr-4">

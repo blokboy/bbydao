@@ -13,7 +13,7 @@ const NotificationsIcon = ({ id }) => {
   const setNotificationCount = useUiStore(state => state.setNotificationCount)
 
   const { data } = useQuery(
-    ["notifications", id],
+    ["notifications"],
     () => api.userNotifications({ target: id })
     // { onSettled: data => console.log("settled data", data) }
   )
