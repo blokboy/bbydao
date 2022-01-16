@@ -2,6 +2,8 @@ import React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import Avatar from "boring-avatars"
+import Davatar from "@davatar/react"
+import MemberCard from "./MemberCard"
 
 const SidePanel = ({ safeInfo, nftImage }) => {
   console.log("SidePanel safeInfo", safeInfo)
@@ -26,22 +28,8 @@ const SidePanel = ({ safeInfo, nftImage }) => {
       {/* make component to represent these (with pics) */}
       {/* modal pops to center of screen to scroll through all members */}
       <h1 className="mt-3">members</h1>
-      {safeInfo.owners.map((owner, index) => (
-        <Link key={index} href={`/user/${owner}`}>
-          <a className="flex flex-row items-center">
-            <Avatar
-              size={"2rem"}
-              name={`${owner}`}
-              variant="pixel"
-              colors={["#0DB2AC", "#F5DD7E", "#FC8D4D", "#FC694D", "#FABA32"]}
-            />
-            <span className="text-sm p-3">
-              {owner.substring(0, 6) +
-                "..." +
-                owner.substring(owner.length - 5, owner.length - 1)}
-            </span>
-          </a>
-        </Link>
+      {safeInfo.owners.map((member, index) => (
+        <MemberCard key={index} member={member} />
       ))}
     </div>
   )
