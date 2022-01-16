@@ -12,12 +12,10 @@ const UserFriends = ({ id }) => {
 
   console.log("UserFriends data:", data)
 
-  if (!data) return <></>
-
   return (
-    <div className="flex flex-col my-10 items-center md:items-start">
+    <div className="flex flex-col my-2 items-center md:items-start">
       <span>
-        {data.length} {data.length === 1 ? "friend" : "friends"}
+        {data?.length} {data?.length === 1 ? "friend" : "friends"}
       </span>
       <div className="flex flex-row mt-4">
         <div className="w-12 h-12 rounded-full border border-white bg-gray-200 dark:bg-gray-900"></div>

@@ -1,10 +1,10 @@
 import React from "react"
-import { useAccountStore } from "stores/useAccountStore"
 import NotificationsIcon from "./NotificationsIcon"
 import MessagesIcon from "./MessagesIcon"
 import Menu from "./Menu"
 import ThemeToggle from "./ThemeToggle"
 import AccountDisplay from "./AccountDisplay"
+import ConnectButton from "./ConnectButton"
 import DisconnectButton from "./DisconnectButton"
 import ToggleSearchModal from "./ToggleSearchModal"
 import { useConnect, useAccount } from "wagmi"
@@ -15,9 +15,6 @@ const Nav = () => {
     fetchEns: true,
   })
 
-  const userData = useAccountStore(state => state.userData)
-
-  console.log("nav userData:", userData)
   console.log("nav accountData:", accountData)
   console.log("nav data:", data)
 
@@ -25,16 +22,12 @@ const Nav = () => {
     <>
       <nav className="flex w-screen p-2 md:p-6">
         <div className="flex flex-row w-screen justify-between items-center">
-          {data?.connected && userData ? <ToggleSearchModal /> : <></>}
+          {data?.connected ? <ToggleSearchModal /> : <></>}
         </div>
-        {data?.connected && userData ? <AccountDisplay /> : <></>}
-        {data?.connected && userData ? <DisconnectButton /> : <></>}
-        {data?.connected && userData ? (
-          <NotificationsIcon id={userData.id} />
-        ) : (
-          <></>
-        )}
-        {data?.connected && userData ? <MessagesIcon /> : <></>}
+        {data?.connected ? <AccountDisplay /> : <></>}
+        {data?.connected ? <DisconnectButton /> : <ConnectButton />}
+        {/* {data?.connected ? <NotificationsIcon id={userData.id} /> : <></>} */}
+        {data?.connected ? <MessagesIcon /> : <></>}
         <Menu />
         <ThemeToggle />
       </nav>

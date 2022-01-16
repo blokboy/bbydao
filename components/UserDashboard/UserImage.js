@@ -2,14 +2,22 @@ import React from "react"
 import Davatar from "@davatar/react"
 
 const UserImage = ({ address }) => {
+  console.log(address)
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    if (mounted) return
+    setMounted(true)
+  }, [])
+
+  const davatar = React.useMemo(() => {
+    return (
+      <Davatar size={175} address={address} generatedAvatarType="blockies" />
+    )
+  }, [mounted, address])
+
   return (
-    <div className="flex w-full justify-center md:justify-start">
-      <Davatar
-        size={175}
-        address={address}
-        generatedAvatarType="blockies" // optional, 'jazzicon' or 'blockies'
-      />
-    </div>
+    <div className="flex w-full justify-center md:justify-start">{davatar}</div>
   )
 }
 

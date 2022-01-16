@@ -10,6 +10,11 @@ export const useUiStore = create(set => ({
   setCreateDaoModalOpen: () =>
     set(state => ({ createDaoModalOpen: !state.createDaoModalOpen })),
 
+  // connect modal display
+  connectModalOpen: false,
+  setConnectModalOpen: () =>
+    set(state => ({ connectModalOpen: !state.connectModalOpen })),
+
   // notification count on nav
   notificationCount: null,
   setNotificationCount: count => set({ notificationCount: count }),

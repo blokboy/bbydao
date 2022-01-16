@@ -1,7 +1,8 @@
 import React from "react"
 import Head from "next/head"
 import Explore from "components/Explore"
-import { useConnect, useAccount, useProvider } from "wagmi"
+import ConnectButton from "../components/Layout/Nav/ConnectButton"
+import { useConnect, useAccount } from "wagmi"
 
 const Home = () => {
   const [{ data, error }, connect] = useConnect()
@@ -18,41 +19,6 @@ const Home = () => {
     setMounted(true)
   }, []) /* eslint-disable-line react-hooks/exhaustive-deps */
 
-  const connectButtons = React.useMemo(() => {
-    return (
-      <div className="flex flex-col">
-        {data.connectors.map(connector =>
-          connector.ready ? (
-            <button
-              className="shadow p-0.5 rounded-full bg-gradient-to-r hover:bg-gradient-to-l from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] mb-4"
-              key={connector.id}
-              onClick={() => connect(connector)}
-            >
-              <span className="block px-8 py-3 font-medium text-black dark:text-white bg-gray-200 dark:bg-gray-900 rounded-full hover:bg-opacity-50 dark:hover:bg-opacity-75">
-                {connector.name}
-                {!connector.ready && " (unsupported)"}
-              </span>
-            </button>
-          ) : (
-            <button
-              className="border rounded-xl bg-zinc-500 my-2 py-3 px-6"
-              key={connector.id}
-            >
-              {connector.name}
-              {!connector.ready && " (unsupported)"}
-            </button>
-          )
-        )}
-
-        {error && <div>{error?.message ?? "Failed to connect"}</div>}
-      </div>
-    )
-  }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
-
-  if (accountData && data?.connected && mounted) {
-    return <Explore accountData={accountData} />
-  }
-
   return (
     <>
       <Head>
@@ -61,11 +27,8 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex flex-col items-center justify-center w- full min-h-screen">
-        <h1 className="text-3xl sm:text-5xl mb-3">Welcome to babydao</h1>
-        <p className="mb-3">Get started by connecting your wallet </p>
-
-        {data && mounted ? connectButtons : <></>}
+      <main className="flex flex-col items-center justify-center w-full min-h-screen">
+        <Explore accountData={accountData} />
       </main>
     </>
   )

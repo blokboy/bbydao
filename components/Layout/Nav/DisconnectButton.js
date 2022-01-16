@@ -1,5 +1,4 @@
 import React from "react"
-// import { useRainbowButton } from "hooks/useRainbowButton"
 import { useAccount } from "wagmi"
 import { useAccountStore } from "stores/useAccountStore"
 
@@ -9,9 +8,6 @@ const DisconnectButton = () => {
   const setUserData = useAccountStore(state => state.setUserData)
 
   const handleDisconnect = () => {
-    // set to initial state
-
-    // there should better way ?
     setUserData(null)
     useAccountStore.persist.clearStorage()
     useAccountStore.destroy()
