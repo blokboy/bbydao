@@ -8,7 +8,7 @@ const MenuThemeToggle = () => {
   return (
     <li className="w-full">
       <div
-        className="md:hidden flex flex-row rounded hover:shadow text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 px-1 py-2 justify-between"
+        className="md:hidden flex flex-row rounded hover:shadow text-sm text-slate-800 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 px-1 py-2 justify-between"
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       >
         {theme === "light" ? <>Dark Mode</> : <>Light Mode</>}

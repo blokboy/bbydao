@@ -8,7 +8,7 @@ const NotificationsDropdown = ({ ...props }) => {
     <div
       className={
         (notificationsOpen && notificationCount ? "absolute " : "hidden ") +
-        "overflow-auto top-0 right-0 -translate-x-20 translate-y-20 z-50 rounded border shadow px-4 py-2 text-gray-800 bg-gray-200 dark:text-white dark:bg-gray-900 h-2/3 w-4/12"
+        "overflow-auto top-0 right-0 -translate-x-20 translate-y-20 z-50 rounded border shadow px-4 py-2 text-slate-800 bg-slate-200 dark:text-white dark:bg-slate-900 h-2/3 w-4/12"
       }
     >
       <div className="flex flex-row rounded border justify-between p-2 mb-2">

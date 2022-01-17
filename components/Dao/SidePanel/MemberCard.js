@@ -11,7 +11,7 @@ const MemberCard = ({ member }) => {
   return (
     <>
       <Link href={`/user/${member}`}>
-        <a className="flex flex-row items-center mb-1 p-1 transform hover:-translate-x-0.5 transition duration-500 ease-in-out hover:shadow rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 justify-between">
+        <a className="flex flex-row items-center mb-1 p-1 transform hover:-translate-x-0.5 transition duration-200 ease-in-out hover:shadow rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 justify-between">
           <Davatar
             size={40}
             address={member}

@@ -30,7 +30,7 @@ const ConnectModal = () => {
               key={connector.id}
               onClick={() => connect(connector)}
             >
-              <span className="block px-8 py-3 font-medium text-black dark:text-white bg-gray-200 dark:bg-gray-900 rounded-full hover:bg-opacity-50 dark:hover:bg-opacity-75">
+              <span className="block px-8 py-3 font-medium text-black dark:text-white bg-slate-200 dark:bg-slate-900 rounded-full hover:bg-opacity-50 dark:hover:bg-opacity-75">
                 {connector.name}
                 {!connector.ready && " (unsupported)"}
               </span>
@@ -55,10 +55,10 @@ const ConnectModal = () => {
 
   return (
     <div
-      className="fixed z-40 inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+      className="fixed z-40 inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full"
       onClick={e => closeModal(e)}
     >
-      <div className="flex flex-col mt-24 mx-auto z-50 rounded shadow-xl w-full md:w-3/6 md:rounded-xl px-8 pt-6 pb-8 mb-4 bg-gray-100 dark:bg-gray-900">
+      <div className="flex flex-col mt-24 mx-auto z-50 rounded shadow-xl w-full md:w-3/6 md:rounded-xl px-8 pt-6 pb-8 mb-4 bg-slate-100 dark:bg-slate-900">
         {connectButtons}
       </div>
     </div>

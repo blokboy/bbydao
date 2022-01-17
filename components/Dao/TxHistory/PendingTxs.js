@@ -5,7 +5,7 @@ const PendingTxs = ({ pendingTxs, threshold }) => {
   console.log("PendingTxs", pendingTxs)
   return (
     <>
-      <div className="flex flex-col mt-4">
+      <div className="flex flex-col rounded-lg shadow-inner mt-4 bg-slate-100 dark:bg-slate-800 p-2">
         <h1>Pending Transactions: {pendingTxs.count}</h1>
         {pendingTxs.results.map((tx, index) => (
           <div key={index} className="flex flex-row">

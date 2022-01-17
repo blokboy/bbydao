@@ -8,7 +8,7 @@ const ThemeToggle = () => {
   return (
     <div className="hidden md:flex flex-row items-center justify-center mx-2">
       <button
-        className="flex rounded-full shadow p-2 bg-white dark:bg-gray-900 justify-center h-10 w-10"
+        className="flex rounded-full shadow p-2 bg-white dark:bg-slate-900 justify-center h-10 w-10"
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       >
         {theme === "light" ? (

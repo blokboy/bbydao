@@ -18,19 +18,19 @@ const Dao = ({ data }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex flex-col md:flex-row w-full h-screen mt-10">
+      <div className="flex flex-col md:flex-row w-full h-screen mt-5">
         {/* at least one collectible to side panel */}
         {/* */}
         <SidePanel
           nftImage={data.collectibles[0].imageUri}
           safeInfo={data.safeInfo}
         />
-        <div className="flex flex-col flex-start rounded md:rounded-xl shadow md:w-5/12 bg-gray-100 dark:bg-gray-800 px-4 md:px-10 p-3 mr-1">
+        <div className="flex flex-col flex-start rounded md:rounded-xl shadow md:w-[40%] bg-slate-100 dark:bg-slate-800 p-2 m-3 md:m-0 md:mr-1">
           <Graph safeAddress={data.safeInfo.address} />
           <TokensNfts tokens={data.usd} collectibles={data.collectibles} />
           <TransactionForm safeAddress={data?.safeInfo.address} />
         </div>
-        <div className="flex flex-col flex-start rounded md:rounded-xl shadow md:w-5/12 bg-gray-100 dark:bg-gray-800 px-4 md:px-10 p-3 ml-1">
+        <div className="flex flex-col flex-start rounded md:rounded-xl shadow md:w-[40%] bg-slate-100 dark:bg-slate-800 p-2 m-3 md:m-0 md:ml-1">
           <TxHistory
             allTxs={data.allTxs}
             incomingTxs={data.incomingTxs}

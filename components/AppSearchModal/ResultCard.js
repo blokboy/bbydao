@@ -25,7 +25,7 @@ const ResultCard = ({ address, targetId }) => {
   }
 
   return (
-    <div className="flex flex-row mb-3 rounded-lg bg-gray-50 dark:bg-gray-800 justify-between py-2 px-1 w-full">
+    <div className="flex flex-row mb-3 rounded-lg bg-slate-50 dark:bg-slate-800 justify-between py-2 px-1 w-full">
       <Link href={`/user/${address}`}>
         <a>
           <span>@{data ? data : `@${address.substring(0, 12) + "..."}`}</span>

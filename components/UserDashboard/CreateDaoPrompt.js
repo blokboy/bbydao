@@ -11,10 +11,10 @@ const CreateDaoPrompt = () => {
         you havent joined any daos yet.
       </span>
       <button
-        className="flex flex-row mt-4 rounded-full shadow bg-gray-200 dark:bg-gray-900 hover:bg-white dark:hover:bg-gray-700 px-4 py-2 w-max"
+        className="flex flex-row mt-4 rounded-full shadow bg-slate-200 dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-700 px-4 py-2 w-max"
         onClick={setCreateDaoModalOpen}
       >
-        <span className="h-full pr-1 pt-1 text-gray-800 dark:text-white">
+        <span className="h-full pr-1 pt-1 text-slate-800 dark:text-white">
           <MdAdd />
         </span>
         <a>create</a>

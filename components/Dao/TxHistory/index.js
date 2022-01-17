@@ -7,7 +7,7 @@ const TxHistory = ({ allTxs, incomingTxs, pendingTxs }) => {
   console.log("TxHistory incomingTxs", incomingTxs)
   console.log("TxHistory pendingTxs", pendingTxs)
   return (
-    <div className="flex flex-col mx-auto rounded shadow-xl w-full md:rounded-xl px-8 pt-6 pb-8 mb-3 bg-gray-100 dark:bg-gray-900">
+    <div className="flex flex-col mx-auto rounded shadow-xl w-full md:rounded-xl md:px-2 pt-6 pb-8 mb-3 bg-slate-200 dark:bg-slate-900">
       <PendingTxs pendingTxs={pendingTxs} />
       <AllTxs allTxs={allTxs} />
     </div>

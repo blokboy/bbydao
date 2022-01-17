@@ -81,7 +81,7 @@ const FriendRequest = ({ body, id, relationshipRef, seen }) => {
 
   return (
     <div
-      className="flex flex-row mb-3 mx-auto rounded-lg bg-gray-50 dark:bg-gray-900 justify-between py-4 px-3 w-11/12 md:w-6/12"
+      className="flex flex-row mb-3 mx-auto rounded-lg bg-slate-50 dark:bg-slate-900 justify-between py-4 px-3 w-11/12 md:w-6/12"
       ref={ref}
     >
       <span>{body}</span>

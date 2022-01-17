@@ -52,28 +52,28 @@ const UserDetails = ({ id, address }) => {
 
       {data?.address === address ? (
         <Link href={"/user/settings"} passHref>
-          <button className="my-4 rounded-full shadow bg-gray-200 dark:bg-gray-900 hover:bg-white dark:hover:bg-gray-700 px-4 py-2 w-max">
+          <button className="my-4 rounded-full shadow bg-slate-200 dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-700 px-4 py-2 w-max">
             <a>edit profile</a>
           </button>
         </Link>
       ) : status === "success" ? (
         // style and persist through validating relationship status
-        <span className="my-4 rounded-full shadow bg-gray-200 dark:bg-gray-900 hover:bg-white dark:hover:bg-gray-700 px-4 py-2 w-max">
+        <span className="my-4 rounded-full shadow bg-slate-200 dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-700 px-4 py-2 w-max">
           success
         </span>
       ) : connectData?.connected ? (
         <button
-          className="my-4 rounded-full shadow bg-gray-200 dark:bg-gray-900 hover:bg-white dark:hover:bg-gray-700 px-4 py-2 w-max"
+          className="my-4 rounded-full shadow bg-slate-200 dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-700 px-4 py-2 w-max"
           onClick={handleRequest}
         >
           request
         </button>
       ) : (
         <button
-          className="flex flex-row my-4 shadow p-0.5 rounded-full bg-gradient-to-r hover:bg-gradient-to-l from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] transform hover:-translate-x-0.5 transition duration-500 ease-in-out hover:bg-white dark:hover:bg-gray-700 w-max"
+          className="flex flex-row my-4 shadow p-0.5 rounded-full bg-gradient-to-r hover:bg-gradient-to-l from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] transform hover:-translate-x-0.5 transition duration-500 ease-in-out hover:bg-white dark:hover:bg-slate-700 w-max"
           onClick={setConnectModalOpen}
         >
-          <span className="block px-6 py-1.5 font-bold text-[#FC8D4D] hover:text-white bg-gray-200 dark:bg-gray-900 rounded-full hover:bg-opacity-50 dark:hover:bg-opacity-75">
+          <span className="block px-6 py-1.5 font-bold text-[#FC8D4D] hover:text-white bg-slate-200 dark:bg-slate-900 rounded-full hover:bg-opacity-50 dark:hover:bg-opacity-75">
             connect to...
           </span>
         </button>

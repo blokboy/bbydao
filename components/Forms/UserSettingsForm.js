@@ -42,7 +42,7 @@ const UserSettingsForm = () => {
     <div className="w-full h-screen flex justify-center">
       <form
         onSubmit={handleUpdateRequest}
-        className="shadow-xl w-full md:w-3/6 h-1/2 rounded-xl px-8 pt-6 pb-8 mb-4 bg-gray-100 dark:bg-gray-900"
+        className="shadow-xl w-full md:w-3/6 h-1/2 rounded-xl px-8 pt-6 pb-8 mb-4 bg-slate-100 dark:bg-slate-900"
       >
         <div className="w-full text-xl text-center font-bold mb-8">
           user settings
@@ -55,7 +55,7 @@ const UserSettingsForm = () => {
           <input
             value={state.username || ""}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 dark:bg-gray-800"
+            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-200 dark:bg-slate-800"
             id="username"
             name="username"
             type="text"
@@ -70,7 +70,7 @@ const UserSettingsForm = () => {
           <input
             value={state.email || ""}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 dark:bg-gray-800"
+            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-200 dark:bg-slate-800"
             id="email"
             name="email"
             type="email"
@@ -84,7 +84,7 @@ const UserSettingsForm = () => {
           </label>
           <div className="h-56">
             <textarea
-              className="shadow appearance-none border rounded w-full h-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 dark:bg-gray-800"
+              className="shadow appearance-none border rounded w-full h-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-200 dark:bg-slate-800"
               type="textarea"
               placeholder="enter a short description"
             />
@@ -93,7 +93,7 @@ const UserSettingsForm = () => {
 
         <div className="flex items-center justify-between">
           <button
-            className="w-full font-bold py-3 px-4 rounded-xl focus:outline-none focus:shadow-outline shadow-xl bg-gray-200 dark:bg-gray-800"
+            className="w-full font-bold py-3 px-4 rounded-xl focus:outline-none focus:shadow-outline shadow-xl bg-slate-200 dark:bg-slate-800"
             type="submit"
           >
             save

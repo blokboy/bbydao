@@ -50,9 +50,9 @@ const SignModal = ({ incomingUser }) => {
   }, [approveData]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   return (
-    <div className="fixed z-40 inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+    <div className="fixed z-40 inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full">
       <form
-        className="flex flex-col z-50 mt-24 mx-auto rounded-xl shadow bg-gray-200 dark:bg-gray-900 px-4 py-2 w-11/12 md:w-6/12"
+        className="flex flex-col z-50 mt-24 mx-auto rounded-xl shadow bg-slate-200 dark:bg-slate-900 px-4 py-2 w-11/12 md:w-6/12"
         onSubmit={event => {
           event.preventDefault()
           signMessage()

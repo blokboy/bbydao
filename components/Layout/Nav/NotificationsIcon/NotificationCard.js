@@ -85,7 +85,7 @@ const NotificationCard = ({ ...props }) => {
 
   return (
     <li
-      className="flex flex-row rounded-lg bg-gray-100 dark:bg-gray-800 text-sm justify-between w-full p-3 mb-2"
+      className="flex flex-row rounded-lg bg-slate-100 dark:bg-slate-800 text-sm justify-between w-full p-3 mb-2"
       ref={ref}
     >
       <span>{body}</span>
