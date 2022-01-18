@@ -18,12 +18,19 @@ DaoPage.getInitialProps = async ({ query }) => {
 
   const safeInfo = await safeService.getSafeInfo(query.address)
   const usd = await safeService.getUsdBalances(query.address)
+
+  // SAFE TXs
+  // Returns a list of transactions for a Safe. The list has different structures depending on the transaction type.
   const allTxs = await safeService.getMultisigTransactions(query.address)
+  // Returns the list of multi-signature transactions that are waiting for the confirmation of the Safe owners.
   const pendingTxs = await safeService.getPendingTransactions(query.address)
-  const collectibles = await safeService.getCollectibles(query.address)
+  // Returns the history of incoming transactions of a Safe account.
   const incomingTxs = await safeService.getIncomingTransactions(query.address)
+  //
+
+  const collectibles = await safeService.getCollectibles(query.address)
 
   return {
-    data: { safeInfo, usd, allTxs, pendingTxs, collectibles, incomingTxs },
+    data: { safeInfo, usd, allTxs, pendingTxs, incomingTxs, collectibles },
   }
 }

@@ -156,6 +156,10 @@ const TransactionForm = ({ safeAddress }) => {
     }
     const proposedTx = await safeService.proposeTransaction(transactionConfig)
     console.log("proposedTx", proposedTx)
+
+    // loading states
+    // clear form data upon success
+
     // let signers = []
     // safeTransaction.signatures.forEach(element => {
     //   signers.push(element.signer)
@@ -246,7 +250,7 @@ const TransactionForm = ({ safeAddress }) => {
   // }
 
   return (
-    <div className="flex flex-col mx-auto rounded shadow-xl w-full md:rounded-xl px-8 pt-6 pb-8 mb-3 bg-slate-100 dark:bg-slate-900">
+    <div className="flex flex-col mx-auto rounded shadow-xl w-full overflow-auto md:rounded-xl px-8 pt-6 pb-8 mb-3 bg-slate-200 dark:bg-slate-900">
       <div className="w-full text-xl text-center font-bold mb-8">
         transaction
       </div>
@@ -258,7 +262,7 @@ const TransactionForm = ({ safeAddress }) => {
         <input
           value={state.to || ""}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-200 dark:bg-slate-800"
+          className="shadow appearance-none border rounded-lg w-full h-16 text-xl py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-100 dark:bg-slate-800"
           id="name"
           name="to"
           type="text"
@@ -274,7 +278,7 @@ const TransactionForm = ({ safeAddress }) => {
         <input
           value={state.value || ""}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-200 dark:bg-slate-800"
+          className="shadow appearance-none border rounded-lg w-full h-16 text-xl py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-100 dark:bg-slate-800"
           id="name"
           name="value"
           type="number"
@@ -285,7 +289,7 @@ const TransactionForm = ({ safeAddress }) => {
 
       <div className="flex flex-row items-center justify-between">
         <button
-          className="w-full font-bold py-3 px-4 rounded-xl focus:outline-none focus:shadow-outline shadow-xl bg-slate-200 dark:bg-slate-800"
+          className="w-full font-bold py-3 px-4 rounded-xl border-2 focus:outline-none focus:shadow-outline shadow-xl bg-slate-300 hover:bg-slate-100 dark:bg-slate-800 hover:shadow-sm hover:border-[#0db2ac93] hover:border-2"
           // type="submit"
           onClick={sign}
         >

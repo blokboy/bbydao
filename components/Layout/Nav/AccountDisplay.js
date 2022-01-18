@@ -7,7 +7,7 @@ const AccountDisplay = () => {
   if (!data) return
 
   return (
-    <div className="flex flex-row mr-3 rounded-full border border-blue-100 shadow font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-slate-100 dark:bg-slate-900 px-4 py-2 w-max">
+    <div className="flex flex-row mr-3 rounded-full border border-blue-100 shadow font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] px-4 py-2 w-max">
       {data?.address ? (
         data.address.substring(0, 6) +
         "..." +
