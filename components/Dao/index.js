@@ -7,8 +7,38 @@ import TokensNfts from "./TokensNfts"
 import TxHistory from "./TxHistory"
 import ProposalHistory from "./ProposalHistory"
 
+import { ethers } from "ethers"
+import { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
+import Safe, { SafeFactory, SafeAccountConfig } from "@gnosis.pm/safe-core-sdk"
+
 const Dao = ({ data }) => {
   // console.log(data.collectibles[0].imageUri)
+
+  let safeSdk
+
+  /* create Safe object (pass to AllTxs as prop)
+  - only create if connected address is an owner ?
+  -- will need all of connected users safes in state to check against
+  React.useEffect(() => {
+    setSafeAddress()
+    console.log(safeSdk)
+  }, [])
+  
+  const setSafeAddress = async () => {
+    console.log("setSafeAddress run")
+    await window.ethereum.enable()
+    await window.ethereum.request({ method: "eth_requestAccounts" })
+  
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner(provider.provider.selectedAddress)
+  
+    const ethAdapter = new EthersAdapter({ ethers, signer })
+    safeSdk = await Safe.create({
+      ethAdapter,
+      safeAddress: safeAddress,
+    })
+  }
+*/
 
   return (
     <>
@@ -35,6 +65,7 @@ const Dao = ({ data }) => {
             allTxs={data.allTxs}
             incomingTxs={data.incomingTxs}
             pendingTxs={data.pendingTxs}
+            threshold={data.safeInfo.threshold}
           />
           <ProposalHistory />
         </div>

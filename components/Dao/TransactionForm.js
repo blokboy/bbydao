@@ -157,6 +157,9 @@ const TransactionForm = ({ safeAddress }) => {
     const proposedTx = await safeService.proposeTransaction(transactionConfig)
     console.log("proposedTx", proposedTx)
 
+    const nextNonce = await safeService.getNextNonce(safeAddress)
+    console.log("nextNonce", nextNonce)
+
     // loading states
     // clear form data upon success
 

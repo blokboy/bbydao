@@ -2,8 +2,29 @@ import React from "react"
 import { ethers } from "ethers"
 import Davatar from "@davatar/react"
 
-const AllTxs = ({ allTxs }) => {
+const AllTxs = ({ allTxs, threshold }) => {
   console.log("AllTxs", allTxs)
+
+  // sign
+  // reject
+
+  /* EXECUTE (needs Safe object)
+  const execute = async () => {
+    await window.ethereum.enable()
+    await window.ethereum.request({ method: "eth_requestAccounts" })
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner(provider.provider.selectedAddress)
+
+    const ethAdapter = new EthersAdapter({ ethers, signer })
+    const safeSdk2 = await safeSdk.connect({
+      ethAdapter,
+      safeAddress: safeAddress,
+    })
+    // await safeSdk2.executeTransaction(safeTransaction)
+  }
+  */
+
   return (
     <div className="w-fit">
       <h1 className="mt-4">All Transactions: {allTxs.count}</h1>
@@ -16,7 +37,17 @@ const AllTxs = ({ allTxs }) => {
           >
             {/* tx data */}
             <div className="flex flex-row">
-              <div className="w-6 h-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800 mr-1"></div>
+              {tx.confirmations[0]?.owner ? (
+                <div className="w-6 h-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800 mr-1">
+                  <Davatar
+                    size={22}
+                    address={tx.confirmations[0].owner}
+                    generatedAvatarType="blockies"
+                  />
+                </div>
+              ) : (
+                <div className="w-6 h-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800 mr-1"></div>
+              )}
               <span className="flex flex-row justify-end text-[12px] rounded border border-white bg-slate-100 dark:bg-slate-800 p-1 mr-1 w-20">
                 <span>{ethers.utils.formatEther(tx.value).slice(0, 6)}</span>{" "}
                 <span className="text-blue-500">ETH</span>
@@ -72,6 +103,10 @@ const AllTxs = ({ allTxs }) => {
                     />
                   </div>
                 </>
+              ) : tx.confirmations.length >= threshold ? (
+                <button className="bg-blue-400 rounded-lg shadow-sm p-1 text-xs mr-1">
+                  execute
+                </button>
               ) : (
                 <>
                   <button className="bg-red-400 rounded-lg shadow-sm p-1 text-xs mr-1">
