@@ -1,9 +1,11 @@
 import "../styles/globals.css"
 import React from "react"
+import Router from "next/router"
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query"
 import { ReactQueryDevtools } from "react-query/devtools"
 import { ThemeProvider } from "next-themes"
 import Layout from "../components/Layout"
+import Loading from "../components/Layout/Loading"
 
 import {
   InjectedConnector,
@@ -46,13 +48,29 @@ function MyApp({ Component, pageProps }) {
     ]
   }
 
+  const [loading, setLoading] = React.useState(false)
+
+  Router.events.on("routeChangeStart", url => {
+    setLoading(true)
+  })
+
+  Router.events.on("routeChangeComplete", url => {
+    setLoading(false)
+  })
+
   return (
     <ThemeProvider attribute="class">
       <Provider autoConnect connectors={connectors}>
         <QueryClientProvider client={queryClient}>
           <Layout>
-            <Component {...pageProps} />
-            <ReactQueryDevtools />
+            {loading ? (
+              <Loading />
+            ) : (
+              <>
+                <Component {...pageProps} />
+                <ReactQueryDevtools />
+              </>
+            )}
           </Layout>
         </QueryClientProvider>
       </Provider>
