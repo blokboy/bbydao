@@ -2,9 +2,13 @@ import React from "react"
 import useForm from "hooks/useForm"
 import { useDaoStore } from "../../../stores/useDaoStore"
 import { GoSearch } from "react-icons/go"
+import OsResults from "./OsResults"
 
 const OsSearchBar = () => {
+  // react-query to get results on keyDown, render from cached in OsResults
+
   const { state, setState, handleChange } = useForm()
+  const [hits, setHits] = React.useState()
 
   const openSeaModalOpen = useDaoStore(state => state.openSeaModalOpen)
   const setOpenSeaModalOpen = useDaoStore(state => state.setOpenSeaModalOpen)
@@ -62,6 +66,16 @@ const OsSearchBar = () => {
           esc
         </button>
       </div>
+      {/* if there are hits in the search, pass them to OsResults */}
+      {state.OpenSeaSearch?.length ? (
+        <OsResults />
+      ) : (
+        <>
+          <div className="flex h-24 w-full justify-center items-center">
+            <h1 className="font-semibold">start typing...</h1>
+          </div>
+        </>
+      )}
     </div>
   )
 }
