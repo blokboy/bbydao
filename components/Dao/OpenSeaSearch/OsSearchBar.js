@@ -4,8 +4,34 @@ import { useDaoStore } from "../../../stores/useDaoStore"
 import { GoSearch } from "react-icons/go"
 import OsResults from "./OsResults"
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "fetch_start":
+      return {
+        ...state,
+        isLoading: true,
+        hasError: false,
+      }
+    case "fetch_success":
+      return {
+        ...state,
+        isLoading: false,
+        hasError: false,
+        hits: action.payload,
+      }
+    case "fetch_failure":
+      return {
+        ...state,
+        isLoading: false,
+        hasError: true,
+      }
+    default:
+      throw new Error()
+  }
+}
+
 const OsSearchBar = () => {
-  // react-query to get results on keyDown, render from cached in OsResults
+  // reducer to manage state between keydown events / queries
 
   const { state, setState, handleChange } = useForm()
   const [hits, setHits] = React.useState()

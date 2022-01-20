@@ -19,4 +19,27 @@
   p {
     @apply font-sans;
   }
+
+  /* width */
+  ::-webkit-scrollbar {
+    @apply w-3;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    @apply shadow;
+    @apply bg-slate-200 dark:bg-slate-700;
+    @apply rounded;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-800;
+    @apply rounded-xl;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400;
+  }
 }

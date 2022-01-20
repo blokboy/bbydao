@@ -26,7 +26,7 @@ const AllTxs = ({ allTxs, threshold }) => {
   */
 
   return (
-    <div className="w-fit">
+    <div className="w-full">
       <h1 className="mt-4">All Transactions: {allTxs.count}</h1>
       <div className="flex flex-col rounded-lg shadow-inner mt-1 bg-slate-100 dark:bg-slate-800 p-1">
         {/* Txs */}
