@@ -8,6 +8,8 @@ const OpenSeaPage = ({ data }) => {
 export default OpenSeaPage
 
 OpenSeaPage.getInitialProps = async ({ query }) => {
+  // query.slug
+
   const doodles = {
     address: "0x8a90cab2b38dba80c64b7734e58ee1db38b8992e",
     asset_contract_type: "non-fungible",
