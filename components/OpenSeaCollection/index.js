@@ -10,17 +10,17 @@ const OpenSeaCollection = ({ data }) => {
   // collection info
   // - name
   // - description
-  // - total owners
-  // - total supply
-  // - verified
-  // - supply
+  // - total owners : data.num_owners
+  // - total supply : data.total_supply
+  // - verified : data.safelist_request_status
+  // - supply :
   // - owned by
 
   // collection stats
   // - mkt cap
-  // - floor
-  // - avg price
-  // - volume
+  // - floor : data.floor_price
+  // - avg price : data.average_price
+  // - volume : data.total_volume
 
   // assets
   // - name
