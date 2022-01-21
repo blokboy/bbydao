@@ -7,7 +7,7 @@ const CollectionInfo = ({ name, description }) => {
   }
 
   return (
-    <div className="flex flex-col w-full border border-white rounded-xl p-3">
+    <div className="flex flex-col w-full p-3">
       <h1 className="flex text-5xl w-full justify-center">{name}</h1>
       <div className="">
         {isReadMore ? description.slice(0, 150) : description}
