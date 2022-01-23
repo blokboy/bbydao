@@ -7,7 +7,9 @@ const AssetCard = ({ asset }) => {
       <div className="flex flex-row justify-between">
         {/* asset name & number of sales */}
         <h1>{asset.name}</h1>
-        <span className="text-xs font-semibold">Sales: {asset.num_sales}</span>
+        <span className="text-xs font-semibold">
+          Sales: {asset.num_sales ? asset.num_sales : "0"}
+        </span>
       </div>
       {/* asset img */}
       <img src={asset.image_url} alt="" />

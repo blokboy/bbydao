@@ -3,6 +3,7 @@ import useForm from "hooks/useForm"
 import { useDaoStore } from "../../../stores/useDaoStore"
 import { GoSearch } from "react-icons/go"
 import OsResults from "./OsResults"
+import axios from "axios"
 
 const reducer = (state, action) => {
   switch (action.type) {

@@ -1,6 +1,12 @@
 import React from "react"
 
-const CollectionInfo = ({ name, description }) => {
+const CollectionInfo = ({
+  name,
+  description,
+  numOwners,
+  totalSupply,
+  verified,
+}) => {
   const [isReadMore, setIsReadMore] = React.useState(true)
   const toggleReadMore = () => {
     setIsReadMore(!isReadMore)
@@ -9,6 +15,10 @@ const CollectionInfo = ({ name, description }) => {
   return (
     <div className="flex flex-col w-full p-3">
       <h1 className="flex text-5xl w-full justify-center">{name}</h1>
+      <div>owners: {numOwners}</div>
+      <div>total supply: {totalSupply}</div>
+      <div>verified: {verified}</div>
+
       <div className="">
         {isReadMore ? description.slice(0, 150) : description}
 

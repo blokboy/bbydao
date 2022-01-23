@@ -32,12 +32,22 @@ const OpenSeaCollection = ({ data }) => {
 
   return (
     <div className="flex flex-col h-full w-screen items-center">
-      <div className="flex flex-col h-full w-full md:w-3/4">
+      <div className="flex flex-col h-full w-full md:px-10 lg:px-16">
         <CollectionBanner banner={data.banner_image_url} />
         <div className="flex flex-col md:flex-row">
           <div className="flex flex-col w-full md:w-1/3 items-center p-4">
-            <CollectionInfo name={data.name} description={data.description} />
-            <CollectionStats />
+            <CollectionInfo
+              name={data.name}
+              description={data.description}
+              numOwners={data.num_owners}
+              totalSupply={data.total_supply}
+              verified={data.safelist_request_status}
+            />
+            <CollectionStats
+              floor={data.floor_price}
+              avg={data.average_price}
+              volume={data.total_volume}
+            />
           </div>
           <AssetList />
         </div>
