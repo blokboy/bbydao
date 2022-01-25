@@ -3,11 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    @apply h-screen w-screen;
-  }
   body {
-    @apply w-screen text-slate-800 dark:text-slate-100;
+    @apply h-[100%] w-[100%] text-slate-800 dark:text-slate-100;
     @apply bg-gradient-to-bl from-slate-100 via-[#d6e5eb] to-slate-300;
     @apply dark:bg-gradient-to-br dark:from-slate-800 dark:via-gray-900 dark:to-slate-900;
   }

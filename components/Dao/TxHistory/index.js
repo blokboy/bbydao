@@ -8,7 +8,7 @@ const TxHistory = ({ allTxs, incomingTxs, pendingTxs, threshold }) => {
   console.log("TxHistory pendingTxs", pendingTxs)
 
   return (
-    <div className="flex flex-col mx-auto rounded-xl shadow-xl w-full px-4 pt-6 pb-8 mb-3 bg-slate-200 dark:bg-slate-900 items-center">
+    <div className="mb-3 flex w-max flex-col items-center rounded-xl bg-slate-200 px-4 pt-6 pb-8 shadow-xl dark:bg-slate-900">
       {/* pre sig transactions - awaiting threshold sigs*/}
       {/* <PendingTxs pendingTxs={pendingTxs} /> */}
       {/* post sig transactions - ready to execute*/}

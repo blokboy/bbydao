@@ -26,19 +26,19 @@ const AllTxs = ({ allTxs, threshold }) => {
   */
 
   return (
-    <div className="w-full">
+    <div className="w-fit">
       <h1 className="mt-4">All Transactions: {allTxs.count}</h1>
-      <div className="flex flex-col rounded-lg shadow-inner mt-1 bg-slate-100 dark:bg-slate-800 p-1">
+      <div className="mt-1 flex flex-col rounded-lg bg-slate-100 p-1 shadow-inner dark:bg-slate-800">
         {/* Txs */}
         {allTxs.results.map((tx, index) => (
           <div
             key={index}
-            className="flex flex-row m-1 rounded-lg shadow bg-slate-300 dark:bg-slate-900 items-center p-2 justify-between"
+            className="m-1 flex flex-row items-center justify-between rounded-lg bg-slate-300 p-2 shadow dark:bg-slate-900"
           >
             {/* tx data */}
             <div className="flex flex-row">
               {tx.confirmations[0]?.owner ? (
-                <div className="w-6 h-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800 mr-1">
+                <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800">
                   <Davatar
                     size={22}
                     address={tx.confirmations[0].owner}
@@ -46,21 +46,21 @@ const AllTxs = ({ allTxs, threshold }) => {
                   />
                 </div>
               ) : (
-                <div className="w-6 h-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800 mr-1"></div>
+                <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800"></div>
               )}
-              <span className="flex flex-row justify-end text-[12px] rounded border border-white bg-slate-100 dark:bg-slate-800 p-1 mr-1 w-20">
+              <span className="mr-1 flex w-20 flex-row justify-end rounded border border-white bg-slate-100 p-1 text-[12px] dark:bg-slate-800">
                 <span>{ethers.utils.formatEther(tx.value).slice(0, 6)}</span>{" "}
                 <span className="text-blue-500">ETH</span>
               </span>
-              <span className="text-[12px] font-semibold p-1">to:</span>
-              <span className="text-[12px] rounded border border-white p-1 text-yellow-500 bg-slate-100 dark:bg-slate-800 w-16">
+              <span className="p-1 text-[12px] font-semibold">to:</span>
+              <span className="w-16 rounded border border-white bg-slate-100 p-1 text-[12px] text-yellow-500 dark:bg-slate-800">
                 {tx.to.slice(0, 6)}...
               </span>
             </div>
 
             {/* tx confirmations */}
             <div className="flex flex-row">
-              <ul className="flex flex-row justify-end px-1 w-14">
+              <ul className="flex w-14 flex-row justify-end px-1">
                 {tx.confirmations.map((conf, index) => (
                   <li
                     key={index}
@@ -81,15 +81,15 @@ const AllTxs = ({ allTxs, threshold }) => {
               <span>/</span>
 
               {/* tx rejections */}
-              <ul className="flex flex-row px-1 w-14">
-                <li className="w-6 h-6 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></li>
-                <li className="w-6 h-6 rounded-full border border-white -ml-3 bg-slate-200 dark:bg-slate-900"></li>
-                <li className="w-6 h-6 rounded-full border border-white -ml-3 bg-slate-200 dark:bg-slate-900"></li>
+              <ul className="flex w-14 flex-row px-1">
+                <li className="h-6 w-6 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></li>
+                <li className="-ml-3 h-6 w-6 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></li>
+                <li className="-ml-3 h-6 w-6 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></li>
               </ul>
             </div>
 
             {/* approve, reject, execute tx actions */}
-            <div className="flex flex-row justify-end px-1 w-28">
+            <div className="flex w-28 flex-row justify-end px-1">
               {tx.isExecuted ? (
                 <>
                   {/* <span className="bg-blue-400 rounded-lg shadow-sm p-1 text-xs mr-1">
@@ -104,15 +104,15 @@ const AllTxs = ({ allTxs, threshold }) => {
                   </div>
                 </>
               ) : tx.confirmations.length >= threshold ? (
-                <button className="bg-blue-400 rounded-lg shadow-sm p-1 text-xs mr-1">
+                <button className="mr-1 rounded-lg bg-blue-400 p-1 text-xs shadow-sm">
                   execute
                 </button>
               ) : (
                 <>
-                  <button className="bg-red-400 rounded-lg shadow-sm p-1 text-xs mr-1">
+                  <button className="mr-1 rounded-lg bg-red-400 p-1 text-xs shadow-sm">
                     reject
                   </button>
-                  <button className="bg-green-400 rounded-lg shadow-sm p-1 text-xs">
+                  <button className="rounded-lg bg-green-400 p-1 text-xs shadow-sm">
                     approve
                   </button>
                 </>
