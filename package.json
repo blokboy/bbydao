@@ -32,9 +32,10 @@
     "react-icons": "^4.3.1",
     "react-metamask-login-button": "^1.0.18",
     "react-query": "^3.34.0",
+    "sharp": "^0.29.3",
     "swr": "^1.0.1",
     "typescript": "^4.4.3",
-    "wagmi": "^0.0.1",
+    "wagmi": "^0.2.1",
     "zustand": "^3.6.5"
   },
   "devDependencies": {

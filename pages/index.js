@@ -27,9 +27,7 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex flex-col items-center justify-center w-full min-h-screen">
-        <Explore accountData={accountData} />
-      </main>
+      <Explore accountData={accountData} />
     </>
   )
 }

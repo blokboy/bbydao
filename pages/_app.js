@@ -7,14 +7,10 @@ import { ThemeProvider } from "next-themes"
 import Layout from "../components/Layout"
 import Loading from "../components/Layout/Loading"
 
-import {
-  InjectedConnector,
-  Provider,
-  WalletConnectConnector,
-  WalletLinkConnector,
-  chain,
-  defaultChains,
-} from "wagmi"
+import { Provider, chain, defaultChains } from "wagmi"
+import { InjectedConnector } from "wagmi/connectors/injected"
+import { WalletConnectConnector } from "wagmi/connectors/walletConnect"
+import { WalletLinkConnector } from "wagmi/connectors/walletLink"
 
 function MyApp({ Component, pageProps }) {
   const [queryClient] = React.useState(() => new QueryClient())

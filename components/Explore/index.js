@@ -52,7 +52,7 @@ const Explore = ({ accountData }) => {
 
       {userData?.confirmed ? <SignModal incomingUser={incomingUser} /> : <></>}
 
-      <div className="flex w-screen flex-col">
+      <div className="flex h-full w-screen flex-col">
         <Splash />
         <ProfilesContainer />
       </div>
