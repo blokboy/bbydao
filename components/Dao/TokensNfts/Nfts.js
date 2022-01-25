@@ -11,10 +11,10 @@ const Nfts = ({ collectibles }) => {
 
       <div className="w-full text-center">
         <button
-          className="shadow p-0.5 rounded-full bg-gradient-to-r hover:bg-gradient-to-l from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] mb-4 w-2/4"
+          className="mb-4 w-2/4 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow hover:bg-gradient-to-l"
           onClick={setOpenSeaModalOpen}
         >
-          <span className="block px-8 py-3 font-medium text-black dark:text-white bg-slate-200 dark:bg-slate-900 rounded-full hover:bg-opacity-50 dark:hover:bg-opacity-75">
+          <span className="block rounded-full bg-slate-200 px-8 py-3 font-medium text-black hover:bg-opacity-50 dark:bg-slate-900 dark:text-white dark:hover:bg-opacity-75">
             search open sea
           </span>
         </button>

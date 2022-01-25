@@ -253,19 +253,19 @@ const TransactionForm = ({ safeAddress }) => {
   // }
 
   return (
-    <div className="flex flex-col mx-auto rounded shadow-xl w-full overflow-auto md:rounded-xl px-8 pt-6 pb-8 mb-3 bg-slate-200 dark:bg-slate-900">
-      <div className="w-full text-xl text-center font-bold mb-8">
+    <div className="mx-auto mb-3 flex w-full flex-col overflow-auto rounded bg-slate-200 px-8 pt-6 pb-8 shadow-xl dark:bg-slate-900 md:rounded-xl">
+      <div className="mb-8 w-full text-center text-xl font-bold">
         transaction
       </div>
 
       <div className="mb-8">
-        <label className="block text-sm font-bold mb-2" htmlFor="name">
+        <label className="mb-2 block text-sm font-bold" htmlFor="name">
           to
         </label>
         <input
           value={state.to || ""}
           onChange={handleChange}
-          className="shadow appearance-none border rounded-lg w-full h-16 text-xl py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-100 dark:bg-slate-800"
+          className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
           id="name"
           name="to"
           type="text"
@@ -275,13 +275,13 @@ const TransactionForm = ({ safeAddress }) => {
       </div>
 
       <div className="mb-8">
-        <label className="block text-sm font-bold mb-2" htmlFor="name">
+        <label className="mb-2 block text-sm font-bold" htmlFor="name">
           value
         </label>
         <input
           value={state.value || ""}
           onChange={handleChange}
-          className="shadow appearance-none border rounded-lg w-full h-16 text-xl py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-100 dark:bg-slate-800"
+          className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
           id="name"
           name="value"
           type="number"
@@ -292,7 +292,7 @@ const TransactionForm = ({ safeAddress }) => {
 
       <div className="flex flex-row items-center justify-between">
         <button
-          className="w-full font-bold py-3 px-4 rounded-xl border-2 focus:outline-none focus:shadow-outline shadow-xl bg-slate-300 hover:bg-slate-100 dark:bg-slate-800 hover:shadow-sm hover:border-[#0db2ac93] hover:border-2"
+          className="focus:shadow-outline w-full rounded-xl border-2 bg-slate-300 py-3 px-4 font-bold shadow-xl hover:border-2 hover:border-[#0db2ac93] hover:bg-slate-100 hover:shadow-sm focus:outline-none dark:bg-slate-800"
           // type="submit"
           onClick={sign}
         >

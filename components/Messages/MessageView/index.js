@@ -5,7 +5,7 @@ import MessageViewToolbar from "./MessageViewToolbar"
 
 const MessageView = () => {
   return (
-    <div className="shadow-xl md:w-[75%] h-5/6 bg-slate-200 dark:bg-slate-900 p-2">
+    <div className="h-5/6 bg-slate-200 p-2 shadow-xl dark:bg-slate-900 md:w-[75%]">
       <MessageViewToolbar />
       <MessageContent />
       <MessageForm />

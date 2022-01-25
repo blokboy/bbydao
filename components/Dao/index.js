@@ -49,19 +49,19 @@ const Dao = ({ data }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex flex-col md:flex-row w-full mt-3 overflow-auto">
+      <div className="mt-3 flex w-full flex-col overflow-auto md:flex-row">
         {/* at least one collectible to side panel */}
         {/* */}
         <SidePanel
           nftImage={data?.collectibles[0]?.imageUri}
           safeInfo={data.safeInfo}
         />
-        <div className="flex flex-col flex-start md:w-[40%] m-3 md:m-0 md:mr-1">
+        <div className="flex-start m-3 flex flex-col md:m-0 md:mr-1 md:w-[40%]">
           <Graph safeAddress={data.safeInfo.address} />
           <TokensNfts tokens={data.usd} collectibles={data.collectibles} />
           <TransactionForm safeAddress={data?.safeInfo.address} />
         </div>
-        <div className="flex flex-col flex-start md:w-[40%] m-3 md:m-0 md:ml-1">
+        <div className="flex-start m-3 flex flex-col md:m-0 md:ml-1 md:w-[40%]">
           <TxHistory
             allTxs={data.allTxs}
             incomingTxs={data.incomingTxs}

@@ -9,9 +9,9 @@ const Splash = () => {
   })
 
   return (
-    <div className="hidden md:flex flex-col w-screen h-80 justify-center items-center">
+    <div className="hidden h-80 w-screen flex-col items-center justify-center md:flex">
       <p>welcome to</p>
-      <h1 className="text-5xl m-4">babydao</h1>
+      <h1 className="m-4 text-5xl">babydao</h1>
       {!accountData ? <ConnectButton /> : <></>}
     </div>
   )

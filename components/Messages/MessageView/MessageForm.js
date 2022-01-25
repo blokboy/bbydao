@@ -4,7 +4,7 @@ const MessageForm = () => {
   return (
     <textarea
       autoFocus
-      className="resize-none w-full h-[10%] mt-2 p-3 rounded-xl text-white bg-slate-100 focus:outline-none focus:text-slate-900 dark:bg-slate-800 dark:focus:text-slate-100"
+      className="mt-2 h-[10%] w-full resize-none rounded-xl bg-slate-100 p-3 text-white focus:text-slate-900 focus:outline-none dark:bg-slate-800 dark:focus:text-slate-100"
       type="textarea"
       placeholder="Message..."
       autoComplete="off"

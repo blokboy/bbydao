@@ -81,19 +81,19 @@ const FriendRequest = ({ body, id, relationshipRef, seen }) => {
 
   return (
     <div
-      className="flex flex-row mb-3 mx-auto rounded-lg bg-slate-50 dark:bg-slate-900 justify-between py-4 px-3 w-11/12 md:w-6/12"
+      className="mx-auto mb-3 flex w-11/12 flex-row justify-between rounded-lg bg-slate-50 py-4 px-3 dark:bg-slate-900 md:w-6/12"
       ref={ref}
     >
       <span>{body}</span>
       <div>
         <button
-          className="border rounded-lg bg-green-500 hover:bg-green-400 text-xs mr-4 p-1"
+          className="mr-4 rounded-lg border bg-green-500 p-1 text-xs hover:bg-green-400"
           onClick={handleAcceptRelationship}
         >
           accept
         </button>
         <button
-          className="border rounded-lg bg-red-500 hover:bg-red-400 text-xs mr-4 p-1"
+          className="mr-4 rounded-lg border bg-red-500 p-1 text-xs hover:bg-red-400"
           onClick={handleRejectRelationship}
         >
           reject

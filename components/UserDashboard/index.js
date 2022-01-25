@@ -31,14 +31,14 @@ const UserDashboard = ({ data }) => {
       {data ? (
         <>
           {createDaoModalOpen ? <DaoForm address={address} /> : <></>}
-          <div className="flex flex-col md:flex-row w-full h-full mt-5 pb-10">
-            <div className="flex flex-col flex-start md:w-3/12 px-4 md:px-10">
+          <div className="mt-5 flex h-full w-full flex-col pb-10 md:flex-row">
+            <div className="flex-start flex flex-col px-4 md:w-3/12 md:px-10">
               <UserImage address={address} />
               <UserDetails id={id} address={address} />
               <UserFriends id={id} />
               <UserBio />
             </div>
-            <div className="flex flex-col md:w-9/12 px-10">
+            <div className="flex flex-col px-10 md:w-9/12">
               {safes.length ? (
                 <UserDaos safes={data.safes} />
               ) : (

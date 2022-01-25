@@ -12,7 +12,7 @@ const Messages = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="w-full h-screen flex justify-center">
+      <div className="flex h-screen w-full justify-center">
         <ListView />
         <MessageView />
       </div>

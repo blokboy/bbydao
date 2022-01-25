@@ -13,8 +13,8 @@ const CollectionInfo = ({
   }
 
   return (
-    <div className="flex flex-col w-full p-3">
-      <h1 className="flex text-5xl w-full justify-center">{name}</h1>
+    <div className="flex w-full flex-col p-3">
+      <h1 className="flex w-full justify-center text-5xl">{name}</h1>
       <div>owners: {numOwners}</div>
       <div>total supply: {totalSupply}</div>
       <div>verified: {verified}</div>

@@ -85,20 +85,20 @@ const NotificationCard = ({ ...props }) => {
 
   return (
     <li
-      className="flex flex-row rounded-lg bg-slate-100 dark:bg-slate-800 text-sm justify-between w-full p-3 mb-2"
+      className="mb-2 flex w-full flex-row justify-between rounded-lg bg-slate-100 p-3 text-sm dark:bg-slate-800"
       ref={ref}
     >
       <span>{body}</span>
 
       <div>
         <button
-          className="text-green-500 hover:text-green-400 px-1"
+          className="px-1 text-green-500 hover:text-green-400"
           onClick={handleAcceptRelationship}
         >
           <HiOutlineCheckCircle size={22} />
         </button>
         <button
-          className="text-red-500 hover:text-red-400 px-1"
+          className="px-1 text-red-500 hover:text-red-400"
           onClick={handleRejectRelationship}
         >
           <HiOutlineXCircle size={22} />

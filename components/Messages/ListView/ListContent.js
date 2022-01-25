@@ -3,7 +3,7 @@ import ListViewCard from "./ListViewCard"
 
 const ListContent = () => {
   return (
-    <div className="overflow-auto rounded-xl bg-slate-50 dark:bg-slate-800 h-[90%] p-3">
+    <div className="h-[90%] overflow-auto rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
       <ListViewCard />
       <ListViewCard />
       <ListViewCard />

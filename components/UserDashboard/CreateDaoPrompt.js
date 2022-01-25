@@ -6,12 +6,12 @@ const CreateDaoPrompt = () => {
   const setCreateDaoModalOpen = useUiStore(state => state.setCreateDaoModalOpen)
 
   return (
-    <div className="flex flex-col w-full mt-10 items-center">
-      <span className="font-bold text-2xl">
+    <div className="mt-10 flex w-full flex-col items-center">
+      <span className="text-2xl font-bold">
         you havent joined any daos yet.
       </span>
       <button
-        className="flex flex-row mt-4 rounded-full shadow bg-slate-200 dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-700 px-4 py-2 w-max"
+        className="mt-4 flex w-max flex-row rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-700"
         onClick={setCreateDaoModalOpen}
       >
         <span className="h-full pr-1 pt-1 text-slate-800 dark:text-white">

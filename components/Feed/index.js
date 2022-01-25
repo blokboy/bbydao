@@ -31,7 +31,7 @@ const Feed = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex flex-col py-2 my-2 w-full">
+      <div className="my-2 flex w-full flex-col py-2">
         {data?.parsedNotifs.FRIEND_REQUESTS.map(notif => (
           <FriendRequest
             key={notif.id}

@@ -4,7 +4,7 @@
 
 @layer base {
   html {
-    @apply w-screen;
+    @apply h-screen w-screen;
   }
   body {
     @apply w-screen text-slate-800 dark:text-slate-100;

@@ -19,7 +19,7 @@ const OpenSeaSearch = () => {
 
   return (
     <div
-      className="fixed z-40 inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full"
+      className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
       onClick={e => closeModal(e)}
     >
       <OsSearchBar />

@@ -8,7 +8,7 @@ const OpenSeaPage = ({ data }) => {
 export default OpenSeaPage
 
 OpenSeaPage.getInitialProps = async ({ query }) => {
-  // query.slug
+  // query.slug to fetch collection from os api
 
   const doodles = {
     address: "0x8a90cab2b38dba80c64b7734e58ee1db38b8992e",

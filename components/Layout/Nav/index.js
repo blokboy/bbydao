@@ -21,7 +21,7 @@ const Nav = () => {
   return (
     <>
       <nav className="flex w-screen p-2 md:p-6">
-        <div className="flex flex-row w-screen justify-between items-center">
+        <div className="flex w-screen flex-row items-center justify-between">
           {data?.connected ? <ToggleSearchModal /> : <></>}
         </div>
         {data?.connected ? <AccountDisplay /> : <></>}

@@ -39,12 +39,12 @@ const UserSettingsForm = () => {
   }
 
   return (
-    <div className="w-full h-screen flex justify-center">
+    <div className="flex h-screen w-full justify-center">
       <form
         onSubmit={handleUpdateRequest}
-        className="shadow-xl w-full md:w-3/6 h-1/2 rounded-xl px-8 pt-6 pb-8 mb-4 bg-slate-100 dark:bg-slate-900"
+        className="mb-4 h-1/2 w-full rounded-xl bg-slate-100 px-8 pt-6 pb-8 shadow-xl dark:bg-slate-900 md:w-3/6"
       >
-        <div className="w-full text-xl text-center font-bold mb-8">
+        <div className="mb-8 w-full text-center text-xl font-bold">
           user settings
         </div>
 
@@ -64,13 +64,13 @@ const UserSettingsForm = () => {
         </div> */}
 
         <div className="mb-8">
-          <label className="block text-sm font-bold mb-2" htmlFor="email">
+          <label className="mb-2 block text-sm font-bold" htmlFor="email">
             email
           </label>
           <input
             value={state.email || ""}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-200 dark:bg-slate-800"
+            className="focus:shadow-outline w-full appearance-none rounded border bg-slate-200 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
             id="email"
             name="email"
             type="email"
@@ -93,7 +93,7 @@ const UserSettingsForm = () => {
 
         <div className="flex items-center justify-between">
           <button
-            className="w-full font-bold py-3 px-4 rounded-xl focus:outline-none focus:shadow-outline shadow-xl bg-slate-200 dark:bg-slate-800"
+            className="focus:shadow-outline w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
             type="submit"
           >
             save

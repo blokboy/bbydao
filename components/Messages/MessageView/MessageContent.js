@@ -5,7 +5,7 @@ import MessageViewCard from "./MessageViewCard"
 
 const MessageContent = () => {
   return (
-    <div className="overflow-auto rounded-xl bg-slate-50 dark:bg-slate-800 h-[82%] p-3">
+    <div className="h-[82%] overflow-auto rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
       <MessageViewCard />
       <MessageViewCard />
       <MessageViewCard />

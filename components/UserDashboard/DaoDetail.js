@@ -20,7 +20,7 @@ const DaoDetail = ({ safe }) => {
               generatedAvatarType="blockies" // optional, 'jazzicon' or 'blockies'
             />
             {/* or collectible ? */}
-            <span className="text-sm text-transparent bg-clip-text bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] mt-2">
+            <span className="mt-2 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-sm text-transparent">
               {safe.substring(0, 12) + "..."}
             </span>
           </div>

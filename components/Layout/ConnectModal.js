@@ -20,24 +20,24 @@ const ConnectModal = () => {
 
   const connectButtons = React.useMemo(() => {
     return (
-      <div className="flex flex-col items-center justify-center w-full">
-        <h1 className="text-3xl sm:text-5xl mb-3">Welcome to babydao</h1>
+      <div className="flex w-full flex-col items-center justify-center">
+        <h1 className="mb-3 text-3xl sm:text-5xl">Welcome to babydao</h1>
         <p className="mb-3">Get started by connecting your wallet </p>
         {data.connectors.map(connector =>
           connector.ready ? (
             <button
-              className="shadow p-0.5 rounded-full bg-gradient-to-r hover:bg-gradient-to-l from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] mb-4 w-2/4"
+              className="mb-4 w-2/4 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow hover:bg-gradient-to-l"
               key={connector.id}
               onClick={() => connect(connector)}
             >
-              <span className="block px-8 py-3 font-medium text-black dark:text-white bg-slate-200 dark:bg-slate-900 rounded-full hover:bg-opacity-50 dark:hover:bg-opacity-75">
+              <span className="block rounded-full bg-slate-200 px-8 py-3 font-medium text-black hover:bg-opacity-50 dark:bg-slate-900 dark:text-white dark:hover:bg-opacity-75">
                 {connector.name}
                 {!connector.ready && " (unsupported)"}
               </span>
             </button>
           ) : (
             <button
-              className="border rounded-xl bg-zinc-500 my-2 py-3 px-6"
+              className="my-2 rounded-xl border bg-zinc-500 py-3 px-6"
               key={connector.id}
             >
               {connector.name}
@@ -55,10 +55,10 @@ const ConnectModal = () => {
 
   return (
     <div
-      className="fixed z-40 inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full"
+      className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
       onClick={e => closeModal(e)}
     >
-      <div className="flex flex-col mt-24 mx-auto z-50 rounded shadow-xl w-full md:w-3/6 md:rounded-xl px-8 pt-6 pb-8 mb-4 bg-slate-100 dark:bg-slate-900">
+      <div className="z-50 mx-auto mt-24 mb-4 flex w-full flex-col rounded bg-slate-100 px-8 pt-6 pb-8 shadow-xl dark:bg-slate-900 md:w-3/6 md:rounded-xl">
         {connectButtons}
       </div>
     </div>

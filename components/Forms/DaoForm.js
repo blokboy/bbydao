@@ -68,16 +68,16 @@ const DaoForm = ({ address }) => {
 
   return (
     <div
-      className="fixed z-40 inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full"
+      className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
       onClick={e => closeModal(e)}
     >
       {data.connected ? (
         <form
-          className="flex flex-col mt-24 mx-auto z-50 rounded shadow-xl w-full md:w-3/6 md:rounded-xl px-8 pt-6 pb-8 mb-4 bg-slate-100 dark:bg-slate-900"
+          className="z-50 mx-auto mt-24 mb-4 flex w-full flex-col rounded bg-slate-100 px-8 pt-6 pb-8 shadow-xl dark:bg-slate-900 md:w-3/6 md:rounded-xl"
           onSubmit={handleSubmit}
           onClick={e => closeModal(e)}
         >
-          <div className="w-full text-xl text-center font-bold mb-8">
+          <div className="mb-8 w-full text-center text-xl font-bold">
             create your dao
           </div>
 
@@ -104,13 +104,13 @@ const DaoForm = ({ address }) => {
           )}
 
           <div className="mb-8">
-            <label className="block text-sm font-bold mb-2" htmlFor="name">
+            <label className="mb-2 block text-sm font-bold" htmlFor="name">
               name
             </label>
             <input
               value={state.name || ""}
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-200 dark:bg-slate-800"
+              className="focus:shadow-outline w-full appearance-none rounded border bg-slate-200 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
               id="name"
               name="name"
               type="text"
@@ -119,7 +119,7 @@ const DaoForm = ({ address }) => {
           </div>
 
           <div className="mb-8">
-            <label className="block text-sm font-bold mb-2" htmlFor="name">
+            <label className="mb-2 block text-sm font-bold" htmlFor="name">
               about
             </label>
             <div className="h-56">
@@ -128,7 +128,7 @@ const DaoForm = ({ address }) => {
                 onChange={handleChange}
                 id="about"
                 name="about"
-                className="shadow appearance-none border rounded w-full h-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-200 dark:bg-slate-800"
+                className="focus:shadow-outline h-full w-full appearance-none rounded border bg-slate-200 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
                 type="textarea"
                 placeholder="enter a short description"
               />
@@ -136,16 +136,16 @@ const DaoForm = ({ address }) => {
           </div>
 
           <div className="mb-8">
-            <label className="block text-sm font-bold mb-2" htmlFor="name">
+            <label className="mb-2 block text-sm font-bold" htmlFor="name">
               invite friends
             </label>
-            <p className="text-xs mb-2">separate usernames with comma</p>
+            <p className="mb-2 text-xs">separate usernames with comma</p>
             <input
               value={state.invite || ""}
               onChange={handleChange}
               id="invite"
               name="invite"
-              className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-slate-200 dark:bg-slate-800"
+              className="focus:shadow-outline w-full appearance-none rounded border bg-slate-200 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
               type="text"
               placeholder="@username"
             />
@@ -153,7 +153,7 @@ const DaoForm = ({ address }) => {
 
           <div className="flex items-center justify-between">
             <button
-              className="w-full font-bold py-3 px-4 rounded-xl focus:outline-none focus:shadow-outline shadow-xl bg-slate-200 dark:bg-slate-800"
+              className="focus:shadow-outline w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
               type="submit"
             >
               save

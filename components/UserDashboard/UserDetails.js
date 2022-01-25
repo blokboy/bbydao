@@ -31,49 +31,49 @@ const UserDetails = ({ id, address }) => {
   }
 
   return (
-    <div className="flex flex-col mt-4 items-center text-center md:text-left md:items-start">
+    <div className="mt-4 flex flex-col items-center text-center md:items-start md:text-left">
       {ensLoading && !ensData ? (
-        <div className="flex space-x-2 animate-pulse w-full place-content-center md:place-content-start">
-          <div className="w-3/12 md:w-8/12 h-10 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] rounded-full"></div>
+        <div className="flex w-full animate-pulse place-content-center space-x-2 md:place-content-start">
+          <div className="h-10 w-3/12 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] md:w-8/12"></div>
         </div>
       ) : ensData && !ensLoading ? (
-        <span className="text-3xl text-transparent bg-clip-text bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] w-full h-10">
+        <span className="h-10 w-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-3xl text-transparent">
           @{ensData}
         </span>
       ) : !ensData && !loading ? (
-        <span className="text-3xl text-transparent bg-clip-text bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] w-full h-10">
+        <span className="h-10 w-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-3xl text-transparent">
           @{`${address.substring(0, 6) + "..."}`}
         </span>
       ) : (
-        <div className="flex space-x-2 animate-pulse w-full place-content-center md:place-content-start">
-          <div className="w-3/12 md:w-8/12 h-10 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] rounded-full"></div>
+        <div className="flex w-full animate-pulse place-content-center space-x-2 md:place-content-start">
+          <div className="h-10 w-3/12 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] md:w-8/12"></div>
         </div>
       )}
 
       {data?.address === address ? (
         <Link href={"/user/settings"} passHref>
-          <button className="my-4 rounded-full shadow bg-slate-200 dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-700 px-4 py-2 w-max">
+          <button className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-700">
             <a>edit profile</a>
           </button>
         </Link>
       ) : status === "success" ? (
         // style and persist through validating relationship status
-        <span className="my-4 rounded-full shadow bg-slate-200 dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-700 px-4 py-2 w-max">
+        <span className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-700">
           success
         </span>
       ) : connectData?.connected ? (
         <button
-          className="my-4 rounded-full shadow bg-slate-200 dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-700 px-4 py-2 w-max"
+          className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-700"
           onClick={handleRequest}
         >
           request
         </button>
       ) : (
         <button
-          className="flex flex-row my-4 shadow p-0.5 rounded-full bg-gradient-to-r hover:bg-gradient-to-l from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] transform hover:-translate-x-0.5 transition duration-500 ease-in-out hover:bg-white dark:hover:bg-slate-700 w-max"
+          className="my-4 flex w-max transform flex-row rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow transition duration-500 ease-in-out hover:-translate-x-0.5 hover:bg-white hover:bg-gradient-to-l dark:hover:bg-slate-700"
           onClick={setConnectModalOpen}
         >
-          <span className="block px-6 py-1.5 font-bold text-[#FC8D4D] hover:text-white bg-slate-200 dark:bg-slate-900 rounded-full hover:bg-opacity-50 dark:hover:bg-opacity-75">
+          <span className="block rounded-full bg-slate-200 px-6 py-1.5 font-bold text-[#FC8D4D] hover:bg-opacity-50 hover:text-white dark:bg-slate-900 dark:hover:bg-opacity-75">
             connect to...
           </span>
         </button>

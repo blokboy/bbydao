@@ -25,21 +25,21 @@ const ResultCard = ({ address, targetId }) => {
   }
 
   return (
-    <div className="flex flex-row mb-3 rounded-lg bg-slate-50 dark:bg-slate-800 justify-between py-2 px-1 w-full">
+    <div className="mb-3 flex w-full flex-row justify-between rounded-lg bg-slate-50 py-2 px-1 dark:bg-slate-800">
       <Link href={`/user/${address}`}>
         <a>
           <span>@{data ? data : `@${address.substring(0, 12) + "..."}`}</span>
         </a>
       </Link>
       {status === "loading" ? (
-        <span className="mr-4 border rounded-lg text-xs p-1">loading</span>
+        <span className="mr-4 rounded-lg border p-1 text-xs">loading</span>
       ) : status === "success" ? (
-        <span className="mr-4 border border-green-400 rounded-lg text-xs text-green-400 p-1">
+        <span className="mr-4 rounded-lg border border-green-400 p-1 text-xs text-green-400">
           requested
         </span>
       ) : (
         <button
-          className="border rounded-lg text-xs mr-4 p-1"
+          className="mr-4 rounded-lg border p-1 text-xs"
           onClick={handleRequest}
         >
           request

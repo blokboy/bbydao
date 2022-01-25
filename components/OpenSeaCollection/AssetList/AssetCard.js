@@ -3,7 +3,7 @@ import Davatar from "@davatar/react"
 
 const AssetCard = ({ asset }) => {
   return (
-    <div className="flex flex-col w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3">
+    <div className="flex w-full flex-col rounded-xl bg-slate-100 p-3 dark:bg-slate-800">
       <div className="flex flex-row justify-between">
         {/* asset name & number of sales */}
         <h1>{asset.name}</h1>
@@ -13,7 +13,7 @@ const AssetCard = ({ asset }) => {
       </div>
       {/* asset img */}
       <img src={asset.image_url} alt="" />
-      <div className="flex flex-row justify-between mt-2">
+      <div className="mt-2 flex flex-row justify-between">
         {/* owner avatar */}
         <Davatar
           size={40}
@@ -23,7 +23,7 @@ const AssetCard = ({ asset }) => {
         {/* owner address */}
         <div className="flex flex-col">
           <span className="text-xs font-semibold">owner:</span>
-          <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32]">
+          <span className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text font-semibold text-transparent">
             {asset.owner.substring(0, 6) +
               "..." +
               asset.owner.substring(
@@ -35,13 +35,13 @@ const AssetCard = ({ asset }) => {
         {/* asset price */}
         <span className="text-sm font-semibold">asset price</span>
       </div>
-      <div className="flex flex-row justify-between mt-2">
+      <div className="mt-2 flex flex-row justify-between">
         {/* asset traits */}
         <div className="grid grid-cols-3 gap-1">
           {asset.traits.map((trait, index) => (
             <div
               key={index}
-              className="h-5 w-5 rounded-full bg-slate-300 dark:bg-slate-700 p-[3px]"
+              className="h-5 w-5 rounded-full bg-slate-300 p-[3px] dark:bg-slate-700"
             ></div>
           ))}
         </div>
@@ -49,11 +49,11 @@ const AssetCard = ({ asset }) => {
         <span className="text-sm font-semibold">rarity score</span>
       </div>
       {/* buy offer buttons */}
-      <div className="flex flex-row justify-center mt-2">
-        <button className="bg-slate-200 dark:bg-slate-900 p-2 shadow rounded font-semibold mx-1">
+      <div className="mt-2 flex flex-row justify-center">
+        <button className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900">
           buy
         </button>
-        <button className="bg-slate-200 dark:bg-slate-900 p-2 shadow rounded font-semibold mx-1">
+        <button className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900">
           offer
         </button>
       </div>

@@ -6,9 +6,9 @@ const ThemeToggle = () => {
   const { theme, setTheme } = useTheme()
 
   return (
-    <div className="hidden md:flex flex-row items-center justify-center mx-2">
+    <div className="mx-2 hidden flex-row items-center justify-center md:flex">
       <button
-        className="flex rounded-full shadow p-2 bg-white dark:bg-slate-900 justify-center h-10 w-10"
+        className="flex h-10 w-10 justify-center rounded-full bg-white p-2 shadow dark:bg-slate-900"
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       >
         {theme === "light" ? (

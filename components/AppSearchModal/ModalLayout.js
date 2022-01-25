@@ -18,11 +18,11 @@ const ModalLayout = () => {
     <>
       {appModalOpen ? (
         <div
-          className="fixed z-40 inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full"
+          className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
           onClick={e => closeModal(e)}
         >
           <div
-            className="flex flex-col z-50 mt-24 mx-auto rounded-xl shadow bg-slate-200 dark:bg-slate-900 px-4 py-2 w-11/12 md:w-6/12"
+            className="z-50 mx-auto mt-24 flex w-11/12 flex-col rounded-xl bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:w-6/12"
             onClick={e => closeModal(e)}
           >
             <SearchForm />

@@ -2,8 +2,8 @@ import React from "react"
 
 const UserBio = () => {
   return (
-    <div className="flex flex-col mb-14 items-center md:items-start">
-      <div className="text-xl font-bold mb-2">about:</div>
+    <div className="mb-14 flex flex-col items-center md:items-start">
+      <div className="mb-2 text-xl font-bold">about:</div>
       <p className="text-sm">
         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit
         consectetur similique ea quibusdam atque impedit inventore tenetur eum

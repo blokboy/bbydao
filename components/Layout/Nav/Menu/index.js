@@ -25,14 +25,14 @@ const Menu = () => {
       <div>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="relative z-10 rounded-xl border border-slate-400 shadow text-xl text-slate-800 bg-slate-200 hover:bg-slate-100 dark:text-white dark:bg-slate-900 dark:hover:bg-slate-700 h-10 px-3 py-2"
+          className="relative z-10 h-10 rounded-xl border border-slate-400 bg-slate-200 px-3 py-2 text-xl text-slate-800 shadow hover:bg-slate-100 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-700"
         >
           <HiDotsHorizontal />
         </button>
         <div
           className={
             (menuOpen ? "absolute " : "hidden ") +
-            "top-0 right-0 md:-translate-x-20 translate-y-20 z-50 rounded border shadow px-2 py-2 text-slate-800 bg-slate-200 dark:text-white dark:bg-slate-900 w-2/6 md:w-1/6"
+            "top-0 right-0 z-50 w-2/6 translate-y-20 rounded border bg-slate-200 px-2 py-2 text-slate-800 shadow dark:bg-slate-900 dark:text-white md:w-1/6 md:-translate-x-20"
           }
         >
           <ul className="py-1" onClick={clickAway}>
