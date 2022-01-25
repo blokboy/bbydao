@@ -9,7 +9,7 @@ import { useAccountStore } from "stores/useAccountStore"
 const Explore = ({ accountData }) => {
   const { status, mutateAsync } = useMutation(api.getUser)
 
-  const userData = useAccountStore(state => state.userData)
+  // const userData = useAccountStore(state => state.userData)
   const setUserData = useAccountStore(state => state.setUserData)
 
   const handleRequest = req => {
@@ -18,8 +18,6 @@ const Explore = ({ accountData }) => {
         const { address, id, confirmed } = data
         setUserData(data)
         console.log("Explore data user:", data)
-
-        setIncomingUser({ id: id, confirmed: confirmed })
       },
     })
   }

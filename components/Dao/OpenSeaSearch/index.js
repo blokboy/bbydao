@@ -1,7 +1,6 @@
 import React from "react"
 import { useDaoStore } from "../../../stores/useDaoStore"
 import OsSearchBar from "./osSearchBar"
-import OsResults from "./OsResults"
 
 const OpenSeaSearch = () => {
   const openSeaModalOpen = useDaoStore(state => state.openSeaModalOpen)
@@ -11,7 +10,6 @@ const OpenSeaSearch = () => {
     if (!openSeaModalOpen && e.target) {
       return
     }
-    // setState({})
     setOpenSeaModalOpen()
   }
 

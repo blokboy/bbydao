@@ -1,21 +1,11 @@
 import React from "react"
-import { useAccount } from "wagmi"
 import { useUiStore } from "stores/useUiStore"
 
 const ConnectButton = () => {
-  const [{ data, error, loading }, disconnect] = useAccount()
-
-  const connectModalOpen = useUiStore(state => state.connectModalOpen)
   const setConnectModalOpen = useUiStore(state => state.setConnectModalOpen)
-
-  // const setUserData = useAccountStore(state => state.setUserData)
 
   const handleConnect = () => {
     setConnectModalOpen()
-    // setUserData(null)
-    // useAccountStore.persist.clearStorage()
-    // useAccountStore.destroy()
-    // disconnect()
   }
 
   return (

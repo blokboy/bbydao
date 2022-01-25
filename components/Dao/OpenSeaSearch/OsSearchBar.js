@@ -1,8 +1,8 @@
 import React from "react"
-import useForm from "hooks/useForm"
 import { useDaoStore } from "../../../stores/useDaoStore"
 import { GoSearch } from "react-icons/go"
-import OsResults from "./OsResults"
+import OsResultsLoading from "./OsResultsLoading"
+import OsResultsSuccess from "./OsResultsSuccess"
 import axios from "axios"
 
 const reducer = (state, action) => {
@@ -31,11 +31,33 @@ const reducer = (state, action) => {
   }
 }
 
-const OsSearchBar = () => {
-  // reducer to manage state between keydown events / queries
+const fetchHits = async (query, dispatch) => {
+  dispatch({ type: "fetch_start" })
+  try {
+    const result = await axios.post(
+      `https://minidao.herokuapp.com/collection/search`,
+      { name: query }
+    )
+    dispatch({ type: "fetch_success", payload: result.data })
+  } catch (err) {
+    dispatch({ type: "fetch_failure" })
+    axios.isCancel(err) || dispatch({ type: "fetch_failure" })
+  }
+}
 
-  const { state, setState, handleChange } = useForm()
-  const [hits, setHits] = React.useState()
+const OsSearchBar = () => {
+  const [{ hits, hasError, isLoading }, dispatch] = React.useReducer(reducer, {
+    hits: [],
+    isLoading: true,
+    hasError: false,
+  })
+  const [query, setQuery] = React.useState("")
+
+  React.useEffect(() => {
+    const { cancel, token } = axios.CancelToken.source()
+    const timeOutId = setTimeout(() => fetchHits(query, dispatch, token), 500)
+    return () => cancel("No longer latest query") || clearTimeout(timeOutId)
+  }, [query])
 
   const openSeaModalOpen = useDaoStore(state => state.openSeaModalOpen)
   const setOpenSeaModalOpen = useDaoStore(state => state.setOpenSeaModalOpen)
@@ -43,7 +65,7 @@ const OsSearchBar = () => {
   const handleKeyDown = event => {
     if (event.keyCode === 27) {
       if (openSeaModalOpen) {
-        setState({})
+        setQuery("")
         setOpenSeaModalOpen()
       }
       return
@@ -62,7 +84,7 @@ const OsSearchBar = () => {
     if (!openSeaModalOpen && e.target) {
       return
     }
-    setState({})
+    setQuery("")
     setOpenSeaModalOpen()
   }
 
@@ -82,8 +104,8 @@ const OsSearchBar = () => {
           className="w-full bg-slate-200 py-2 pl-12 text-sm text-white focus:text-slate-900 focus:outline-none dark:bg-slate-900 dark:focus:text-slate-100"
           placeholder="Search OpenSea..."
           autoComplete="off"
-          onChange={handleChange}
-          value={state.OpenSeaSearch || ""}
+          onChange={event => setQuery(event.target.value)}
+          value={query}
           name="OpenSeaSearch"
         />
         <button
@@ -93,16 +115,22 @@ const OsSearchBar = () => {
           esc
         </button>
       </div>
+
       {/* if there are hits in the search, pass them to OsResults */}
-      {state.OpenSeaSearch?.length ? (
-        <OsResults />
-      ) : (
+      {isLoading && query.length ? (
+        <OsResultsLoading />
+      ) : hits && query.length ? (
+        <OsResultsSuccess hits={hits} />
+      ) : !query.length ? (
         <>
           <div className="flex h-24 w-full items-center justify-center">
             <h1 className="font-semibold">start typing...</h1>
           </div>
         </>
+      ) : (
+        <OsResultsLoading />
       )}
+      {/* query - loading states */}
     </div>
   )
 }

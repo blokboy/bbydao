@@ -50,10 +50,9 @@ export const updateRelationship = async req => {
 }
 
 // get users notifications
-// { target: id }
+// { target: address }
 export const userNotifications = async req => {
   const res = await api.post("/notification/account", req)
-  // console.log("notifications in query:", res.data)
   return res.data
 }
 

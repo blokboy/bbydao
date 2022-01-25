@@ -15,9 +15,6 @@ const Nav = () => {
     fetchEns: true,
   })
 
-  console.log("nav accountData:", accountData)
-  console.log("nav data:", data)
-
   return (
     <>
       <nav className="flex w-screen p-2 md:p-6">
@@ -26,7 +23,11 @@ const Nav = () => {
         </div>
         {data?.connected ? <AccountDisplay /> : <></>}
         {data?.connected ? <DisconnectButton /> : <ConnectButton />}
-        {/* {data?.connected ? <NotificationsIcon id={userData.id} /> : <></>} */}
+        {data?.connected ? (
+          <NotificationsIcon address={accountData.address} />
+        ) : (
+          <></>
+        )}
         {data?.connected ? <MessagesIcon /> : <></>}
         <Menu />
         <ThemeToggle />
