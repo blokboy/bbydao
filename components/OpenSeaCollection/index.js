@@ -7,48 +7,28 @@ import AssetList from "./AssetList"
 const OpenSeaCollection = ({ data }) => {
   console.log("OpenSeaCollection", data)
 
-  // collection info
-  // - name
-  // - description
-  // - total owners : data.num_owners
-  // - total supply : data.total_supply
-  // - verified : data.safelist_request_status
-  // - supply :
-  // - owned by
-
-  // collection stats
-  // - mkt cap
-  // - floor : data.floor_price
-  // - avg price : data.average_price
-  // - volume : data.total_volume
-
-  // assets
-  // - name
-  // - number of sales
-  // - owner (prof pic)
-  // - price
-  // - rarity score
-  //
+  if (!data) return <></>
 
   return (
     <div className="flex w-full flex-col md:px-10 lg:px-16">
-      <CollectionBanner banner={data.banner_image_url} />
+      {/* needs banner image */}
+      <CollectionBanner banner={data.collection.image_url} />
       <div className="flex flex-col md:flex-row">
         <div className="flex w-full flex-col items-center p-4 md:w-1/3">
           <CollectionInfo
-            name={data.name}
-            description={data.description}
-            numOwners={data.num_owners}
-            totalSupply={data.total_supply}
-            verified={data.safelist_request_status}
+            name={data.collection.name}
+            description={data.collection.description}
+            numOwners={data.collection.num_owners}
+            totalSupply={data.collection.total_supply}
+            verified={data.collection.safelist_request_status}
           />
           <CollectionStats
-            floor={data.floor_price}
-            avg={data.average_price}
-            volume={data.total_volume}
+            floor={data.collection.floor_price}
+            avg={data.collection.average_price}
+            volume={data.collection.total_volume}
           />
         </div>
-        <AssetList />
+        <AssetList assets={data.assets} />
       </div>
     </div>
   )
