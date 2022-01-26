@@ -6,7 +6,7 @@ const index = ({ children }) => {
   return (
     <>
       <Nav />
-      <main className="h-screen w-screen">
+      <main className="w-screen">
         {children}
         <ConnectModal />
         <AppSearchModal />

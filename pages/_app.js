@@ -16,7 +16,6 @@ function MyApp({ Component, pageProps }) {
   const [queryClient] = React.useState(() => new QueryClient())
 
   // API key for Ethereum node
-  // Two popular services are Infura (infura.io) and Alchemy (alchemy.com)
   const infuraId = process.env.INFURA_ID
 
   // Chains for connectors to support

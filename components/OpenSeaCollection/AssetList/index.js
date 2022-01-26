@@ -134,13 +134,19 @@ const assets = [
 
 const AssetList = () => {
   return (
-    <div className="flex w-full p-3">
-      <div className="mx-4 grid w-full grid-cols-1 justify-items-center gap-3 md:grid-cols-2 lg:grid-cols-3">
-        {assets.map((asset, index) => (
+    // <div className="flex h-full w-full p-3">
+    <div className="mx-4 grid w-full grid-cols-1 justify-items-center gap-3 p-3 md:grid-cols-2 lg:grid-cols-3">
+      {assets.map((asset, index) => (
+        <>
           <AssetCard key={index} asset={asset} />
-        ))}
-      </div>
+          <AssetCard key={index} asset={asset} />
+          <AssetCard key={index} asset={asset} />
+          <AssetCard key={index} asset={asset} />
+          <AssetCard key={index} asset={asset} />
+        </>
+      ))}
     </div>
+    // </div>
   )
 }
 

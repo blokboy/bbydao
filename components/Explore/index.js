@@ -12,7 +12,7 @@ const Explore = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex h-full w-screen flex-col">
+      <div className="flex h-screen w-screen flex-col">
         <Splash />
         <ProfilesContainer />
       </div>

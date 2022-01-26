@@ -14,23 +14,25 @@ const AssetCard = ({ asset }) => {
       {/* asset img */}
       <img src={asset.image_url} alt="" />
       <div className="mt-2 flex flex-row justify-between">
-        {/* owner avatar */}
-        <Davatar
-          size={40}
-          address={asset.owner}
-          generatedAvatarType="blockies"
-        />
-        {/* owner address */}
-        <div className="flex flex-col">
-          <span className="text-xs font-semibold">owner:</span>
-          <span className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text font-semibold text-transparent">
-            {asset.owner.substring(0, 6) +
-              "..." +
-              asset.owner.substring(
-                asset.owner.length - 5,
-                asset.owner.length - 1
-              )}
-          </span>
+        <div className="flex flex-row">
+          {/* owner avatar */}
+          <Davatar
+            size={40}
+            address={asset.owner}
+            generatedAvatarType="blockies"
+          />
+          {/* owner address */}
+          <div className="mx-2 flex flex-col">
+            <span className="text-xs font-semibold">owner:</span>
+            <span className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text font-semibold text-transparent">
+              {asset.owner.substring(0, 6) +
+                "..." +
+                asset.owner.substring(
+                  asset.owner.length - 5,
+                  asset.owner.length - 1
+                )}
+            </span>
+          </div>
         </div>
         {/* asset price */}
         <span className="text-sm font-semibold">asset price</span>

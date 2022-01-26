@@ -31,7 +31,7 @@ const OpenSeaCollection = ({ data }) => {
   //
 
   return (
-    <div className="flex h-full w-full flex-col md:px-10 lg:px-16">
+    <div className="flex w-full flex-col md:px-10 lg:px-16">
       <CollectionBanner banner={data.banner_image_url} />
       <div className="flex flex-col md:flex-row">
         <div className="flex w-full flex-col items-center p-4 md:w-1/3">

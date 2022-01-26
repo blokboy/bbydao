@@ -7,9 +7,7 @@ const UserDaos = ({ safes }) => {
       <h1 className="mb-4 pl-10 text-xl font-bold underline">my daos</h1>
       <div className="mx-4 grid grid-cols-2 justify-items-center gap-12 sm:grid-cols-3 md:gap-6 lg:grid-cols-4">
         {safes ? (
-          safes?.safes.map((safe, index) => (
-            <DaoDetail key={index} safe={safe} />
-          ))
+          safes?.map((safe, index) => <DaoDetail key={index} safe={safe} />)
         ) : (
           <></>
         )}

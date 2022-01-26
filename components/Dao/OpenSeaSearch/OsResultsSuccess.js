@@ -6,12 +6,9 @@ const OsResultsSuccess = ({ hits, closeModal }) => {
   return (
     <div className="grid max-h-96 grid-cols-2 gap-4 overflow-auto py-4 px-2">
       {hits.map((hit, index) => (
-        <Link href={`/opensea/${hit.slug}`}>
+        <Link key={index} href={`/opensea/${hit.slug}`}>
           <a onClick={closeModal}>
-            <div
-              key={index}
-              className="flex h-16 flex-row rounded bg-slate-300 shadow dark:bg-slate-800"
-            >
+            <div className="flex h-16 flex-row rounded bg-slate-300 shadow dark:bg-slate-800">
               <img
                 className="m-1 rounded-full"
                 src={hit.imgUri}

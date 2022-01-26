@@ -3,7 +3,7 @@ import Image from "next/image"
 
 const Loading = () => {
   return (
-    <div className="flex h-full w-screen flex-col items-center justify-center font-bold">
+    <div className="flex h-screen w-screen flex-col items-center justify-center font-bold">
       <div className="motion-safe:animate-[bounce_3s_ease-in-out_infinite]">
         <Image alt="" src="/babydao.png" width={200} height={200} />
       </div>

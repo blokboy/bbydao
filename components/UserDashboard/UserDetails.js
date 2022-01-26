@@ -5,7 +5,7 @@ import { useMutation } from "react-query"
 import * as api from "../../query"
 import { useEnsLookup, useAccount, useConnect } from "wagmi"
 
-const UserDetails = ({ id, address }) => {
+const UserDetails = ({ address }) => {
   const [{ data: connectData, error: connectError }, connect] = useConnect()
   const [{ data, error, loading }, disconnect] = useAccount()
   const [
@@ -45,16 +45,12 @@ const UserDetails = ({ id, address }) => {
         </span>
       ) : (
         <div className="flex w-full animate-pulse place-content-center space-x-2 md:place-content-start">
-          <div className="h-10 w-3/12 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] md:w-8/12"></div>
+          <div className="h-10 w-1/2 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] md:w-8/12"></div>
         </div>
       )}
 
       {data?.address === address ? (
-        <Link href={"/user/settings"} passHref>
-          <button className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-700">
-            <a>edit profile</a>
-          </button>
-        </Link>
+        <></>
       ) : status === "success" ? (
         // style and persist through validating relationship status
         <span className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-700">

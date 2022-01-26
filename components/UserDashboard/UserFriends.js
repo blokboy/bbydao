@@ -2,16 +2,12 @@ import React from "react"
 import * as api from "query"
 import { useQuery } from "react-query"
 
-const UserFriends = ({ id }) => {
-  // fetch using address instead of id ?
+const UserFriends = ({ address }) => {
   const { data } = useQuery(
     "friends",
-    () => api.getFriends({ initiatorId: id, targetId: id }),
+    () => api.getFriends({ initiator: address }),
     { refetchOnWindowFocus: false }
-    // { onSettled: data => console.log("settled UserFriends data", data) }
   )
-
-  console.log("UserFriends data:", data)
 
   return (
     <div className="my-2 flex flex-col items-center md:items-start">
