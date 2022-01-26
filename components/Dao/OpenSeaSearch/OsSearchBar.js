@@ -120,7 +120,7 @@ const OsSearchBar = () => {
       {isLoading && query.length ? (
         <OsResultsLoading />
       ) : hits && query.length ? (
-        <OsResultsSuccess hits={hits} />
+        <OsResultsSuccess hits={hits} closeModal={closeModal} />
       ) : !query.length ? (
         <>
           <div className="flex h-24 w-full items-center justify-center">
