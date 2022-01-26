@@ -2,7 +2,7 @@ import Nav from "./Nav"
 import ConnectModal from "./ConnectModal"
 import AppSearchModal from "../AppSearchModal"
 
-const index = ({ children }) => {
+const Layout = ({ children }) => {
   return (
     <>
       <Nav />
@@ -15,4 +15,4 @@ const index = ({ children }) => {
   )
 }
 
-export default index
+export default Layout
