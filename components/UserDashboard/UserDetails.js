@@ -4,7 +4,6 @@ import { useUiStore } from "stores/useUiStore"
 import { useMutation } from "react-query"
 import * as api from "../../query"
 import { useEnsLookup, useAccount, useConnect } from "wagmi"
-import ConnectButton from "components/Layout/Nav/ConnectButton"
 
 const UserDetails = ({ id, address }) => {
   const [{ data: connectData, error: connectError }, connect] = useConnect()
@@ -22,8 +21,8 @@ const UserDetails = ({ id, address }) => {
 
   const handleRequest = () => {
     const req = {
-      // initiatorId: accountData.address,
-      // targetId: address
+      initiator: data.address,
+      target: address,
       status: 3,
     }
 

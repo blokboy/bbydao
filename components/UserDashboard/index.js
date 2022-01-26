@@ -14,6 +14,7 @@ const UserDashboard = ({ data }) => {
   const { id, address } = data.user
   const { safes } = data.safes
   const [{ data: connectData, error, loading }, connect] = useConnect()
+
   const createDaoModalOpen = useUiStore(state => state.createDaoModalOpen)
 
   console.log("UserDashboard user:", data.user)
@@ -36,7 +37,7 @@ const UserDashboard = ({ data }) => {
               <UserImage address={address} />
               <UserDetails id={id} address={address} />
               <UserFriends id={id} />
-              <UserBio />
+              {/* <UserBio /> */}
             </div>
             <div className="flex flex-col px-10 md:w-9/12">
               {safes.length ? (

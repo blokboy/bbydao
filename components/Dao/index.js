@@ -13,8 +13,6 @@ import { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
 import Safe, { SafeFactory, SafeAccountConfig } from "@gnosis.pm/safe-core-sdk"
 
 const Dao = ({ data }) => {
-  // console.log(data.collectibles[0].imageUri)
-
   let safeSdk
 
   /* create Safe object (pass to AllTxs as prop)

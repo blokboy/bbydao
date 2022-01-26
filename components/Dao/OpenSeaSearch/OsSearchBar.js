@@ -119,7 +119,7 @@ const OsSearchBar = () => {
       {/* if there are hits in the search, pass them to OsResults */}
       {isLoading && query.length ? (
         <OsResultsLoading />
-      ) : hits && query.length ? (
+      ) : hits.length && query.length ? (
         <OsResultsSuccess hits={hits} closeModal={closeModal} />
       ) : !query.length ? (
         <>
@@ -127,10 +127,15 @@ const OsSearchBar = () => {
             <h1 className="font-semibold">start typing...</h1>
           </div>
         </>
+      ) : hasError ? (
+        <>
+          <div className="flex h-24 w-full items-center justify-center">
+            <h1 className="font-semibold text-red-500">something went wrong</h1>
+          </div>
+        </>
       ) : (
         <OsResultsLoading />
       )}
-      {/* query - loading states */}
     </div>
   )
 }

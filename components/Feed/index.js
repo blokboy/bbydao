@@ -1,23 +1,21 @@
 import React from "react"
 import Head from "next/head"
-import { useQuery } from "react-query"
 import * as api from "query"
-import { useAccountStore } from "stores/useAccountStore"
+import { useQuery } from "react-query"
+import { useAccount } from "wagmi"
 import { useUiStore } from "stores/useUiStore"
 import FriendRequest from "./FriendRequest"
 
 const Feed = () => {
-  const userData = useAccountStore(state => state.userData)
+  const [
+    { data: accountData, error: accountError, loading: accountLoading },
+    disconnect,
+  ] = useAccount()
   const setNotificationCount = useUiStore(state => state.setNotificationCount)
 
-  //error on disconnect
   const { data } = useQuery(["notifications"], () =>
-    api.userNotifications({ target: userData.id })
+    api.userNotifications({ target: accountData.address })
   )
-
-  if (!userData) {
-    return <></>
-  }
 
   if (data) {
     setNotificationCount(data?.notificationCount)
@@ -32,15 +30,19 @@ const Feed = () => {
       </Head>
 
       <div className="my-2 flex h-full w-full flex-col py-2">
-        {data?.parsedNotifs.FRIEND_REQUESTS.map(notif => (
-          <FriendRequest
-            key={notif.id}
-            id={notif.id}
-            relationshipRef={notif.ref}
-            body={notif.body}
-            seen={notif.seen}
-          />
-        ))}
+        {data?.parsedNotifs.length ? (
+          data.parsedNotifs.FRIEND_REQUESTS.map(notif => (
+            <FriendRequest
+              key={notif.id}
+              id={notif.id}
+              relationshipRef={notif.ref}
+              body={notif.body}
+              seen={notif.seen}
+            />
+          ))
+        ) : (
+          <h1>no notifications</h1>
+        )}
       </div>
     </>
   )

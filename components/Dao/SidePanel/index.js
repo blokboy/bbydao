@@ -2,8 +2,6 @@ import React from "react"
 import MemberCard from "./MemberCard"
 
 const SidePanel = ({ safeInfo, nftImage }) => {
-  console.log("SidePanel safeInfo", safeInfo)
-
   return (
     <div className="flex-start mx-1 mb-3 flex h-full flex-row px-4 md:flex-col">
       <div className="w-1/2 md:w-full">

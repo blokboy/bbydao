@@ -4,8 +4,6 @@ import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import { useConnect } from "wagmi"
 
 const UserPage = ({ data }) => {
-  const [{ data: connectData, error, loading }, connect] = useConnect()
-
   return <UserDashboard data={data} />
 }
 

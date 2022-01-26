@@ -2,7 +2,6 @@ import React from "react"
 import Davatar from "@davatar/react"
 
 const UserImage = ({ address }) => {
-  console.log(address)
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {

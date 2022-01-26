@@ -3,6 +3,7 @@ import * as api from "query"
 import { useQuery } from "react-query"
 
 const UserFriends = ({ id }) => {
+  // fetch using address instead of id ?
   const { data } = useQuery(
     "friends",
     () => api.getFriends({ initiatorId: id, targetId: id }),
