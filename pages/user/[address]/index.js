@@ -9,7 +9,7 @@ const UserPage = ({ data }) => {
 
 export default UserPage
 
-UserPage.getInitialProps = async ({ query }) => {
+export const getServerSideProps = async ({ query }) => {
   const safeService = new SafeServiceClient(
     "https://safe-transaction.gnosis.io"
   )
@@ -28,8 +28,8 @@ UserPage.getInitialProps = async ({ query }) => {
       safes.safes[0]
     )
 
-    return { data: { user, safes, safeCreationInfo } }
+    return { props: { data: { user, safes, safeCreationInfo } } }
   }
 
-  return { data: { user, safes } }
+  return { props: { data: { user, safes } } }
 }

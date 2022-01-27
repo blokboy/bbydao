@@ -6,7 +6,6 @@ import Graph from "./Graph"
 import TokensNfts from "./TokensNfts"
 import TxHistory from "./TxHistory"
 import ProposalHistory from "./ProposalHistory"
-import OpenSeaSearch from "./OpenSeaSearch"
 
 import { ethers } from "ethers"
 import { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
@@ -69,7 +68,6 @@ const Dao = ({ data }) => {
           <ProposalHistory />
 
           {/* modals  */}
-          <OpenSeaSearch />
         </div>
       </div>
     </>

@@ -1,17 +1,14 @@
 import React from "react"
 import Dao from "components/Dao"
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
-import { useConnect } from "wagmi"
 
 const DaoPage = ({ data }) => {
-  const [{ data: connectData, error, loading }, connect] = useConnect()
-
   return <Dao data={data} />
 }
 
 export default DaoPage
 
-DaoPage.getInitialProps = async ({ query }) => {
+export const getServerSideProps = async ({ query }) => {
   const safeService = new SafeServiceClient(
     "https://safe-transaction.gnosis.io"
   )
@@ -31,6 +28,8 @@ DaoPage.getInitialProps = async ({ query }) => {
   const collectibles = await safeService.getCollectibles(query.address)
 
   return {
-    data: { safeInfo, usd, allTxs, pendingTxs, incomingTxs, collectibles },
+    props: {
+      data: { safeInfo, usd, allTxs, pendingTxs, incomingTxs, collectibles },
+    },
   }
 }

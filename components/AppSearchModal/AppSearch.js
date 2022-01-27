@@ -5,6 +5,7 @@ import axios from "axios"
 import ResultsLoading from "./ResultsLoading"
 import CollectionsResultsSuccess from "./CollectionsResultsSuccess"
 import ProfilesResultsSuccess from "./ProfilesResultsSuccess"
+import DaosResultsSuccess from "./DaosResultsSuccess"
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -121,15 +122,33 @@ const AppSearch = () => {
         </>
       ) : isLoading && query.length ? (
         <ResultsLoading />
-      ) : hits?.Collections?.length && query.length ? (
-        <CollectionsResultsSuccess
-          hits={hits.Collections}
-          closeModal={closeModal}
-        />
-      ) : hits?.Profiles?.length && query.length ? (
-        <ProfilesResultsSuccess hits={hits.Profiles} closeModal={closeModal} />
+      ) : (hits?.Collections?.length && query.length) ||
+        (hits?.Profiles?.length && query.length) ||
+        (hits?.Daos?.length && query.length) ? (
+        <>
+          {hits?.Collections.length ? (
+            <CollectionsResultsSuccess
+              hits={hits.Collections}
+              closeModal={closeModal}
+            />
+          ) : (
+            <></>
+          )}
+          {hits?.Profiles.length ? (
+            <ProfilesResultsSuccess
+              hits={hits.Profiles}
+              closeModal={closeModal}
+            />
+          ) : (
+            <></>
+          )}
+          {hits?.Daos.length ? (
+            <DaosResultsSuccess hits={hits.Daos} closeModal={closeModal} />
+          ) : (
+            <></>
+          )}
+        </>
       ) : (
-        // DaoResultsSuccess
         <ResultsLoading />
       )}
     </div>
