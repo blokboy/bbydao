@@ -54,18 +54,18 @@ const Dao = ({ data }) => {
           nftImage={data?.collectibles[0]?.imageUri}
           safeInfo={data.safeInfo}
         />
-        <div className="flex-start m-3 flex flex-col md:m-0 md:mr-1 md:w-[40%]">
+        <div className="flex-start item m-3 flex flex-col md:m-0 md:mr-1 md:w-full">
           <Graph safeAddress={data.safeInfo.address} />
           <TokensNfts tokens={data.usd} collectibles={data.collectibles} />
-          <TransactionForm safeAddress={data?.safeInfo.address} />
-        </div>
-        <div className="flex-start m-3 flex flex-col md:m-0 md:ml-1 md:w-[40%]">
           <TxHistory
             allTxs={data.allTxs}
             incomingTxs={data.incomingTxs}
             pendingTxs={data.pendingTxs}
             threshold={data.safeInfo.threshold}
           />
+          <TransactionForm safeAddress={data?.safeInfo.address} />
+          {/* </div>
+        <div className="flex-start m-3 flex flex-col md:m-0 md:ml-1 md:w-[40%]"> */}
           <ProposalHistory />
 
           {/* modals  */}

@@ -15,9 +15,12 @@ UserPage.getInitialProps = async ({ query }) => {
   )
   const safes = await safeService.getSafesByOwner(query.address)
 
-  const res = await axios.post(`${process.env.accounts_api}`, {
-    address: query.address,
-  })
+  const res = await axios.post(
+    `${process.env.NEXT_PUBLIC_API}/accounts/account`,
+    {
+      address: query.address,
+    }
+  )
   const user = res.data
 
   if (safes.length) {
