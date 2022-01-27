@@ -1,9 +1,10 @@
 import React from "react"
-import { useDaoStore } from "../../../stores/useDaoStore"
 import { GoSearch } from "react-icons/go"
-import OsResultsLoading from "./OsResultsLoading"
-import OsResultsSuccess from "./OsResultsSuccess"
+import { useUiStore } from "stores/useUiStore"
 import axios from "axios"
+import ResultsLoading from "./ResultsLoading"
+import CollectionsResultsSuccess from "./CollectionsResultsSuccess"
+import ProfilesResultsSuccess from "./ProfilesResultsSuccess"
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -34,10 +35,9 @@ const reducer = (state, action) => {
 const fetchHits = async (query, dispatch) => {
   dispatch({ type: "fetch_start" })
   try {
-    const result = await axios.post(
-      `https://minidao.herokuapp.com/collection/search`,
-      { name: query }
-    )
+    const result = await axios.post(`${process.env.NEXT_PUBLIC_API}/search`, {
+      query: query,
+    })
     dispatch({ type: "fetch_success", payload: result.data })
   } catch (err) {
     dispatch({ type: "fetch_failure" })
@@ -45,7 +45,7 @@ const fetchHits = async (query, dispatch) => {
   }
 }
 
-const OsSearchBar = () => {
+const AppSearch = () => {
   const [{ hits, hasError, isLoading }, dispatch] = React.useReducer(reducer, {
     hits: [],
     isLoading: true,
@@ -59,14 +59,13 @@ const OsSearchBar = () => {
     return () => cancel("No longer latest query") || clearTimeout(timeOutId)
   }, [query])
 
-  const openSeaModalOpen = useDaoStore(state => state.openSeaModalOpen)
-  const setOpenSeaModalOpen = useDaoStore(state => state.setOpenSeaModalOpen)
+  const appModalOpen = useUiStore(state => state.setAppModalOpen)
+  const setAppModalOpen = useUiStore(state => state.setAppModalOpen)
 
   const handleKeyDown = event => {
     if (event.keyCode === 27) {
-      if (openSeaModalOpen) {
-        setQuery("")
-        setOpenSeaModalOpen()
+      if (appModalOpen) {
+        setAppModalOpen()
       }
       return
     }
@@ -81,14 +80,12 @@ const OsSearchBar = () => {
   }, []) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const closeModal = e => {
-    if (!openSeaModalOpen && e.target) {
+    if (!appModalOpen && e.target) {
       return
     }
     setQuery("")
-    setOpenSeaModalOpen()
+    setAppModalOpen()
   }
-
-  if (!openSeaModalOpen) return <></>
 
   return (
     <div
@@ -102,42 +99,41 @@ const OsSearchBar = () => {
         <input
           autoFocus
           className="w-full bg-slate-200 py-2 pl-12 text-sm text-white focus:text-slate-900 focus:outline-none dark:bg-slate-900 dark:focus:text-slate-100"
-          placeholder="Search OpenSea..."
+          placeholder="Search..."
           autoComplete="off"
           onChange={event => setQuery(event.target.value)}
           value={query}
-          name="OpenSeaSearch"
         />
         <button
           className="absolute right-2 top-3 rounded-lg border px-2 py-1 dark:text-white"
-          onClick={setOpenSeaModalOpen}
+          onClick={setAppModalOpen}
         >
           esc
         </button>
       </div>
 
-      {/* if there are hits in the search, pass them to OsResults */}
-      {isLoading && query.length ? (
-        <OsResultsLoading />
-      ) : hits.length && query.length ? (
-        <OsResultsSuccess hits={hits} closeModal={closeModal} />
-      ) : !query.length ? (
+      {/* if there are hits in the search, pass them to Results */}
+      {!query.length ? (
         <>
           <div className="flex h-24 w-full items-center justify-center">
             <h1 className="font-semibold">start typing...</h1>
           </div>
         </>
-      ) : hasError ? (
-        <>
-          <div className="flex h-24 w-full items-center justify-center">
-            <h1 className="font-semibold text-red-500">something went wrong</h1>
-          </div>
-        </>
+      ) : isLoading && query.length ? (
+        <ResultsLoading />
+      ) : hits?.Collections?.length && query.length ? (
+        <CollectionsResultsSuccess
+          hits={hits.Collections}
+          closeModal={closeModal}
+        />
+      ) : hits?.Profiles?.length && query.length ? (
+        <ProfilesResultsSuccess hits={hits.Profiles} closeModal={closeModal} />
       ) : (
-        <OsResultsLoading />
+        // DaoResultsSuccess
+        <ResultsLoading />
       )}
     </div>
   )
 }
 
-export default OsSearchBar
+export default AppSearch

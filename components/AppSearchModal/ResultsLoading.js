@@ -1,6 +1,6 @@
 import React from "react"
 
-const OsResultsLoading = () => {
+const ResultsLoading = () => {
   return (
     // loading state
     <div className="grid max-h-96 grid-cols-2 gap-4 overflow-auto py-4 px-2">
@@ -12,4 +12,4 @@ const OsResultsLoading = () => {
   )
 }
 
-export default OsResultsLoading
+export default ResultsLoading

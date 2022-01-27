@@ -8,9 +8,8 @@ const OpenSeaPage = ({ data }) => {
 
 export default OpenSeaPage
 
-OpenSeaPage.getInitialProps = async ({ query }) => {
+export const getServerSideProps = async ({ query }) => {
   try {
-    // process.env not working? -- plain api url works
     const res = await axios.post(
       `${process.env.NEXT_PUBLIC_API}/collection/fetch`,
       {
@@ -19,9 +18,9 @@ OpenSeaPage.getInitialProps = async ({ query }) => {
       }
     )
     const collection = res.data
-    return { data: collection }
+    return { props: { data: collection } }
   } catch (error) {
     console.log(error)
-    return { data: null }
+    return { props: { data: undefined } }
   }
 }

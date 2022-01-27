@@ -2,7 +2,7 @@ import React from "react"
 import Link from "next/link"
 import { HiBadgeCheck } from "react-icons/hi"
 
-const OsResultsSuccess = ({ hits, closeModal }) => {
+const CollectionsResultsSuccess = ({ hits, closeModal }) => {
   return (
     <div className="grid max-h-96 grid-cols-2 gap-4 overflow-auto py-4 px-2">
       {hits.map((hit, index) => (
@@ -35,4 +35,4 @@ const OsResultsSuccess = ({ hits, closeModal }) => {
   )
 }
 
-export default OsResultsSuccess
+export default CollectionsResultsSuccess

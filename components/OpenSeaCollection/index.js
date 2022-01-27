@@ -12,7 +12,7 @@ const OpenSeaCollection = ({ data }) => {
   return (
     <div className="flex w-full flex-col md:px-10 lg:px-16">
       {/* needs banner image */}
-      <CollectionBanner banner={data.collection.image_url} />
+      <CollectionBanner banner={data.collection.banner_image_url} />
       <div className="flex flex-col md:flex-row">
         <div className="flex w-full flex-col items-center p-4 md:w-1/3">
           <CollectionInfo
