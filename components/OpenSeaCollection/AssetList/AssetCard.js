@@ -1,7 +1,15 @@
 import React from "react"
-import Davatar from "@davatar/react"
+import { useOsStore } from "stores/useOsStore"
 
 const AssetCard = ({ asset }) => {
+  const setOsOfferModalOpen = useOsStore(state => state.setOsOfferModalOpen)
+  const setOsAssetInfo = useOsStore(state => state.setOsAssetInfo)
+
+  const offerModal = () => {
+    setOsOfferModalOpen()
+    setOsAssetInfo({ address: asset.address, token_id: asset.token_id })
+  }
+
   return (
     <div className="flex w-full flex-col rounded-xl bg-slate-100 p-3 dark:bg-slate-800">
       <div className="flex flex-row justify-between">
@@ -15,12 +23,6 @@ const AssetCard = ({ asset }) => {
       <img src={asset.image_url} alt="" />
       <div className="mt-2 flex flex-row justify-between">
         <div className="flex flex-row">
-          {/* owner avatar */}
-          <Davatar
-            size={40}
-            address={asset.owner}
-            generatedAvatarType="blockies"
-          />
           {/* owner address */}
           <div className="mx-2 flex flex-col">
             <span className="text-xs font-semibold">owner:</span>
@@ -55,7 +57,10 @@ const AssetCard = ({ asset }) => {
         <button className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900">
           buy
         </button>
-        <button className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900">
+        <button
+          onClick={offerModal}
+          className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900"
+        >
           offer
         </button>
       </div>
