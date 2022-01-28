@@ -20,9 +20,9 @@ const CollectionInfo = ({
       <div>verified: {verified}</div>
 
       <div className="">
-        {isReadMore ? description.slice(0, 150) : description}
+        {isReadMore && description ? description?.slice(0, 150) : <></>}
 
-        {description.length > 150 && (
+        {description?.length > 150 && (
           <button className="text-blue-400" onClick={toggleReadMore}>
             {isReadMore ? " ...read more" : " ...show less"}
           </button>

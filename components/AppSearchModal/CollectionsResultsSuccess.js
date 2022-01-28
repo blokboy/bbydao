@@ -17,7 +17,7 @@ const CollectionsResultsSuccess = ({ hits, closeModal }) => {
             <a onClick={closeModal}>
               <div className="flex h-16 flex-row rounded bg-slate-300 shadow dark:bg-slate-800">
                 <img
-                  className="m-1 rounded-full"
+                  className="m-1 h-14 w-14 rounded-full object-none"
                   src={hit.imgUri}
                   alt={hit.name}
                 />

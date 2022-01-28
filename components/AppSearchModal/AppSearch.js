@@ -1,4 +1,5 @@
 import React from "react"
+import Link from "next/link"
 import { GoSearch } from "react-icons/go"
 import { useUiStore } from "stores/useUiStore"
 import axios from "axios"
@@ -6,6 +7,7 @@ import ResultsLoading from "./ResultsLoading"
 import CollectionsResultsSuccess from "./CollectionsResultsSuccess"
 import ProfilesResultsSuccess from "./ProfilesResultsSuccess"
 import DaosResultsSuccess from "./DaosResultsSuccess"
+import CollectionAddedCard from "./CollectionAddedCard"
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -147,6 +149,12 @@ const AppSearch = () => {
           ) : (
             <></>
           )}
+        </>
+      ) : hits?.slug ? (
+        <>
+          <div className="flex h-24 w-full items-center justify-center">
+            <CollectionAddedCard hit={hits} closeModal={closeModal} />
+          </div>
         </>
       ) : (
         <ResultsLoading />
