@@ -1,4 +1,5 @@
 import React from "react"
+import { ethers } from "ethers"
 import { useOsStore } from "stores/useOsStore"
 
 const AssetCard = ({ asset }) => {
@@ -16,7 +17,9 @@ const AssetCard = ({ asset }) => {
         {/* asset name & number of sales */}
         <h1>{asset.name}</h1>
         <span className="text-xs font-semibold">
-          Sales: {asset.num_sales ? asset.num_sales : "0"}
+          {asset?.last_sale
+            ? `Last Sale: ${ethers.utils.formatEther(asset.last_sale)} ETH`
+            : "diamond"}
         </span>
       </div>
       {/* asset img */}
@@ -37,7 +40,7 @@ const AssetCard = ({ asset }) => {
           </div>
         </div>
         {/* asset price */}
-        <span className="text-sm font-semibold">asset price</span>
+        <span className="text-sm font-semibold">price</span>
       </div>
       <div className="mt-2 flex flex-row justify-between">
         {/* asset traits */}

@@ -11,7 +11,8 @@ const UserImage = ({ address }) => {
 
   const davatar = React.useMemo(() => {
     return (
-      <Davatar size={175} address={address} generatedAvatarType="blockies" />
+      // <Davatar size={175} address={address} generatedAvatarType="blockies" />
+      <></>
     )
   }, [mounted, address])
 

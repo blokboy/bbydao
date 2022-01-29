@@ -39,11 +39,11 @@ const AllTxs = ({ allTxs, threshold }) => {
             <div className="flex flex-row">
               {tx.confirmations[0]?.owner ? (
                 <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800">
-                  <Davatar
+                  {/* <Davatar
                     size={22}
                     address={tx.confirmations[0].owner}
                     generatedAvatarType="blockies"
-                  />
+                  /> */}
                 </div>
               ) : (
                 <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800"></div>
@@ -69,11 +69,11 @@ const AllTxs = ({ allTxs, threshold }) => {
                       (index === 0 ? " ml-0" : " -ml-3")
                     }
                   >
-                    <Davatar
+                    {/* <Davatar
                       size={22}
                       address={conf.owner}
                       generatedAvatarType="blockies"
-                    />
+                    /> */}
                   </li>
                 ))}
               </ul>
@@ -96,11 +96,11 @@ const AllTxs = ({ allTxs, threshold }) => {
                     executed
                   </span> */}
                   <div className="rounded-full border border-white bg-slate-200 dark:bg-slate-900">
-                    <Davatar
+                    {/* <Davatar
                       size={22}
                       address={tx.executor}
                       generatedAvatarType="blockies"
-                    />
+                    /> */}
                   </div>
                 </>
               ) : tx.confirmations.length >= threshold ? (
