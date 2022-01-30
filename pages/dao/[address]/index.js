@@ -1,5 +1,6 @@
 import React from "react"
 import Dao from "components/Dao"
+import axios from "axios"
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
 
 const DaoPage = ({ data }) => {
@@ -17,19 +18,28 @@ export const getServerSideProps = async ({ query }) => {
   const usd = await safeService.getUsdBalances(query.address)
 
   // SAFE TXs
+  // replace with calls to our backend for safe txs
+  // POST "/" {safeContract: query.address }
+  const res = await axios.post(
+    `${process.env.NEXT_PUBLIC_API}/transaction/safe`,
+    {
+      safeContract: query.address,
+    }
+  )
+  const allTxs = res.data
+
   // Returns a list of transactions for a Safe. The list has different structures depending on the transaction type.
-  const allTxs = await safeService.getMultisigTransactions(query.address)
+  //const allTxs = await safeService.getMultisigTransactions(query.address)
   // Returns the list of multi-signature transactions that are waiting for the confirmation of the Safe owners.
-  const pendingTxs = await safeService.getPendingTransactions(query.address)
+  // const pendingTxs = await safeService.getPendingTransactions(query.address)
   // Returns the history of incoming transactions of a Safe account.
-  const incomingTxs = await safeService.getIncomingTransactions(query.address)
-  //
+  //const incomingTxs = await safeService.getIncomingTransactions(query.address)
 
   const collectibles = await safeService.getCollectibles(query.address)
 
   return {
     props: {
-      data: { safeInfo, usd, allTxs, pendingTxs, incomingTxs, collectibles },
+      data: { safeInfo, usd, allTxs, collectibles },
     },
   }
 }

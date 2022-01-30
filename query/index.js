@@ -69,3 +69,26 @@ export const deleteNotification = async req => {
   const res = await api.post("/notification/delete", req)
   return res.data
 }
+
+// storeTxOffChain
+/* { 
+  creator: string,
+  txHash: string, 
+  tokenContract: string, 
+  tokenId: string, 
+  safeContract: string,
+  value: string,
+  type: enum
+}
+*/
+export const storeTxOffChain = async req => {
+  const res = await api.post("/transaction", req)
+  return res.data
+}
+
+// mutate off chain tx
+// { id: id, approvals: [creator address] }
+export const mutateOffChainTx = async req => {
+  const res = await api.put("/transaction", req)
+  return res.data
+}

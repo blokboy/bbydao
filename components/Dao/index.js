@@ -6,12 +6,17 @@ import Graph from "./Graph"
 import TokensNfts from "./TokensNfts"
 import TxHistory from "./TxHistory"
 import ProposalHistory from "./ProposalHistory"
+import SellModal from "./TokensNfts/SellModal"
+
+import { useOsStore } from "stores/useOsStore"
 
 import { ethers } from "ethers"
 import { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
 import Safe, { SafeFactory, SafeAccountConfig } from "@gnosis.pm/safe-core-sdk"
 
 const Dao = ({ data }) => {
+  const osSellModalOpen = useOsStore(state => state.osSellModalOpen)
+
   let safeSdk
 
   /* create Safe object (pass to AllTxs as prop)
@@ -56,18 +61,18 @@ const Dao = ({ data }) => {
         <div className="flex-start item m-3 flex flex-col md:m-0 md:mr-1 md:w-full">
           <Graph safeAddress={data.safeInfo.address} />
           <TokensNfts tokens={data.usd} collectibles={data.collectibles} />
-          <TxHistory
-            allTxs={data.allTxs}
-            incomingTxs={data.incomingTxs}
-            pendingTxs={data.pendingTxs}
-            threshold={data.safeInfo.threshold}
-          />
+          <TxHistory allTxs={data.allTxs} threshold={data.safeInfo.threshold} />
           <TransactionForm safeAddress={data?.safeInfo.address} />
           {/* </div>
         <div className="flex-start m-3 flex flex-col md:m-0 md:ml-1 md:w-[40%]"> */}
           <ProposalHistory />
 
           {/* modals  */}
+          {osSellModalOpen ? (
+            <SellModal safeAddress={data?.safeInfo.address} />
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </>

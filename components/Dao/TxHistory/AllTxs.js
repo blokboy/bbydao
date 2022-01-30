@@ -30,14 +30,14 @@ const AllTxs = ({ allTxs, threshold }) => {
       <h1 className="mt-4">All Transactions: {allTxs.count}</h1>
       <div className="mt-1 flex flex-col rounded-lg bg-slate-100 p-1 shadow-inner dark:bg-slate-800">
         {/* Txs */}
-        {allTxs.results.map((tx, index) => (
+        {allTxs.map((tx, index) => (
           <div
             key={index}
             className="m-1 flex flex-row items-center justify-between rounded-lg bg-slate-300 p-2 shadow dark:bg-slate-900"
           >
             {/* tx data */}
             <div className="flex flex-row">
-              {tx.confirmations[0]?.owner ? (
+              {tx.approvals ? (
                 <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800">
                   {/* <Davatar
                     size={22}
@@ -49,19 +49,21 @@ const AllTxs = ({ allTxs, threshold }) => {
                 <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800"></div>
               )}
               <span className="mr-1 flex w-20 flex-row justify-end rounded border border-white bg-slate-100 p-1 text-[12px] dark:bg-slate-800">
-                <span>{ethers.utils.formatEther(tx.value).slice(0, 6)}</span>{" "}
+                <span>{ethers.utils.formatEther(tx.value).slice(0, 8)}</span>{" "}
                 <span className="text-blue-500">ETH</span>
               </span>
+
+              {/* render based on type */}
               <span className="p-1 text-[12px] font-semibold">to:</span>
               <span className="w-16 rounded border border-white bg-slate-100 p-1 text-[12px] text-yellow-500 dark:bg-slate-800">
-                {tx.to.slice(0, 6)}...
+                {/* {tx.to.slice(0, 6)}... */}
               </span>
             </div>
 
             {/* tx confirmations */}
             <div className="flex flex-row">
               <ul className="flex w-14 flex-row justify-end px-1">
-                {tx.confirmations.map((conf, index) => (
+                {tx.approvals?.map((conf, index) => (
                   <li
                     key={index}
                     className={
@@ -69,16 +71,17 @@ const AllTxs = ({ allTxs, threshold }) => {
                       (index === 0 ? " ml-0" : " -ml-3")
                     }
                   >
+                    <li className="h-6 w-6 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></li>
                     {/* <Davatar
                       size={22}
-                      address={conf.owner}
+                      address={conf}
                       generatedAvatarType="blockies"
                     /> */}
                   </li>
                 ))}
               </ul>
 
-              <span>/</span>
+              <span></span>
 
               {/* tx rejections */}
               <ul className="flex w-14 flex-row px-1">
@@ -90,20 +93,7 @@ const AllTxs = ({ allTxs, threshold }) => {
 
             {/* approve, reject, execute tx actions */}
             <div className="flex w-28 flex-row justify-end px-1">
-              {tx.isExecuted ? (
-                <>
-                  {/* <span className="bg-blue-400 rounded-lg shadow-sm p-1 text-xs mr-1">
-                    executed
-                  </span> */}
-                  <div className="rounded-full border border-white bg-slate-200 dark:bg-slate-900">
-                    {/* <Davatar
-                      size={22}
-                      address={tx.executor}
-                      generatedAvatarType="blockies"
-                    /> */}
-                  </div>
-                </>
-              ) : tx.confirmations.length >= threshold ? (
+              {tx.approvals?.length >= threshold ? (
                 <button className="mr-1 rounded-lg bg-blue-400 p-1 text-xs shadow-sm">
                   execute
                 </button>

@@ -5,22 +5,14 @@ import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import useForm from "hooks/useForm"
 import { ethers } from "ethers"
 import { createSafeSdk } from "utils/createSafeSdk"
-import { useMutation } from "react-query"
-import * as api from "../../query"
 
-const OfferModal = () => {
-  const osOfferModalOpen = useOsStore(state => state.osOfferModalOpen)
-  const setOsOfferModalOpen = useOsStore(state => state.setOsOfferModalOpen)
+const SellModal = ({ safeAddress }) => {
+  const osSellModalOpen = useOsStore(state => state.osSellModalOpen)
+  const setOsSellModalOpen = useOsStore(state => state.setOsSellModalOpen)
   const osAssetInfo = useOsStore(state => state.osAssetInfo)
   const setOsAssetInfo = useOsStore(state => state.setOsAssetInfo)
 
   const [{ data, error, loading }, disconnect] = useAccount()
-
-  const {
-    data: storedTxData,
-    status: storedTxStatus,
-    mutateAsync: storeTx,
-  } = useMutation(api.storeTxOffChain)
 
   const [safes, setSafes] = React.useState()
   const { state, setState, handleChange } = useForm()
@@ -42,10 +34,10 @@ const OfferModal = () => {
   }, [])
 
   const closeModal = e => {
-    if (!osOfferModalOpen && e.target) {
+    if (!osSellModalOpen && e.target) {
       return
     }
-    setOsOfferModalOpen()
+    setOsSellModalOpen()
     // setOsAssetInfo({})
   }
 
@@ -73,27 +65,33 @@ const OfferModal = () => {
     let fee = (Number(weiString) * 0.01).toString()
     const transactions = [
       {
+        to: state.safe,
+        data: ethers.utils.hexlify(`
+          ${osAssetInfo?.address},
+          "OPENSEA",
+          ${osAssetInfo?.token_id}
+        `),
+        value: weiString,
+      },
+      {
         to: process.env.dao,
-        data: ethers.utils.hexlify([1]),
+        data,
         value: fee,
       },
     ]
-
     const safeTransaction = await safeSdk.createTransaction(...transactions)
     console.log(safeTransaction)
-
-    const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
-    console.log("safeTxHash", safeTxHash)
 
     // Sign the transaction off-chain (in wallet)
     const signedTransaction = await safeSdk.signTransaction(safeTransaction)
     console.log("signedTransaction", signedTransaction)
 
+    const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
+
     const safeService = new SafeServiceClient(
       "https://safe-transaction.gnosis.io"
     )
 
-    let safeAddress = state.safe
     const transactionConfig = {
       safeAddress,
       safeTransaction,
@@ -103,30 +101,13 @@ const OfferModal = () => {
     const proposedTx = await safeService.proposeTransaction(transactionConfig)
     console.log("proposedTx", proposedTx)
 
-    const tx = {
-      approvals: [data?.address],
-      creator: data?.address,
-      txHash: safeTxHash,
-      tokenContract: osAssetInfo?.address,
-      tokenId: osAssetInfo?.token_id,
-      safeContract: state.safe,
-      value: weiString,
-      type: 1,
-    }
-
-    storeTx(tx)
-
-    // show confirmation in modal
-    //
-    // render button to close OfferModal
-
     // console.log("token_id", osAssetInfo?.token_id)
     // console.log("token address", osAssetInfo?.address)
     // console.log("safe", state.safe)
     // console.log("value", state.offerValue)
   }
 
-  if (!osOfferModalOpen) return <></>
+  if (!osSellModalOpen) return <></>
 
   return (
     <div
@@ -194,4 +175,4 @@ const OfferModal = () => {
   )
 }
 
-export default OfferModal
+export default SellModal
