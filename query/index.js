@@ -26,7 +26,7 @@ export const getUsers = async () => {
 }
 
 // update user
-// { id: id, username: string, email: string }
+// { id: id, username: string, email: string, ens: string }
 export const updateUser = async req => {
   const res = await api.put("/accounts", req)
   console.log("query: Update User", res.data)

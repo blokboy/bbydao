@@ -21,6 +21,6 @@ export const getServerSideProps = async ({ query }) => {
     return { props: { data: collection } }
   } catch (error) {
     console.log(error)
-    return { props: { data: undefined } }
+    return { props: { data: null } }
   }
 }

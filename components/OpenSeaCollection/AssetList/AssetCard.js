@@ -5,10 +5,15 @@ import { useOsStore } from "stores/useOsStore"
 const AssetCard = ({ asset }) => {
   const setOsOfferModalOpen = useOsStore(state => state.setOsOfferModalOpen)
   const setOsAssetInfo = useOsStore(state => state.setOsAssetInfo)
+  const setOsBuyModalOpen = useOsStore(state => state.setOsBuyModalOpen)
 
   const offerModal = () => {
     setOsOfferModalOpen()
     setOsAssetInfo({ address: asset.address, token_id: asset.token_id })
+  }
+
+  const buyModal = () => {
+    setOsBuyModalOpen()
   }
 
   return (
@@ -57,7 +62,10 @@ const AssetCard = ({ asset }) => {
       </div>
       {/* buy offer buttons */}
       <div className="mt-2 flex flex-row justify-center">
-        <button className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900">
+        <button
+          onClick={buyModal}
+          className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900"
+        >
           buy
         </button>
         <button

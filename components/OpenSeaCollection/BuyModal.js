@@ -6,9 +6,9 @@ import useForm from "hooks/useForm"
 import { ethers } from "ethers"
 import { createSafeSdk } from "utils/createSafeSdk"
 
-const OfferModal = () => {
-  const osOfferModalOpen = useOsStore(state => state.osOfferModalOpen)
-  const setOsOfferModalOpen = useOsStore(state => state.setOsOfferModalOpen)
+const BuyModal = () => {
+  const osBuyModalOpen = useOsStore(state => state.osBuyModalOpen)
+  const setOsBuyModalOpen = useOsStore(state => state.setOsBuyModalOpen)
   const osAssetInfo = useOsStore(state => state.osAssetInfo)
   const setOsAssetInfo = useOsStore(state => state.setOsAssetInfo)
 
@@ -34,10 +34,10 @@ const OfferModal = () => {
   }, [])
 
   const closeModal = e => {
-    if (!osOfferModalOpen && e.target) {
+    if (!osBuyModalOpen && e.target) {
       return
     }
-    setOsOfferModalOpen()
+    setOsBuyModalOpen()
     // setOsAssetInfo({})
   }
 
@@ -107,7 +107,7 @@ const OfferModal = () => {
     // console.log("value", state.offerValue)
   }
 
-  if (!osOfferModalOpen) return <></>
+  if (!osBuyModalOpen) return <></>
 
   return (
     <div
@@ -175,4 +175,4 @@ const OfferModal = () => {
   )
 }
 
-export default OfferModal
+export default BuyModal

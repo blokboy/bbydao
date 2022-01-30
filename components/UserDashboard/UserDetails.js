@@ -3,17 +3,11 @@ import Link from "next/link"
 import { useUiStore } from "stores/useUiStore"
 import { useMutation } from "react-query"
 import * as api from "../../query"
-import { useEnsLookup, useAccount, useConnect } from "wagmi"
+import { useAccount, useConnect } from "wagmi"
 
-const UserDetails = ({ address }) => {
+const UserDetails = ({ address, ens }) => {
   const [{ data: connectData, error: connectError }, connect] = useConnect()
   const [{ data, error, loading }, disconnect] = useAccount()
-  const [
-    { data: ensData, error: ensError, loading: ensLoading },
-    lookupAddress,
-  ] = useEnsLookup({
-    address: address,
-  })
 
   const setConnectModalOpen = useUiStore(state => state.setConnectModalOpen)
 
@@ -31,22 +25,14 @@ const UserDetails = ({ address }) => {
 
   return (
     <div className="mt-4 flex flex-col items-center text-center md:items-start md:text-left">
-      {ensLoading && !ensData ? (
-        <div className="flex w-full animate-pulse place-content-center space-x-2 md:place-content-start">
-          <div className="h-10 w-3/12 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] md:w-8/12"></div>
-        </div>
-      ) : ensData && !ensLoading ? (
+      {ens ? (
         <span className="h-10 w-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-3xl text-transparent">
-          @{ensData}
+          @{ens}
         </span>
-      ) : !ensData && !loading ? (
+      ) : (
         <span className="h-10 w-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-3xl text-transparent">
           @{`${address.substring(0, 6) + "..."}`}
         </span>
-      ) : (
-        <div className="flex w-full animate-pulse place-content-center space-x-2 md:place-content-start">
-          <div className="h-10 w-1/2 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] md:w-8/12"></div>
-        </div>
       )}
 
       {data?.address === address ? (

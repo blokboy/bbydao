@@ -6,6 +6,11 @@ export const useOsStore = create(set => ({
   setOsOfferModalOpen: () =>
     set(state => ({ osOfferModalOpen: !state.osOfferModalOpen })),
 
+  // os offer modal display
+  osBuyModalOpen: false,
+  setOsBuyModalOpen: () =>
+    set(state => ({ osBuyModalOpen: !state.osBuyModalOpen })),
+
   // os asset info
   osAssetInfo: {},
   setOsAssetInfo: asset => set({ osAssetInfo: asset }),

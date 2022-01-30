@@ -20,7 +20,10 @@ const ProfilesResultsSuccess = ({ hits, closeModal }) => {
                 </div>
                 <div className="ml-3 flex h-full w-full flex-row items-center">
                   <span className="mr-3 text-lg font-semibold">
-                    @{`${hit.address.substring(0, 12) + "..."}`}
+                    @
+                    {hit.ens
+                      ? hit.ens
+                      : `${hit.address.substring(0, 12) + "..."}`}
                   </span>
                 </div>
               </div>

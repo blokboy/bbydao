@@ -4,10 +4,12 @@ import CollectionInfo from "./CollectionInfo"
 import CollectionStats from "./CollectionStats"
 import AssetList from "./AssetList"
 import OfferModal from "./OfferModal"
+import BuyModal from "./BuyModal"
 import { useOsStore } from "../../stores/useOsStore"
 
 const OpenSeaCollection = ({ data }) => {
   const osOfferModalOpen = useOsStore(state => state.osOfferModalOpen)
+  const osBuyModalOpen = useOsStore(state => state.osBuyModalOpen)
 
   if (!data) return <></>
 
@@ -34,6 +36,7 @@ const OpenSeaCollection = ({ data }) => {
       </div>
       {/* offer modal */}
       {osOfferModalOpen ? <OfferModal /> : <></>}
+      {osBuyModalOpen ? <BuyModal /> : <></>}
     </div>
   )
 }
