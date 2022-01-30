@@ -119,11 +119,6 @@ const OfferModal = () => {
     // show confirmation in modal
     //
     // render button to close OfferModal
-
-    // console.log("token_id", osAssetInfo?.token_id)
-    // console.log("token address", osAssetInfo?.address)
-    // console.log("safe", state.safe)
-    // console.log("value", state.offerValue)
   }
 
   if (!osOfferModalOpen) return <></>

@@ -5,6 +5,8 @@ import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import useForm from "hooks/useForm"
 import { ethers } from "ethers"
 import { createSafeSdk } from "utils/createSafeSdk"
+import { useMutation } from "react-query"
+import * as api from "../../query"
 
 const BuyModal = () => {
   const osBuyModalOpen = useOsStore(state => state.osBuyModalOpen)
@@ -13,6 +15,12 @@ const BuyModal = () => {
   const setOsAssetInfo = useOsStore(state => state.setOsAssetInfo)
 
   const [{ data, error, loading }, disconnect] = useAccount()
+
+  const {
+    data: storedTxData,
+    status: storedTxStatus,
+    mutateAsync: storeTx,
+  } = useMutation(api.storeTxOffChain)
 
   const [safes, setSafes] = React.useState()
   const { state, setState, handleChange } = useForm()
@@ -65,17 +73,8 @@ const BuyModal = () => {
     let fee = (Number(weiString) * 0.01).toString()
     const transactions = [
       {
-        to: state.safe,
-        data: ethers.utils.hexlify(`
-          ${osAssetInfo?.address},
-          "OPENSEA",
-          ${osAssetInfo?.token_id}
-        `),
-        value: weiString,
-      },
-      {
         to: process.env.dao,
-        data,
+        data: ethers.utils.hexlify([1]),
         value: fee,
       },
     ]
@@ -92,6 +91,7 @@ const BuyModal = () => {
       "https://safe-transaction.gnosis.io"
     )
 
+    let safeAddress = state.safe
     const transactionConfig = {
       safeAddress,
       safeTransaction,
@@ -101,10 +101,22 @@ const BuyModal = () => {
     const proposedTx = await safeService.proposeTransaction(transactionConfig)
     console.log("proposedTx", proposedTx)
 
-    // console.log("token_id", osAssetInfo?.token_id)
-    // console.log("token address", osAssetInfo?.address)
-    // console.log("safe", state.safe)
-    // console.log("value", state.offerValue)
+    const tx = {
+      approvals: [data?.address],
+      creator: data?.address,
+      txHash: safeTxHash,
+      tokenContract: osAssetInfo?.address,
+      tokenId: osAssetInfo?.token_id,
+      safeContract: state.safe,
+      value: weiString,
+      type: 1,
+    }
+
+    storeTx(tx)
+
+    // show confirmation in modal
+    //
+    // render button to close BuyModal
   }
 
   if (!osBuyModalOpen) return <></>
