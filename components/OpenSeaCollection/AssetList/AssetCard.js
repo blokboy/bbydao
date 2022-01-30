@@ -14,6 +14,7 @@ const AssetCard = ({ asset }) => {
 
   const buyModal = () => {
     setOsBuyModalOpen()
+    setOsAssetInfo({ address: asset.address, token_id: asset.token_id })
   }
 
   return (
