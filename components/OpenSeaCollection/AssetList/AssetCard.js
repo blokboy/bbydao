@@ -9,12 +9,20 @@ const AssetCard = ({ asset }) => {
 
   const offerModal = () => {
     setOsOfferModalOpen()
-    setOsAssetInfo({ address: asset.address, token_id: asset.token_id })
+    setOsAssetInfo({
+      address: asset.address,
+      token_id: asset.token_id,
+      sellOrder: null,
+    })
   }
 
   const buyModal = () => {
     setOsBuyModalOpen()
-    setOsAssetInfo({ address: asset.address, token_id: asset.token_id })
+    setOsAssetInfo({
+      address: asset.address,
+      token_id: asset.token_id,
+      sellOrder: asset.sell_orders?.[0].current_price || null,
+    })
   }
 
   return (
@@ -63,12 +71,16 @@ const AssetCard = ({ asset }) => {
       </div>
       {/* buy offer buttons */}
       <div className="mt-2 flex flex-row justify-center">
-        <button
-          onClick={buyModal}
-          className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900"
-        >
-          buy
-        </button>
+        {asset?.sell_orders ? (
+          <button
+            onClick={buyModal}
+            className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900"
+          >
+            buy
+          </button>
+        ) : (
+          <></>
+        )}
         <button
           onClick={offerModal}
           className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900"
