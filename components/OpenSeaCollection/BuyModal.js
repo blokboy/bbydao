@@ -119,6 +119,9 @@ const BuyModal = () => {
     // render button to close BuyModal
   }
 
+  const sellOrderWei = ethers.utils.parseUnits(osAssetInfo?.sellOrder)
+  const sellOrderEth = ethers.utils.formatEther(sellOrderWei)
+
   if (!osBuyModalOpen) return <></>
 
   return (
@@ -159,18 +162,8 @@ const BuyModal = () => {
               : "no safes"}
 
             <label className="mb-2 block text-sm font-bold" htmlFor="name">
-              value
+              {sellOrderEth}
             </label>
-            <input
-              value={state.offerValue || ""}
-              onChange={handleChange}
-              className="focus:shadow-outline w-full appearance-none rounded border bg-slate-200 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
-              id="offerValue"
-              name="offerValue"
-              type="number"
-              placeholder="value"
-              required
-            />
           </div>
           <div className="flex items-center justify-between">
             <button
