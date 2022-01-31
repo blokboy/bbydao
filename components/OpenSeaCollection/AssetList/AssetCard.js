@@ -54,7 +54,10 @@ const AssetCard = ({ asset }) => {
           </div>
         </div>
         {/* asset price */}
-        <span className="text-sm font-semibold">price</span>
+        <div className="mx-2 flex flex-col">
+          <span className="text-xs font-semibold">price</span>
+          <span className="text-sm font-semibold">{ asset?.sell_orders ? asset.sell_orders[0].current_price / (10 ** 18) : 'Not For Sale' }</span>
+        </div>
       </div>
       <div className="mt-2 flex flex-row justify-between">
         {/* asset traits */}

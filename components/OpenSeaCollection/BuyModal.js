@@ -109,7 +109,7 @@ const BuyModal = () => {
       tokenId: osAssetInfo?.token_id,
       safeContract: state.safe,
       value: weiString,
-      type: 1,
+      type: 2,
     }
 
     storeTx(tx)
@@ -120,7 +120,9 @@ const BuyModal = () => {
   }
 
   const sellOrderWei = ethers.utils.parseUnits(osAssetInfo?.sellOrder)
-  const sellOrderEth = ethers.utils.formatEther(sellOrderWei)
+  const sellOrderEth = ethers.utils.formatEther(sellOrderWei).toString()
+  const price = Number(sellOrderEth) / (10 ** 18)
+  console.log('wei ', price)
 
   if (!osBuyModalOpen) return <></>
 
@@ -162,7 +164,7 @@ const BuyModal = () => {
               : "no safes"}
 
             <label className="mb-2 block text-sm font-bold" htmlFor="name">
-              {sellOrderEth}
+              {price}
             </label>
           </div>
           <div className="flex items-center justify-between">
