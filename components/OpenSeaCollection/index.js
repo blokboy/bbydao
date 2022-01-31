@@ -11,7 +11,7 @@ const OpenSeaCollection = ({ data }) => {
   const osOfferModalOpen = useOsStore(state => state.osOfferModalOpen)
   const osBuyModalOpen = useOsStore(state => state.osBuyModalOpen)
 
-  if (!data) return <></>
+  if (!data) return <div className="h-screen">collection fetch failed</div>
 
   return (
     <div className="flex w-full flex-col md:px-10 lg:px-16">

@@ -61,9 +61,10 @@ const BuyModal = () => {
     const safeSdk = await createSafeSdk(state.safe)
 
     // construct txs
-    let wei = ethers.utils.parseEther(state.offerValue)
-    let weiString = wei.toString()
+    let wei = ethers.utils.parseUnits(osAssetInfo?.sellOrder)
+    let weiString = ethers.utils.formatEther(wei).toString()
     let fee = (Number(weiString) * 0.01).toString()
+    console.log(fee)
     const transactions = [
       {
         to: process.env.dao,
@@ -138,10 +139,15 @@ const BuyModal = () => {
         onClick={e => closeModal(e)}
       >
         <div
-          className="z-50 mx-auto mt-24 flex h-1/3 w-full flex-col rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
+          className="z-50 mx-auto mt-24 flex h-1/3 w-full flex-col items-center rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
           onClick={e => closeModal(e)}
         >
-          waiting
+          <div className="mt-10 motion-safe:animate-[bounce_3s_ease-in-out_infinite]">
+            <img alt="" src="/babydao.png" width={200} height={200} />
+          </div>
+          <h1 className="animation animate-pulse text-xl">
+            please check your wallet...
+          </h1>
         </div>
       </div>
     )
@@ -153,10 +159,11 @@ const BuyModal = () => {
       onClick={e => closeModal(e)}
     >
       <div
-        className="z-50 mx-auto mt-24 flex h-3/4 w-full flex-col items-center rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
+        className="min-h-3/4 z-50 mx-auto mt-24 flex w-full flex-col items-center rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
         onClick={e => closeModal(e)}
       >
         <img
+          className="mb-2"
           width="250px"
           src={osAssetInfo.image_url}
           alt={osAssetInfo?.token_id}
@@ -164,37 +171,42 @@ const BuyModal = () => {
         <div className="font-bold">
           <span>{price}</span> <span className="text-blue-500">ETH</span>
         </div>
-        <span>{data?.address ? data.address : "not connected"}</span>
-        <span>{osAssetInfo?.address}</span>
-        <span>{osAssetInfo?.token_id}</span>
 
         {/* form to get proposed offer value */}
         {/* onSubmit make offer */}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-8">
+        <form className="w-11/12" onSubmit={handleSubmit}>
+          <div className="mb-2">
+            <span className="font-semibold">
+              Please pick a dao to perform this action from
+            </span>
             {/* iterate through safes into radio input buttons, value will be picked up by useForm */}
-            {safes?.length
-              ? safes?.map((safe, index) => (
-                  <div className="" key={index}>
-                    <input
-                      type="radio"
-                      name="safe"
-                      checked={state.safe === safe}
-                      onChange={handleChange}
-                      value={safe}
-                    />
-                    <label className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text pl-4 font-semibold text-transparent">
-                      {safe.substring(0, 6) +
-                        "..." +
-                        safe.substring(safe.length - 5, safe.length - 1)}
-                    </label>
-                  </div>
-                ))
-              : "no safes"}
+            <div className="my-2 mb-4 grid grid-cols-3">
+              {safes?.length
+                ? safes?.map((safe, index) => (
+                    <div
+                      className="m-1 bg-slate-300 p-3 dark:bg-slate-800"
+                      key={index}
+                    >
+                      <input
+                        type="radio"
+                        name="safe"
+                        checked={state.safe === safe}
+                        onChange={handleChange}
+                        value={safe}
+                      />
+                      <label className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text pl-4 font-semibold text-transparent">
+                        {safe.substring(0, 6) +
+                          "..." +
+                          safe.substring(safe.length - 5, safe.length - 1)}
+                      </label>
+                    </div>
+                  ))
+                : "no safes"}
+            </div>
           </div>
           <div className="flex items-center justify-between">
             <button
-              className="focus:shadow-outline w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
+              className="focus:shadow-outline w-full rounded-xl bg-slate-300 py-3 px-4 font-bold shadow-xl hover:bg-slate-400 focus:outline-none dark:bg-slate-800 dark:hover:bg-slate-700"
               type="submit"
             >
               submit

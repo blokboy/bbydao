@@ -132,10 +132,15 @@ const OfferModal = () => {
         onClick={e => closeModal(e)}
       >
         <div
-          className="z-50 mx-auto mt-24 flex h-1/3 w-full flex-col rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
+          className="z-50 mx-auto mt-24 flex h-1/3 w-full flex-col items-center rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
           onClick={e => closeModal(e)}
         >
-          waiting
+          <div className="mt-10 motion-safe:animate-[bounce_3s_ease-in-out_infinite]">
+            <img alt="" src="/babydao.png" width={200} height={200} />
+          </div>
+          <h1 className="animation animate-pulse text-xl">
+            please check your wallet...
+          </h1>
         </div>
       </div>
     )
@@ -147,61 +152,65 @@ const OfferModal = () => {
       onClick={e => closeModal(e)}
     >
       <div
-        className="z-50 mx-auto mt-24 flex h-3/4 w-full flex-col items-center rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
+        className="min-h-3/4 z-50 mx-auto mt-24 flex w-full flex-col items-center rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
         onClick={e => closeModal(e)}
       >
         <img
+          className="mb-2"
           width="250px"
           src={osAssetInfo.image_url}
           alt={osAssetInfo?.token_id}
         />
-        <div className="flex flex-col">
-          <span>{data?.address ? data.address : "not connected"}</span>
-          <span>{osAssetInfo?.address}</span>
-          <span>{osAssetInfo?.token_id}</span>
-        </div>
 
         {/* form to get proposed offer value */}
         {/* onSubmit make offer */}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-8">
-            {/* iterate through safes into radio input buttons, value will be picked up by useForm */}
-            {safes?.length
-              ? safes?.map((safe, index) => (
-                  <div className="" key={index}>
-                    <input
-                      type="radio"
-                      name="safe"
-                      checked={state.safe === safe}
-                      onChange={handleChange}
-                      value={safe}
-                    />
-                    <label className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text pl-4 font-semibold text-transparent">
-                      {safe.substring(0, 6) +
-                        "..." +
-                        safe.substring(safe.length - 5, safe.length - 1)}
-                    </label>
-                  </div>
-                ))
-              : "no safes"}
-
-            <label className="mb-2 block text-sm font-bold" htmlFor="name">
-              value
+        <form className="w-11/12" onSubmit={handleSubmit}>
+          <div className="mb-2">
+            <label className="text-sm font-bold" htmlFor="name">
+              Offer (in ETH)
             </label>
             <input
               value={state.offerValue || ""}
               onChange={handleChange}
-              className="focus:shadow-outline w-full appearance-none rounded border bg-slate-200 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
+              className="focus:shadow-outline mb-4 w-full appearance-none rounded border bg-slate-100 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
               id="offerValue"
               name="offerValue"
               type="number"
-              placeholder="value"
+              placeholder="ETH value"
               required
             />
+
+            <span className="font-semibold">
+              Please pick a dao to perform this action from
+            </span>
+            {/* iterate through safes into radio input buttons, value will be picked up by useForm */}
+            <div className="my-2 mb-4 grid grid-cols-3">
+              {safes?.length
+                ? safes?.map((safe, index) => (
+                    <div
+                      className="m-1 bg-slate-300 p-3 dark:bg-slate-800"
+                      key={index}
+                    >
+                      <input
+                        type="radio"
+                        name="safe"
+                        checked={state.safe === safe}
+                        onChange={handleChange}
+                        value={safe}
+                      />
+                      <label className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text pl-4 font-semibold text-transparent">
+                        {safe.substring(0, 6) +
+                          "..." +
+                          safe.substring(safe.length - 5, safe.length - 1)}
+                      </label>
+                    </div>
+                  ))
+                : "no safes"}
+            </div>
           </div>
           <div className="flex items-center justify-between">
             <button
-              className="focus:shadow-outline w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
+              className="focus:shadow-outline w-full rounded-xl bg-slate-300 py-3 px-4 font-bold shadow-xl hover:bg-slate-400 focus:outline-none dark:bg-slate-800 dark:hover:bg-slate-700"
               type="submit"
             >
               submit
