@@ -12,6 +12,7 @@ const AssetCard = ({ asset }) => {
     setOsAssetInfo({
       address: asset.address,
       token_id: asset.token_id,
+      image_url: asset.image_url,
       sellOrder: null,
     })
   }
@@ -21,6 +22,7 @@ const AssetCard = ({ asset }) => {
     setOsAssetInfo({
       address: asset.address,
       token_id: asset.token_id,
+      image_url: asset.image_url,
       sellOrder: asset.sell_orders?.[0].current_price || null,
     })
   }
@@ -56,7 +58,11 @@ const AssetCard = ({ asset }) => {
         {/* asset price */}
         <div className="mx-2 flex flex-col">
           <span className="text-xs font-semibold">price</span>
-          <span className="text-sm font-semibold">{ asset?.sell_orders ? asset.sell_orders[0].current_price / (10 ** 18) : 'Not For Sale' }</span>
+          <span className="text-sm font-semibold">
+            {asset?.sell_orders
+              ? asset.sell_orders[0].current_price / 10 ** 18
+              : "Not For Sale"}
+          </span>
         </div>
       </div>
       <div className="mt-2 flex flex-row justify-between">

@@ -13,6 +13,7 @@ const BuyModal = () => {
   const setOsBuyModalOpen = useOsStore(state => state.setOsBuyModalOpen)
   const osAssetInfo = useOsStore(state => state.osAssetInfo)
   const setOsAssetInfo = useOsStore(state => state.setOsAssetInfo)
+  const [txWaiting, setTxWaiting] = React.useState(false)
 
   const [{ data, error, loading }, disconnect] = useAccount()
 
@@ -56,16 +57,8 @@ const BuyModal = () => {
       console.log("no safe submitted")
       return
     }
-    // ?
-    await window.ethereum.enable()
-    await window.ethereum.request({ method: "eth_requestAccounts" })
-
     // createSafeSdk
     const safeSdk = await createSafeSdk(state.safe)
-
-    // ?
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner(provider.provider.selectedAddress)
 
     // construct txs
     let wei = ethers.utils.parseEther(state.offerValue)
@@ -78,14 +71,22 @@ const BuyModal = () => {
         value: fee,
       },
     ]
-    const safeTransaction = await safeSdk.createTransaction(...transactions)
-    console.log(safeTransaction)
 
-    // Sign the transaction off-chain (in wallet)
-    const signedTransaction = await safeSdk.signTransaction(safeTransaction)
-    console.log("signedTransaction", signedTransaction)
+    const safeTransaction = await safeSdk.createTransaction(...transactions)
 
     const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
+
+    // modal in waiting state
+    setTxWaiting(true)
+
+    try {
+      // Sign the transaction off-chain (in wallet)
+      const signedTransaction = await safeSdk.signTransaction(safeTransaction)
+    } catch (error) {
+      setTxWaiting(false)
+      // user rejected tx
+      return
+    }
 
     const safeService = new SafeServiceClient(
       "https://safe-transaction.gnosis.io"
@@ -99,7 +100,7 @@ const BuyModal = () => {
       senderAddress: data.address,
     }
     const proposedTx = await safeService.proposeTransaction(transactionConfig)
-    console.log("proposedTx", proposedTx)
+    // if proposedTx fails - txLoading(false)...
 
     const tx = {
       approvals: [data?.address],
@@ -113,18 +114,38 @@ const BuyModal = () => {
     }
 
     storeTx(tx)
+    // if storeTx fails...
+
+    // tx success, waiting state false
+    setTxWaiting(false)
 
     // show confirmation in modal
-    //
-    // render button to close BuyModal
+    // render button to close OfferModal
   }
 
   const sellOrderWei = ethers.utils.parseUnits(osAssetInfo?.sellOrder)
   const sellOrderEth = ethers.utils.formatEther(sellOrderWei).toString()
-  const price = Number(sellOrderEth) / (10 ** 18)
-  console.log('wei ', price)
+  const price = Number(sellOrderEth) / 10 ** 18
+  console.log("wei ", price)
 
   if (!osBuyModalOpen) return <></>
+
+  // if txWaiting ?
+  if (txWaiting) {
+    return (
+      <div
+        className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
+        onClick={e => closeModal(e)}
+      >
+        <div
+          className="z-50 mx-auto mt-24 flex h-1/3 w-full flex-col rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
+          onClick={e => closeModal(e)}
+        >
+          waiting
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -132,9 +153,17 @@ const BuyModal = () => {
       onClick={e => closeModal(e)}
     >
       <div
-        className="z-50 mx-auto mt-24 flex w-full flex-col rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
+        className="z-50 mx-auto mt-24 flex h-3/4 w-full flex-col items-center rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
         onClick={e => closeModal(e)}
       >
+        <img
+          width="250px"
+          src={osAssetInfo.image_url}
+          alt={osAssetInfo?.token_id}
+        />
+        <div className="font-bold">
+          <span>{price}</span> <span className="text-blue-500">ETH</span>
+        </div>
         <span>{data?.address ? data.address : "not connected"}</span>
         <span>{osAssetInfo?.address}</span>
         <span>{osAssetInfo?.token_id}</span>
@@ -162,10 +191,6 @@ const BuyModal = () => {
                   </div>
                 ))
               : "no safes"}
-
-            <label className="mb-2 block text-sm font-bold" htmlFor="name">
-              {price}
-            </label>
           </div>
           <div className="flex items-center justify-between">
             <button
