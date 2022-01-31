@@ -13,7 +13,7 @@ const Nfts = ({ collectibles }) => {
           <div className="flex flex-col items-center">
             <img className="p-3" key={index} src={nft.imageUri} alt="" />
             <button
-              className="w-1/2 rounded bg-slate-200 p-3 shadow dark:bg-slate-800"
+              className="w-1/2 rounded-lg bg-slate-300 p-3 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700"
               onClick={setOsSellModalOpen}
             >
               sell
