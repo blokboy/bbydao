@@ -2,9 +2,13 @@ import React from "react"
 import { ethers } from "ethers"
 import Davatar from "@davatar/react"
 import ApproveReject from "./ApproveReject"
+import { useAccount } from "wagmi"
 
-const AllTxs = ({ allTxs, threshold }) => {
+const AllTxs = ({ allTxs, owners, threshold }) => {
   console.log("AllTxs", allTxs)
+  const [{ data, error, loading }, disconnect] = useAccount()
+
+  console.log(data?.address)
 
   // sign
   // reject
@@ -98,8 +102,10 @@ const AllTxs = ({ allTxs, threshold }) => {
                 <button className="mr-1 rounded-lg bg-blue-400 p-1 text-xs shadow-sm">
                   execute
                 </button>
-              ) : (
+              ) : data && owners?.includes(data?.address) ? (
                 <ApproveReject tx={tx} />
+              ) : (
+                <></>
               )}
             </div>
           </div>

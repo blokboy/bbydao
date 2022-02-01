@@ -61,7 +61,11 @@ const Dao = ({ data }) => {
         <div className="flex-start item m-3 flex flex-col md:m-0 md:mr-1 md:w-full">
           <Graph safeAddress={data.safeInfo.address} />
           <TokensNfts tokens={data.usd} collectibles={data.collectibles} />
-          <TxHistory allTxs={data.allTxs} threshold={data.safeInfo.threshold} />
+          <TxHistory
+            allTxs={data.allTxs}
+            owners={data.safeInfo.owners}
+            threshold={data.safeInfo.threshold}
+          />
           <TransactionForm safeAddress={data?.safeInfo.address} />
           {/* </div>
         <div className="flex-start m-3 flex flex-col md:m-0 md:ml-1 md:w-[40%]"> */}

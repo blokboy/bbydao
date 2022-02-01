@@ -2,7 +2,7 @@ import React from "react"
 import PendingTxs from "./PendingTxs"
 import AllTxs from "./AllTxs"
 
-const TxHistory = ({ allTxs, threshold }) => {
+const TxHistory = ({ allTxs, owners, threshold }) => {
   console.log("TxHistory allTxs", allTxs)
   // console.log("TxHistory pendingTxs", pendingTxs)
 
@@ -11,7 +11,7 @@ const TxHistory = ({ allTxs, threshold }) => {
       {/* pre sig transactions - awaiting threshold sigs*/}
       {/* <PendingTxs pendingTxs={pendingTxs} /> */}
       {/* post sig transactions - ready to execute*/}
-      <AllTxs allTxs={allTxs} threshold={threshold} />
+      <AllTxs allTxs={allTxs} owners={owners} threshold={threshold} />
     </div>
   )
 }

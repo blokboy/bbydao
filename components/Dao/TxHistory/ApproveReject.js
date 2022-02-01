@@ -3,12 +3,14 @@ import React from "react"
 const ApproveReject = ({ tx }) => {
   const { type, txHash } = tx
 
-  const handleApprove = () => {
+  const handleApprove = async e => {
+    e.preventDefault()
     console.log("approve type", type)
     console.log("approve hash", txHash)
   }
 
-  const handleReject = () => {
+  const handleReject = async e => {
+    e.preventDefault()
     console.log("reject type", type)
     console.log("reject hash", txHash)
   }

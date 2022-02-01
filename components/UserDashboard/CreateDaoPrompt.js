@@ -9,7 +9,7 @@ const CreateDaoPrompt = () => {
   return (
     <div className="mt-10 flex w-full flex-col items-center">
       <span className="text-2xl font-bold">
-        you havent joined any daos yet.
+        Create a new dao to get started
       </span>
       <CreateDaoButton />
     </div>

@@ -53,14 +53,16 @@ const UserDashboard = ({ data }) => {
             <div className="flex-start flex flex-col px-4 md:w-3/12 md:px-10">
               <UserImage address={address} />
               <UserDetails address={address} ens={ens} />
-              {accountData ? <CreateDaoButton /> : <></>}
+              {address === accountData?.address ? <CreateDaoButton /> : <></>}
               <UserFriends address={address} />
             </div>
             <div className="flex flex-col px-10 md:w-9/12">
               {safes.length ? (
                 <UserDaos address={address} safes={safes} />
-              ) : (
+              ) : address === accountData?.address ? (
                 <CreateDaoPrompt />
+              ) : (
+                <></>
               )}
             </div>
           </div>
