@@ -1,6 +1,7 @@
 import React from "react"
 import { ethers } from "ethers"
 import Davatar from "@davatar/react"
+import ApproveReject from "./ApproveReject"
 
 const AllTxs = ({ allTxs, threshold }) => {
   console.log("AllTxs", allTxs)
@@ -98,14 +99,7 @@ const AllTxs = ({ allTxs, threshold }) => {
                   execute
                 </button>
               ) : (
-                <>
-                  <button className="mr-1 rounded-lg bg-red-400 p-1 text-xs shadow-sm">
-                    reject
-                  </button>
-                  <button className="rounded-lg bg-green-400 p-1 text-xs shadow-sm">
-                    approve
-                  </button>
-                </>
+                <ApproveReject tx={tx} />
               )}
             </div>
           </div>
