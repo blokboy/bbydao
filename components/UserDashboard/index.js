@@ -10,6 +10,7 @@ import { useUiStore } from "stores/useUiStore"
 import * as api from "../../query"
 import { useMutation } from "react-query"
 import { useEnsLookup } from "wagmi"
+import CreateDaoButton from "./CreateDaoButton"
 
 const UserDashboard = ({ data }) => {
   const { id, address, ens } = data.user
@@ -48,10 +49,15 @@ const UserDashboard = ({ data }) => {
             <div className="flex-start flex flex-col px-4 md:w-3/12 md:px-10">
               <UserImage address={address} />
               <UserDetails address={address} ens={ens} />
+              <CreateDaoButton />
               <UserFriends address={address} />
             </div>
             <div className="flex flex-col px-10 md:w-9/12">
-              {safes.length ? <UserDaos safes={safes} /> : <CreateDaoPrompt />}
+              {safes.length ? (
+                <UserDaos address={address} safes={safes} />
+              ) : (
+                <CreateDaoPrompt />
+              )}
             </div>
           </div>
         </>
