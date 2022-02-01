@@ -38,11 +38,11 @@ const PendingTxs = ({ pendingTxs, threshold }) => {
                       (index === 0 ? " ml-0" : " -ml-3")
                     }
                   >
-                    <Davatar
+                    {/* <Davatar
                       size={22}
                       address={conf.owner}
                       generatedAvatarType="blockies"
-                    />
+                    /> */}
                   </li>
                 ))}
               </ul>

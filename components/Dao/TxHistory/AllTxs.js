@@ -40,11 +40,11 @@ const AllTxs = ({ allTxs, threshold }) => {
             <div className="flex flex-row">
               {tx.approvals ? (
                 <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800">
-                  <Davatar
+                  {/* <Davatar
                     size={22}
                     address={tx.confirmations[0].owner}
                     generatedAvatarType="blockies"
-                  />
+                  /> */}
                 </div>
               ) : (
                 <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800"></div>
@@ -73,11 +73,11 @@ const AllTxs = ({ allTxs, threshold }) => {
                     }
                   >
                     <li className="h-6 w-6 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></li>
-                    <Davatar
+                    {/* <Davatar
                       size={22}
                       address={conf}
                       generatedAvatarType="blockies"
-                    />
+                    /> */}
                   </li>
                 ))}
               </ul>
