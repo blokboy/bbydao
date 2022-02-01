@@ -1,7 +1,8 @@
 import React from "react"
 import { ethers } from "ethers"
 import Davatar from "@davatar/react"
-import ApproveReject from "./ApproveReject"
+import ApproveRejectTx from "./ApproveRejectTx"
+import ExecuteTx from "./ExecuteTx"
 import { useAccount } from "wagmi"
 
 const AllTxs = ({ allTxs, owners, threshold }) => {
@@ -98,12 +99,14 @@ const AllTxs = ({ allTxs, owners, threshold }) => {
 
             {/* approve, reject, execute tx actions */}
             <div className="flex w-28 flex-row justify-end px-1">
-              {tx.approvals?.length >= threshold ? (
-                <button className="mr-1 rounded-lg bg-blue-400 p-1 text-xs shadow-sm">
-                  execute
-                </button>
-              ) : data && owners?.includes(data?.address) ? (
-                <ApproveReject tx={tx} />
+              {data &&
+              owners?.includes(data?.address) &&
+              tx.approvals?.length >= threshold ? (
+                <ExecuteTx tx={tx} />
+              ) : data &&
+                owners?.includes(data?.address) &&
+                !tx?.approvals?.includes(data?.address) ? (
+                <ApproveRejectTx tx={tx} address={data?.address} />
               ) : (
                 <></>
               )}

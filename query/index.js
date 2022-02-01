@@ -92,3 +92,10 @@ export const mutateOffChainTx = async req => {
   const res = await api.put("/transaction", req)
   return res.data
 }
+
+// delete off chain tx
+// { id: id }
+export const deleteOffChainTx = async req => {
+  const res = await api.delete("/transaction", req)
+  return res.data
+}

@@ -64,7 +64,6 @@ const BuyModal = () => {
     let wei = ethers.utils.parseUnits(osAssetInfo?.sellOrder)
     let weiString = ethers.utils.formatEther(wei).toString()
     let fee = (Number(weiString) * 0.01).toString()
-    console.log(fee)
     const transactions = [
       {
         to: process.env.dao,
