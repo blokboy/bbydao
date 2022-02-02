@@ -68,7 +68,6 @@ const ExecuteTx = ({ tx, address }) => {
     }
     */
   }
-}
 
   return (
     <button
