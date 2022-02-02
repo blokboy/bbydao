@@ -28,13 +28,10 @@ const OfferModal = () => {
 
   const getUserSafes = async () => {
     if (!data?.address) return
-
     const safeService = new SafeServiceClient(
       "https://safe-transaction.gnosis.io"
     )
-
     const safes = await safeService.getSafesByOwner(data?.address)
-
     setSafes(safes.safes)
   }
 
@@ -59,7 +56,6 @@ const OfferModal = () => {
     }
     // createSafeSdk
     const safeSdk = await createSafeSdk(state.safe)
-
     // construct txs
     let wei = ethers.utils.parseEther(state.offerValue)
     let weiString = wei.toString()
@@ -71,14 +67,10 @@ const OfferModal = () => {
         value: fee,
       },
     ]
-
     const safeTransaction = await safeSdk.createTransaction(...transactions)
-
     const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
-
     // modal in waiting state
     setTxWaiting(true)
-
     try {
       // Sign the transaction off-chain (in wallet)
       const signedTransaction = await safeSdk.signTransaction(safeTransaction)
@@ -87,11 +79,10 @@ const OfferModal = () => {
       // user rejected tx
       return
     }
-
+    // safeService to propose tx
     const safeService = new SafeServiceClient(
       "https://safe-transaction.gnosis.io"
     )
-
     let safeAddress = state.safe
     const transactionConfig = {
       safeAddress,
@@ -101,7 +92,6 @@ const OfferModal = () => {
     }
     const proposedTx = await safeService.proposeTransaction(transactionConfig)
     // if proposedTx fails - txLoading(false)...
-
     const tx = {
       approvals: [data?.address],
       creator: data?.address,
@@ -112,10 +102,8 @@ const OfferModal = () => {
       value: weiString,
       type: 1,
     }
-
     storeTx(tx)
     // if storeTx fails...
-
     // tx success, waiting state false
     setTxWaiting(false)
     // show confirmation in modal

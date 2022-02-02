@@ -1,15 +1,12 @@
 import React from "react"
 import { ethers } from "ethers"
-import { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
-import SafeServiceClient from "@gnosis.pm/safe-service-client"
-import Safe, { SafeFactory, SafeAccountConfig } from "@gnosis.pm/safe-core-sdk"
 import * as api from "../../../query"
 import { useMutation } from "react-query"
 import { createSeaport } from "utils/createSeaport"
 import { createSafeSdk } from "utils/createSafeSdk"
 
-const ExecuteTx = ({ tx }) => {
-  const { id, type, value, txHash, safeContract } = tx
+const ExecuteTx = ({ tx, address }) => {
+  const { id, type, value, tokenContract, tokenId, txHash, safeContract } = tx
 
   const {
     data: mutateTxData,
@@ -19,14 +16,53 @@ const ExecuteTx = ({ tx }) => {
 
   const handleExecute = async e => {
     e.preventDefault()
+    if (type === 1) {
+      // opensea offer tx
+      const seaport = await createSeaport()
+      const ethValue = ethers.utils.formatEther(value)
+      const offer = await seaport.createBuyOrder({
+        asset: {
+          tokenId: tokenId,
+          tokenAddress: tokenContract,
+        },
+        accountAddress: safeContract,
+        startAmount: ethValue,
+      })
+      console.log("offer", offer)
+    }
 
-    // opensea tx, v3 tx, or tx
-    // const seaport = createSeaport()
+    if (type === 4) {
+      // uni sdk and execute swap
+    }
 
     // create fee tx for our safe
-    // const safeSdk = await createSafeSdk(safeContract)
-
-    // mutate tx on backend
+    const safeSdk = await createSafeSdk(safeContract)
+    let wei = ethers.utils.parseEther(value)
+    let weiString = wei.toString()
+    let fee = (Number(weiString) * 0.01).toString()
+    const transactions = [
+      {
+        to: process.env.dao,
+        data: ethers.utils.hexlify([1]),
+        value: fee,
+      },
+    ]
+    const safeTransaction = await safeSdk.createTransaction(...transactions)
+    const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
+    try {
+      // Sign the transaction off-chain (in wallet)
+      const signedTransaction = await safeSdk.signTransaction(safeTransaction)
+      // mutate tx on backend
+      const tx = {
+        txHash: txHash,
+        executor: address,
+      }
+      mutateTx(tx)
+    } catch (error) {
+      // user rejected tx
+      console.log("user rejected tx")
+      return
+    }
   }
 
   return (

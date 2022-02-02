@@ -102,7 +102,7 @@ const AllTxs = ({ allTxs, owners, threshold }) => {
               {data &&
               owners?.includes(data?.address) &&
               tx.approvals?.length >= threshold ? (
-                <ExecuteTx tx={tx} />
+                <ExecuteTx tx={tx} address={data?.address} />
               ) : data &&
                 owners?.includes(data?.address) &&
                 !tx?.approvals?.includes(data?.address) ? (

@@ -18,16 +18,13 @@ const ApproveRejectTx = ({ tx, address }) => {
 
   const handleApprove = async e => {
     e.preventDefault()
-
     // create safeService
     const safeService = new SafeServiceClient(
       "https://safe-transaction.gnosis.io"
     )
     const nextNonce = await safeService.getNextNonce(safeContract)
-
     // createSafeSdk
     const safeSdk = await createSafeSdk(safeContract)
-
     // construct tx
     let fee = (Number(value) * 0.01).toString()
     const transactions = [
@@ -38,10 +35,8 @@ const ApproveRejectTx = ({ tx, address }) => {
         nonce: nextNonce,
       },
     ]
-
     // create safeTransaction
     const safeTransaction = await safeSdk.createTransaction(...transactions)
-
     try {
       // Sign the transaction off-chain (in wallet)
       const signedTransaction = await safeSdk.signTransaction(safeTransaction)
