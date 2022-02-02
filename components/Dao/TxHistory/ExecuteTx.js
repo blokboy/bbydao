@@ -28,8 +28,8 @@ const ExecuteTx = ({ tx, address }) => {
       const { tokenAddress, tokenId, schemaName } = asset;
 
       
-      console.log('asset ', asset )
-
+      console.log('asset ', asset);
+      /*
       const offer = await seaport.createBuyOrder({
         asset: {
           tokenId,
@@ -40,10 +40,11 @@ const ExecuteTx = ({ tx, address }) => {
         startAmount: ethValue,
       })
       console.log("offer", offer)
+      
     }
 
     if (type === 4) {
-      // uni sdk and execute swap
+      return // uni sdk and execute swap
     }
 
     // create fee tx for our safe
@@ -74,7 +75,9 @@ const ExecuteTx = ({ tx, address }) => {
       console.log("user rejected tx")
       return
     }
+    */
   }
+}
 
   return (
     <button
