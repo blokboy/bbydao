@@ -22,7 +22,7 @@ const ExecuteTx = ({ tx, address }) => {
       console.log('seaport ', seaport);
       const asset = await seaport.api.getAsset({
         tokenAddress: tokenContract, // string
-        tokenId, // string | number | null
+        tokenId: tokenId, // string | number | null
       });
       console.log('asset ', asset);
       const ethValue = ethers.utils.formatEther(value)
