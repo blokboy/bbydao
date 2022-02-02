@@ -5,9 +5,11 @@ import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import Safe, { SafeFactory, SafeAccountConfig } from "@gnosis.pm/safe-core-sdk"
 import * as api from "../../../query"
 import { useMutation } from "react-query"
+import { createSeaport } from "utils/createSeaport"
+import { createSafeSdk } from "utils/createSafeSdk"
 
 const ExecuteTx = ({ tx }) => {
-  const { type, txHash } = tx
+  const { id, type, value, txHash, safeContract } = tx
 
   const {
     data: mutateTxData,
@@ -17,8 +19,14 @@ const ExecuteTx = ({ tx }) => {
 
   const handleExecute = async e => {
     e.preventDefault()
-    console.log("execute type", type)
-    console.log("execute hash", txHash)
+
+    // opensea tx, v3 tx, or tx
+    // const seaport = createSeaport()
+
+    // create fee tx for our safe
+    // const safeSdk = await createSafeSdk(safeContract)
+
+    // mutate tx on backend
   }
 
   return (

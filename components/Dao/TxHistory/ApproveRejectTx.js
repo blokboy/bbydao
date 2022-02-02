@@ -8,7 +8,6 @@ import { useMutation } from "react-query"
 import { createSafeSdk } from "../../../utils/createSafeSdk"
 
 const ApproveRejectTx = ({ tx, address }) => {
-  console.log(tx)
   const { id, type, value, txHash, safeContract } = tx
 
   const {
