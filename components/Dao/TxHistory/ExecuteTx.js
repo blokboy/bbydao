@@ -22,11 +22,15 @@ const ExecuteTx = ({ tx, address }) => {
       console.log('seaport ', seaport)
       const ethValue = ethers.utils.formatEther(value)
       console.log('eth val ', ethValue);
+
+      const asset = await seaport.api.getAsset({
+        tokenAddress: tokenContract, // string
+        tokenId, // string | number | null
+      })
+      console.log('asset ', asset )
+
       const offer = await seaport.createBuyOrder({
-        asset: {
-          tokenId: tokenId,
-          tokenAddress: tokenContract,
-        },
+        asset,
         accountAddress: safeContract,
         startAmount: ethValue,
       })
