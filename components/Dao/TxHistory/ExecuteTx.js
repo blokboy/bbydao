@@ -4,6 +4,7 @@ import * as api from "../../../query"
 import { useMutation } from "react-query"
 import { createSeaport } from "utils/createSeaport"
 import { createSafeSdk } from "utils/createSafeSdk"
+import { isConstructorDeclaration } from "typescript"
 
 const ExecuteTx = ({ tx, address }) => {
   const { id, type, value, tokenContract, tokenId, txHash, safeContract } = tx
@@ -21,6 +22,7 @@ const ExecuteTx = ({ tx, address }) => {
       const seaport = await createSeaport()
       const ethValue = ethers.utils.formatEther(value)
    
+      
       const offer = await seaport.createBuyOrder({
         asset: {
           tokenId,
@@ -28,7 +30,7 @@ const ExecuteTx = ({ tx, address }) => {
           schemaName: "ERC721" | "ERC1155"
         },
         accountAddress: safeContract,
-        startAmount: ethValue,
+        startAmount: Number(ethValue),
       })
       console.log("offer", offer)
       
