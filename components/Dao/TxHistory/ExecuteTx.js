@@ -19,22 +19,13 @@ const ExecuteTx = ({ tx, address }) => {
     if (type === 1) {
       // opensea offer tx
       const seaport = await createSeaport()
-      console.log('seaport ', seaport);
-      const asset = await seaport.api.getAsset({
-        tokenAddress: tokenContract, // string
-        tokenId: tokenId, // string | number | null
-      });
-      console.log('asset ', asset);
       const ethValue = ethers.utils.formatEther(value)
-
-      const { tokenAddress, tokenId, schemaName } = asset;
-
-      /*
+   
       const offer = await seaport.createBuyOrder({
         asset: {
           tokenId,
-          tokenAddress,
-          schemaName
+          tokenAddress: tokenContract,
+          schemaName: "ERC721" | "ERC1155"
         },
         accountAddress: safeContract,
         startAmount: ethValue,
@@ -42,7 +33,7 @@ const ExecuteTx = ({ tx, address }) => {
       console.log("offer", offer)
       
     }
-
+    /*
     if (type === 4) {
       return // uni sdk and execute swap
     }
