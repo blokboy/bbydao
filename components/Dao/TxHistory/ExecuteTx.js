@@ -37,7 +37,7 @@ const ExecuteTx = ({ tx, address }) => {
           schemaName
         },
         accountAddress: safeContract,
-        startAmount: ethValue.toString(),
+        startAmount: ethValue,
       })
       console.log("offer", offer)
     }
