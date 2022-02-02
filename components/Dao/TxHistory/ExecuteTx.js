@@ -19,16 +19,16 @@ const ExecuteTx = ({ tx, address }) => {
     if (type === 1) {
       // opensea offer tx
       const seaport = await createSeaport()
+      console.log('seaport ', seaport);
       const asset = await seaport.api.getAsset({
         tokenAddress: tokenContract, // string
         tokenId, // string | number | null
-      })
+      });
+      console.log('asset ', asset);
       const ethValue = ethers.utils.formatEther(value)
 
       const { tokenAddress, tokenId, schemaName } = asset;
 
-      
-      console.log('asset ', asset);
       /*
       const offer = await seaport.createBuyOrder({
         asset: {
