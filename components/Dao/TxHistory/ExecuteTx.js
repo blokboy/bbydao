@@ -20,7 +20,7 @@ const ExecuteTx = ({ tx, address }) => {
     if (type === 1) {
       // opensea offer tx
       const seaport = await createSeaport()
-      const ethValue = ethers.utils.formatEther(value)
+      const ethValue = parseInt(ethers.utils.formatEther(value))
    
       
       const offer = await seaport.createBuyOrder({
@@ -30,7 +30,7 @@ const ExecuteTx = ({ tx, address }) => {
           schemaName: "ERC721" | "ERC1155"
         },
         accountAddress: safeContract,
-        startAmount: parseInt(ethValue),
+        startAmount: ethValue,
       })
       console.log("offer", offer)
       
