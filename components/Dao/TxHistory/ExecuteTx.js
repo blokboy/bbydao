@@ -19,7 +19,9 @@ const ExecuteTx = ({ tx, address }) => {
     if (type === 1) {
       // opensea offer tx
       const seaport = await createSeaport()
+      console.log('seaport ', seaport)
       const ethValue = ethers.utils.formatEther(value)
+      console.log('eth val ', ethValue);
       const offer = await seaport.createBuyOrder({
         asset: {
           tokenId: tokenId,
