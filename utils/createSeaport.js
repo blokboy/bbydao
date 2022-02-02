@@ -6,7 +6,7 @@ export const createSeaport = async () => {
   await window.ethereum.request({ method: "eth_requestAccounts" })
 
   const provider = new ethers.providers.Web3Provider(window.ethereum)
-
+  console.log('provider from seaport call ', provider);
   const seaport = new OpenSeaPort(provider, {
     networkName: Network.Main,
     apiKey: process.env.OPENSEA_API,
