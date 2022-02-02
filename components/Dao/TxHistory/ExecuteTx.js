@@ -20,11 +20,12 @@ const ExecuteTx = ({ tx, address }) => {
       // opensea offer tx
       const seaport = await createSeaport()
       const ethValue = parseInt(ethers.utils.formatEther(value))
+      console.log('ethValue ', ethValue);
+      const desiredAsset = { tokenId, tokenAddress: tokenContract }
+      console.log('asset ', desiredAsset)
+      
       const offer = await seaport.createBuyOrder({
-        asset: {
-          tokenId: tokenId,
-          tokenAddress: tokenContract,
-        },
+        asset: desiredAsset,
         accountAddress: safeContract,
         startAmount: ethValue,
       })
