@@ -30,7 +30,7 @@ const ExecuteTx = ({ tx, address }) => {
           schemaName: "ERC721" | "ERC1155"
         },
         accountAddress: safeContract,
-        startAmount: Number(ethValue),
+        startAmount: parseInt(ethValue),
       })
       console.log("offer", offer)
       
