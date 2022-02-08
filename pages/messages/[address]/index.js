@@ -3,8 +3,6 @@ import { useConnect } from "wagmi"
 import axios from "axios"
 
 const Index = ({ data }) => {
-  const [{ data: connectData, error, loading }, connect] = useConnect()
-  console.log('data ', data);
   return <Messages data={data}/>
 }
 
@@ -18,7 +16,6 @@ export const getServerSideProps = async ({ query }) => {
         address: query.address,
       }
     )
-    console.log('res ', res);
     const threads = res.data
 
 

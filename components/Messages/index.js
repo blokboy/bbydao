@@ -3,7 +3,8 @@ import Head from "next/head"
 import MessageView from "./MessageView"
 import ListView from "./ListView"
 
-const Messages = () => {
+const Messages = ({ data  }) => {
+  console.log('threads in msgs ', data);
   return (
     <>
       <Head>
@@ -13,7 +14,7 @@ const Messages = () => {
       </Head>
 
       <div className="flex h-screen w-full justify-center">
-        <ListView />
+        <ListView threads={ data }/>
         <MessageView />
       </div>
     </>
