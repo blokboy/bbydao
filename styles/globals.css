@@ -40,3 +40,9 @@
     @apply bg-slate-400;
   }
 }
+
+@layer components {
+  .nav-btn {
+    @apply flex h-10 w-10 items-center justify-center rounded-full border border-slate-400 bg-slate-200 p-1 text-slate-800 shadow hover:bg-slate-100 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-700;
+  }
+}
