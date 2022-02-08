@@ -45,6 +45,7 @@ const DaoForm = ({ address }) => {
 
     const safeSdk = await safeFactory.deploySafe(safeAccountConfig)
     console.log("safe sdk ", safeSdk)
+
     return safeSdk
   }
 
@@ -53,6 +54,8 @@ const DaoForm = ({ address }) => {
     const ownerList = [address, state.invite]
     console.log(ownerList)
     await createBabyDao(e, ownerList)
+    // once createBabyDao runs, use name, type and address to create dao
+    // await createDao(state.name, type = 1, address)
     setState({})
   }
 
