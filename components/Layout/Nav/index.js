@@ -30,7 +30,7 @@ const Nav = () => {
           <></>
         )}
         {data?.connected ? <MessagesIcon /> : <></>}
-        <SearchIcon />
+        {data?.connected ? <SearchIcon /> : <></>}
         <Menu />
         <ThemeToggle />
       </nav>
