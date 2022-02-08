@@ -99,3 +99,17 @@ export const deleteOffChainTx = async req => {
   const res = await api.delete("/transaction", req)
   return res.data
 }
+
+// create dao
+// { name: string, type: enum, address: string }
+export const createDao = async req => {
+  const res = await api.post("/dao/create", req)
+  return res.data
+}
+
+// update dao properties
+// {  id: id, name: string, imgUri: string }
+export const updateDao = async req => {
+  const res = await api.put("/dao", req)
+  return res.data
+}

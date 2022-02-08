@@ -1,5 +1,6 @@
 import React from "react"
 import NotificationsIcon from "./NotificationsIcon"
+import SearchIcon from "./SearchIcon"
 import MessagesIcon from "./MessagesIcon"
 import Menu from "./Menu"
 import ThemeToggle from "./ThemeToggle"
@@ -29,6 +30,7 @@ const Nav = () => {
           <></>
         )}
         {data?.connected ? <MessagesIcon /> : <></>}
+        {data?.connected ? <SearchIcon /> : <></>}
         <Menu />
         <ThemeToggle />
       </nav>
