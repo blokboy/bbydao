@@ -33,7 +33,7 @@ const NotificationsIcon = ({ address }) => {
     <ClickAwayListener onClickAway={clickAway}>
       <div className="mr-3 hidden flex-row items-center justify-center md:flex">
         <button
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-400 bg-slate-200 p-1 text-slate-800 shadow hover:bg-slate-100 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-700"
+          className="nav-btn"
           onClick={() => setNotificationsOpen(!notificationsOpen)}
         >
           <FiBell />
