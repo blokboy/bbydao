@@ -8,7 +8,7 @@ const MessagesIcon = () => {
   const [messagesOpen, setMessagesOpen] = React.useState(false)
   const messagesCount = useUiStore(state => state.messagesCount)
   const setMessagesCount = useUiStore(state => state.setMessagesCount)
-  const [count, setCount] = React.useState(19)
+  const [count, setCount] = React.useState(count? count : 0)
 
   const clickAway = () => {
     if (!messagesOpen) {
