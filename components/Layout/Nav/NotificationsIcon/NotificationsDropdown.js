@@ -16,7 +16,7 @@ const NotificationsDropdown = ({ ...props }) => {
       </div>
       <ul>
         <li>
-        {data?.parsedNotifs.FRIEND_REQUESTS.map(notif => (
+        {data?.parsedNotifs.FRIEND_REQUESTS?.map(notif => (
           <NotificationCard
             key={notif.id}
             id={notif.id}
@@ -28,7 +28,7 @@ const NotificationsDropdown = ({ ...props }) => {
         ))}
         </li>
         <li>
-        {data?.parsedNotifs.FRIEND_REQUESTS_ACCEPTED.map(notif => (
+        {data?.parsedNotifs.FRIEND_REQUESTS_ACCEPTED?.map(notif => (
           <NotificationCard
             key={notif.id}
             id={notif.id}
@@ -40,7 +40,7 @@ const NotificationsDropdown = ({ ...props }) => {
         ))}
         </li>
         <li>
-        {data?.parsedNotifs.PROPOSAL_REQUEST.map(notif => (
+        {data?.parsedNotifs.PROPOSAL_REQUEST?.map(notif => (
           <NotificationCard
             key={notif.id}
             id={notif.id}
@@ -52,7 +52,7 @@ const NotificationsDropdown = ({ ...props }) => {
         ))}
         </li>
         <li>
-        {data?.parsedNotifs.PROPOSAL_RESULT.map(notif => (
+        {data?.parsedNotifs.PROPOSAL_RESULT?.map(notif => (
           <NotificationCard
             key={notif.id}
             id={notif.id}
@@ -64,7 +64,7 @@ const NotificationsDropdown = ({ ...props }) => {
         ))}
         </li>
         <li>
-        {data?.parsedNotifs.TRANSACTION_EXECUTION.map(notif => (
+        {data?.parsedNotifs.TRANSACTION_EXECUTION?.map(notif => (
           <NotificationCard
             key={notif.id}
             id={notif.id}
@@ -76,7 +76,7 @@ const NotificationsDropdown = ({ ...props }) => {
         ))}
         </li>
         <li>
-        {data?.parsedNotifs.DAO_INVITE.map(notif => (
+        {data?.parsedNotifs.DAO_INVITE?.map(notif => (
           <NotificationCard
             key={notif.id}
             id={notif.id}
