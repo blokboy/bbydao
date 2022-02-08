@@ -15,6 +15,7 @@ const NotificationsDropdown = ({ ...props }) => {
         <h1>Notifications</h1>
       </div>
       <ul>
+        <li>
         {data?.parsedNotifs.FRIEND_REQUESTS.map(notif => (
           <NotificationCard
             key={notif.id}
@@ -25,6 +26,67 @@ const NotificationsDropdown = ({ ...props }) => {
             notificationsOpen={notificationsOpen}
           />
         ))}
+        </li>
+        <li>
+        {data?.parsedNotifs.FRIEND_REQUESTS_ACCEPTED.map(notif => (
+          <NotificationCard
+            key={notif.id}
+            id={notif.id}
+            relationshipRef={notif.ref}
+            body={notif.body}
+            seen={notif.seen}
+            notificationsOpen={notificationsOpen}
+          />
+        ))}
+        </li>
+        <li>
+        {data?.parsedNotifs.PROPOSAL_REQUEST.map(notif => (
+          <NotificationCard
+            key={notif.id}
+            id={notif.id}
+            relationshipRef={notif.ref}
+            body={notif.body}
+            seen={notif.seen}
+            notificationsOpen={notificationsOpen}
+          />
+        ))}
+        </li>
+        <li>
+        {data?.parsedNotifs.PROPOSAL_RESULT.map(notif => (
+          <NotificationCard
+            key={notif.id}
+            id={notif.id}
+            relationshipRef={notif.ref}
+            body={notif.body}
+            seen={notif.seen}
+            notificationsOpen={notificationsOpen}
+          />
+        ))}
+        </li>
+        <li>
+        {data?.parsedNotifs.TRANSACTION_EXECUTION.map(notif => (
+          <NotificationCard
+            key={notif.id}
+            id={notif.id}
+            relationshipRef={notif.ref}
+            body={notif.body}
+            seen={notif.seen}
+            notificationsOpen={notificationsOpen}
+          />
+        ))}
+        </li>
+        <li>
+        {data?.parsedNotifs.DAO_INVITE.map(notif => (
+          <NotificationCard
+            key={notif.id}
+            id={notif.id}
+            relationshipRef={notif.ref}
+            body={notif.body}
+            seen={notif.seen}
+            notificationsOpen={notificationsOpen}
+          />
+        ))}
+        </li>
       </ul>
     </div>
   )
