@@ -99,3 +99,6 @@ export const deleteOffChainTx = async req => {
   const res = await api.delete("/transaction", req)
   return res.data
 }
+
+// update dao properties
+// {  id: id, name: string, imgUri: string }

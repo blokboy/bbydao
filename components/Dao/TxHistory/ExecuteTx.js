@@ -4,6 +4,7 @@ import * as api from "../../../query"
 import { useMutation } from "react-query"
 import { createSeaport } from "utils/createSeaport"
 import { createSafeSdk } from "utils/createSafeSdk"
+import { isConstructorDeclaration } from "typescript"
 
 const ExecuteTx = ({ tx, address }) => {
   const { id, type, value, tokenContract, tokenId, txHash, safeContract } = tx
@@ -22,18 +23,22 @@ const ExecuteTx = ({ tx, address }) => {
       const ethValue = parseInt(ethers.utils.formatEther(value))
       console.log('ethValue ', ethValue);
       const desiredAsset = { tokenId, tokenAddress: tokenContract }
-      console.log('asset ', desiredAsset)
       
       const offer = await seaport.createBuyOrder({
-        asset: desiredAsset,
+        asset: {
+          tokenId,
+          tokenAddress: tokenContract,
+          schemaName: "ERC721" | "ERC1155"
+        },
         accountAddress: safeContract,
         startAmount: ethValue,
       })
       console.log("offer", offer)
+      
     }
-
+    /*
     if (type === 4) {
-      // uni sdk and execute swap
+      return // uni sdk and execute swap
     }
 
     // create fee tx for our safe
@@ -64,6 +69,7 @@ const ExecuteTx = ({ tx, address }) => {
       console.log("user rejected tx")
       return
     }
+    */
   }
 
   return (
