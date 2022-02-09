@@ -29,7 +29,7 @@ const Nav = () => {
         ) : (
           <></>
         )}
-        {data?.connected ? <MessagesIcon /> : <></>}
+        {data?.connected ? <MessagesIcon address={accountData.address}/> : <></>}
         {data?.connected ? <SearchIcon /> : <></>}
         <Menu />
         <ThemeToggle />

@@ -2,8 +2,8 @@ import React from "react"
 import MessageCard from "./MessageCard"
 
 const MessagesDropdown = ({ ...props }) => {
-  const { messagesOpen } = props
-
+  const { messagesOpen, threads } = props
+  console.log('threads in dropdown ', threads);
   return (
     <div
       className={
@@ -15,8 +15,17 @@ const MessagesDropdown = ({ ...props }) => {
         <h1>Messages</h1>
       </div>
       <ul className="">
-        <MessageCard />
-        <MessageCard />
+        {
+          threads.map( (thread, i) => {
+            return (
+              <MessageCard 
+                key={i}
+                title={thread[0]}
+                thread={thread[1]}
+              />
+            )
+          })
+        }
       </ul>
     </div>
   )

@@ -4,7 +4,6 @@ import MessageView from "./MessageView"
 import ListView from "./ListView"
 
 const Messages = ({ data  }) => {
-  console.log('threads in msgs ', data);
   return (
     <>
       <Head>

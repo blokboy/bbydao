@@ -113,3 +113,10 @@ export const updateDao = async req => {
   const res = await api.put("/dao", req)
   return res.data
 }
+
+//get user threads for message drop down
+// { address: string }
+export const getUserThreads = async req => {
+  const res = await api.post("/member/threads", req)
+  return res.data;
+}
