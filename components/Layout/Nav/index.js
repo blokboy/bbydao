@@ -20,7 +20,7 @@ const Nav = () => {
     <>
       <nav className="flex w-screen p-2 md:p-6">
         <div className="flex w-screen flex-row items-center justify-between">
-          {data?.connected ? <ToggleSearchModal /> : <></>}
+          <ToggleSearchModal />
         </div>
         {data?.connected ? <AccountDisplay /> : <></>}
         {data?.connected ? <DisconnectButton /> : <ConnectButton />}
@@ -29,8 +29,12 @@ const Nav = () => {
         ) : (
           <></>
         )}
-        {data?.connected ? <MessagesIcon address={accountData.address}/> : <></>}
-        {data?.connected ? <SearchIcon /> : <></>}
+        {data?.connected ? (
+          <MessagesIcon address={accountData.address} />
+        ) : (
+          <></>
+        )}
+        <SearchIcon />
         <Menu />
         <ThemeToggle />
       </nav>

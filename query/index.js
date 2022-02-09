@@ -114,9 +114,16 @@ export const updateDao = async req => {
   return res.data
 }
 
-//get user threads for message drop down
+// get user threads for message drop down
 // { address: string }
 export const getUserThreads = async req => {
   const res = await api.post("/member/threads", req)
-  return res.data;
+  return res.data
+}
+
+// get thread messages
+// { channel: string }
+export const getThreadMessages = async req => {
+  const res = await api.post("/message/channel", req)
+  return res.data
 }
