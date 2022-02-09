@@ -11,7 +11,7 @@ const MessagesIcon = ({ address }) => {
   const [messagesOpen, setMessagesOpen] = React.useState(false)
   const messagesCount = useUiStore(state => state.messagesCount)
   const setMessagesCount = useUiStore(state => state.setMessagesCount)
-  const [count, setCount] = React.useState(count? count : 0)
+  const [count, setCount] = React.useState(count ? count : 0)
 
   const { data } = useQuery(
     ["threads"],
@@ -19,9 +19,9 @@ const MessagesIcon = ({ address }) => {
     { staleTime: 180000 }
   )
 
-  const threads = [];
-  if(data) {
-    for(const [key, value] of Object.entries(data)) {
+  const threads = []
+  if (data) {
+    for (const [key, value] of Object.entries(data)) {
       threads.push([key, value])
     }
   }
@@ -63,7 +63,11 @@ const MessagesIcon = ({ address }) => {
         )}
 
         {/* && messagesCount */}
-        <MessagesDropdown messagesOpen={messagesOpen} threads={threads} />
+        <MessagesDropdown
+          messagesOpen={messagesOpen}
+          threads={threads}
+          clickAway={clickAway}
+        />
       </div>
     </ClickAwayListener>
   )

@@ -2,8 +2,8 @@ import React from "react"
 import MessageCard from "./MessageCard"
 
 const MessagesDropdown = ({ ...props }) => {
-  const { messagesOpen, threads } = props
-  console.log('threads in dropdown ', threads);
+  const { messagesOpen, threads, clickAway } = props
+
   return (
     <div
       className={
@@ -15,17 +15,16 @@ const MessagesDropdown = ({ ...props }) => {
         <h1>Messages</h1>
       </div>
       <ul className="">
-        {
-          threads.map( (thread, i) => {
-            return (
-              <MessageCard 
-                key={i}
-                title={thread[0]}
-                thread={thread[1]}
-              />
-            )
-          })
-        }
+        {threads.map((thread, i) => {
+          return (
+            <MessageCard
+              key={i}
+              title={thread[0]}
+              thread={thread[1]}
+              clickAway={clickAway}
+            />
+          )
+        })}
       </ul>
     </div>
   )
