@@ -5,7 +5,7 @@ import { useAccount } from "wagmi"
 
 const MessagesLink = () => {
   const [{ data, error, loading }, disconnect] = useAccount()
-  console.log('data ', data);
+  
   return (
     <li className="w-full">
       <Link href={`/messages/${data?.address}`}>

@@ -1,9 +1,8 @@
 import Messages from "components/Messages"
-import { useConnect } from "wagmi"
 import axios from "axios"
 
 const Index = ({ data }) => {
-  return <Messages data={data}/>
+  return <Messages data={data} />
 }
 
 export default Index
@@ -18,10 +17,9 @@ export const getServerSideProps = async ({ query }) => {
     )
     const threads = res.data
 
-
     return { props: { data: { threads } } }
   } catch (error) {
     // return error
-    console.log(error);
+    console.log(error)
   }
 }

@@ -1,7 +1,6 @@
 import React from "react"
 import Head from "next/head"
 import Explore from "components/Explore"
-import ConnectButton from "../components/Layout/Nav/ConnectButton"
 import { useConnect, useAccount } from "wagmi"
 
 const Home = () => {

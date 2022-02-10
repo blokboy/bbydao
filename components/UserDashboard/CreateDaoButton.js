@@ -1,6 +1,5 @@
 import React from "react"
 import { useUiStore } from "stores/useUiStore"
-import { MdAdd } from "react-icons/md"
 
 const CreateDaoButton = () => {
   const setCreateDaoModalOpen = useUiStore(state => state.setCreateDaoModalOpen)

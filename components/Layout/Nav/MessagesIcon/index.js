@@ -4,7 +4,6 @@ import { useUiStore } from "stores/useUiStore"
 import { FiMail } from "react-icons/fi"
 import MessagesDropdown from "./MessagesDropdown"
 import { useQuery } from "react-query"
-import { useAccount } from "wagmi"
 import * as api from "query"
 
 const MessagesIcon = ({ address }) => {
