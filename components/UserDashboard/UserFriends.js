@@ -8,6 +8,7 @@ const UserFriends = ({ address }) => {
     () => api.getFriends({ initiator: address }),
     { refetchOnWindowFocus: false }
   )
+  console.log('friend data ', data)
 
   return (
     <div className="my-2 flex flex-col items-center md:items-start">
@@ -15,14 +16,21 @@ const UserFriends = ({ address }) => {
         {data?.length} {data?.length === 1 ? "friend" : "friends"}
       </span>
       <div className="mt-4 flex flex-row">
-        <div className="h-12 w-12 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
-        <div className="-ml-3 h-12 w-12 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
-        <div className="-ml-3 h-12 w-12 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
-        <div className="-ml-3 h-12 w-12 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
+        { data?.length && data.map( friend => {
+          return (
+            <div className="h-12 w-12 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
+          )
+        })}
       </div>
       <button className="mt-4">view all</button>
     </div>
   )
+
+  /*
+        <div className="-ml-3 h-12 w-12 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
+        <div className="-ml-3 h-12 w-12 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
+        <div className="-ml-3 h-12 w-12 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
+  */
 }
 
 export default UserFriends
