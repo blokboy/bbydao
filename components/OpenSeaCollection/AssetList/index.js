@@ -27,7 +27,7 @@ const AssetList = ({ assets, address, slug }) => {
       onSuccess: async data => {
         const newAssets = await data?.assets
         if (!newAssets.length) return
-        setOsAssets([...assets, ...newAssets])
+        setOsAssets([...osAssets, ...newAssets])
         setFetchAssets(false)
       },
     }
