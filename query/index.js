@@ -127,3 +127,10 @@ export const getThreadMessages = async req => {
   const res = await api.post("/message/channel", req)
   return res.data
 }
+
+// query for infinite scroll on os collections
+// { slug: string, address: string, offset: num }
+export const getOsAssets = async req => {
+  const res = await api.post("/collection/fetch", req)
+  return res.data
+}

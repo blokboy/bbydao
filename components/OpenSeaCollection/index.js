@@ -7,7 +7,8 @@ import OfferModal from "./OfferModal"
 import BuyModal from "./BuyModal"
 import { useOsStore } from "../../stores/useOsStore"
 
-const OpenSeaCollection = ({ data }) => {
+const OpenSeaCollection = ({ data, slug }) => {
+  console.log("data", data)
   const osOfferModalOpen = useOsStore(state => state.osOfferModalOpen)
   const osBuyModalOpen = useOsStore(state => state.osBuyModalOpen)
 
@@ -32,7 +33,11 @@ const OpenSeaCollection = ({ data }) => {
             volume={data.collection.total_volume}
           />
         </div>
-        <AssetList assets={data.assets} />
+        <AssetList
+          assets={data.assets}
+          address={data?.collection?.address}
+          slug={slug}
+        />
       </div>
       {/* offer modal */}
       {osOfferModalOpen ? <OfferModal /> : <></>}

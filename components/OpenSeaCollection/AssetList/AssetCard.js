@@ -31,27 +31,27 @@ const AssetCard = ({ asset }) => {
     <div className="flex w-full flex-col rounded-xl bg-slate-100 p-3 dark:bg-slate-800">
       <div className="flex flex-row justify-between">
         {/* asset name & number of sales */}
-        <span className="text-xs font-bold">{asset.name}</span>
+        <span className="text-xs font-bold">{asset?.name}</span>
         <span className="text-xs font-semibold">
           {asset?.last_sale
-            ? `Last Sale: ${ethers.utils.formatEther(asset.last_sale)} ETH`
+            ? `Last Sale: ${ethers.utils.formatEther(asset?.last_sale)} ETH`
             : "diamond"}
         </span>
       </div>
       {/* asset img */}
-      <img src={asset.image_url} alt="" />
-      <span className="text-sm font-bold">{asset.name}</span>
+      <img src={asset?.image_url} alt="" />
+      <span className="text-sm font-bold">{asset?.name}</span>
       <div className="mt-2 flex flex-row justify-between">
         <div className="flex flex-row">
           {/* owner address */}
           <div className="flex flex-col">
             <span className="text-xs font-semibold">owner:</span>
             <span className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text font-semibold text-transparent">
-              {asset.owner.substring(0, 6) +
+              {asset?.owner.substring(0, 6) +
                 "..." +
-                asset.owner.substring(
-                  asset.owner.length - 5,
-                  asset.owner.length - 1
+                asset?.owner.substring(
+                  asset?.owner.length - 5,
+                  asset?.owner.length - 1
                 )}
             </span>
           </div>
@@ -61,7 +61,7 @@ const AssetCard = ({ asset }) => {
           <span className="text-xs font-semibold">price</span>
           <span className="text-sm font-semibold">
             {asset?.sell_orders
-              ? asset.sell_orders[0].current_price / 10 ** 18
+              ? asset?.sell_orders[0].current_price / 10 ** 18
               : "Not For Sale"}
           </span>
         </div>
