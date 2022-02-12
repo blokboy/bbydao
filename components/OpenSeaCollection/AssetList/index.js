@@ -25,9 +25,8 @@ const AssetList = ({ assets, address, slug }) => {
       refetchOnWindowFocus: false,
       staleTime: Infinity,
       onSuccess: async data => {
-        console.log("fetch ran")
         const newAssets = await data?.assets
-        console.log("newAssets", newAssets)
+        if (!newAssets.length) return
         setOsAssets([...assets, ...newAssets])
         setFetchAssets(false)
       },
