@@ -128,6 +128,13 @@ export const getThreadMessages = async req => {
   return res.data
 }
 
+// create messages
+// { channel: string, body: string }
+export const createMessage = async req => {
+  const res = await api.post("/message/create", req)
+  return res.data
+}
+
 // query for infinite scroll on os collections
 // { slug: string, address: string, offset: num }
 export const getOsAssets = async req => {

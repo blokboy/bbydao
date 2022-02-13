@@ -15,6 +15,11 @@ export const useUiStore = create(set => ({
   setConnectModalOpen: () =>
     set(state => ({ connectModalOpen: !state.connectModalOpen })),
 
+  // create thread modal display
+  createThreadModalOpen: false,
+  setCreateThreadModalOpen: () =>
+    set(state => ({ createThreadModalOpen: !state.createThreadModalOpen })),
+
   // notification count on nav
   notificationCount: null,
   setNotificationCount: count => set({ notificationCount: count }),

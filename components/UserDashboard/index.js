@@ -53,7 +53,13 @@ const UserDashboard = ({ data }) => {
             <div className="flex-start flex flex-col px-4 md:w-3/12 md:px-10">
               <UserImage address={address} />
               <UserDetails address={address} ens={ens} />
-              {address === accountData?.address ? <CreateDaoButton /> : <></>}
+              {address === accountData?.address ? (
+                <div className="flex w-full justify-center md:justify-start">
+                  <CreateDaoButton />
+                </div>
+              ) : (
+                <></>
+              )}
               <UserFriends address={address} />
             </div>
             <div className="flex flex-col px-10 md:w-9/12">

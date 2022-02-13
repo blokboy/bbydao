@@ -3,7 +3,6 @@ import { GoSearch } from "react-icons/go"
 import { useUiStore } from "stores/useUiStore"
 
 const SearchIcon = () => {
-  // const appModalOpen = useUiStore(state => state.appModalOpen)
   const setAppModalOpen = useUiStore(state => state.setAppModalOpen)
 
   return (

@@ -76,7 +76,7 @@ const DaoForm = ({ address }) => {
     >
       {data.connected ? (
         <form
-          className="z-50 mx-auto mt-24 mb-4 flex w-full flex-col rounded bg-slate-100 px-8 pt-6 pb-8 shadow-xl dark:bg-slate-900 md:w-3/6 md:rounded-xl"
+          className="z-50 mx-auto mt-0 flex h-full w-full flex-col bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-auto md:w-6/12 md:rounded-xl"
           onSubmit={handleSubmit}
           onClick={e => closeModal(e)}
         >

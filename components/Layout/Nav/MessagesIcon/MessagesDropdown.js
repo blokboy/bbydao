@@ -1,12 +1,18 @@
 import React from "react"
 import MessageCard from "./MessageCard"
+import { useUiStore } from "stores/useUiStore"
 import { HiOutlineChat } from "react-icons/hi"
 
 const MessagesDropdown = ({ ...props }) => {
   const { messagesOpen, threads, clickAway } = props
 
+  const setCreateThreadModalOpen = useUiStore(
+    state => state.setCreateThreadModalOpen
+  )
+
   const handleStartConversation = () => {
     // open a start conversation modal
+    setCreateThreadModalOpen()
     clickAway()
   }
 
