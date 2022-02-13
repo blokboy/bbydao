@@ -129,9 +129,9 @@ export const getThreadMessages = async req => {
 }
 
 // create messages
-// { channel: string, body: string }
+// { sender: string (req), body: string (req), channel: string (semi-req), addresses: (semi-req) }
 export const createMessage = async req => {
-  const res = await api.post("/message/create", req)
+  const res = await api.post("/message", req)
   return res.data
 }
 

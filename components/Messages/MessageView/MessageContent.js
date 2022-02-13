@@ -12,10 +12,10 @@ const MessageContent = () => {
     () => api.getThreadMessages({ channel: threadChannel }),
     {
       enabled: !!threadChannel,
-      retry: false,
-      retryOnMount: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
+      // retry: false,
+      // retryOnMount: false,
+      // refetchOnWindowFocus: false,
+      // staleTime: Infinity,
     }
   )
 
