@@ -11,10 +11,12 @@ import * as api from "../../query"
 import { useMutation } from "react-query"
 import { useEnsLookup, useAccount } from "wagmi"
 import CreateDaoButton from "./CreateDaoButton"
+import UserStats from "./UserStats"
 
 const UserDashboard = ({ data }) => {
   const { id, address, ens } = data.user
   const { safes } = data.safes
+  const balances = data.safeBalanceInfo
 
   const createDaoModalOpen = useUiStore(state => state.createDaoModalOpen)
 
@@ -55,6 +57,7 @@ const UserDashboard = ({ data }) => {
               <UserDetails address={address} ens={ens} />
               {address === accountData?.address ? <CreateDaoButton /> : <></>}
               <UserFriends address={address} />
+              <UserStats address={address} balances={balances} />
             </div>
             <div className="flex flex-col px-10 md:w-9/12">
               {safes.length ? (

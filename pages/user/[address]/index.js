@@ -23,12 +23,18 @@ export const getServerSideProps = async ({ query }) => {
     )
     const user = res.data
 
-    if (safes.length) {
+    if (safes.safes.length) {
       const safeCreationInfo = await safeService.getSafeCreationInfo(
         safes.safes[0]
       )
+    
+      const safeBalanceInfo = {}
+      for(const safe of safes.safes) {
+        const balances = await safeService.getBalances(safe);
+        safeBalanceInfo[safe] = balances;
+      }
 
-      return { props: { data: { user, safes, safeCreationInfo } } }
+      return { props: { data: { user, safes, safeCreationInfo, safeBalanceInfo } } }
     }
 
     return { props: { data: { user, safes } } }
