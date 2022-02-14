@@ -7,7 +7,7 @@ const Layout = ({ children }) => {
   return (
     <>
       <Nav />
-      <main className="w-screen">
+      <main className="w-full">
         {children}
         <ConnectModal />
         <AppSearchModal />

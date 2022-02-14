@@ -3,10 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    /* @apply mx-3 md:mx-1; */
+  }
+
   body {
     @apply h-[100%] w-[100%] text-slate-800 dark:text-slate-100;
-    @apply bg-gradient-to-bl from-slate-100 via-[#d6e5eb] to-slate-300;
-    @apply dark:bg-gradient-to-br dark:from-slate-800 dark:via-gray-900 dark:to-slate-900;
+    /* @apply bg-gradient-to-bl from-slate-100 via-[#d6e5eb] to-slate-300; */
+    @apply bg-slate-300;
+    /* @apply dark:bg-gradient-to-br dark:from-slate-800 dark:via-gray-900 dark:to-slate-900; */
+    @apply dark:bg-slate-900;
   }
 
   h1 {

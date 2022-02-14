@@ -12,6 +12,7 @@ import { useMutation } from "react-query"
 import { useEnsLookup, useAccount } from "wagmi"
 import CreateDaoButton from "./CreateDaoButton"
 import UserStats from "./UserStats"
+import UserFeed from "./UserFeed"
 
 const UserDashboard = ({ data }) => {
   const { id, address, ens } = data.user
@@ -52,7 +53,7 @@ const UserDashboard = ({ data }) => {
         <>
           {createDaoModalOpen ? <DaoForm address={address} /> : <></>}
           <div className="mt-5 flex h-screen w-full flex-col pb-10 md:flex-row">
-            <div className="flex-start flex flex-col px-4 md:w-3/12 md:px-10">
+            <div className="flex-start flex flex-col px-4 md:w-3/12">
               <UserImage address={address} />
               <UserDetails address={address} ens={ens} />
               {address === accountData?.address ? (
@@ -65,14 +66,19 @@ const UserDashboard = ({ data }) => {
               <UserFriends address={address} />
               <UserStats address={address} balances={balances} />
             </div>
-            <div className="flex flex-col px-10 md:w-9/12">
-              {safes.length ? (
-                <UserDaos address={address} safes={safes} />
-              ) : address === accountData?.address ? (
-                <CreateDaoPrompt />
-              ) : (
-                <></>
-              )}
+            <div className="flex flex-col md:w-9/12 md:flex-row">
+              <div className="flex w-full flex-col md:w-1/2">
+                <UserFeed />
+              </div>
+              <div className="flex w-full flex-col md:w-1/2">
+                {safes.length ? (
+                  <UserDaos address={address} safes={safes} />
+                ) : address === accountData?.address ? (
+                  <CreateDaoPrompt />
+                ) : (
+                  <></>
+                )}
+              </div>
             </div>
           </div>
         </>

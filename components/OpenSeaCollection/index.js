@@ -15,11 +15,11 @@ const OpenSeaCollection = ({ data, slug }) => {
   if (!data) return <div className="h-screen">collection fetch failed</div>
 
   return (
-    <div className="flex w-full flex-col md:px-10 lg:px-16">
+    <div className="flex w-full flex-col">
       {/* needs banner image */}
       <CollectionBanner banner={data.collection.banner_image_url} />
       <div className="flex flex-col md:flex-row">
-        <div className="flex w-full flex-col items-center p-4 md:w-1/3">
+        <div className="flex w-full flex-col items-center md:w-1/3">
           <CollectionInfo
             name={data.collection.name}
             description={data.collection.description}
@@ -33,11 +33,13 @@ const OpenSeaCollection = ({ data, slug }) => {
             volume={data.collection.total_volume}
           />
         </div>
-        <AssetList
-          assets={data.assets}
-          address={data?.collection?.address}
-          slug={slug}
-        />
+        <div className="w-full md:w-2/3">
+          <AssetList
+            assets={data.assets}
+            address={data?.collection?.address}
+            slug={slug}
+          />
+        </div>
       </div>
       {/* offer modal */}
       {osOfferModalOpen ? <OfferModal /> : <></>}
