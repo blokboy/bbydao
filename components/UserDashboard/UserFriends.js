@@ -16,9 +16,9 @@ const UserFriends = ({ address }) => {
         {data?.length} {data?.length === 1 ? "friend" : "friends"}
       </span>
       <div className="mt-4 flex flex-row">
-        { data?.length && data.map( friend => {
+        { data?.length && data.map( (friend, i) => {
           return (
-            <div className="h-12 w-12 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
+            <div key={i} className="h-12 w-12 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
           )
         })}
       </div>

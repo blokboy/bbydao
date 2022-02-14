@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@carbon/charts": "^0.54.12",
+    "@carbon/charts-react": "^0.54.12",
     "@davatar/react": "^1.8.1",
     "@gnosis.pm/safe-core-sdk": "^1.3.0",
     "@gnosis.pm/safe-core-sdk-types": "^0.1.1",
@@ -18,8 +20,10 @@
     "@types/react": "^17.0.39",
     "@walletconnect/client": "^1.6.6",
     "axios": "^0.22.0",
+    "carbon-components": "^10.52.0",
     "classnames": "^2.3.1",
     "cookie": "^0.4.1",
+    "d3": "^7.3.0",
     "ethereum-checksum-address": "^0.0.1",
     "ethers": "^5.5.3",
     "jsonwebtoken": "^8.5.1",
