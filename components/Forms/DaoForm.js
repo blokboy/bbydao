@@ -1,5 +1,6 @@
 import React from "react"
 import useForm from "hooks/useForm"
+import { HiX } from "react-icons/hi"
 import { useUiStore } from "stores/useUiStore"
 import { useConnect, useWaitForTransaction } from "wagmi"
 import { ethers } from "ethers"
@@ -80,6 +81,11 @@ const DaoForm = ({ address }) => {
           onSubmit={handleSubmit}
           onClick={e => closeModal(e)}
         >
+          <div className="flex w-full justify-end">
+            <button className="modal-close-btn" onClick={e => closeModal(e)}>
+              <HiX />
+            </button>
+          </div>
           <div className="mb-8 w-full text-center text-xl font-bold">
             create your dao
           </div>

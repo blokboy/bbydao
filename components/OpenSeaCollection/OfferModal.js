@@ -7,6 +7,7 @@ import { ethers } from "ethers"
 import { createSafeSdk } from "utils/createSafeSdk"
 import { useMutation } from "react-query"
 import * as api from "../../query"
+import { HiX } from "react-icons/hi"
 
 const OfferModal = () => {
   const osOfferModalOpen = useOsStore(state => state.osOfferModalOpen)
@@ -120,7 +121,7 @@ const OfferModal = () => {
         onClick={e => closeModal(e)}
       >
         <div
-          className="z-50 mx-auto mt-24 flex h-1/3 w-full flex-col items-center rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
+          className="z-50 mx-auto mt-0 flex h-full w-full flex-col bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-1/3 md:w-6/12 md:rounded-xl"
           onClick={e => closeModal(e)}
         >
           <div className="mt-10 motion-safe:animate-[bounce_3s_ease-in-out_infinite]">
@@ -140,9 +141,14 @@ const OfferModal = () => {
       onClick={e => closeModal(e)}
     >
       <div
-        className="min-h-3/4 z-50 mx-auto mt-24 flex w-full flex-col items-center rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
+        className="z-50 mx-auto mt-0 flex h-max w-full flex-col items-center bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-auto md:w-6/12 md:rounded-xl"
         onClick={e => closeModal(e)}
       >
+        <div className="flex w-full justify-end">
+          <button className="modal-close-btn" onClick={e => closeModal(e)}>
+            <HiX />
+          </button>
+        </div>
         <img
           className="mb-2"
           width="250px"

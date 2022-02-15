@@ -7,6 +7,7 @@ import { ethers } from "ethers"
 import { createSafeSdk } from "utils/createSafeSdk"
 import { useMutation } from "react-query"
 import * as api from "../../query"
+import { HiX } from "react-icons/hi"
 
 const BuyModal = () => {
   const osBuyModalOpen = useOsStore(state => state.osBuyModalOpen)
@@ -123,14 +124,8 @@ const BuyModal = () => {
     // render button to close OfferModal
   }
 
-  const sellOrderWei = ethers.utils.parseUnits(osAssetInfo?.sellOrder)
-  const sellOrderEth = ethers.utils.formatEther(sellOrderWei).toString()
-  const price = Number(sellOrderEth) / 10 ** 18
-  console.log("wei ", price)
+  if (!osBuyModalOpen || !osAssetInfo) return <></>
 
-  if (!osBuyModalOpen) return <></>
-
-  // if txWaiting ?
   if (txWaiting) {
     return (
       <div
@@ -138,7 +133,7 @@ const BuyModal = () => {
         onClick={e => closeModal(e)}
       >
         <div
-          className="z-50 mx-auto mt-24 flex h-1/3 w-full flex-col items-center rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
+          className="z-50 mx-auto mt-0 flex h-full w-full flex-col bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-1/3 md:w-6/12 md:rounded-xl"
           onClick={e => closeModal(e)}
         >
           <div className="mt-10 motion-safe:animate-[bounce_3s_ease-in-out_infinite]">
@@ -152,70 +147,83 @@ const BuyModal = () => {
     )
   }
 
-  return (
-    <div
-      className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
-      onClick={e => closeModal(e)}
-    >
+  if (osAssetInfo && !txWaiting) {
+    const sellOrderWei = ethers.utils.parseUnits(osAssetInfo?.sellOrder)
+    const sellOrderEth = ethers.utils.formatEther(sellOrderWei).toString()
+    const price = Number(sellOrderEth) / 10 ** 18
+    console.log("wei ", price)
+
+    return (
       <div
-        className="min-h-3/4 z-50 mx-auto mt-24 flex w-full flex-col items-center rounded-xl bg-slate-200 py-6 px-4 shadow dark:bg-slate-900 md:w-6/12"
+        className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
         onClick={e => closeModal(e)}
       >
-        <img
-          className="mb-2"
-          width="250px"
-          src={osAssetInfo.image_url}
-          alt={osAssetInfo?.token_id}
-        />
-        <div className="font-bold">
-          <span>{price}</span> <span className="text-blue-500">ETH</span>
-        </div>
-
-        {/* form to get proposed offer value */}
-        {/* onSubmit make offer */}
-        <form className="w-11/12" onSubmit={handleSubmit}>
-          <div className="mb-2">
-            <span className="font-semibold">
-              Please pick a dao to perform this action from
-            </span>
-            {/* iterate through safes into radio input buttons, value will be picked up by useForm */}
-            <div className="my-2 mb-4 grid grid-cols-3">
-              {safes?.length
-                ? safes?.map((safe, index) => (
-                    <div
-                      className="m-1 bg-slate-300 p-3 dark:bg-slate-800"
-                      key={index}
-                    >
-                      <input
-                        type="radio"
-                        name="safe"
-                        checked={state.safe === safe}
-                        onChange={handleChange}
-                        value={safe}
-                      />
-                      <label className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text pl-4 font-semibold text-transparent">
-                        {safe.substring(0, 6) +
-                          "..." +
-                          safe.substring(safe.length - 5, safe.length - 1)}
-                      </label>
-                    </div>
-                  ))
-                : "no safes"}
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <button
-              className="focus:shadow-outline w-full rounded-xl bg-slate-300 py-3 px-4 font-bold shadow-xl hover:bg-slate-400 focus:outline-none dark:bg-slate-800 dark:hover:bg-slate-700"
-              type="submit"
-            >
-              submit
+        <div
+          className="z-50 mx-auto mt-0 flex h-full w-full flex-col items-center bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-auto md:w-6/12 md:rounded-xl"
+          onClick={e => closeModal(e)}
+        >
+          <div className="flex w-full justify-end">
+            <button className="modal-close-btn" onClick={e => closeModal(e)}>
+              <HiX />
             </button>
           </div>
-        </form>
-        {/* form */}
+          <img
+            className="mb-2"
+            width="250px"
+            src={osAssetInfo.image_url}
+            alt={osAssetInfo?.token_id}
+          />
+          <div className="font-bold">
+            <span>{price ? price : ""}</span>{" "}
+            <span className="text-blue-500">ETH</span>
+          </div>
+
+          {/* form to get proposed offer value */}
+          {/* onSubmit make offer */}
+          <form className="w-11/12" onSubmit={handleSubmit}>
+            <div className="mb-2">
+              <span className="font-semibold">
+                Please pick a dao to perform this action from
+              </span>
+              {/* iterate through safes into radio input buttons, value will be picked up by useForm */}
+              <div className="my-2 mb-4 grid grid-cols-3">
+                {safes?.length
+                  ? safes?.map((safe, index) => (
+                      <div
+                        className="m-1 bg-slate-300 p-3 dark:bg-slate-800"
+                        key={index}
+                      >
+                        <input
+                          type="radio"
+                          name="safe"
+                          checked={state.safe === safe}
+                          onChange={handleChange}
+                          value={safe}
+                        />
+                        <label className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text pl-4 font-semibold text-transparent">
+                          {safe.substring(0, 6) +
+                            "..." +
+                            safe.substring(safe.length - 5, safe.length - 1)}
+                        </label>
+                      </div>
+                    ))
+                  : "no safes"}
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <button
+                className="focus:shadow-outline w-full rounded-xl bg-slate-300 py-3 px-4 font-bold shadow-xl hover:bg-slate-400 focus:outline-none dark:bg-slate-800 dark:hover:bg-slate-700"
+                type="submit"
+              >
+                submit
+              </button>
+            </div>
+          </form>
+          {/* form */}
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 }
 
 export default BuyModal

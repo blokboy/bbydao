@@ -1,6 +1,7 @@
 import React from "react"
 import { useUiStore } from "stores/useUiStore"
 import { useConnect, useAccount } from "wagmi"
+import { HiX } from "react-icons/hi"
 
 const ConnectModal = () => {
   const [{ data, error }, connect] = useConnect()
@@ -51,14 +52,22 @@ const ConnectModal = () => {
     )
   }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
-  if (!connectModalOpen) return <></>
+  if (!connectModalOpen || accountData) return <></>
 
   return (
     <div
       className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
       onClick={e => closeModal(e)}
     >
-      <div className="z-50 mx-auto mt-24 mb-4 flex w-full flex-col rounded bg-slate-100 px-8 pt-6 pb-8 shadow-xl dark:bg-slate-900 md:w-3/6 md:rounded-xl">
+      <div
+        className="z-50 mx-auto mt-0 flex h-full w-full flex-col bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-auto md:w-6/12 md:rounded-xl"
+        onClick={e => closeModal(e)}
+      >
+        <div className="flex w-full justify-end">
+          <button className="modal-close-btn" onClick={e => closeModal(e)}>
+            <HiX />
+          </button>
+        </div>
         {connectButtons}
       </div>
     </div>
