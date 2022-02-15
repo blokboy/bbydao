@@ -2,7 +2,6 @@ import React from "react"
 import Head from "next/head"
 import UserImage from "./UserImage"
 import UserDetails from "./UserDetails"
-import UserFriends from "./UserFriends"
 import CreateDaoPrompt from "./CreateDaoPrompt"
 import UserDaos from "./UserDaos"
 import DaoForm from "../Forms/DaoForm"
@@ -63,7 +62,6 @@ const UserDashboard = ({ data }) => {
               ) : (
                 <></>
               )}
-              <UserFriends address={address} />
               <UserStats address={address} balances={balances} />
             </div>
             <div className="flex flex-col md:w-9/12 md:flex-row">
