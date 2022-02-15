@@ -37,7 +37,7 @@ export const updateUser = async req => {
 // { initiatorId: id, targetId: id, status: enum }
 export const reqRelationship = async req => {
   const res = await api.post("/relationship/create", req)
-  console.log("reqRelationship response:", data)
+  console.log("reqRelationship response:", res.data)
   return res.data
 }
 
