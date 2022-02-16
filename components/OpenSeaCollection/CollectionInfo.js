@@ -1,4 +1,5 @@
 import React from "react"
+import { HiBadgeCheck } from "react-icons/hi"
 
 const CollectionInfo = ({
   name,
@@ -6,6 +7,9 @@ const CollectionInfo = ({
   numOwners,
   totalSupply,
   verified,
+  floor,
+  avg,
+  volume
 }) => {
   const [isReadMore, setIsReadMore] = React.useState(true)
   const toggleReadMore = () => {
@@ -13,11 +17,23 @@ const CollectionInfo = ({
   }
 
   return (
-    <div className="flex w-full flex-col p-3">
-      <h1 className="flex w-full justify-center text-5xl">{name}</h1>
-      <div>owners: {numOwners}</div>
-      <div>total supply: {totalSupply}</div>
-      <div>verified: {verified}</div>
+    <div className="flex w-full flex-col rounded-xl border border-white p-3">
+      <div className="ml-1 flex h-full w-full flex-row items-center">
+                  <span className="mr-1 text-2xl underline font-semibold">{name}</span>
+                  {verified ? (
+                    <HiBadgeCheck className="text-blue-400" />
+                  ) : (
+                    <></>
+                  )}
+      </div>
+      
+      <div className="mt-4 flex w-full flex-row p-3">
+      <span className="mr-1 text-lg font-semibold">{numOwners} Owners</span>
+      <span className="mr-1 text-lg font-semibold">{totalSupply} Supply</span>
+      <span className="mr-1 text-lg font-semibold">{floor.toFixed(1)}E Floor</span>
+      <span className="mr-1 text-lg font-semibold">{avg.toFixed(1)}E Price</span>
+      <span className="mr-1 text-lg font-semibold">{volume.toFixed(1)}E Volume</span>
+      </div>
 
       <div className="">
         {isReadMore && description ? description?.slice(0, 150) : <></>}
@@ -28,6 +44,7 @@ const CollectionInfo = ({
           </button>
         )}
       </div>
+
     </div>
   )
 }

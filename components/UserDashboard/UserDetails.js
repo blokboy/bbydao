@@ -75,7 +75,13 @@ const UserDetails = ({ address, ens }) => {
       ) : (
         <button
           className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-700"
-          onClick={handleRequest}
+          onClick={() => {
+            if(getUserRelationship(friendData) === 3) {
+              return 
+            } else {
+              handleRequest()
+            }
+          }}
         >
           {data?.address && getUserRelationship(friendData) === 3
             ? "pending"
