@@ -1,5 +1,5 @@
 import React from "react"
-import FriendsModalBody from "./FriendsModalBody"
+import FriendSearch from "./FriendSearch"
 import { useUiStore } from "stores/useUiStore"
 
 const FriendsModal = () => {
@@ -20,7 +20,7 @@ const FriendsModal = () => {
       className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
       onClick={e => closeModal(e)}
     >
-      <FriendsModalBody closeModal={closeModal} />
+      <FriendSearch closeModal={closeModal} />
     </div>
   )
 }

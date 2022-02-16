@@ -9,11 +9,11 @@ const UserDetails = ({ address, ens }) => {
   const [{ data: connectData, error: connectError }, connect] = useConnect()
   const [{ data, error, loading }, disconnect] = useAccount()
   const { data: friendData } = useQuery(
-    "friends",
+    ["friends", address],
     () => api.getFriends({ initiator: address }),
     { refetchOnWindowFocus: false }
   )
-  console.log("data ", data)
+  console.log("friends ", friendData)
 
   const setFriendsModalOpen = useUiStore(state => state.setFriendsModalOpen)
 
@@ -76,8 +76,8 @@ const UserDetails = ({ address, ens }) => {
         <button
           className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-700"
           onClick={() => {
-            if(getUserRelationship(friendData) === 3) {
-              return 
+            if (getUserRelationship(friendData) === 3) {
+              return
             } else {
               handleRequest()
             }

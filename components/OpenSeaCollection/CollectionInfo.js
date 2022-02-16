@@ -9,7 +9,7 @@ const CollectionInfo = ({
   verified,
   floor,
   avg,
-  volume
+  volume,
 }) => {
   const [isReadMore, setIsReadMore] = React.useState(true)
   const toggleReadMore = () => {
@@ -19,20 +19,22 @@ const CollectionInfo = ({
   return (
     <div className="flex w-full flex-col rounded-xl border border-white p-3">
       <div className="ml-1 flex h-full w-full flex-row items-center">
-                  <span className="mr-1 text-2xl underline font-semibold">{name}</span>
-                  {verified ? (
-                    <HiBadgeCheck className="text-blue-400" />
-                  ) : (
-                    <></>
-                  )}
+        <span className="mr-1 text-2xl font-semibold underline">{name}</span>
+        {verified ? <HiBadgeCheck className="text-blue-400" /> : <></>}
       </div>
-      
+
       <div className="mt-4 flex w-full flex-row p-3">
-      <span className="mr-1 text-lg font-semibold">{numOwners} Owners</span>
-      <span className="mr-1 text-lg font-semibold">{totalSupply} Supply</span>
-      <span className="mr-1 text-lg font-semibold">{floor.toFixed(1)}E Floor</span>
-      <span className="mr-1 text-lg font-semibold">{avg.toFixed(1)}E Price</span>
-      <span className="mr-1 text-lg font-semibold">{volume.toFixed(1)}E Volume</span>
+        <span className="mr-1 text-lg font-semibold">{numOwners} Owners</span>
+        <span className="mr-1 text-lg font-semibold">{totalSupply} Supply</span>
+        <span className="mr-1 text-lg font-semibold">
+          {floor.toFixed(1)}E Floor
+        </span>
+        <span className="mr-1 text-lg font-semibold">
+          {avg.toFixed(1)}E Price
+        </span>
+        <span className="mr-1 text-lg font-semibold">
+          {volume.toFixed(1)}E Volume
+        </span>
       </div>
 
       <div className="">
@@ -44,7 +46,6 @@ const CollectionInfo = ({
           </button>
         )}
       </div>
-
     </div>
   )
 }

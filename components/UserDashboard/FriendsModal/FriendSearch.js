@@ -1,0 +1,34 @@
+import React from "react"
+import { GoSearch } from "react-icons/go"
+import { HiX } from "react-icons/hi"
+
+const FriendSearch = ({ closeModal }) => {
+  return (
+    <div
+      className="z-50 mx-auto mt-0 flex h-full w-full flex-col bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-1/3 md:w-6/12 md:rounded-xl"
+      onClick={e => closeModal(e)}
+    >
+      <div className="relative w-full border-b-2 border-slate-300 py-3 text-slate-600 focus-within:text-slate-400 dark:focus-within:text-slate-100">
+        <span className="absolute left-0 top-4 flex items-center pl-2">
+          <GoSearch size={24} />
+        </span>
+        <input
+          autoFocus
+          className="w-full bg-slate-200 py-2 pl-12 text-sm text-white focus:text-slate-900 focus:outline-none dark:bg-slate-900 dark:focus:text-slate-100"
+          placeholder="Search..."
+          autoComplete="off"
+          // onChange={event => setQuery(event.target.value)}
+          // value={query}
+        />
+        <button
+          className="absolute right-2 top-3 rounded-full border px-2 py-1 dark:text-white"
+          onClick={e => closeModal(e)}
+        >
+          <HiX />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+export default FriendSearch

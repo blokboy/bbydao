@@ -1,5 +1,4 @@
 import React from "react"
-import Link from "next/link"
 import { GoSearch } from "react-icons/go"
 import { useUiStore } from "stores/useUiStore"
 import axios from "axios"
