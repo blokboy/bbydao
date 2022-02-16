@@ -1,13 +1,40 @@
 import React from "react"
+import Select from "react-select"
 import useForm from "hooks/useForm"
+import { useQuery } from "react-query"
+import { useAccount } from "wagmi"
 
 const CreateThreadForm = ({ closeModal }) => {
   const { state, setState, handleChange } = useForm()
+  const [selectedOptions, setSelectedOptions] = React.useState([])
+  const [{ data: accountData }] = useAccount()
+
+  const { data: friendData } = useQuery(
+    ["friends", accountData?.address],
+    () => api.getFriends({ initiator: accountData?.address }),
+    {
+      refetchOnWindowFocus: false,
+      staleTime: 180000,
+    }
+  )
+
+  const friends = friendData?.map(friend => {
+    return {
+      value: friend.initiator,
+      label: friend.initiatorEns ? friend.initiatorEns : friend.initiator,
+    }
+  })
+
+  const handleSelectedOptions = options => {
+    setSelectedOptions(options)
+  }
 
   const handleSubmit = async e => {
     e.preventDefault()
     console.log(state)
+    console.log(selectedOptions)
     setState({})
+    // setSelectedOptions([])
   }
 
   return (
@@ -16,7 +43,7 @@ const CreateThreadForm = ({ closeModal }) => {
         start message thread
       </div>
 
-      <div className="mb-8">
+      {/* <div className="mb-8">
         <label className="mb-2 block text-sm font-bold" htmlFor="name">
           invites
         </label>
@@ -29,7 +56,17 @@ const CreateThreadForm = ({ closeModal }) => {
           type="text"
           placeholder="invites"
         />
-      </div>
+      </div> */}
+
+      <Select
+        // defaultValue={}
+        isMulti
+        name="invites"
+        options={friends}
+        className="basic-multi-select"
+        classNamePrefix="select"
+        onChange={handleSelectedOptions}
+      />
 
       <div className="mb-8">
         <label className="mb-2 block text-sm font-bold" htmlFor="name">
