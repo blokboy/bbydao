@@ -2,15 +2,43 @@ import React from "react"
 import { GoSearch } from "react-icons/go"
 import { HiX } from "react-icons/hi"
 import { useQuery } from "react-query"
+import FriendSearchResults from "./FriendSearchResults"
 
 const FriendSearch = ({ address, closeModal }) => {
+  const [results, setResults] = React.useState([])
+
   const { data: friendData } = useQuery(
     ["friends", address],
     () => api.getFriends({ initiator: address }),
-    { refetchOnWindowFocus: false }
+    {
+      refetchOnWindowFocus: false,
+      staleTime: 180000,
+    }
   )
 
-  console.log("modal friends", friendData)
+  const excludeColumns = [
+    "createdAt",
+    "id",
+    "status",
+    "target",
+    "targetEns",
+    "updatedAt",
+  ]
+
+  const filterFriends = value => {
+    const lowercasedValue = value.toLowerCase().trim()
+    if (lowercasedValue === "") setResults([])
+    else {
+      const filteredData = friendData.filter(item => {
+        return Object.keys(item).some(key =>
+          excludeColumns.includes(key)
+            ? false
+            : item[key].toString().toLowerCase().includes(lowercasedValue)
+        )
+      })
+      setResults(filteredData)
+    }
+  }
 
   return (
     <div
@@ -26,8 +54,7 @@ const FriendSearch = ({ address, closeModal }) => {
           className="w-full bg-slate-200 py-2 pl-12 text-sm text-white focus:text-slate-900 focus:outline-none dark:bg-slate-900 dark:focus:text-slate-100"
           placeholder="Search..."
           autoComplete="off"
-          // onChange={event => setQuery(event.target.value)}
-          // value={query}
+          onChange={event => filterFriends(event.target.value)}
         />
         <button
           className="absolute right-2 top-3 rounded-full border px-2 py-1 dark:text-white"
@@ -36,6 +63,18 @@ const FriendSearch = ({ address, closeModal }) => {
           <HiX />
         </button>
       </div>
+
+      {!results.length ? (
+        <>
+          <div className="flex h-24 w-full items-center justify-center">
+            <h1 className="font-semibold">start typing...</h1>
+          </div>
+        </>
+      ) : results.length ? (
+        <FriendSearchResults friends={results} closeModal={closeModal} />
+      ) : (
+        <></>
+      )}
     </div>
   )
 }
