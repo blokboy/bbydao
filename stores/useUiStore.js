@@ -25,6 +25,9 @@ export const useUiStore = create(set => ({
   setFriendsModalOpen: () =>
     set(state => ({ friendsModalOpen: !state.friendsModalOpen })),
 
+  friendsModalAddress: null,
+  setFriendsModalAddress: address => set({ friendsModalAddress: address }),
+
   // notification count on nav
   notificationCount: null,
   setNotificationCount: count => set({ notificationCount: count }),

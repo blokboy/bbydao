@@ -1,8 +1,17 @@
 import React from "react"
 import { GoSearch } from "react-icons/go"
 import { HiX } from "react-icons/hi"
+import { useQuery } from "react-query"
 
-const FriendSearch = ({ closeModal }) => {
+const FriendSearch = ({ address, closeModal }) => {
+  const { data: friendData } = useQuery(
+    ["friends", address],
+    () => api.getFriends({ initiator: address }),
+    { refetchOnWindowFocus: false }
+  )
+
+  console.log("modal friends", friendData)
+
   return (
     <div
       className="z-50 mx-auto mt-0 flex h-full w-full flex-col bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-1/3 md:w-6/12 md:rounded-xl"

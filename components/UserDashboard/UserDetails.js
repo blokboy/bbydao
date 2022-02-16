@@ -11,10 +11,15 @@ const UserDetails = ({ address, ens }) => {
   const { data: friendData } = useQuery(
     ["friends", address],
     () => api.getFriends({ initiator: address }),
-    { refetchOnWindowFocus: false }
+    {
+      refetchOnWindowFocus: false,
+      staleTime: 180000,
+    }
   )
-  console.log("friends ", friendData)
 
+  const setFriendsModalAddress = useUiStore(
+    state => state.setFriendsModalAddress
+  )
   const setFriendsModalOpen = useUiStore(state => state.setFriendsModalOpen)
 
   const { status, mutateAsync } = useMutation(api.reqRelationship)
@@ -47,6 +52,11 @@ const UserDetails = ({ address, ens }) => {
     }
 
     mutateAsync(req)
+  }
+
+  const handleOpenFriendsModal = () => {
+    setFriendsModalAddress(address)
+    setFriendsModalOpen()
   }
 
   return (
@@ -89,7 +99,7 @@ const UserDetails = ({ address, ens }) => {
         </button>
       )}
       <div className="mt-4 ml-4 mb-4 mr-4 flex flex-row">
-        <button className="cursor-pointer" onClick={setFriendsModalOpen}>
+        <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
           {friendData?.length} {friendData?.length === 1 ? "friend" : "friends"}
         </button>
       </div>
