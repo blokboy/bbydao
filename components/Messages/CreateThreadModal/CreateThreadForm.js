@@ -1,5 +1,6 @@
 import React from "react"
 import Select from "react-select"
+import { customStyles } from "./customStyles"
 import useForm from "hooks/useForm"
 import { useQuery } from "react-query"
 import { useAccount } from "wagmi"
@@ -43,23 +44,12 @@ const CreateThreadForm = ({ closeModal }) => {
         start message thread
       </div>
 
-      {/* <div className="mb-8">
-        <label className="mb-2 block text-sm font-bold" htmlFor="name">
-          invites
-        </label>
-        <input
-          value={state.invites || ""}
-          onChange={handleChange}
-          className="focus:shadow-outline w-full appearance-none rounded border bg-slate-200 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
-          id="invites"
-          name="invites"
-          type="text"
-          placeholder="invites"
-        />
-      </div> */}
-
+      <label className="mb-2 block text-sm font-bold" htmlFor="name">
+        invites
+      </label>
       <Select
         // defaultValue={}
+        styles={customStyles}
         isMulti
         name="invites"
         options={friends}
@@ -68,7 +58,7 @@ const CreateThreadForm = ({ closeModal }) => {
         onChange={handleSelectedOptions}
       />
 
-      <div className="mb-8">
+      <div className="mb-3 mt-3">
         <label className="mb-2 block text-sm font-bold" htmlFor="name">
           body
         </label>

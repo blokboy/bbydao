@@ -6,6 +6,7 @@ import { useConnect, useWaitForTransaction } from "wagmi"
 import { ethers } from "ethers"
 import { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
 import { Safe, SafeFactory, SafeAccountConfig } from "@gnosis.pm/safe-core-sdk"
+import { useQuery } from "react-query"
 
 const DaoForm = ({ address }) => {
   const { state, setState, handleChange } = useForm()
@@ -16,6 +17,22 @@ const DaoForm = ({ address }) => {
 
   const createDaoModalOpen = useUiStore(state => state.createDaoModalOpen)
   const setCreateDaoModalOpen = useUiStore(state => state.setCreateDaoModalOpen)
+
+  const { data: friendData } = useQuery(
+    ["friends", address],
+    () => api.getFriends({ initiator: address }),
+    {
+      refetchOnWindowFocus: false,
+      staleTime: 180000,
+    }
+  )
+
+  const friends = friendData?.map(friend => {
+    return {
+      value: friend.initiator,
+      label: friend.initiatorEns ? friend.initiatorEns : friend.initiator,
+    }
+  })
 
   const createBabyDao = async (e, ownerList, userThreshold = 2) => {
     if (!address) {
@@ -86,33 +103,27 @@ const DaoForm = ({ address }) => {
               <HiX />
             </button>
           </div>
-          <div className="mb-8 w-full text-center text-xl font-bold">
+          <div className="mb-3 w-full text-center text-xl font-bold">
             create your dao
           </div>
 
-          {loading ? (
-            <span className="text-yellow-500">
-              useWaitForTransaction loading...
-            </span>
-          ) : (
-            <></>
-          )}
+          <div className="mb-3">
+            <label className="mb-2 block text-sm font-bold" htmlFor="name">
+              invite friends
+            </label>
+            <p className="mb-2 text-xs">separate usernames with comma</p>
+            <input
+              value={state.invite || ""}
+              onChange={handleChange}
+              id="invite"
+              name="invite"
+              className="focus:shadow-outline w-full appearance-none rounded border bg-slate-200 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
+              type="text"
+              placeholder="@username"
+            />
+          </div>
 
-          {waitError ? (
-            <span className="text-red-500">useWaitForTransaction ERROR</span>
-          ) : (
-            <></>
-          )}
-
-          {waitData ? (
-            <span className="text-green-500">
-              useWaitForTransaction data success
-            </span>
-          ) : (
-            <></>
-          )}
-
-          <div className="mb-8">
+          <div className="mb-3">
             <label className="mb-2 block text-sm font-bold" htmlFor="name">
               name
             </label>
@@ -142,22 +153,6 @@ const DaoForm = ({ address }) => {
                 placeholder="enter a short description"
               />
             </div>
-          </div>
-
-          <div className="mb-8">
-            <label className="mb-2 block text-sm font-bold" htmlFor="name">
-              invite friends
-            </label>
-            <p className="mb-2 text-xs">separate usernames with comma</p>
-            <input
-              value={state.invite || ""}
-              onChange={handleChange}
-              id="invite"
-              name="invite"
-              className="focus:shadow-outline w-full appearance-none rounded border bg-slate-200 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
-              type="text"
-              placeholder="@username"
-            />
           </div>
 
           <div className="flex items-center justify-between">
