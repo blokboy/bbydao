@@ -1,5 +1,5 @@
 import React from "react"
-import ModalBody from "./ModalBody"
+import ModalBody from "./ThreadModalBody"
 import { useUiStore } from "stores/useUiStore"
 
 const CreateThreadModal = () => {

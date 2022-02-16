@@ -13,33 +13,32 @@ const UserDetails = ({ address, ens }) => {
     () => api.getFriends({ initiator: address }),
     { refetchOnWindowFocus: false }
   )
-  console.log('data ', data)
+  console.log("data ", data)
 
-
-  const setConnectModalOpen = useUiStore(state => state.setConnectModalOpen)
+  const setFriendsModalOpen = useUiStore(state => state.setFriendsModalOpen)
 
   const { status, mutateAsync } = useMutation(api.reqRelationship)
 
-  const getUserRelationship = (friends) => {
-    let relationship;
+  const getUserRelationship = friends => {
+    let relationship
 
-    if(!friends?.length) {
-      return 
+    if (!friends?.length) {
+      return
     }
 
-    for(const friend of friends) {
-      if(friend.initiator == data?.address || friend.target == data?.address) {
-        relationship = friend.status;
+    for (const friend of friends) {
+      if (friend.initiator == data?.address || friend.target == data?.address) {
+        relationship = friend.status
         return relationship
       }
     }
 
-    return null;
+    return null
   }
 
   const handleRequest = () => {
-    if(!data?.address) {
-      return 
+    if (!data?.address) {
+      return
     }
     const req = {
       initiator: data.address,
@@ -70,9 +69,7 @@ const UserDetails = ({ address, ens }) => {
           success
         </span>
       ) : connectData?.connected && getUserRelationship(friendData) === 1 ? (
-        <button
-          className="my-4 w-max rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] text-xl text-white px-4 py-2 shadow"
-        >
+        <button className="my-4 w-max rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] px-4 py-2 text-xl text-white shadow">
           friends
         </button>
       ) : (
@@ -80,15 +77,17 @@ const UserDetails = ({ address, ens }) => {
           className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-700"
           onClick={handleRequest}
         >
-          { data?.address && getUserRelationship(friendData) === 3 ? "pending" : "request" }
+          {data?.address && getUserRelationship(friendData) === 3
+            ? "pending"
+            : "request"}
         </button>
       )}
       <div className="mt-4 ml-4 mb-4 mr-4 flex flex-row">
-      <span className="cursor-pointer">
-        {friendData?.length} {friendData?.length === 1 ? "friend" : "friends"}
-      </span>
+        <button className="cursor-pointer" onClick={setFriendsModalOpen}>
+          {friendData?.length} {friendData?.length === 1 ? "friend" : "friends"}
+        </button>
       </div>
-      </div>
+    </div>
   )
 }
 

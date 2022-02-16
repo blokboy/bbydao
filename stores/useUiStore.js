@@ -20,6 +20,11 @@ export const useUiStore = create(set => ({
   setCreateThreadModalOpen: () =>
     set(state => ({ createThreadModalOpen: !state.createThreadModalOpen })),
 
+  // friends modal display
+  friendsModalOpen: false,
+  setFriendsModalOpen: () =>
+    set(state => ({ friendsModalOpen: !state.friendsModalOpen })),
+
   // notification count on nav
   notificationCount: null,
   setNotificationCount: count => set({ notificationCount: count }),
