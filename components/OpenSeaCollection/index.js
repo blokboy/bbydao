@@ -1,7 +1,6 @@
 import React from "react"
 import CollectionBanner from "./CollectionBanner"
 import CollectionInfo from "./CollectionInfo"
-import CollectionStats from "./CollectionStats"
 import AssetList from "./AssetList"
 
 const OpenSeaCollection = ({ data, slug }) => {
@@ -19,8 +18,6 @@ const OpenSeaCollection = ({ data, slug }) => {
             numOwners={data.collection.num_owners}
             totalSupply={data.collection.total_supply}
             verified={data.collection.safelist_request_status}
-          />
-          <CollectionStats
             floor={data.collection.floor_price}
             avg={data.collection.average_price}
             volume={data.collection.total_volume}
