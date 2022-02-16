@@ -1,5 +1,5 @@
 import React from "react"
-import ModalBody from "./ThreadModalBody"
+import ThreadModalBody from "./ThreadModalBody"
 import { useUiStore } from "stores/useUiStore"
 
 const CreateThreadModal = () => {
@@ -22,7 +22,7 @@ const CreateThreadModal = () => {
       className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
       onClick={e => closeModal(e)}
     >
-      <ModalBody closeModal={closeModal} />
+      <ThreadModalBody closeModal={closeModal} />
     </div>
   )
 }
