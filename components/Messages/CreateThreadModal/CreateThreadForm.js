@@ -78,7 +78,7 @@ const CreateThreadForm = ({ closeModal }) => {
 
       <div className="mb-8">
         <label className="mb-2 block text-sm font-bold" htmlFor="name">
-          name
+          channel name
         </label>
         <input
           value={state.name || ""}
@@ -93,7 +93,7 @@ const CreateThreadForm = ({ closeModal }) => {
 
       <div className="flex items-center justify-between">
         <button
-          className="focus:shadow-outline w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
+          className="focus:shadow-outline mb-3 w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
           type="submit"
         >
           save

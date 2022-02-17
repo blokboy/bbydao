@@ -119,7 +119,7 @@ const DaoForm = ({ address }) => {
             <label className="mb-2 block text-sm font-bold" htmlFor="name">
               invite friends
             </label>
-            <p className="mb-2 text-xs">separate usernames with comma</p>
+            <p className="mb-2 text-xs">select from your friends</p>
             <Select
               // defaultValue={}
               styles={customStyles}
@@ -166,7 +166,7 @@ const DaoForm = ({ address }) => {
 
           <div className="flex items-center justify-between">
             <button
-              className="focus:shadow-outline w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
+              className="focus:shadow-outline mb-3 w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
               type="submit"
             >
               save
