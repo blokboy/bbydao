@@ -27,7 +27,8 @@ const CreateThreadForm = ({ closeModal }) => {
   })
 
   const handleSelectedOptions = options => {
-    setSelectedOptions(options)
+    const selectedAddresses = options.map(option => option.value)
+    setSelectedOptions(selectedAddresses)
   }
 
   const handleSubmit = async e => {
