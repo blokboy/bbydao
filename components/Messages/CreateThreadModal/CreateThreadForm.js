@@ -21,8 +21,8 @@ const CreateThreadForm = ({ closeModal }) => {
 
   const friends = friendData?.map(friend => {
     return {
-      value: friend.initiator,
-      label: friend.initiatorEns ? friend.initiatorEns : friend.initiator,
+      value: friend.initiator === accountData?.address ? friend.target : friend.initiator,
+      label: friend.initiator === accountData?.address ? friend.targetEns || friend.target : friend.initiatorEns,
     }
   })
 
