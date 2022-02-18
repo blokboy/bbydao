@@ -29,11 +29,11 @@ const DaoForm = ({ address }) => {
       staleTime: 180000,
     }
   )
-
+  
   const friends = friendData?.map(friend => {
     return {
-      value: friend.initiator,
-      label: friend.initiatorEns ? friend.initiatorEns : friend.initiator,
+      value: friend.initiator === address ? friend.target : friend.initiator,
+      label: friend.initiator === address ? friend.targetEns || friend.target : friend.initiatorEns,
     }
   })
 
