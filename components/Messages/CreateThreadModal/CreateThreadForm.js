@@ -21,8 +21,14 @@ const CreateThreadForm = ({ closeModal }) => {
 
   const friends = friendData?.map(friend => {
     return {
-      value: friend.initiator === accountData?.address ? friend.target : friend.initiator,
-      label: friend.initiator === accountData?.address ? friend.targetEns || friend.target : friend.initiatorEns,
+      value:
+        friend.initiator === accountData?.address
+          ? friend.target
+          : friend.initiator,
+      label:
+        friend.initiator === accountData?.address
+          ? friend.targetEns || friend.target
+          : friend.initiatorEns,
     }
   })
 
@@ -49,7 +55,6 @@ const CreateThreadForm = ({ closeModal }) => {
         invites
       </label>
       <Select
-        // defaultValue={}
         styles={customStyles}
         isMulti
         name="invites"

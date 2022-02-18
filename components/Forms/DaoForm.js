@@ -29,11 +29,14 @@ const DaoForm = ({ address }) => {
       staleTime: 180000,
     }
   )
-  
+
   const friends = friendData?.map(friend => {
     return {
       value: friend.initiator === address ? friend.target : friend.initiator,
-      label: friend.initiator === address ? friend.targetEns || friend.target : friend.initiatorEns,
+      label:
+        friend.initiator === address
+          ? friend.targetEns || friend.target
+          : friend.initiatorEns,
     }
   })
 
@@ -77,7 +80,7 @@ const DaoForm = ({ address }) => {
 
   const handleSubmit = async e => {
     e.preventDefault()
-    const ownerList = [address, state.invite]
+    const ownerList = [address, ...selectedOptions]
     console.log(ownerList)
     await createBabyDao(e, ownerList)
     // once createBabyDao runs, use name, type and address to create dao
@@ -116,7 +119,7 @@ const DaoForm = ({ address }) => {
           </div>
 
           <div className="mb-3">
-            <label className="mb-2 block text-sm font-bold" htmlFor="name">
+            <label className="mb-2 block text-sm font-bold" htmlFor="invites">
               invite friends
             </label>
             <p className="mb-2 text-xs">select from your friends</p>
@@ -132,7 +135,7 @@ const DaoForm = ({ address }) => {
             />
           </div>
 
-          <div className="mb-3">
+          <div className="mb-8">
             <label className="mb-2 block text-sm font-bold" htmlFor="name">
               name
             </label>
@@ -148,7 +151,7 @@ const DaoForm = ({ address }) => {
           </div>
 
           <div className="mb-8">
-            <label className="mb-2 block text-sm font-bold" htmlFor="name">
+            <label className="mb-2 block text-sm font-bold" htmlFor="about">
               about
             </label>
             <div className="h-56">
