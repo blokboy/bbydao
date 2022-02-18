@@ -2,6 +2,8 @@ export const customStyles = {
   option: (provided, state) => ({
     ...provided,
     color: state.isSelected ? "red" : "blue",
+    backgroundColor:
+      document.documentElement.className === "dark" ? "rgb(30,41,59)" : "#fff",
   }),
   input: (provided, state) => ({
     ...provided,
@@ -31,5 +33,10 @@ export const customStyles = {
       document.documentElement.className === "dark" ? "rgb(15 23 42)" : "#fff",
     borderWidth: "0.5px",
     borderRadius: "0.25rem",
+  }),
+  menu: (provided, state) => ({
+    ...provided,
+    backgroundColor:
+      document.documentElement.className === "dark" ? "rgb(30,41,59)" : "#fff",
   }),
 }

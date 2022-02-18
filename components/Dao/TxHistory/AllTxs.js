@@ -32,7 +32,7 @@ const AllTxs = ({ allTxs, owners, threshold }) => {
   */
 
   return (
-    <div className="w-fit">
+    <div className="w-full">
       <h1 className="mt-4">All Transactions: {allTxs.count}</h1>
       <div className="mt-1 flex flex-col rounded-lg bg-slate-100 p-1 shadow-inner dark:bg-slate-800">
         {/* Txs */}

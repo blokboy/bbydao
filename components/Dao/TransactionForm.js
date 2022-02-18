@@ -253,7 +253,7 @@ const TransactionForm = ({ safeAddress }) => {
   // }
 
   return (
-    <div className="mx-auto mb-3 flex w-1/2 flex-col overflow-auto rounded bg-slate-200 px-8 pt-6 pb-8 shadow-xl dark:bg-slate-900 md:rounded-xl">
+    <div className="flex flex-col rounded-xl bg-slate-200 shadow-xl dark:bg-slate-900">
       <div className="mb-8 w-full text-center text-xl font-bold">
         transaction
       </div>
