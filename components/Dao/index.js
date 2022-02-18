@@ -20,25 +20,27 @@ const Dao = ({ data }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="mt-3 flex w-full flex-col overflow-auto md:flex-row">
-        {/* at least one collectible to side panel */}
-        {/* */}
-        <SidePanel
-          nftImage={data?.collectibles[0]?.imageUri}
-          safeInfo={data.safeInfo}
-        />
-        <div className="flex-start item m-3 flex flex-col md:m-0 md:mr-1 md:w-full">
-          <Graph safeAddress={data.safeInfo.address} />
-          <TokensNfts tokens={data.usd} collectibles={data.collectibles} />
-          <TxHistory
-            allTxs={data.allTxs}
-            owners={data.safeInfo.owners}
-            threshold={data.safeInfo.threshold}
+      <div className="mt-5 flex w-full flex-col overflow-auto md:flex-row">
+        <div className="flex-start flex flex-col px-4 md:w-3/12">
+          <SidePanel
+            nftImage={data?.collectibles[0]?.imageUri}
+            safeInfo={data.safeInfo}
           />
-          <TransactionForm safeAddress={data?.safeInfo.address} />
-          {/* </div>
-        <div className="flex-start m-3 flex flex-col md:m-0 md:ml-1 md:w-[40%]"> */}
-          <ProposalHistory />
+        </div>
+        <div className="flex-start item m-3 flex flex-col md:m-0 md:mr-1 md:w-full md:flex-row">
+          <div className="flex w-full flex-col md:w-1/2">
+            <Graph safeAddress={data.safeInfo.address} />
+            <TokensNfts tokens={data.usd} collectibles={data.collectibles} />
+          </div>
+          <div className="flex w-full flex-col md:w-1/2">
+            <TxHistory
+              allTxs={data.allTxs}
+              owners={data.safeInfo.owners}
+              threshold={data.safeInfo.threshold}
+            />
+            <TransactionForm safeAddress={data?.safeInfo.address} />
+            <ProposalHistory />
+          </div>
 
           {/* modals  */}
           {osSellModalOpen ? (
