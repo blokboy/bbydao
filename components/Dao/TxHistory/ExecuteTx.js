@@ -4,7 +4,6 @@ import * as api from "../../../query"
 import { useMutation } from "react-query"
 import { createSeaport } from "utils/createSeaport"
 import { createSafeSdk } from "utils/createSafeSdk"
-import { isConstructorDeclaration } from "typescript"
 
 const ExecuteTx = ({ tx, address }) => {
   const { id, type, value, tokenContract, tokenId, txHash, safeContract } = tx
@@ -18,27 +17,71 @@ const ExecuteTx = ({ tx, address }) => {
   const handleExecute = async e => {
     e.preventDefault()
     if (type === 1) {
+      let acct = await window.ethereum.request({ method: 'eth_requestAccounts' })
+      acct = ethers.utils.getAddress(...acct);
+      console.log('addr ', acct)
       // opensea offer tx
       const seaport = await createSeaport()
-      const ethValue = parseInt(ethers.utils.formatEther(value))
-      const desiredAsset = { tokenId, tokenAddress: tokenContract }
-     
-      const offer = await seaport.createBuyOrder({
-        asset: {
-          tokenId,
-          tokenAddress: tokenContract,
-          schemaName: "ERC721" | "ERC1155",
-        },
-        accountAddress: safeContract,
-        startAmount: ethValue,
+      let ethValue = ethers.utils.formatEther(value)
+      ethValue = Number(ethValue);
+      const desiredAsset = await seaport.api.getAsset({
+        tokenId,
+        tokenAddress: tokenContract
       })
+
+      const order = {
+        asset: {
+          tokenId: desiredAsset.tokenId,
+          tokenAddress: desiredAsset.tokenAddress,
+          schemaName: desiredAsset.schemaName === "ERC1155" ? "ERC1155" : "ERC721"
+        },
+        accountAddress: safeContract, // contract address can't be input here
+        startAmount: ethValue,
+      }
+      
+      const offer = await seaport.createBuyOrder(order)
       console.log("offer", offer)
     }
-    /*
-    if (type === 4) {
-      return // uni sdk and execute swap
+
+    if (type === 2) { 
+      // opensea purchase tx
+      let acct = await window.ethereum.request({ method: 'eth_requestAccounts' })
+      acct = ethers.utils.getAddress(...acct);
+      console.log('addr ', acct)
+      // opensea offer tx
+      const seaport = await createSeaport()
+      let ethValue = ethers.utils.formatEther(value)
+      ethValue = Number(ethValue);
+      const desiredAsset = await seaport.api.getAsset({
+        tokenId,
+        tokenAddress: tokenContract
+      });
+      
+      const order = {
+        asset: {
+          tokenId: desiredAsset.tokenId,
+          tokenAddress: desiredAsset.tokenAddress,
+          schemaName: desiredAsset.schemaName === "ERC1155" ? "ERC1155" : "ERC721"
+        },
+        accountAddress: safeContract, // contract address can't be input here
+        startAmount: ethValue,
+      }
+
+      const offer = await seaport.createBuyOrder(order)
+      console.log('offer ', offer);
+
+      const transfer = await seaport.fulfillOrder({
+        order: offer,
+        accountAddress: acct,
+        recipientAddress: safeContract
+      })
+
+      console.log('transfer ', transfer);
     }
 
+    
+
+    /*
     // create fee tx for our safe
     const safeSdk = await createSafeSdk(safeContract)
     let wei = ethers.utils.parseEther(value)

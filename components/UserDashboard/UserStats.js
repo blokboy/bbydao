@@ -29,58 +29,6 @@ const UserStats = ({ balances, address }) => {
     return formattedData
   }
 
-  const lineChartData = [
-    {
-      "group": "Tokens",
-      "key": "Day 1",
-      "value": 1.42
-    },
-    {
-      "group": "Tokens",
-      "key": "Day 2",
-      "value": 2.1
-    },
-    {
-      "group": "Tokens",
-      "key": "Day 3",
-      "value": 1.91
-    },
-    {
-      "group": "Tokens",
-      "key": "Day 4",
-      "value": 2.35
-    },
-    {
-      "group": "Tokens",
-      "key": "Day 5",
-      "value": 3
-    },
-    {
-      "group": "Collectibles",
-      "key": "Day 1",
-      "value": 0.5
-    },
-    {
-      "group": "Collectibles",
-      "key": "Day 2",
-      "value": 1
-    },
-    {
-      "group": "Collectibles",
-      "key": "Day 3",
-      "value": 2
-    },
-    {
-      "group": "Collectibles",
-      "key": "Day 4",
-      "value": 4
-    },
-    {
-      "group": "Collectibles",
-      "key": "Day 5",
-      "value": 1
-    }]
-
   const lineChartConfig = {
     "title": "BaybDAO Growth",
     "axes": {
