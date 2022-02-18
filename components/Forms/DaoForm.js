@@ -47,8 +47,9 @@ const DaoForm = ({ address }) => {
       console.log("DaoForm.js no owner address")
       return
     }
-
     await window.ethereum.enable()
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    console.log('accounts ', accounts)
 
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const owner1 = provider.getSigner(0)
