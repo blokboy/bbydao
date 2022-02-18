@@ -29,7 +29,7 @@ const DaoForm = ({ address }) => {
       staleTime: 180000,
     }
   )
-  
+
   const friends = friendData?.map(friend => {
     return {
       value: friend.initiator === address ? friend.target : friend.initiator,
@@ -137,7 +137,7 @@ const DaoForm = ({ address }) => {
               name
             </label>
             <input
-              value={state.name || ""}
+              value={state?.name}
               onChange={handleChange}
               className="focus:shadow-outline w-full appearance-none rounded border bg-slate-200 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
               id="name"
@@ -153,7 +153,7 @@ const DaoForm = ({ address }) => {
             </label>
             <div className="h-56">
               <textarea
-                value={state.about || ""}
+                value={state?.about}
                 onChange={handleChange}
                 id="about"
                 name="about"
