@@ -50,8 +50,9 @@ const DaoForm = ({ address }) => {
       console.log("DaoForm.js no owner address")
       return
     }
-
     await window.ethereum.enable()
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    console.log('accounts ', accounts)
 
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const owner1 = provider.getSigner(0)
@@ -140,7 +141,7 @@ const DaoForm = ({ address }) => {
               name
             </label>
             <input
-              value={state.name || ""}
+              value={state?.name}
               onChange={handleChange}
               className="focus:shadow-outline w-full appearance-none rounded border bg-slate-200 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
               id="name"
@@ -156,7 +157,7 @@ const DaoForm = ({ address }) => {
             </label>
             <div className="h-56">
               <textarea
-                value={state.about || ""}
+                value={state?.about}
                 onChange={handleChange}
                 id="about"
                 name="about"

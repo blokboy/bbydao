@@ -62,7 +62,6 @@ const UserDashboard = ({ data }) => {
               ) : (
                 <></>
               )}
-              <UserStats address={address} balances={balances} />
             </div>
             <div className="flex flex-col md:w-9/12 md:flex-row">
               <div className="flex w-full flex-col md:w-1/2">
