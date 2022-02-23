@@ -1,6 +1,13 @@
 export const customStyles = {
   option: (provided, state) => ({
     ...provided,
+    color: state.isSelected
+      ? document.documentElement.className === "dark"
+        ? "lightgray"
+        : "#gray"
+      : document.documentElement.className === "dark"
+      ? "#fff"
+      : "black",
     backgroundColor:
       document.documentElement.className === "dark" ? "rgb(30,41,59)" : "#fff",
   }),
