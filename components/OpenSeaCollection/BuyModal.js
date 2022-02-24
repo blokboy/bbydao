@@ -45,6 +45,7 @@ const BuyModal = () => {
     if (!osBuyModalOpen && e.target) {
       return
     }
+    setState({})
     setOsBuyModalOpen()
     // setOsAssetInfo({})
   }
@@ -188,7 +189,7 @@ const BuyModal = () => {
                 {safes?.length
                   ? safes?.map((safe, index) => (
                       <div
-                        className="m-1 bg-slate-300 p-3 dark:bg-slate-800"
+                        className="m-1 rounded bg-slate-300 p-3 shadow dark:bg-slate-800"
                         key={index}
                       >
                         <input

@@ -6,30 +6,7 @@ import ExecuteTx from "./ExecuteTx"
 import { useAccount } from "wagmi"
 
 const AllTxs = ({ allTxs, owners, threshold }) => {
-  console.log("AllTxs", allTxs)
   const [{ data, error, loading }, disconnect] = useAccount()
-
-  console.log(data?.address)
-
-  // sign
-  // reject
-
-  /* EXECUTE (needs Safe object)
-  const execute = async () => {
-    await window.ethereum.enable()
-    await window.ethereum.request({ method: "eth_requestAccounts" })
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner(provider.provider.selectedAddress)
-
-    const ethAdapter = new EthersAdapter({ ethers, signer })
-    const safeSdk2 = await safeSdk.connect({
-      ethAdapter,
-      safeAddress: safeAddress,
-    })
-    // await safeSdk2.executeTransaction(safeTransaction)
-  }
-  */
 
   return (
     <div className="w-full">

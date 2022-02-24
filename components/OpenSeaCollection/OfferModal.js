@@ -45,6 +45,7 @@ const OfferModal = () => {
     if (!osOfferModalOpen && e.target) {
       return
     }
+    setState({})
     setOsOfferModalOpen()
     // setOsAssetInfo({})
   }
@@ -78,7 +79,7 @@ const OfferModal = () => {
       const signedTransaction = await safeSdk.signTransaction(safeTransaction)
     } catch (error) {
       setTxWaiting(false)
-      // user rejected tx
+      console.log("error signing transaction", error)
       return
     }
     // safeService to propose tx
@@ -181,7 +182,7 @@ const OfferModal = () => {
               {safes?.length
                 ? safes?.map((safe, index) => (
                     <div
-                      className="m-1 bg-slate-300 p-3 dark:bg-slate-800"
+                      className="m-1 rounded bg-slate-300 p-3 shadow dark:bg-slate-800"
                       key={index}
                     >
                       <input

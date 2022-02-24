@@ -2,7 +2,6 @@ import React from "react"
 import { useOsStore } from "stores/useOsStore"
 
 const Nfts = ({ collectibles }) => {
-  console.log("Nfts", collectibles)
   const setOsSellModalOpen = useOsStore(state => state.setOsSellModalOpen)
 
   return (
