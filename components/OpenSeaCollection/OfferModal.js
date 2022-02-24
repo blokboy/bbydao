@@ -156,8 +156,6 @@ const OfferModal = () => {
           alt={osAssetInfo?.token_id}
         />
 
-        {/* form to get proposed offer value */}
-        {/* onSubmit make offer */}
         <form className="w-11/12" onSubmit={handleSubmit}>
           <div className="mb-2">
             <label className="text-sm font-bold" htmlFor="name">
@@ -211,7 +209,6 @@ const OfferModal = () => {
             </button>
           </div>
         </form>
-        {/* form */}
       </div>
     </div>
   )
