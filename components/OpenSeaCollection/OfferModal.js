@@ -37,8 +37,9 @@ const OfferModal = () => {
   }
 
   React.useEffect(() => {
+    if (!osOfferModalOpen) return
     getUserSafes()
-  }, [])
+  }, [osOfferModalOpen])
 
   const closeModal = e => {
     if (!osOfferModalOpen && e.target) {

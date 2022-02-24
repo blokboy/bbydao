@@ -29,19 +29,17 @@ const BuyModal = () => {
 
   const getUserSafes = async () => {
     if (!data?.address) return
-
     const safeService = new SafeServiceClient(
       "https://safe-transaction.gnosis.io"
     )
-
     const safes = await safeService.getSafesByOwner(data?.address)
-
     setSafes(safes.safes)
   }
 
   React.useEffect(() => {
+    if (!osOfferModalOpen) return
     getUserSafes()
-  }, [])
+  }, [osOfferModalOpen])
 
   const closeModal = e => {
     if (!osBuyModalOpen && e.target) {
