@@ -112,13 +112,6 @@ const TransactionForm = ({ safeAddress }) => {
   }
 
   const sign = async () => {
-    // if (!safeTransaction) {
-    //   const contract = new ethers.Contract(
-    //     REACT_APP_CONTRACT_ADDRESS,
-    //     Popcat.abi,
-    //     provider
-    //   )
-
     await window.ethereum.enable()
     await window.ethereum.request({ method: "eth_requestAccounts" })
 

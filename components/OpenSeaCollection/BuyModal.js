@@ -37,9 +37,9 @@ const BuyModal = () => {
   }
 
   React.useEffect(() => {
-    if (!osOfferModalOpen) return
+    if (!osBuyModalOpen) return
     getUserSafes()
-  }, [osOfferModalOpen])
+  }, [osBuyModalOpen])
 
   const closeModal = e => {
     if (!osBuyModalOpen && e.target) {
