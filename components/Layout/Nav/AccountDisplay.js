@@ -19,7 +19,7 @@ const AccountDisplay = () => {
   return (
     <div 
     className="mr-3 flex w-max flex-row cursor-pointer rounded-full border border-blue-100 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text px-4 py-2 font-semibold text-transparent shadow md:w-min"
-    onClick={() => {navigator.clipboard.writeText(data?.address)}}
+    onClick={() => {navigator.clipboard.writeText(data?.address ? data.address : "")}}
     >
       {ensData ? (
         ensData
