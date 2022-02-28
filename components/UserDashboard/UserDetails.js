@@ -79,9 +79,13 @@ const UserDetails = ({ address, ens }) => {
           success
         </span>
       ) : connectData?.connected && getUserRelationship(friendData) === 1 ? (
-        <button className="my-4 w-max rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] px-4 py-2 text-xl text-white shadow">
-          friends
-        </button>
+        <button
+      className="mr-3 flex w-max transform flex-row rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow transition duration-500 ease-in-out hover:-translate-x-0.5 hover:bg-white hover:bg-gradient-to-l dark:hover:bg-slate-700"
+      >
+      <span className="block rounded-full bg-slate-200 px-6 py-[0.45rem] font-bold text-[#FC8D4D] hover:bg-opacity-50 hover:text-white dark:bg-slate-900 dark:hover:bg-opacity-75">
+        frens
+      </span>
+    </button>
       ) : (
         <button
           className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white dark:bg-slate-900 dark:hover:bg-slate-700"
@@ -98,9 +102,12 @@ const UserDetails = ({ address, ens }) => {
             : "request"}
         </button>
       )}
-      <div className="mt-4 ml-4 mb-4 mr-4 flex flex-row">
+      <div className="mt-4 ml-4 mb-4 mr-4 flex flex-col">
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
-          {friendData?.length} {friendData?.length === 1 ? "friend" : "friends"}
+          <h1>{friendData?.length} {friendData?.length >= 1 ? "follows" : ""}</h1>
+        </button>
+        <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
+          <h1>{friendData?.length} {friendData?.length === 1 ? "friend" : "friends"}</h1>
         </button>
       </div>
     </div>
