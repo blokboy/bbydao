@@ -13,7 +13,7 @@ const UserFeedCard = () => {
   if (!data) return null
 
   return (
-    <div className="w-max cursor-pointer rounded-full border border-blue-100 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text px-4 py-2 font-semibold text-transparent shadow md:w-min">
+    <div className="w-5/6 my-2 cursor-pointer rounded-full border border-blue-100 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text px-4 py-2 font-semibold text-transparent shadow">
       Test content change to see if width is dynamic
     </div>
   )
