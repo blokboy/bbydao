@@ -1,7 +1,30 @@
 import React from "react"
 import MemberCard from "./MemberCard"
+import { useUiStore } from "stores/useUiStore"
+import { useQuery } from "react-query"
 
 const SidePanel = ({ safeInfo, nftImage }) => {
+  const { data: friendData } = useQuery(
+    ["friends", safeInfo.address],
+    () => api.getFriends({ initiator: safeInfo.address }),
+    {
+      refetchOnWindowFocus: false,
+      staleTime: 180000,
+    }
+  )
+
+  const setFriendsModalAddress = useUiStore(
+    state => state.setFriendsModalAddress
+  )
+  const setFriendsModalOpen = useUiStore(state => state.setFriendsModalOpen)
+
+  const handleOpenFriendsModal = () => {
+    setFriendsModalAddress(safeInfo.address)
+    setFriendsModalOpen()
+  }
+
+  
+
   return (
     <div className="flex-start mx-1 mb-3 flex h-full flex-col px-4 md:flex-col">
       <div className="mb-3 flex place-content-center">
@@ -17,6 +40,15 @@ const SidePanel = ({ safeInfo, nftImage }) => {
               safeInfo.address.length - 1
             )}
         </span>
+      </div>
+
+      <div className="flex flex-col items-start">
+        <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
+          <h1>{friendData?.length || 1} {friendData?.length === 1 ? "follower" : "followers"}</h1>
+        </button>
+        <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
+          <h1>{friendData?.length || 1 } {friendData?.length === 1 ? "friend" : "friends"}</h1>
+        </button>
       </div>
 
       <button
