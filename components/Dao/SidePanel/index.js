@@ -32,7 +32,10 @@ const SidePanel = ({ safeInfo, nftImage }) => {
       </div>
       <div className="flex flex-col items-center md:items-start">
         <h1 className="">dao address</h1>
-        <span className="mb-3 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-2xl font-semibold text-transparent">
+        <span 
+        className="mb-3 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-2xl font-semibold text-transparent cursor-pointer"
+        onClick={() => {navigator.clipboard.writeText(safeInfo?.address ? safeInfo.address : "")}}
+        >
           {safeInfo.address.substring(0, 6) +
             "..." +
             safeInfo.address.substring(
