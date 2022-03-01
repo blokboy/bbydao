@@ -7,7 +7,6 @@ import { HiOutlineCheckCircle } from "react-icons/hi"
 import { HiOutlineXCircle } from "react-icons/hi"
 
 const NotificationCard = ({ ...props }) => {
-  console.log("props", props)
   const { body, id, relationshipRef, seen, notificationsOpen } = props
 
   const [isVisible, setIsVisible] = React.useState(false)
