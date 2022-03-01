@@ -118,7 +118,7 @@ const UserDetails = ({ address, ens }) => {
       )}
       <div className="mt-4 ml-4 mb-4 mr-4 flex flex-col">
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
-          <h1>{parsedList.following?.length} {parsedList.following?.length >= 1 ? "follows" : "follows"}</h1>
+          <h1>{parsedList.following?.length} {parsedList.following?.length > 1 ? "follows" : "follow"}</h1>
         </button>
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
           <h1>{parsedList.friends?.length} {parsedList.friends?.length === 1 ? "friend" : "friends"}</h1>

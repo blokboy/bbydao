@@ -43,7 +43,7 @@ const UserDashboard = ({ data }) => {
   return (
     <>
       <Head>
-        <title>{`babydao | ${address.substring(0, 6)}...`}</title>
+        <title>{`bbyDAO | ${address.substring(0, 6)}...`}</title>
         <meta name="description" content="" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
