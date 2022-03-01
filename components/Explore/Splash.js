@@ -11,7 +11,7 @@ const Splash = () => {
   return (
     <div className="hidden h-80 w-screen flex-col items-center justify-center md:flex">
       <p>welcome to</p>
-      <h1 className="m-4 text-5xl">babydao</h1>
+      <h1 className="m-4 text-5xl">bbyDAO</h1>
       {!accountData ? <ConnectButton /> : <></>}
     </div>
   )

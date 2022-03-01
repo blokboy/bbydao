@@ -7,7 +7,7 @@ const Messages = ({ data  }) => {
   return (
     <>
       <Head>
-        <title>{"babydao | messages"}</title>
+        <title>{"bbyDAO | messages"}</title>
         <meta name="description" content="" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
