@@ -79,13 +79,13 @@ const SidePanel = ({ safeInfo, nftImage }) => {
       {dropdown ? (
         <div className="flex flex-col items-start">
           <button className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700">
-            <h1>friend</h1>
+            <h1>follow</h1>
           </button>
           <button
             className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700"
             onClick={setFollowDaoModalOpen}
           >
-            <h1>follow</h1>
+            <h1>friend</h1>
           </button>
         </div>
       ) : (
