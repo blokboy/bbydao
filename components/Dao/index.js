@@ -15,7 +15,7 @@ const Dao = ({ data }) => {
   return (
     <>
       <Head>
-        <title>{`babydao | ${data.safeInfo.address.substring(0, 6)}...`}</title>
+        <title>{`bbyDAO | ${data.safeInfo.address.substring(0, 6)}...`}</title>
         <meta name="description" content="" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
