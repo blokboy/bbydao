@@ -43,7 +43,7 @@ const UserDashboard = ({ data }) => {
   return (
     <>
       <Head>
-        <title>{`babydao | ${address.substring(0, 6)}...`}</title>
+        <title>{`bbyDAO | ${address.substring(0, 6)}...`}</title>
         <meta name="description" content="" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -65,7 +65,7 @@ const UserDashboard = ({ data }) => {
             </div>
             <div className="flex flex-col md:w-9/12 md:flex-row">
               <div className="flex w-full flex-col md:w-1/2">
-                <UserFeed address={address}/>
+                <UserFeed address={address} />
               </div>
               <div className="flex w-full flex-col md:w-1/2">
                 {safes.length ? (

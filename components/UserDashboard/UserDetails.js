@@ -18,18 +18,17 @@ const UserDetails = ({ address, ens }) => {
   )
   let parsedList = {
     friends: [],
-    following: []
+    following: [],
   }
-  if(friendData) {
-    for(const friend of friendData) {
-      if(friend.status === 4) {
+  if (friendData) {
+    for (const friend of friendData) {
+      if (friend.status === 4) {
         parsedList.following.push(friend)
       } else {
         parsedList.friends.push(friend)
       }
     }
   }
-  
 
   const setFriendsModalAddress = useUiStore(
     state => state.setFriendsModalAddress
@@ -69,7 +68,6 @@ const UserDetails = ({ address, ens }) => {
   }
 
   const handleOpenFriendsModal = () => {
-    console.log(friendData)
     setFriendsModalAddress(address)
     setFriendsModalOpen()
   }
@@ -117,22 +115,16 @@ const UserDetails = ({ address, ens }) => {
       )}
       <div className="mt-4 ml-4 mb-4 mr-4 flex flex-col">
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
-<<<<<<< HEAD
           <h1>
-            {friendData?.length} {friendData?.length >= 1 ? "follows" : ""}
+            {parsedList.following?.length}{" "}
+            {parsedList.following?.length > 1 ? "follows" : "follow"}
           </h1>
         </button>
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
           <h1>
-            {friendData?.length}{" "}
-            {friendData?.length === 1 ? "friend" : "friends"}
+            {parsedList.friends?.length}{" "}
+            {parsedList.friends?.length === 1 ? "friend" : "friends"}
           </h1>
-=======
-          <h1>{parsedList.following?.length} {parsedList.following?.length >= 1 ? "follows" : "follows"}</h1>
-        </button>
-        <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
-          <h1>{parsedList.friends?.length} {parsedList.friends?.length === 1 ? "friend" : "friends"}</h1>
->>>>>>> 437efe33fc25820dfc658b27aa69c4f7e5fa54af
         </button>
       </div>
     </div>
