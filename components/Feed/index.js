@@ -24,7 +24,7 @@ const Feed = () => {
   return (
     <>
       <Head>
-        <title>{"babydao | feed"}</title>
+        <title>{"bbyDAO | feed"}</title>
         <meta name="description" content="" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
