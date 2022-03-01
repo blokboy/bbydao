@@ -1,9 +1,13 @@
 import React from "react"
 import MemberCard from "./MemberCard"
 import { useUiStore } from "stores/useUiStore"
-import { useQuery } from "react-query"
+import { useQuery, useMutation } from "react-query"
+import { useAccount, useConnect } from "wagmi"
+import * as api from "../../../query"
+
 
 const SidePanel = ({ safeInfo, nftImage }) => {
+  const [{ data, error, loading }, disconnect] = useAccount()
   const [dropdown, setDropdown] = React.useState(false)
   const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
   const setFollowDaoModalOpen = useUiStore(state => state.setFollowDaoModalOpen)
@@ -17,6 +21,25 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     }
   )
 
+  const getUserRelationship = friends => {
+    let relationship
+
+    if (!friends?.length) {
+      return
+    }
+
+    for (const friend of friends) {
+      if (friend.initiator == data?.address || friend.target == data?.address) {
+        relationship = friend.status
+        return relationship
+      }
+    }
+
+    return null
+  }
+
+  const { status, mutateAsync } = useMutation(api.reqRelationship)
+
   const setFriendsModalAddress = useUiStore(
     state => state.setFriendsModalAddress
   )
@@ -26,6 +49,20 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     setFriendsModalAddress(safeInfo.address)
     setFriendsModalOpen()
   }
+
+  const handleRequest = () => {
+    if (!data?.address) {
+      return
+    }
+    const req = {
+      initiator: data.address,
+      target: safeInfo.address,
+      status: 4,
+    }
+
+    mutateAsync(req)
+  }
+  console.log('fren ', getUserRelationship(friendData))
 
   return (
     <div className="flex-start mx-1 mb-3 flex h-full flex-col px-4 md:flex-col">
@@ -78,8 +115,17 @@ const SidePanel = ({ safeInfo, nftImage }) => {
       {/* follow or friend buttons when be frens is clicked  */}
       {dropdown ? (
         <div className="flex flex-col items-start">
-          <button className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700">
-            <h1>follow</h1>
+          <button 
+            className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700"
+            onClick={() => {
+              if (getUserRelationship(friendData) === 4) {
+                return
+              } else {
+                handleRequest()
+              }
+            }}
+          >
+            <h1>{ getUserRelationship(friendData) === 4 ? "following" : "follow"}</h1>
           </button>
           <button
             className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700"
