@@ -41,6 +41,15 @@ const FollowModal = ({ safeAddress }) => {
       console.log("no safe submitted")
       return
     }
+    /*
+      Transaction Obj for submission 
+      {
+        safeContract: state.safe,
+        creator: data.address,
+        receiver: safeAddress,
+        type: 7
+      }
+    */
 
     console.log("following dao", safeAddress)
     console.log("safe", state.safe)
