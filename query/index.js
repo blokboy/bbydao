@@ -42,7 +42,7 @@ export const reqRelationship = async req => {
 }
 
 // update relationship
-// { id: relationship reference id, notificationId: notificationId, status: enum }
+// { id: relationshipRef, notificationId: notificationId, status: enum }
 export const updateRelationship = async req => {
   const res = await api.put("/relationship", req)
   return res.data

@@ -7,12 +7,19 @@ import { HiOutlineCheckCircle } from "react-icons/hi"
 import { HiOutlineXCircle } from "react-icons/hi"
 
 const NotificationCard = ({ ...props }) => {
+  console.log("props", props)
   const { body, id, relationshipRef, seen, notificationsOpen } = props
 
   const [isVisible, setIsVisible] = React.useState(false)
 
   const queryClient = useQueryClient()
-  const acceptRelationship = useMutation(api.updateRelationship)
+  const acceptRelationship = useMutation(api.updateRelationship, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries("notifications", {
+        refetchActive: true,
+      })
+    },
+  })
 
   const updateNotif = useMutation(api.updateNotification, {
     onSuccess: async () => {
@@ -45,7 +52,6 @@ const NotificationCard = ({ ...props }) => {
   React.useEffect(() => {
     if (seen || !notificationsOpen) return
     console.log("is visible")
-
     updateNotifSeen()
   }, [isVisible]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
@@ -54,32 +60,26 @@ const NotificationCard = ({ ...props }) => {
       id: id,
       seen: true,
     }
-
     console.log("mutate func:", req)
-
     // updateNotif.mutateAsync(req)
   }
 
   const handleAcceptRelationship = () => {
     if (!relationshipRef) return
-
     const req = {
       id: relationshipRef,
       notificationId: id,
       status: 1,
     }
-
     acceptRelationship.mutateAsync(req)
   }
 
   const handleRejectRelationship = () => {
     if (!id) return
-
     const req = {
       id: id,
       seen: true,
     }
-
     rejectRelationship.mutateAsync(req)
   }
 
