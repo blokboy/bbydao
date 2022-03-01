@@ -4,6 +4,8 @@ import useForm from "hooks/useForm"
 import { useUiStore } from "stores/useUiStore"
 import { useAccount } from "wagmi"
 import { HiX } from "react-icons/hi"
+import * as api from '../../../query'
+import { useMutation } from "react-query"
 
 const FollowModal = ({ safeAddress }) => {
   const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
@@ -13,6 +15,7 @@ const FollowModal = ({ safeAddress }) => {
 
   const [safes, setSafes] = React.useState()
   const { state, setState, handleChange } = useForm()
+  const { status, mutateAsync } = useMutation(api.storeTxOffChain)
 
   const getUserSafes = async () => {
     if (!data?.address) return
@@ -47,12 +50,18 @@ const FollowModal = ({ safeAddress }) => {
         safeContract: state.safe,
         creator: data.address,
         receiver: safeAddress,
-        type: 7
+        approvals: [ data.address ] 
+        type: 6 (TransactionType.DAO_REQUEST)
       }
     */
+    const req = {
+      creator: data?.address,
+      receiver: safeAddress,
+      safeContract: state?.safe,
+      type: 6
+    }
 
-    console.log("following dao", safeAddress)
-    console.log("safe", state.safe)
+    mutateAsync(req)
   }
 
   return (
