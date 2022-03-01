@@ -19,13 +19,10 @@ const SellModal = ({ safeAddress }) => {
 
   const getUserSafes = async () => {
     if (!data?.address) return
-
     const safeService = new SafeServiceClient(
       "https://safe-transaction.gnosis.io"
     )
-
     const safes = await safeService.getSafesByOwner(data?.address)
-
     setSafes(safes.safes)
   }
 
@@ -49,7 +46,6 @@ const SellModal = ({ safeAddress }) => {
       return
     }
     // ?
-    await window.ethereum.enable()
     await window.ethereum.request({ method: "eth_requestAccounts" })
 
     // createSafeSdk

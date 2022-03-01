@@ -7,10 +7,13 @@ import TokensNfts from "./TokensNfts"
 import TxHistory from "./TxHistory"
 import ProposalHistory from "./ProposalHistory"
 import SellModal from "./TokensNfts/SellModal"
+import FollowModal from "./SidePanel/FollowModal"
 import { useOsStore } from "stores/useOsStore"
+import { useUiStore } from "stores/useUiStore"
 
 const Dao = ({ data }) => {
   const osSellModalOpen = useOsStore(state => state.osSellModalOpen)
+  const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
 
   return (
     <>
@@ -43,10 +46,11 @@ const Dao = ({ data }) => {
           </div>
 
           {/* modals  */}
-          {osSellModalOpen ? (
+          {osSellModalOpen && (
             <SellModal safeAddress={data?.safeInfo.address} />
-          ) : (
-            <></>
+          )}
+          {followDaoModalOpen && (
+            <FollowModal safeAddress={data?.safeInfo.address} />
           )}
         </div>
       </div>

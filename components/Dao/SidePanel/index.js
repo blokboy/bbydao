@@ -4,6 +4,10 @@ import { useUiStore } from "stores/useUiStore"
 import { useQuery } from "react-query"
 
 const SidePanel = ({ safeInfo, nftImage }) => {
+  const [dropdown, setDropdown] = React.useState(false)
+  const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
+  const setFollowDaoModalOpen = useUiStore(state => state.setFollowDaoModalOpen)
+
   const { data: friendData } = useQuery(
     ["friends", safeInfo.address],
     () => api.getFriends({ initiator: safeInfo.address }),
@@ -23,8 +27,6 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     setFriendsModalOpen()
   }
 
-  
-
   return (
     <div className="flex-start mx-1 mb-3 flex h-full flex-col px-4 md:flex-col">
       <div className="mb-3 flex place-content-center">
@@ -32,9 +34,13 @@ const SidePanel = ({ safeInfo, nftImage }) => {
       </div>
       <div className="flex flex-col items-center md:items-start">
         <h1 className="">dao address</h1>
-        <span 
-        className="mb-3 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-2xl font-semibold text-transparent cursor-pointer"
-        onClick={() => {navigator.clipboard.writeText(safeInfo?.address ? safeInfo.address : "")}}
+        <span
+          className="mb-3 cursor-pointer bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-2xl font-semibold text-transparent"
+          onClick={() => {
+            navigator.clipboard.writeText(
+              safeInfo?.address ? safeInfo.address : ""
+            )
+          }}
         >
           {safeInfo.address.substring(0, 6) +
             "..." +
@@ -47,20 +53,44 @@ const SidePanel = ({ safeInfo, nftImage }) => {
 
       <div className="flex flex-col items-start">
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
-          <h1>{friendData?.length || 1} {friendData?.length === 1 ? "follower" : "followers"}</h1>
+          <h1>
+            {friendData?.length || 1}{" "}
+            {friendData?.length === 1 ? "follower" : "followers"}
+          </h1>
         </button>
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
-          <h1>{friendData?.length || 1 } {friendData?.length === 1 ? "friend" : "friends"}</h1>
+          <h1>
+            {friendData?.length || 1}{" "}
+            {friendData?.length === 1 ? "friend" : "friends"}
+          </h1>
         </button>
       </div>
 
       <button
-      className="mr-3 my-4 flex w-max transform flex-row rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow transition duration-500 ease-in-out hover:-translate-x-0.5 hover:bg-white hover:bg-gradient-to-l dark:hover:bg-slate-700"
+        onClick={() => setDropdown(!dropdown)}
+        className="my-4 mr-3 flex w-max transform flex-row rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow transition duration-500 ease-in-out hover:-translate-x-0.5 hover:bg-white hover:bg-gradient-to-l dark:hover:bg-slate-700"
       >
-      <span className="block rounded-full bg-slate-200 px-6 py-[0.45rem] font-bold text-[#FC8D4D] hover:bg-opacity-50 hover:text-white dark:bg-slate-900 dark:hover:bg-opacity-75">
-        be frens
-      </span>
-    </button>
+        <span className="block rounded-full bg-slate-200 px-6 py-[0.45rem] font-bold text-[#FC8D4D] hover:bg-opacity-50 hover:text-white dark:bg-slate-900 dark:hover:bg-opacity-75">
+          be frens
+        </span>
+      </button>
+
+      {/* follow or friend buttons when be frens is clicked  */}
+      {dropdown ? (
+        <div className="flex flex-col items-start">
+          <button className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700">
+            <h1>friend</h1>
+          </button>
+          <button
+            className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700"
+            onClick={setFollowDaoModalOpen}
+          >
+            <h1>follow</h1>
+          </button>
+        </div>
+      ) : (
+        <></>
+      )}
 
       {/* make component to represent these (with pics) */}
       {/* modal pops to center of screen to scroll through all members */}

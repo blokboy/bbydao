@@ -38,9 +38,10 @@ const CreateThreadForm = ({ closeModal }) => {
   }
 
   const handleSubmit = async e => {
+    let arr = [accountData?.address, ...selectedOptions]
     e.preventDefault()
     console.log(state)
-    console.log(selectedOptions)
+    console.log(arr)
     setState({})
     // setSelectedOptions([])
   }
