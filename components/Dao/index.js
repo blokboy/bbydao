@@ -1,6 +1,6 @@
 import React from "react"
 import Head from "next/head"
-import TransactionForm from "./TransactionForm"
+import TransactionModal from "./TransactionModal"
 import SidePanel from "./SidePanel"
 import Graph from "./Graph"
 import TokensNfts from "./TokensNfts"
@@ -14,6 +14,7 @@ import { useUiStore } from "stores/useUiStore"
 const Dao = ({ data }) => {
   const osSellModalOpen = useOsStore(state => state.osSellModalOpen)
   const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
+  const txModalOpen = useUiStore(state => state.txModalOpen)
 
   return (
     <>
@@ -41,7 +42,6 @@ const Dao = ({ data }) => {
               owners={data.safeInfo.owners}
               threshold={data.safeInfo.threshold}
             />
-            <TransactionForm safeAddress={data?.safeInfo.address} />
             <ProposalHistory />
           </div>
 
@@ -51,6 +51,9 @@ const Dao = ({ data }) => {
           )}
           {followDaoModalOpen && (
             <FollowModal safeAddress={data?.safeInfo.address} />
+          )}
+          {txModalOpen && (
+            <TransactionModal safeAddress={data?.safeInfo.address} />
           )}
         </div>
       </div>

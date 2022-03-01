@@ -5,10 +5,15 @@ import { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
 import Safe, { SafeFactory, SafeAccountConfig } from "@gnosis.pm/safe-core-sdk"
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import { useAccount } from "wagmi"
+import { HiX } from "react-icons/hi"
+import { useUiStore } from "stores/useUiStore"
 
 let safeSdk
 
-const TransactionForm = ({ safeAddress }) => {
+const TransactionModal = ({ safeAddress }) => {
+  const txModalOpen = useUiStore(state => state.txModalOpen)
+  const setTxModalOpen = useUiStore(state => state.setTxModalOpen)
+
   const [txWaiting, setTxWaiting] = React.useState(false)
   const { state, setState, handleChange } = useForm()
   const [{ data, error, loading }, disconnect] = useAccount()
@@ -18,11 +23,12 @@ const TransactionForm = ({ safeAddress }) => {
   }, [])
 
   const closeModal = e => {
-    // might not need this
-    if (e.target) {
+    if (!txModalOpen && e.target) {
       return
     }
-    setTxWaiting(false)
+    setState({})
+    setTxModalOpen()
+    // setOsAssetInfo({})
   }
 
   const setSafeAddress = async () => {
@@ -92,33 +98,47 @@ const TransactionForm = ({ safeAddress }) => {
     // await safeSdk2.executeTransaction(safeTransaction)
   }
 
-  return (
-    <>
-      {txWaiting && (
+  if (txWaiting) {
+    return (
+      <div
+        className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
+        onClick={e => closeModal(e)}
+      >
         <div
-          className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
+          className="z-50 mx-auto mt-0 flex h-full w-full flex-col items-center justify-center bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-1/3 md:w-6/12 md:rounded-xl"
           onClick={e => closeModal(e)}
         >
-          <div
-            className="z-50 mx-auto mt-0 flex h-full w-full flex-col items-center justify-center bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-1/3 md:w-6/12 md:rounded-xl"
-            onClick={e => closeModal(e)}
-          >
-            <div className="mt-10 motion-safe:animate-[bounce_3s_ease-in-out_infinite]">
-              <img alt="" src="/babydao.png" width={200} height={200} />
-            </div>
-            <h1 className="animation animate-pulse text-xl">
-              please check your wallet...
-            </h1>
+          <div className="mt-10 motion-safe:animate-[bounce_3s_ease-in-out_infinite]">
+            <img alt="" src="/babydao.png" width={200} height={200} />
           </div>
+          <h1 className="animation animate-pulse text-xl">
+            please check your wallet...
+          </h1>
         </div>
-      )}
+      </div>
+    )
+  }
 
-      <div className="mx-2 mb-3 flex flex-col rounded-xl bg-slate-200 p-3 shadow-xl dark:bg-slate-900">
+  return (
+    <div
+      className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
+      onClick={e => closeModal(e)}
+    >
+      <div
+        className="z-50 mx-auto mt-0 flex h-full w-full flex-col items-center bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-auto md:w-6/12 md:rounded-xl"
+        onClick={e => closeModal(e)}
+      >
+        <div className="flex w-full justify-end">
+          <button className="modal-close-btn" onClick={e => closeModal(e)}>
+            <HiX />
+          </button>
+        </div>
+
         <div className="mb-6 w-full text-center text-xl font-bold">
           transaction
         </div>
 
-        <div className="mb-8">
+        <div className="mb-8 w-full">
           <label className="mb-2 block text-sm font-bold" htmlFor="name">
             to
           </label>
@@ -134,7 +154,7 @@ const TransactionForm = ({ safeAddress }) => {
           />
         </div>
 
-        <div className="mb-8">
+        <div className="mb-8 w-full">
           <label className="mb-2 block text-sm font-bold" htmlFor="name">
             value
           </label>
@@ -150,7 +170,7 @@ const TransactionForm = ({ safeAddress }) => {
           />
         </div>
 
-        <div className="flex flex-row items-center justify-between">
+        <div className="mb-8 flex w-full flex-row items-center justify-between">
           <button
             className="focus:shadow-outline w-full rounded-xl border-2 bg-slate-300 py-3 px-4 font-bold shadow-xl hover:border-2 hover:border-[#0db2ac93] hover:bg-slate-100 hover:shadow-sm focus:outline-none dark:bg-slate-800"
             // type="submit"
@@ -160,8 +180,8 @@ const TransactionForm = ({ safeAddress }) => {
           </button>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
-export default TransactionForm
+export default TransactionModal
