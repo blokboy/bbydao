@@ -7,7 +7,7 @@ const FriendSearchCard = ({ friend, closeModal }) => {
   const [{ data, error, loading }] = useAccount()
 
   return (
-    <div className="my-1 mx-1 flex h-16 flex-row rounded bg-slate-300 px-3 py-2 shadow dark:bg-slate-800">
+    <div className="m-1 flex h-16 flex-row rounded bg-slate-300 px-3 py-2 shadow dark:bg-slate-800">
       <div className="flex h-full w-full flex-row items-center justify-between">
         <span className="text-lg font-semibold">
           @
