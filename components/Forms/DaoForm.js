@@ -82,7 +82,15 @@ const DaoForm = ({ address }) => {
     setTxWaiting(true)
     const bbyDao = await createBabyDao(e, ownerList)
     console.log("DaoForm.js bbyDao", bbyDao)
+    // const daoAddress = bbyDao.getAddress()
     // request to backend with dao info
+    // const req = {
+    //   name: state.name,
+    //   type: 1,
+    //   address: bbyDao.getAddress(),
+    //   members: ownerList,
+    // }
+    // mutateAsync(req)
     setTxWaiting(false)
     closeModal()
   }
