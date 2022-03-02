@@ -13,7 +13,6 @@ let safeSdk
 const TransactionModal = ({ safeAddress }) => {
   const txModalOpen = useUiStore(state => state.txModalOpen)
   const setTxModalOpen = useUiStore(state => state.setTxModalOpen)
-
   const [txWaiting, setTxWaiting] = React.useState(false)
   const { state, setState, handleChange } = useForm()
   const [{ data, error, loading }, disconnect] = useAccount()

@@ -3,7 +3,7 @@ import Head from "next/head"
 import MessageView from "./MessageView"
 import ListView from "./ListView"
 
-const Messages = ({ data  }) => {
+const Messages = ({ data }) => {
   return (
     <>
       <Head>
@@ -13,8 +13,8 @@ const Messages = ({ data  }) => {
       </Head>
 
       <div className="flex h-screen w-full justify-center">
-        <ListView threads={ data }/>
-        <MessageView />
+        <ListView threads={data} />
+        {/* <MessageView /> */}
       </div>
     </>
   )
