@@ -55,11 +55,14 @@ const FollowModal = ({ safeAddress }) => {
       }
     */
     const req = {
+      txHash: "DAOTODAO",
       creator: data?.address,
       receiver: safeAddress,
       safeContract: state?.safe,
+      approvals: [ data?.address ],
       type: 6
     }
+
 
     mutateAsync(req)
   }
