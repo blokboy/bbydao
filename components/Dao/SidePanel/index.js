@@ -38,6 +38,17 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     return null
   }
 
+  const parsedList = {
+    followers: [],
+    friends: []
+  }
+
+  for(const friend of friendData) {
+    if(friend.status == 4) {
+      parsedList.followers.push(friend)
+    }
+  }
+
   const { status, mutateAsync } = useMutation(api.reqRelationship)
 
   const setFriendsModalAddress = useUiStore(
@@ -63,6 +74,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     mutateAsync(req)
   }
   console.log('fren ', getUserRelationship(friendData))
+  console.log('friend data ', friendData)
 
   return (
     <div className="flex-start mx-1 mb-3 flex h-full flex-col px-4 md:flex-col">
@@ -91,14 +103,14 @@ const SidePanel = ({ safeInfo, nftImage }) => {
       <div className="flex flex-col items-start">
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
           <h1>
-            {friendData?.length || 1}{" "}
-            {friendData?.length === 1 ? "follower" : "followers"}
+            {parsedList.followers?.length || 1}{" "}
+            {parsedList.followers?.length === 1 ? "follower" : "followers"}
           </h1>
         </button>
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
           <h1>
-            {friendData?.length || 1}{" "}
-            {friendData?.length === 1 ? "friend" : "friends"}
+            {parsedList.friends?.length || 0}{" "}
+            {parsedList.friends?.length === 1 ? "friend" : "friends"}
           </h1>
         </button>
       </div>
