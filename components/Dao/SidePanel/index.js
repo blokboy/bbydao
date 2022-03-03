@@ -104,7 +104,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
       <div className="flex flex-col items-start">
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
           <h1>
-            {parsedList.followers?.length || 1}{" "}
+            {parsedList.followers?.length || 0}{" "}
             {parsedList.followers?.length === 1 ? "follower" : "followers"}
           </h1>
         </button>
