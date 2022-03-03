@@ -25,6 +25,11 @@ export const getUsers = async () => {
   return res.data
 }
 
+export const getUserFeed = async req => {
+  const res = await api.post('/feed/user', req)
+  return res.data;
+}
+
 // update user
 // { id: id, username: string, email: string, ens: string }
 export const updateUser = async req => {
