@@ -18,7 +18,7 @@ const PendingTxs = ({ pendingTxs, threshold }) => {
             <div className="flex flex-row">
               <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800"></div>
               <span className="mr-1 flex w-20 flex-row justify-end rounded border border-white bg-slate-100 p-1 text-[12px] dark:bg-slate-800">
-                <span>{ethers.utils.formatEther(tx.value).slice(0, 6)}</span>{" "}
+                <span>{ethers.utils.formatEther(tx.value ? tx.value : 0).slice(0, 6)}</span>{" "}
                 <span className="text-blue-500">ETH</span>
               </span>
               <span className="p-1 text-[12px] font-semibold">to:</span>
