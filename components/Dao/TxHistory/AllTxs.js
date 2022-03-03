@@ -16,7 +16,6 @@ const AllTxs = ({ allTxs, owners, threshold }) => {
         {/* Txs */}
         {
         allTxs.map((tx, index) => {
-          console.log(tx)
           if(tx.type === 6) {
             return (
               <FriendTransaction key={index} tx={tx} owners={owners} threshold={threshold} />
