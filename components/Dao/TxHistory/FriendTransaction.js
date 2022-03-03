@@ -14,16 +14,16 @@ const FriendTransaction = ({ tx, owners, threshold }) => {
       <div className="flex flex-row">
               {tx.approvals ? (
                 <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800">
-                  {/* <Davatar
+                 <Davatar
                     size={22}
-                    address={tx.confirmations[0].owner}
+                    address={tx.approvals[0]}
                     generatedAvatarType="blockies"
-                  /> */}
+                  />
                 </div>
               ) : (
                 <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800"></div>
               )}
-              <span className="mr-1 flex w-20 flex-row justify-start rounded border border-white bg-slate-100 p-1 text-[12px] dark:bg-slate-800">
+              <span className="mr-1 flex w-20 flex-row justify-center rounded border border-white bg-slate-100 p-1 text-[12px] dark:bg-slate-800">
                 <span className="text-blue-500">FRIEND</span>
               </span>
 
@@ -45,12 +45,11 @@ const FriendTransaction = ({ tx, owners, threshold }) => {
                       (index === 0 ? " ml-0" : " -ml-3")
                     }
                   >
-                    <li className="h-6 w-6 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></li>
-                    {/* <Davatar
+                    <Davatar
                       size={22}
                       address={conf}
                       generatedAvatarType="blockies"
-                    /> */}
+                    /> 
                   </li>
                 ))}
               </ul>
@@ -59,10 +58,12 @@ const FriendTransaction = ({ tx, owners, threshold }) => {
 
               {/* tx rejections */}
               <ul className="flex w-14 flex-row px-1">
-                {}
-                <li className="h-6 w-6 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></li>
-                <li className="-ml-3 h-6 w-6 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></li>
-                <li className="-ml-3 h-6 w-6 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></li>
+              { tx.rejections?.map( address => {
+                    return (
+                        <li className="-ml-3 h-6 w-6 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></li>
+                    )
+                  })
+              }
               </ul>
             </div>
         
