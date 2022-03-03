@@ -42,12 +42,15 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     followers: [],
     friends: []
   }
-
-  for(const friend of friendData) {
-    if(friend.status == 4) {
-      parsedList.followers.push(friend)
+  if(friendData?.length) {
+    for(const friend of friendData) {
+      if(friend.status == 4) {
+        parsedList.followers.push(friend)
+      }
     }
   }
+
+  
 
   const { status, mutateAsync } = useMutation(api.reqRelationship)
 
@@ -73,8 +76,6 @@ const SidePanel = ({ safeInfo, nftImage }) => {
 
     mutateAsync(req)
   }
-  console.log('fren ', getUserRelationship(friendData))
-  console.log('friend data ', friendData)
 
   return (
     <div className="flex-start mx-1 mb-3 flex h-full flex-col px-4 md:flex-col">
