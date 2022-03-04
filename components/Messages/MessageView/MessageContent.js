@@ -20,7 +20,7 @@ const MessageContent = () => {
   )
 
   return (
-    <div className="h-3/4 overflow-scroll bg-slate-50 p-3 dark:bg-slate-800">
+    <div className="h-4/5 overflow-scroll bg-slate-50 p-3 dark:bg-slate-800">
       {messages?.map(message => (
         <MessageViewCard key={message.id} message={message} />
       ))}
