@@ -1,6 +1,9 @@
 import create from "zustand"
 
 export const useMessageStore = create(set => ({
+  channelAddress: null,
+  setChannelAddress: address => set({ channelAddress: address }),
+
   threadChannel: null,
   setThreadChannel: channel => set({ threadChannel: channel }),
 

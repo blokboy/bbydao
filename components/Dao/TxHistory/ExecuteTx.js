@@ -17,69 +17,109 @@ const ExecuteTx = ({ tx, address }) => {
   const handleExecute = async e => {
     e.preventDefault()
     if (type === 1) {
-      let acct = await window.ethereum.request({ method: 'eth_requestAccounts' })
-      acct = ethers.utils.getAddress(...acct);
-      console.log('addr ', acct)
+      let acct = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      })
+      acct = ethers.utils.getAddress(...acct)
+      console.log("addr ", acct)
       // opensea offer tx
       const seaport = await createSeaport()
       let ethValue = ethers.utils.formatEther(value)
-      ethValue = Number(ethValue);
+      ethValue = Number(ethValue)
       const desiredAsset = await seaport.api.getAsset({
         tokenId,
-        tokenAddress: tokenContract
+        tokenAddress: tokenContract,
       })
 
       const order = {
         asset: {
           tokenId: desiredAsset.tokenId,
           tokenAddress: desiredAsset.tokenAddress,
-          schemaName: desiredAsset.schemaName === "ERC1155" ? "ERC1155" : "ERC721"
+          schemaName:
+            desiredAsset.schemaName === "ERC1155" ? "ERC1155" : "ERC721",
         },
         accountAddress: safeContract, // contract address can't be input here
         startAmount: ethValue,
       }
-      
+
       const offer = await seaport.createBuyOrder(order)
       console.log("offer", offer)
     }
 
-    if (type === 2) { 
+    if (type === 2) {
       // opensea purchase tx
-      let acct = await window.ethereum.request({ method: 'eth_requestAccounts' })
-      acct = ethers.utils.getAddress(...acct);
-      console.log('addr ', acct)
+      let acct = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      })
+      acct = ethers.utils.getAddress(...acct)
+      console.log("addr ", acct)
       // opensea offer tx
       const seaport = await createSeaport()
       let ethValue = ethers.utils.formatEther(value)
-      ethValue = Number(ethValue);
+      ethValue = Number(ethValue)
       const desiredAsset = await seaport.api.getAsset({
         tokenId,
-        tokenAddress: tokenContract
-      });
-      
+        tokenAddress: tokenContract,
+      })
+
       const order = {
         asset: {
           tokenId: desiredAsset.tokenId,
           tokenAddress: desiredAsset.tokenAddress,
-          schemaName: desiredAsset.schemaName === "ERC1155" ? "ERC1155" : "ERC721"
+          schemaName:
+            desiredAsset.schemaName === "ERC1155" ? "ERC1155" : "ERC721",
         },
         accountAddress: safeContract, // contract address can't be input here
         startAmount: ethValue,
       }
 
       const offer = await seaport.createBuyOrder(order)
-      console.log('offer ', offer);
+      console.log("offer ", offer)
 
       const transfer = await seaport.fulfillOrder({
         order: offer,
         accountAddress: acct,
-        recipientAddress: safeContract
+        recipientAddress: safeContract,
       })
 
-      console.log('transfer ', transfer);
+      console.log("transfer ", transfer)
     }
 
-    
+    if (type === 4) {
+      // create fee tx for our safe
+      const safeSdk = await createSafeSdk(safeContract)
+      let wei = ethers.utils.parseEther(value)
+      let weiString = wei.toString()
+      let fee = (Number(weiString) * 0.02).toString()
+      const transactions = [
+        {
+          to: "0x9195d47B8EEa7BF3957240126d26A97ff8f35c80",
+          data: ethers.utils.hexlify([1]),
+          value: fee,
+        },
+        {
+          to: tx.receiver,
+          data: ethers.utils.hexlify([1]),
+          value: String(weiString - fee),
+        },
+      ]
+      const safeTransaction = await safeSdk.createTransaction(...transactions)
+      const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
+      try {
+        // Sign the transaction off-chain (in wallet)
+        const signedTransaction = await safeSdk.signTransaction(safeTransaction)
+        // mutate tx on backend
+        const tx = {
+          txHash: txHash,
+          executor: address,
+        }
+        mutateTx(tx)
+      } catch (error) {
+        // user rejected tx
+        console.log("user rejected tx")
+        return
+      }
+    }
 
     /*
     // create fee tx for our safe

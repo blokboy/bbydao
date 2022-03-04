@@ -7,6 +7,8 @@ import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import { useAccount } from "wagmi"
 import { HiX } from "react-icons/hi"
 import { useUiStore } from "stores/useUiStore"
+import { useMutation } from "react-query"
+import * as api from "../../query"
 
 let safeSdk
 
@@ -16,6 +18,12 @@ const TransactionModal = ({ safeAddress }) => {
   const [txWaiting, setTxWaiting] = React.useState(false)
   const { state, setState, handleChange } = useForm()
   const [{ data, error, loading }, disconnect] = useAccount()
+
+  const {
+    data: storedTxData,
+    status: storedTxStatus,
+    mutateAsync: storeTx,
+  } = useMutation(api.storeTxOffChain)
 
   React.useEffect(() => {
     setSafeAddress()
@@ -46,11 +54,11 @@ const TransactionModal = ({ safeAddress }) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner(provider.provider.selectedAddress)
     // contract address to send to
-    let wei = ethers.utils.parseEther(state.value)
+    let wei = ethers.utils.parseEther(state?.value)
     let weiString = wei.toString()
     const transactions = [
       {
-        to: state.to,
+        to: state?.to,
         value: weiString,
         data: ethers.utils.hexlify([1]),
       },
@@ -79,7 +87,22 @@ const TransactionModal = ({ safeAddress }) => {
     console.log("proposedTx", proposedTx)
     const nextNonce = await safeService.getNextNonce(safeAddress)
     console.log("nextNonce", nextNonce)
+
+    const tx = {
+      approvals: [data?.address],
+      creator: data?.address,
+      txHash: safeTxHash,
+      receiver: state.to,
+      // tokenContract: osAssetInfo?.address,
+      // tokenId: osAssetInfo?.token_id,
+      safeContract: safeAddress,
+      value: String(weiString - weiString * 0.02),
+      type: 4,
+    }
+    storeTx(tx)
+
     setTxWaiting(false)
+    closeModal()
   }
 
   const execute = async () => {
