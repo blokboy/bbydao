@@ -17,28 +17,22 @@ const Nav = () => {
   })
 
   return (
-    <>
-      <nav className="flex w-full items-center justify-center p-3 md:mx-0">
-        <div className="hidden w-full flex-row items-center justify-between md:flex">
-          <ToggleSearchModal />
-        </div>
-        {data?.connected ? <AccountDisplay /> : <></>}
-        {data?.connected ? <DisconnectButton /> : <ConnectButton />}
-        {data?.connected ? (
-          <NotificationsIcon address={accountData.address} />
-        ) : (
-          <></>
-        )}
-        {data?.connected ? (
-          <MessagesIcon address={accountData.address} />
-        ) : (
-          <></>
-        )}
-        <SearchIcon />
-        <Menu />
-        <ThemeToggle />
-      </nav>
-    </>
+    <nav className="z-50 flex h-16 w-full items-center justify-center bg-slate-300 p-3 dark:bg-slate-900 md:mx-0">
+      <div className="hidden w-full flex-row items-center justify-between md:flex">
+        <ToggleSearchModal />
+      </div>
+      {data?.connected ? <AccountDisplay /> : <></>}
+      {data?.connected ? <DisconnectButton /> : <ConnectButton />}
+      {data?.connected ? (
+        <NotificationsIcon address={accountData.address} />
+      ) : (
+        <></>
+      )}
+      {data?.connected ? <MessagesIcon address={accountData.address} /> : <></>}
+      <SearchIcon />
+      <Menu />
+      <ThemeToggle />
+    </nav>
   )
 }
 

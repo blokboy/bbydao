@@ -43,10 +43,13 @@ const MessageForm = () => {
   }
 
   return (
-    <form className="flex flex-row items-center" onSubmit={handleSubmit}>
+    <form
+      className="flex h-[20%] w-full flex-row items-center p-3"
+      onSubmit={handleSubmit}
+    >
       <textarea
         autoFocus
-        className="mt-2 h-[10%] w-full resize-none rounded-xl bg-slate-100 p-3 text-white focus:text-slate-900 focus:outline-none dark:bg-slate-800 dark:focus:text-slate-100"
+        className="mt-2 h-full w-[90%] resize-none rounded-xl bg-slate-100 p-3 text-white focus:text-slate-900 focus:outline-none dark:bg-slate-800 dark:focus:text-slate-100"
         type="textarea"
         name="message"
         placeholder="Message..."
@@ -56,7 +59,7 @@ const MessageForm = () => {
         required
       />
       <button
-        className="ml-3 flex h-14 items-center rounded-xl border bg-slate-200 px-4 py-3 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
+        className="ml-3 flex items-center rounded-xl border bg-slate-200 px-4 py-3 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
         type="submit"
       >
         send

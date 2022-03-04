@@ -8,18 +8,16 @@ import BuyModal from "../OpenSeaCollection/BuyModal"
 
 const Layout = ({ children }) => {
   return (
-    <>
+    <main className="h-screen w-full">
       <Nav />
-      <main className="w-full">
-        {children}
-        <ConnectModal />
-        <AppSearchModal />
-        <CreateThreadModal />
-        <FriendsModal />
-        <OfferModal />
-        <BuyModal />
-      </main>
-    </>
+      {children}
+      <ConnectModal />
+      <AppSearchModal />
+      <CreateThreadModal />
+      <FriendsModal />
+      <OfferModal />
+      <BuyModal />
+    </main>
   )
 }
 

@@ -1,4 +1,5 @@
 import React from "react"
+import ListToolbar from "./ListToolbar"
 import ListViewCard from "./ListViewCard"
 
 const ListContent = ({ threads }) => {
@@ -9,17 +10,9 @@ const ListContent = ({ threads }) => {
   }
 
   return (
-    <div className="h-full overflow-auto rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
+    <div className="h-[95%] overflow-scroll p-3">
       {messages.map((thread, i) => {
-        return (
-          <>
-            <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
-            <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
-            <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
-            <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
-            <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
-          </>
-        )
+        return <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
       })}
     </div>
   )
