@@ -4,8 +4,7 @@ import ListContent from "./ListContent"
 
 const ListView = ({ threads }) => {
   return (
-    <div className="md:w-50 h-full w-full bg-slate-100 p-2 shadow-xl dark:bg-slate-900">
-      <ListToolbar />
+    <div className="h-full w-full p-3">
       <ListContent threads={threads} />
     </div>
   )

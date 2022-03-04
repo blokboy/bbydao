@@ -4,7 +4,7 @@ import MessageForm from "./MessageForm"
 
 const MessageView = () => {
   return (
-    <div className="md:w-50 h-full w-full bg-slate-100 p-2 shadow-xl dark:bg-slate-900">
+    <div className="w-full">
       <MessageContent />
       <MessageForm />
     </div>

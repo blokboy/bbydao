@@ -46,7 +46,7 @@ const MessageForm = () => {
     <form className="flex flex-row items-center" onSubmit={handleSubmit}>
       <textarea
         autoFocus
-        className="mt-2 h-[10%] w-full resize-none rounded-xl bg-slate-100 p-3 text-white focus:text-slate-900 focus:outline-none dark:bg-slate-800 dark:focus:text-slate-100"
+        className="mt-2 w-full resize-none rounded-xl bg-slate-100 p-3 text-white focus:text-slate-900 focus:outline-none dark:bg-slate-800 dark:focus:text-slate-100"
         type="textarea"
         name="message"
         placeholder="Message..."
