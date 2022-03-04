@@ -142,7 +142,7 @@ const TransactionModal = ({ safeAddress }) => {
             to
           </label>
           <input
-            value={state.to || ""}
+            value={state?.to}
             onChange={handleChange}
             className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
             id="name"
@@ -158,10 +158,10 @@ const TransactionModal = ({ safeAddress }) => {
             value
           </label>
           <input
-            value={state.value || ""}
+            value={state?.value}
             onChange={handleChange}
             className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
-            id="name"
+            id="value"
             name="value"
             type="number"
             placeholder="value"
@@ -172,7 +172,6 @@ const TransactionModal = ({ safeAddress }) => {
         <div className="mb-8 flex w-full flex-row items-center justify-between">
           <button
             className="focus:shadow-outline w-full rounded-xl border-2 bg-slate-300 py-3 px-4 font-bold shadow-xl hover:border-2 hover:border-[#0db2ac93] hover:bg-slate-100 hover:shadow-sm focus:outline-none dark:bg-slate-800"
-            // type="submit"
             onClick={sign}
           >
             sign
