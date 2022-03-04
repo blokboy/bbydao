@@ -44,12 +44,12 @@ const MessageForm = () => {
 
   return (
     <form
-      className="flex h-[20%] w-full flex-row items-center p-3"
+      className="flex h-[10%] w-full flex-row items-center p-3"
       onSubmit={handleSubmit}
     >
       <textarea
         autoFocus
-        className="mt-2 h-full w-[90%] resize-none rounded-xl bg-slate-100 p-3 text-white focus:text-slate-900 focus:outline-none dark:bg-slate-800 dark:focus:text-slate-100"
+        className="h-full w-[90%] resize-none rounded-xl bg-slate-100 p-3 text-white focus:text-slate-900 focus:outline-none dark:bg-slate-800 dark:focus:text-slate-100"
         type="textarea"
         name="message"
         placeholder="Message..."

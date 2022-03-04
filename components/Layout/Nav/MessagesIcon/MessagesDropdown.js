@@ -1,10 +1,12 @@
 import React from "react"
+import Link from "next/link"
 import MessageCard from "./MessageCard"
 import { useUiStore } from "stores/useUiStore"
+import { HiOutlineArrowCircleRight } from "react-icons/hi"
 import { HiOutlineChat } from "react-icons/hi"
 
 const MessagesDropdown = ({ ...props }) => {
-  const { messagesOpen, threads, clickAway } = props
+  const { messagesOpen, address, threads, clickAway } = props
 
   const setCreateThreadModalOpen = useUiStore(
     state => state.setCreateThreadModalOpen
@@ -25,9 +27,18 @@ const MessagesDropdown = ({ ...props }) => {
     >
       <div className="mb-2 flex flex-row items-center justify-between rounded border p-2">
         <h1>Messages</h1>
-        <button className="nav-btn" onClick={handleStartConversation}>
-          <HiOutlineChat />
-        </button>
+        <div className="flex flex-row">
+          <Link href={`/messages/${address}`}>
+            <a onClick={clickAway}>
+              <button className="nav-btn mx-1">
+                <HiOutlineArrowCircleRight />
+              </button>
+            </a>
+          </Link>
+          <button className="nav-btn mx-1" onClick={handleStartConversation}>
+            <HiOutlineChat />
+          </button>
+        </div>
       </div>
       <ul className="">
         {threads.map((thread, i) => {

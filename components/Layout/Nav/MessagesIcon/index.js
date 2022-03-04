@@ -63,6 +63,7 @@ const MessagesIcon = ({ address }) => {
 
         {/* && messagesCount */}
         <MessagesDropdown
+          address={address}
           messagesOpen={messagesOpen}
           threads={threads}
           clickAway={clickAway}
