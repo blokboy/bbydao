@@ -6,7 +6,7 @@ const DaosResultsSuccess = ({ hits, closeModal }) => {
   return (
     <div className="py-2">
       <span className="px-2 font-semibold">Daos:</span>
-      <div className="grid max-h-96 grid-cols-2 gap-4 overflow-auto px-2 pt-2">
+      <div className="grid max-h-96 grid-cols-1 gap-4 overflow-auto px-2 pt-2 md:grid-cols-2">
         {hits.map((hit, index) => (
           <Link key={index} href={`/dao/${encodeURIComponent(hit.address)}`}>
             <a onClick={closeModal}>

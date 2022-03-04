@@ -2,7 +2,7 @@ import React from "react"
 import { useAccount } from "wagmi"
 import { useQuery, useMutate } from "react-query"
 import UserFeedCard from "./UserFeedCard"
-import * as api from '../../../query';
+import * as api from "../../../query"
 
 const UserFeed = ({ address }) => {
   const [{ data, error, loading }, disconnect] = useAccount()
@@ -21,7 +21,7 @@ const UserFeed = ({ address }) => {
     for (const friend of friendData) {
       if (friend.status === 4) {
         following.push(friend.target)
-      } 
+      }
     }
   }
 
@@ -33,29 +33,24 @@ const UserFeed = ({ address }) => {
       staleTime: 180000,
     }
   )
-  console.log('following ', followData);
+  console.log("following ", followData)
 
   return (
-  <div className="flex flex-col my-2">
-    <h1 className="text-xl font-bold underline">
+    <div className="flex flex-col p-3">
+      <h1 className="text-xl font-bold underline">
         {data?.address === address ? "my feed" : "user feed"}
-    </h1>
+      </h1>
 
-    {
-      followData?.length ? (
-        followData.map( async (follower, index) => {
-          return (
-            <UserFeedCard key={index} follower={follower} />
-          )
+      {followData?.length ? (
+        followData.map(async (follower, index) => {
+          return <UserFeedCard key={index} follower={follower} />
         })
       ) : (
-      <span className="flex align-center rounded-full bg-slate-200 px-6 py-[0.45rem] font-bold text-[#FC8D4D] dark:bg-slate-900 dark:hover:bg-opacity-75">
-       Follow bbyDAOs to populate your feed!
-      </span>
-      )
-    }
-
-  </div>
+        <span className="align-center flex rounded-full bg-slate-200 px-6 py-[0.45rem] font-bold text-[#FC8D4D] dark:bg-slate-900 dark:hover:bg-opacity-75">
+          Follow bbyDAOs to populate your feed!
+        </span>
+      )}
+    </div>
   )
 }
 

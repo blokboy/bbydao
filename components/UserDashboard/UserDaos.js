@@ -6,11 +6,11 @@ const UserDaos = ({ safes, address }) => {
   const [{ data, error, loading }, disconnect] = useAccount()
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col p-3">
       <h1 className="text-xl font-bold underline">
         {data?.address === address ? "my daos" : "user daos"}
       </h1>
-      <div className="grid grid-cols-2 justify-items-center gap-3 py-3">
+      <div className="grid grid-cols-2 justify-items-center gap-3">
         {safes ? (
           safes?.map((safe, index) => <DaoDetail key={index} safe={safe} />)
         ) : (
