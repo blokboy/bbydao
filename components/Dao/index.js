@@ -24,7 +24,7 @@ const Dao = ({ data }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="mt-5 flex w-full flex-col overflow-auto md:flex-row">
+      <div className="flex w-full flex-col overflow-auto pt-4 md:flex-row">
         <div className="flex-start flex flex-col px-4 md:w-3/12">
           <SidePanel
             nftImage={data?.collectibles[0]?.imageUri}

@@ -1,13 +1,13 @@
 import React from "react"
 
-const ListToolbar = () => {
+const MessageToolbar = () => {
   return (
     <div className="flex h-[5%] w-full">
       <div className="flex w-full items-center justify-center">
-        List Toolbar
+        Message Toolbar
       </div>
     </div>
   )
 }
 
-export default ListToolbar
+export default MessageToolbar

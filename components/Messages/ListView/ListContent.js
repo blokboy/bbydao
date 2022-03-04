@@ -10,7 +10,7 @@ const ListContent = ({ threads }) => {
   }
 
   return (
-    <div className="h-[90%] overflow-scroll">
+    <div className="h-[95%] overflow-scroll p-3">
       {messages.map((thread, i) => {
         return <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
       })}
