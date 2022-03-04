@@ -44,7 +44,7 @@ const MessageForm = () => {
 
   return (
     <form
-      className="flex h-[10%] w-full flex-row items-center p-3"
+      className="flex h-[15%] w-full flex-row items-center p-3 md:h-[10%]"
       onSubmit={handleSubmit}
     >
       <textarea

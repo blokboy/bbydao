@@ -6,7 +6,7 @@ const ListToolbar = () => {
   const setDaoListView = useMessageStore(state => state.setDaoListView)
 
   return (
-    <div className="flex h-[5%] w-full">
+    <div className="flex w-full md:h-[5%]">
       <div className="flex w-full items-center justify-center">
         <button
           className={
