@@ -7,6 +7,7 @@ import { useAccount } from "wagmi"
 
 const FriendTransaction = ({ tx, owners, threshold }) => {
   const [{ data, error, loading }, disconnect] = useAccount()
+  console.log('tx ', tx)
   return (
     <div className="w-full">
       <div className="flex flex-col rounded-lg bg-slate-100 p-1 shadow-inner dark:bg-slate-800">
@@ -21,7 +22,13 @@ const FriendTransaction = ({ tx, owners, threshold }) => {
                   />
                 </div>
               ) : (
-                <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800"></div>
+                <div className="mr-1 h-6 w-6 rounded-full border border-white bg-slate-100 dark:bg-slate-800">
+                 <Davatar
+                    size={22}
+                    address={tx.creator}
+                    generatedAvatarType="blockies"
+                  />
+                </div>
               )}
               <span className="mr-1 flex w-20 flex-row justify-center rounded border border-white bg-slate-100 p-1 text-[12px] dark:bg-slate-800">
                 <span className="text-blue-500">FRIEND</span>
@@ -29,7 +36,14 @@ const FriendTransaction = ({ tx, owners, threshold }) => {
 
               {/* render based on type */}
               <span className="p-1 text-[12px] font-semibold">to:</span>
-              <span className="w-16 rounded border border-white bg-slate-100 p-1 text-[12px] text-yellow-500 dark:bg-slate-800">
+              <span 
+              className="w-16 rounded cursor-pointer border border-white bg-slate-100 p-1 text-[12px] text-yellow-500 dark:bg-slate-800"
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  tx?.receiver ? tx.receiver : ""
+                )
+              }}
+              >
                 {tx.receiver.slice(0, 6).concat("...")}
               </span>
         </div>
