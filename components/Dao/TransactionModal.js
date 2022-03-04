@@ -7,6 +7,8 @@ import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import { useAccount } from "wagmi"
 import { HiX } from "react-icons/hi"
 import { useUiStore } from "stores/useUiStore"
+import { useMutation } from "react-query"
+import * as api from "../../query"
 
 let safeSdk
 
@@ -16,6 +18,12 @@ const TransactionModal = ({ safeAddress }) => {
   const [txWaiting, setTxWaiting] = React.useState(false)
   const { state, setState, handleChange } = useForm()
   const [{ data, error, loading }, disconnect] = useAccount()
+
+  const {
+    data: storedTxData,
+    status: storedTxStatus,
+    mutateAsync: storeTx,
+  } = useMutation(api.storeTxOffChain)
 
   React.useEffect(() => {
     setSafeAddress()
@@ -46,11 +54,11 @@ const TransactionModal = ({ safeAddress }) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner(provider.provider.selectedAddress)
     // contract address to send to
-    let wei = ethers.utils.parseEther(state.value)
+    let wei = ethers.utils.parseEther(state?.value)
     let weiString = wei.toString()
     const transactions = [
       {
-        to: state.to,
+        to: state?.to,
         value: weiString,
         data: ethers.utils.hexlify([1]),
       },
@@ -79,7 +87,22 @@ const TransactionModal = ({ safeAddress }) => {
     console.log("proposedTx", proposedTx)
     const nextNonce = await safeService.getNextNonce(safeAddress)
     console.log("nextNonce", nextNonce)
+
+    const tx = {
+      approvals: [data?.address],
+      creator: data?.address,
+      txHash: safeTxHash,
+      receiver: state.to,
+      // tokenContract: osAssetInfo?.address,
+      // tokenId: osAssetInfo?.token_id,
+      safeContract: safeAddress,
+      value: String(weiString - weiString * 0.02),
+      type: 4,
+    }
+    storeTx(tx)
+
     setTxWaiting(false)
+    closeModal()
   }
 
   const execute = async () => {
@@ -142,7 +165,7 @@ const TransactionModal = ({ safeAddress }) => {
             to
           </label>
           <input
-            value={state.to || ""}
+            value={state?.to}
             onChange={handleChange}
             className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
             id="name"
@@ -158,10 +181,10 @@ const TransactionModal = ({ safeAddress }) => {
             value
           </label>
           <input
-            value={state.value || ""}
+            value={state?.value}
             onChange={handleChange}
             className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
-            id="name"
+            id="value"
             name="value"
             type="number"
             placeholder="value"
@@ -172,7 +195,6 @@ const TransactionModal = ({ safeAddress }) => {
         <div className="mb-8 flex w-full flex-row items-center justify-between">
           <button
             className="focus:shadow-outline w-full rounded-xl border-2 bg-slate-300 py-3 px-4 font-bold shadow-xl hover:border-2 hover:border-[#0db2ac93] hover:bg-slate-100 hover:shadow-sm focus:outline-none dark:bg-slate-800"
-            // type="submit"
             onClick={sign}
           >
             sign

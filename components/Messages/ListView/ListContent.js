@@ -1,12 +1,22 @@
 import React from "react"
 import ListToolbar from "./ListToolbar"
 import ListViewCard from "./ListViewCard"
+import { useMessageStore } from "stores/useMessageStore"
 
 const ListContent = ({ threads }) => {
-  console.log(threads)
+  const daoListView = useMessageStore(state => state.daoListView)
+
+  // list all users safes as well as their address to represent inboxes
+  // populate daoListView with these
+  // on click of an address - set channelAddress on useMessageStore to that address
+
   const messages = []
   for (const [key, values] of Object.entries(threads.threads)) {
     messages.push([key, values])
+  }
+
+  if (daoListView) {
+    return <div className="h-[95%] overflow-scroll p-3">dao view</div>
   }
 
   return (
