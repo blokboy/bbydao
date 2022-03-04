@@ -6,6 +6,7 @@ import ExecuteTx from "./ExecuteTx"
 import { useAccount } from "wagmi"
 import OpenseaTransaction from "./OpenseaTransaction"
 import FriendTransaction from "./FriendTransaction"
+import TransferTransaction from "./TransferTransaction"
 
 const AllTxs = ({ allTxs, owners, threshold }) => {
   const [{ data, error, loading }, disconnect] = useAccount()
@@ -19,6 +20,12 @@ const AllTxs = ({ allTxs, owners, threshold }) => {
           if(tx.type === 6) {
             return (
               <FriendTransaction key={index} tx={tx} owners={owners} threshold={threshold} />
+            )
+          }
+
+          if(tx.type === 8) {
+            return (
+              <TransferTransaction key={index} tx={tx} owners={owners} threshold={threshold} />
             )
           }
 
