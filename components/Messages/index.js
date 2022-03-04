@@ -13,8 +13,9 @@ const Messages = ({ data }) => {
       </Head>
 
       <div className="flex h-screen w-full justify-center">
+        {/* toolbar component that controls the message view and list view */}
         <ListView threads={data} />
-        {/* <MessageView /> */}
+        <MessageView />
       </div>
     </>
   )

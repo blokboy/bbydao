@@ -11,15 +11,7 @@ const ListContent = ({ threads }) => {
   return (
     <div className="h-full overflow-auto rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
       {messages.map((thread, i) => {
-        return (
-          <>
-            <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
-            <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
-            <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
-            <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
-            <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
-          </>
-        )
+        return <ListViewCard key={i} title={thread[0]} thread={thread[1]} />
       })}
     </div>
   )
