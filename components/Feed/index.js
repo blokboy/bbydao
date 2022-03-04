@@ -30,7 +30,7 @@ const Feed = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="my-2 flex h-full w-full flex-col">
+      <div className="flex h-full w-full flex-col pt-4">
         {data?.parsedNotifs?.FRIEND_REQUESTS?.length ? (
           data.parsedNotifs.FRIEND_REQUESTS.map(notif => (
             <FriendRequest

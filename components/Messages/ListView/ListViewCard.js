@@ -16,7 +16,7 @@ const ListViewCard = ({ title, thread }) => {
 
   return (
     <li
-      className="mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-900"
+      className="mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-800"
       onClick={handleClickCard}
     >
       <div className="w-1/12">

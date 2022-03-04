@@ -40,6 +40,10 @@ const UserDashboard = ({ data }) => {
     return
   }, [ensData])
 
+  if (!data) {
+    return
+  }
+
   return (
     <>
       <Head>
@@ -48,40 +52,34 @@ const UserDashboard = ({ data }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {data ? (
-        <>
-          {createDaoModalOpen ? <DaoForm address={address} /> : <></>}
-          <div className="mt-5 flex h-screen w-full flex-col pb-10 md:flex-row">
-            <div className="flex-start flex flex-col px-4 md:w-3/12">
-              <UserImage address={address} />
-              <UserDetails address={address} ens={ens} />
-              {address === accountData?.address ? (
-                <div className="flex w-full justify-center md:justify-start">
-                  <CreateDaoButton />
-                </div>
-              ) : (
-                <></>
-              )}
+      <div className="flex w-full flex-col pt-4 md:flex-row">
+        <div className="flex-start flex flex-col px-4 md:w-3/12">
+          <UserImage address={address} />
+          <UserDetails address={address} ens={ens} />
+          {address === accountData?.address ? (
+            <div className="flex w-full justify-center md:justify-start">
+              <CreateDaoButton />
             </div>
-            <div className="flex flex-col md:w-9/12 md:flex-row">
-              <div className="flex w-full flex-col md:w-1/2">
-                <UserFeed address={address} />
-              </div>
-              <div className="flex w-full flex-col md:w-1/2">
-                {safes.length ? (
-                  <UserDaos address={address} safes={safes} />
-                ) : address === accountData?.address ? (
-                  <CreateDaoPrompt />
-                ) : (
-                  <></>
-                )}
-              </div>
-            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+        <div className="flex flex-col md:w-9/12 md:flex-row">
+          <div className="flex w-full flex-col md:w-1/2">
+            <UserFeed address={address} />
           </div>
-        </>
-      ) : (
-        <></>
-      )}
+          <div className="flex w-full flex-col md:w-1/2">
+            {safes.length ? (
+              <UserDaos address={address} safes={safes} />
+            ) : address === accountData?.address ? (
+              <CreateDaoPrompt />
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
+      </div>
+      {createDaoModalOpen && <DaoForm address={address} />}
     </>
   )
 }

@@ -7,7 +7,7 @@ const OpenSeaCollection = ({ data, slug }) => {
   if (!data) return <div className="h-screen">collection fetch failed</div>
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col pt-4">
       {/* needs banner image */}
       <CollectionBanner banner={data.collection.banner_image_url} />
       <div className="flex flex-col md:flex-row">

@@ -13,9 +13,9 @@ const Messages = ({ data }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex h-screen w-full flex-col">
+      <div className="flex h-full w-full flex-col pt-4">
         <MessageNav />
-        <div className="flex h-full w-full flex-col p-3 md:h-5/6 md:flex-row">
+        <div className="flex w-full flex-col p-3 md:h-5/6 md:flex-row">
           <ListView threads={data} />
           <MessageView />
         </div>
