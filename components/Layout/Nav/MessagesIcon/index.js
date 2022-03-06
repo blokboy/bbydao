@@ -13,7 +13,7 @@ const MessagesIcon = ({ address }) => {
   const [count, setCount] = React.useState(count ? count : 0)
 
   const { data } = useQuery(
-    ["threads"],
+    ["threads", address],
     () => api.getUserThreads({ address }),
     { staleTime: 180000 }
   )

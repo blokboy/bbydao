@@ -13,7 +13,6 @@ const MessagesDropdown = ({ ...props }) => {
   )
 
   const handleStartConversation = () => {
-    // open a start conversation modal
     setCreateThreadModalOpen()
     clickAway()
   }
@@ -28,7 +27,7 @@ const MessagesDropdown = ({ ...props }) => {
       <div className="mb-2 flex flex-row items-center justify-between rounded border p-2">
         <h1>Messages</h1>
         <div className="flex flex-row">
-          <Link href={`/messages/${address}`}>
+          <Link href={"/messages"}>
             <a onClick={clickAway}>
               <button className="nav-btn mx-1">
                 <HiOutlineArrowCircleRight />

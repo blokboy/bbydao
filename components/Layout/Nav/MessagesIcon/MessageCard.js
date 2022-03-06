@@ -12,10 +12,7 @@ const MessageCard = ({ title, thread, clickAway }) => {
   }
 
   return (
-    <Link
-      href={`/messages/${thread.address}`}
-      as={`/messages/${thread.address}`}
-    >
+    <Link href={"/messages"} as={"/messages"}>
       <a>
         <li
           className="mb-2 flex w-full cursor-pointer flex-row rounded-lg bg-slate-100 p-3 dark:bg-slate-800"

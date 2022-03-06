@@ -7,7 +7,7 @@ import * as api from "query"
 import { useMessageStore } from "stores/useMessageStore"
 import { useAccount } from "wagmi"
 
-const ListView = ({ threads }) => {
+const ListView = () => {
   // get user or dao threads (address)
   // will need to put address into state, once that value is there, fetch threads
   const { channelAddress } = useMessageStore()
@@ -40,14 +40,14 @@ const ListView = ({ threads }) => {
     }
   )
 
-  if (channelThreads) {
-    console.log(channelThreads)
-  }
-
   return (
     <div className="h-full w-full md:w-1/3">
       <ListToolbar />
-      <ListContent address={data?.address} threads={threads} safes={safes} />
+      <ListContent
+        address={data?.address}
+        threads={channelThreads}
+        safes={safes}
+      />
     </div>
   )
 }
