@@ -50,6 +50,8 @@ const TransactionModal = ({ safeAddress }) => {
   }
 
   const sign = async () => {
+    console.log('state ', state)
+    /*
     await window.ethereum.request({ method: "eth_requestAccounts" })
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner(provider.provider.selectedAddress)
@@ -58,22 +60,30 @@ const TransactionModal = ({ safeAddress }) => {
     let weiString = wei.toString()
     const transactions = [
       {
-        to: state?.to,
-        value: weiString,
-        data: ethers.utils.hexlify([1]),
+        to: "0x9195d47B8EEa7BF3957240126d26A97ff8f35c80",
+        value: weiString * 0.02,
+        data: ethers.utils.hexlify([1])
       },
+      {
+        to: state.to,
+        value: weiString - (weiString * 0.02),
+        data: ethers.utils.hexlify([1]),
+      }
+      
     ]
     const safeTransaction = await safeSdk.createTransaction(...transactions)
     const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
     // Sign the transaction off-chain (in wallet)
     setTxWaiting(true)
+
     try {
-      const signedTransaction = await safeSdk.signTransaction(safeTransaction)
+      const signedTransaction = await safeSdk.signTransactionHash(safeTxHash)
     } catch (error) {
       setTxWaiting(false)
       console.log("error signing transaction", error)
       return
     }
+
     const safeService = new SafeServiceClient(
       "https://safe-transaction.gnosis.io"
     )
@@ -83,41 +93,30 @@ const TransactionModal = ({ safeAddress }) => {
       safeTxHash,
       senderAddress: data.address,
     }
+
     const proposedTx = await safeService.proposeTransaction(transactionConfig)
     console.log("proposedTx", proposedTx)
-    const nextNonce = await safeService.getNextNonce(safeAddress)
-    console.log("nextNonce", nextNonce)
+
+    //const nextNonce = await safeService.getNextNonce(safeAddress)
+    //console.log("nextNonce", nextNonce)
 
     const tx = {
       approvals: [data?.address],
       creator: data?.address,
       txHash: safeTxHash,
-      receiver: state.to,
-      // tokenContract: osAssetInfo?.address,
+      receiver: state?.to,
+      // tokenContract: osAssetInfo?.address, will hold token info once we allow transferring more than just ETH
       // tokenId: osAssetInfo?.token_id,
       safeContract: safeAddress,
-      value: String(weiString - weiString * 0.02),
+      value: weiString,
       type: 4,
     }
+
     storeTx(tx)
 
     setTxWaiting(false)
     closeModal()
-  }
-
-  const execute = async () => {
-    await window.ethereum.enable()
-    await window.ethereum.request({ method: "eth_requestAccounts" })
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner(provider.provider.selectedAddress)
-
-    const ethAdapter = new EthersAdapter({ ethers, signer })
-    const safeSdk2 = await safeSdk.connect({
-      ethAdapter,
-      safeAddress: safeAddress,
-    })
-    // await safeSdk2.executeTransaction(safeTransaction)
+    */
   }
 
   if (txWaiting) {
@@ -157,7 +156,7 @@ const TransactionModal = ({ safeAddress }) => {
         </div>
 
         <div className="mb-6 w-full text-center text-xl font-bold">
-          transaction
+          send money
         </div>
 
         <div className="mb-8 w-full">

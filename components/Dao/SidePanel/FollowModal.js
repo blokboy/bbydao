@@ -44,6 +44,12 @@ const FollowModal = ({ safeAddress }) => {
       console.log("no safe submitted")
       return
     }
+
+    if(safeAddress === state.safe) { 
+      // user tried to send a friend request between same bbyDAO
+      console.log('invalid')
+      return { message: `Cannot friend request the same bbyDAO` }
+    }
     /*
       Transaction Obj for submission 
       {
@@ -58,11 +64,11 @@ const FollowModal = ({ safeAddress }) => {
       txHash: "DAOTODAO",
       creator: data?.address,
       receiver: safeAddress,
+      value: "REQUEST",
       safeContract: state?.safe,
       approvals: [ data?.address ],
       type: 6
     }
-
 
     mutateAsync(req)
   }
