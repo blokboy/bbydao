@@ -1,14 +1,19 @@
 import React from "react"
+import { useRouter } from "next/router"
 import Select from "react-select"
 import { customStyles } from "./customStyles"
 import useForm from "hooks/useForm"
-import { useQuery } from "react-query"
+import * as api from "query"
+import { useQuery, useMutation } from "react-query"
 import { useAccount } from "wagmi"
+import { useMessageStore } from "../../../stores/useMessageStore"
 
 const CreateThreadForm = ({ closeModal }) => {
+  const router = useRouter()
   const { state, setState, handleChange } = useForm()
   const [selectedOptions, setSelectedOptions] = React.useState([])
   const [{ data: accountData }] = useAccount()
+  const setThreadChannel = useMessageStore(state => state.setThreadChannel)
 
   const { data: friendData } = useQuery(
     ["friends", accountData?.address],
@@ -18,6 +23,13 @@ const CreateThreadForm = ({ closeModal }) => {
       staleTime: 180000,
     }
   )
+
+  const { status, mutateAsync } = useMutation(api.createMessage, {
+    onSettled: async data => {
+      const result = await data
+      setThreadChannel(result?.channel)
+    },
+  })
 
   const friends = friendData?.map(friend => {
     return {
@@ -38,12 +50,21 @@ const CreateThreadForm = ({ closeModal }) => {
   }
 
   const handleSubmit = async e => {
-    let arr = [accountData?.address, ...selectedOptions]
+    if (!accountData?.address) {
+      console.log("CreateThreadForm: No account data")
+      return
+    }
     e.preventDefault()
-    console.log(state)
-    console.log(arr)
+    let arr = [accountData?.address, ...selectedOptions]
+    const req = {
+      sender: accountData?.address,
+      body: state.body,
+      addresses: arr,
+    }
+    mutateAsync(req)
     setState({})
-    // setSelectedOptions([])
+    closeModal()
+    router.push("/messages")
   }
 
   return (

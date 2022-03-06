@@ -4,6 +4,7 @@ import { HiOutlineArrowCircleRight } from "react-icons/hi"
 import { useMessageStore } from "stores/useMessageStore"
 
 const ListViewCard = ({ title, thread }) => {
+  console.log(thread)
   const { setThreadChannel } = useMessageStore()
 
   const handleClickCard = () => {
