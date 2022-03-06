@@ -11,8 +11,8 @@ const ListView = ({ threads }) => {
   // get user or dao threads (address)
   // will need to put address into state, once that value is there, fetch threads
   const { channelAddress } = useMessageStore()
-
   const [{ data, error, loading }, disconnect] = useAccount()
+
   const [safes, setSafes] = React.useState()
   const getUserSafes = async () => {
     if (!data?.address) return
@@ -23,9 +23,9 @@ const ListView = ({ threads }) => {
     setSafes(safes.safes)
   }
   React.useEffect(() => {
-    if (!data.address) return
+    console.log("getting user safes...")
     getUserSafes()
-  }, [])
+  }, [loading])
 
   const { data: channelThreads } = useQuery(
     ["threads", channelAddress],
@@ -47,7 +47,7 @@ const ListView = ({ threads }) => {
   return (
     <div className="h-full w-full md:w-1/3">
       <ListToolbar />
-      <ListContent threads={threads} safes={safes} />
+      <ListContent address={data?.address} threads={threads} safes={safes} />
     </div>
   )
 }

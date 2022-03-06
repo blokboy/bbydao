@@ -18,7 +18,7 @@ const Messages = ({ data }) => {
         <MessageNav />
         <div className="flex h-full w-full flex-col p-3 md:h-5/6 md:flex-row">
           <ListView threads={data} />
-          {/* <MessageView /> */}
+          <MessageView />
         </div>
       </div>
     </>

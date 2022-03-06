@@ -4,10 +4,6 @@ import { HiOutlineArrowCircleRight } from "react-icons/hi"
 import { useMessageStore } from "stores/useMessageStore"
 
 const ListViewCard = ({ title, thread }) => {
-  const getAllMessages = async address => {
-    //const res = axios.post(`${process.env.NEXT_PUBLIC_API}/`)
-  }
-
   const { setThreadChannel } = useMessageStore()
 
   const handleClickCard = () => {
