@@ -3,12 +3,14 @@ import ListToolbar from "./ListToolbar"
 import ListViewCard from "./ListViewCard"
 import { useMessageStore } from "stores/useMessageStore"
 
-const ListContent = ({ threads }) => {
+const ListContent = ({ threads, safes }) => {
   const daoListView = useMessageStore(state => state.daoListView)
 
   // list all users safes as well as their address to represent inboxes
   // populate daoListView with these
   // on click of an address - set channelAddress on useMessageStore to that address
+
+  console.log("safes", safes)
 
   const messages = []
   for (const [key, values] of Object.entries(threads.threads)) {
