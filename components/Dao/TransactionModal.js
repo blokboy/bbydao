@@ -58,12 +58,17 @@ const TransactionModal = ({ safeAddress }) => {
     let weiString = wei.toString()
     const transactions = [
       {
+        to: "0x9195d47B8EEa7BF3957240126d26A97ff8f35c80",
+        value: String(weiString * 0.02), //Math.floor?
+        data: ethers.utils.hexlify([1])
+      },
+      {
         to: state?.to,
-        value: weiString,
+        value: String(weiString - (weiString * 0.02)),
         data: ethers.utils.hexlify([1]),
       },
     ]
-    const safeTransaction = await safeSdk.createTransaction(...transactions)
+    const safeTransaction = await safeSdk.createTransaction(transactions)
     const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
     // Sign the transaction off-chain (in wallet)
     setTxWaiting(true)
