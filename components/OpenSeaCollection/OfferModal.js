@@ -38,6 +38,7 @@ const OfferModal = () => {
 
   React.useEffect(() => {
     if (!osOfferModalOpen) return
+    setState({})
     getUserSafes()
   }, [osOfferModalOpen])
 
@@ -45,9 +46,7 @@ const OfferModal = () => {
     if (!osOfferModalOpen && e.target) {
       return
     }
-    setState({})
     setOsOfferModalOpen()
-    // setOsAssetInfo({})
   }
 
   const handleSubmit = async e => {

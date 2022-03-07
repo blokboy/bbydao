@@ -99,7 +99,6 @@ const DaoForm = ({ address }) => {
     if (!createDaoModalOpen && e.target) {
       return
     }
-    setState({})
     setCreateDaoModalOpen()
   }
 

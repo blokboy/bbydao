@@ -38,6 +38,7 @@ const BuyModal = () => {
 
   React.useEffect(() => {
     if (!osBuyModalOpen) return
+    setState({})
     getUserSafes()
   }, [osBuyModalOpen])
 
@@ -45,9 +46,7 @@ const BuyModal = () => {
     if (!osBuyModalOpen && e.target) {
       return
     }
-    setState({})
     setOsBuyModalOpen()
-    // setOsAssetInfo({})
   }
 
   const handleSubmit = async e => {
