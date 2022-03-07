@@ -149,7 +149,7 @@ const BuyModal = () => {
     const sellOrderWei = ethers.utils.parseUnits(osAssetInfo?.sellOrder)
     const sellOrderEth = ethers.utils.formatEther(sellOrderWei).toString()
     const price = Number(sellOrderEth) / 10 ** 18
-    console.log("wei ", price)
+    // console.log("wei ", price)
 
     return (
       <div
