@@ -15,7 +15,7 @@ const ListToolbar = () => {
           }
           onClick={daoListView ? null : setDaoListView}
         >
-          dao view
+          Channel List
         </button>
         <button
           className={
@@ -24,7 +24,7 @@ const ListToolbar = () => {
           }
           onClick={!daoListView ? null : setDaoListView}
         >
-          user view
+          Channel Inbox
         </button>
       </div>
     </div>
