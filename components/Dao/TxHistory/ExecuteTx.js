@@ -110,46 +110,28 @@ const ExecuteTx = ({ tx, address }) => {
 
     if (type === 4) {
       try {
+        await window.ethereum.request({ method: "eth_requestAccounts" })
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const signer = provider.getSigner(provider.provider.selectedAddress)
          // create fee tx for our safe
         const safeSdk = await createSafeSdk(safeContract)
         console.log('safe in exec ', safeSdk)
 
-        let wei = ethers.utils.parseEther(value)
-        let weiString = wei.toString()
-        let fee = (Number(weiString) * 0.02).toString()
+        const safeTx = await safeService.getTransaction(txHash)
+        const executed = await safeSdk.executeTransaction(safeTx)
 
-        const transactions = [
-          {
-            to: "0x9195d47B8EEa7BF3957240126d26A97ff8f35c80",
-            data: ethers.utils.hexlify([1]),
-            value: fee,
-          },
-          {
-            to: tx.receiver,
-            data: ethers.utils.hexlify([1]),
-            value: String(weiString - fee),
-          },
-        ]
+        console.log('executed ', executed)
 
-        const safeTransaction = await safeSdk.createTransaction(...transactions)
         /*
-      
-        const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
-        try {
-          // Sign the transaction off-chain (in wallet)
-          const signedTransaction = await safeSdk.signTransaction(safeTransaction)
-          // mutate tx on backend
+        if(executed) {
           const tx = {
-            txHash: txHash,
-            executor: address,
+            id: tx.id,
+            txHash
           }
-          mutateTx(tx)
-        } catch (error) {
-          // user rejected tx
-          console.log("user rejected tx")
-          return
+          
+          deleteTx(tx)
         }
-      */
+        */
       } catch(e) {
         console.log('exec error ', e)
       }
