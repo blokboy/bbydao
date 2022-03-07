@@ -41,28 +41,38 @@ const ApproveRejectTx = ({ tx, address }) => {
 
       if (type === 4) {
         // transfer transaction
-        const sigs = []
-        const signers = await safeService.getTransactionConfirmations(txHash)
+        await window.ethereum.request({ method: "eth_requestAccounts" })
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const signer = provider.getSigner(provider.provider.selectedAddress)
 
+        const sigs = []
+        const owners = []
+        const signers = await safeService.getTransactionConfirmations(txHash)
+        console.log('signers ', signers)
         for (let i = 0; i < signers.results.length; i++) {
-          sigs.push(signers.results[i].owner)
+          const obj = {
+            owner: signers.results[i].owner,
+            signature: signers.results[i].signature
+          }
+          sigs.push(obj)
+          owners.push(obj.owner)
         }
 
-        if (sigs.includes(data?.address)) {
+        if (owners.includes(data?.address)) {
           return
         } else {
           const safeSdk = await createSafeSdk(safeContract)
           const safeTx = await safeService.getTransaction(txHash)
-
-          await safeSdk.signTransaction(safeTx)
-          await safeSdk.signTransactionHash(txHash)
+          const sign = await safeSdk.signTransactionHash(safeTx.safeTxHash)
+          console.log('sign ', sign)
+          const conf = await safeService.confirmTransaction(safeTx.safeTxHash, sign.data)
 
           const tx = {
             id: id,
             txHash: txHash,
             approvals: approvals?.length ? [...approvals, address] : [address],
           }
-
+          console.log('tx ', tx)
           mutateTx(tx)
         }
       }
