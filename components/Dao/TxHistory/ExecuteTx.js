@@ -6,7 +6,7 @@ import { createSeaport } from "utils/createSeaport"
 import { createSafeSdk } from "utils/createSafeSdk"
 
 const ExecuteTx = ({ tx, address }) => {
-  const { id, type, value, tokenContract, tokenId, txHash, safeContract, receiver } = tx
+  const { id, type, value, tokenContract, tokenId, txHash, safeContract, receiver, executor } = tx
 
   const {
     data: mutateTxData,
@@ -31,6 +31,11 @@ const ExecuteTx = ({ tx, address }) => {
     status: storeTxStatus,
     mutateAsync: storeTxOffChain,
   } = useMutation(api.storeTxOffChain)
+
+  const { 
+    data: deleteTxData,
+    status: deleteTxStatus, 
+    mutateAsync: deleteOffChainTx } = useMutation(api.deleteOffChainTx);
 
   const handleExecute = async e => {
     e.preventDefault()
@@ -155,11 +160,16 @@ const ExecuteTx = ({ tx, address }) => {
       if(value === "RESPONSE") {
         // if tx.value === RESPONSE then we just need to edit the current record with their accepted state or delete it if they rejected
         const req = {
-          id, 
-          status: 1 //pending request
+          id: tx.executor, 
+          status: 5 //pending request to friends
         }
 
-        mutateRelationshipTx(req)
+        const txReq = {
+          id: tx.id
+        }
+
+        await mutateRelationshipTx(req)
+        await deleteOffChainTx(txReq)
       }
 
       if(value === "REQUEST") {
@@ -170,17 +180,26 @@ const ExecuteTx = ({ tx, address }) => {
           status: 3 //pending request
         }
 
-        const resTx = {
-          creator: safeContract,
-          target: safeContract,
-          safeContract: receiver,
-          txHash: "DAOTODAO",
-          type: 6,
-          value: "RESPONSE"
+        
+
+        const reqTx = {
+          id: tx.id
         }
 
-        createRelationshipTx(req)
-        storeTxOffChain(resTx)
+        await deleteOffChainTx(reqTx)
+        const transaction = await createRelationshipTx(req)
+
+        const resTx = {
+          creator: safeContract,
+          receiver: safeContract, // the bbyDAO that initiated the request will be the receiver of the response
+          safeContract: receiver, // the bbyDAO that needs to respond is the safeContract addr we need to attach tx to
+          txHash: "DAOTODAO",
+          type: 6,
+          value: "RESPONSE",
+          executor: transaction.id //the reference to the transaction for editing the relationship for acceptance or deletion
+        }
+
+        await storeTxOffChain(resTx)
       }
       
       return

@@ -87,6 +87,7 @@ export const deleteNotification = async req => {
 */
 export const storeTxOffChain = async req => {
   const res = await api.post("/transaction", req)
+  console.log("storeTxOffChain response:", res.data)
   return res.data
 }
 
@@ -100,7 +101,8 @@ export const mutateOffChainTx = async req => {
 // delete off chain tx
 // { id: id }
 export const deleteOffChainTx = async req => {
-  const res = await api.delete("/transaction", req)
+  const res = await api.post("/transaction/delete", req)
+  console.log("deleteOffChainTx response:", res.data)
   return res.data
 }
 

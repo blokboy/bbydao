@@ -18,24 +18,23 @@ const ApproveRejectTx = ({ tx, address }) => {
 
   const handleApprove = async e => {
     e.preventDefault()
-    try {
-      const safeService = new SafeServiceClient(
-        "https://safe-transaction.gnosis.io"
-      )
-      
+    try {      
+      if(type === 6) {
+        const tx = {
+          id: id,
+          txHash: txHash,
+          value: value,
+          type: type,
+          approvals: approvals?.length ? [ ...approvals, address] : [address],
+        }
+    
+        mutateTx(tx)
+      }
       const safeSdk = await createSafeSdk(safeContract)
       await safeSdk.signTransactionHash(txHash);
   
       // send tx to backend
-      const tx = {
-        id: id,
-        txHash: txHash,
-        value: value,
-        type: type,
-        approvals: [ ...approvals, address],
-      }
-  
-      mutateTx(tx)
+      
     } catch(e) {
       console.log('signing error ', e);
     } 

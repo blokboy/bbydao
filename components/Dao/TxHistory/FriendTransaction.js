@@ -25,7 +25,7 @@ const FriendTransaction = ({ tx, owners, threshold }) => {
                 navigator.clipboard.writeText(tx?.receiver ? tx.receiver : "")
               }}
             >
-              {tx.receiver.slice(0, 4).concat("...").concat(tx.receiver.slice(tx.receiver.length - 4, tx.receiver.length))}
+              {tx?.receiver ? tx.receiver.slice(0, 4).concat("...") : "DAO"}
             </span>
           </div>
 
