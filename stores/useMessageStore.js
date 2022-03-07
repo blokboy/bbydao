@@ -8,6 +8,7 @@ export const useMessageStore = create(set => ({
   setThreadChannel: channel => set({ threadChannel: channel }),
 
   // dao or user view - msg list view
-  daoListView: false,
-  setDaoListView: () => set(state => ({ daoListView: !state.daoListView })),
+  inboxListView: false,
+  setInboxListView: () =>
+    set(state => ({ inboxListView: !state.inboxListView })),
 }))

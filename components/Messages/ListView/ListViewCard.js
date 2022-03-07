@@ -4,8 +4,8 @@ import { HiOutlineArrowCircleRight } from "react-icons/hi"
 import { useMessageStore } from "stores/useMessageStore"
 
 const ListViewCard = ({ title, thread }) => {
-  console.log(thread)
   const { setThreadChannel } = useMessageStore()
+  const threadChannel = useMessageStore(state => state.threadChannel)
 
   const handleClickCard = () => {
     setThreadChannel(thread.channel)
@@ -13,7 +13,10 @@ const ListViewCard = ({ title, thread }) => {
 
   return (
     <li
-      className="mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-800"
+      className={
+        "mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-800" +
+        (threadChannel === thread.channel ? " text-blue-500" : "")
+      }
       onClick={handleClickCard}
     >
       <div className="ml-3 flex w-11/12 flex-col pl-3">

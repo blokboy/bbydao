@@ -2,8 +2,8 @@ import React from "react"
 import { useMessageStore } from "stores/useMessageStore"
 
 const ListToolbar = () => {
-  const daoListView = useMessageStore(state => state.daoListView)
-  const setDaoListView = useMessageStore(state => state.setDaoListView)
+  const inboxListView = useMessageStore(state => state.inboxListView)
+  const setInboxListView = useMessageStore(state => state.setInboxListView)
 
   return (
     <div className="flex w-full md:h-[5%]">
@@ -11,18 +11,18 @@ const ListToolbar = () => {
         <button
           className={
             "mx-1 rounded-lg bg-slate-300 p-3 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700" +
-            (daoListView ? " text-blue-500" : "")
+            (inboxListView ? " text-blue-500" : "")
           }
-          onClick={daoListView ? null : setDaoListView}
+          onClick={inboxListView ? null : setInboxListView}
         >
-          Channel List
+          Inboxes
         </button>
         <button
           className={
             "mx-1 rounded-lg bg-slate-300 p-3 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700" +
-            (!daoListView ? " text-blue-500" : "")
+            (!inboxListView ? " text-blue-500" : "")
           }
-          onClick={!daoListView ? null : setDaoListView}
+          onClick={!inboxListView ? null : setInboxListView}
         >
           Channel Inbox
         </button>

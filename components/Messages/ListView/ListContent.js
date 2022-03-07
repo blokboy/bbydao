@@ -5,7 +5,12 @@ import ListViewCard from "./ListViewCard"
 import { useMessageStore } from "stores/useMessageStore"
 
 const ListContent = ({ threads, safes, address }) => {
-  const daoListView = useMessageStore(state => state.daoListView)
+  const inboxListView = useMessageStore(state => state.inboxListView)
+  const setInboxListView = useMessageStore(state => state.setInboxListView)
+
+  const setInboxView = () => {
+    setInboxListView(true)
+  }
 
   const messages = []
   if (threads) {
@@ -14,12 +19,14 @@ const ListContent = ({ threads, safes, address }) => {
     }
   }
 
-  if (daoListView) {
+  if (inboxListView) {
     return (
       <div className="h-[95%] overflow-scroll p-3">
-        <UserInboxCard address={address} />
+        <UserInboxCard address={address} setInboxView={setInboxView} />
         {safes?.map((safe, i) => {
-          return <DaoInboxCard key={i} safe={safe} />
+          return (
+            <DaoInboxCard key={i} safe={safe} setInboxView={setInboxView} />
+          )
         })}
       </div>
     )
