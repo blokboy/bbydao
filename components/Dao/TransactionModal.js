@@ -68,7 +68,11 @@ const TransactionModal = ({ safeAddress }) => {
         data: ethers.utils.hexlify([1]),
       },
     ]
-    const safeTransaction = await safeSdk.createTransaction(transactions)
+
+    const options = {
+      nonce: await safeService.getNextNonce(safeAddress)
+    }
+    const safeTransaction = await safeSdk.createTransaction(transactions, options)
     const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
     // Sign the transaction off-chain (in wallet)
     setTxWaiting(true)
@@ -90,8 +94,6 @@ const TransactionModal = ({ safeAddress }) => {
     }
     const proposedTx = await safeService.proposeTransaction(transactionConfig)
     console.log("proposedTx", proposedTx)
-    const nextNonce = await safeService.getNextNonce(safeAddress)
-    console.log("nextNonce", nextNonce)
 
     const tx = {
       approvals: [data?.address],

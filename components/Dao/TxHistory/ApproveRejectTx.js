@@ -48,7 +48,6 @@ const ApproveRejectTx = ({ tx, address }) => {
         const sigs = []
         const owners = []
         const signers = await safeService.getTransactionConfirmations(txHash)
-        console.log('signers ', signers)
         for (let i = 0; i < signers.results.length; i++) {
           const obj = {
             owner: signers.results[i].owner,
@@ -57,24 +56,18 @@ const ApproveRejectTx = ({ tx, address }) => {
           sigs.push(obj)
           owners.push(obj.owner)
         }
-
-        if (owners.includes(data?.address)) {
-          return
-        } else {
           const safeSdk = await createSafeSdk(safeContract)
           const safeTx = await safeService.getTransaction(txHash)
           const sign = await safeSdk.signTransactionHash(safeTx.safeTxHash)
           console.log('sign ', sign)
           const conf = await safeService.confirmTransaction(safeTx.safeTxHash, sign.data)
 
-          const tx = {
-            id: id,
-            txHash: txHash,
+          const req = {
+            id: tx.id,
             approvals: approvals?.length ? [...approvals, address] : [address],
           }
           console.log('tx ', tx)
-          mutateTx(tx)
-        }
+          mutateTx(req)
       }
     } catch (e) {
       console.log("signing error ", e)

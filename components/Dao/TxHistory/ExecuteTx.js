@@ -4,9 +4,13 @@ import * as api from "../../../query"
 import { useMutation } from "react-query"
 import { createSeaport } from "utils/createSeaport"
 import { createSafeSdk } from "utils/createSafeSdk"
+import SafeServiceClient from "@gnosis.pm/safe-service-client"
 
 const ExecuteTx = ({ tx, address }) => {
   const { id, type, value, tokenContract, tokenId, txHash, safeContract, receiver, executor } = tx
+  const safeService = new SafeServiceClient(
+    "https://safe-transaction.gnosis.io"
+  )
 
   const {
     data: mutateTxData,
@@ -110,26 +114,21 @@ const ExecuteTx = ({ tx, address }) => {
 
     if (type === 4) {
       try {
-        await window.ethereum.request({ method: "eth_requestAccounts" })
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const signer = provider.getSigner(provider.provider.selectedAddress)
-         // create fee tx for our safe
         const safeSdk = await createSafeSdk(safeContract)
         console.log('safe in exec ', safeSdk)
-
         const safeTx = await safeService.getTransaction(txHash)
+        console.log('safeTx', safeTx)
+
         const executed = await safeSdk.executeTransaction(safeTx)
-
+        await executed.transactionResponse?.wait()
         console.log('executed ', executed)
-
         /*
         if(executed) {
           const tx = {
-            id: tx.id,
-            txHash
+            id: tx.id
           }
           
-          deleteTx(tx)
+          await deleteOffChainTx(tx)
         }
         */
       } catch(e) {
