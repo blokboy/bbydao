@@ -33,9 +33,8 @@ const TransactionModal = ({ safeAddress }) => {
     if (!txModalOpen && e.target) {
       return
     }
-    setState({})
+    // setState({})
     setTxModalOpen()
-    // setOsAssetInfo({})
   }
 
   const setSafeAddress = async () => {
@@ -49,7 +48,8 @@ const TransactionModal = ({ safeAddress }) => {
     })
   }
 
-  const sign = async () => {
+  const sign = async e => {
+    e.preventDefault()
     await window.ethereum.request({ method: "eth_requestAccounts" })
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner(provider.provider.selectedAddress)
@@ -105,20 +105,20 @@ const TransactionModal = ({ safeAddress }) => {
     closeModal()
   }
 
-  const execute = async () => {
-    await window.ethereum.enable()
-    await window.ethereum.request({ method: "eth_requestAccounts" })
+  // const execute = async () => {
+  //   await window.ethereum.enable()
+  //   await window.ethereum.request({ method: "eth_requestAccounts" })
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner(provider.provider.selectedAddress)
+  //   const provider = new ethers.providers.Web3Provider(window.ethereum)
+  //   const signer = provider.getSigner(provider.provider.selectedAddress)
 
-    const ethAdapter = new EthersAdapter({ ethers, signer })
-    const safeSdk2 = await safeSdk.connect({
-      ethAdapter,
-      safeAddress: safeAddress,
-    })
-    // await safeSdk2.executeTransaction(safeTransaction)
-  }
+  //   const ethAdapter = new EthersAdapter({ ethers, signer })
+  //   const safeSdk2 = await safeSdk.connect({
+  //     ethAdapter,
+  //     safeAddress: safeAddress,
+  //   })
+  //   // await safeSdk2.executeTransaction(safeTransaction)
+  // }
 
   if (txWaiting) {
     return (
@@ -160,46 +160,49 @@ const TransactionModal = ({ safeAddress }) => {
           transaction
         </div>
 
-        <div className="mb-8 w-full">
-          <label className="mb-2 block text-sm font-bold" htmlFor="name">
-            to
-          </label>
-          <input
-            value={state?.to}
-            onChange={handleChange}
-            className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
-            id="name"
-            name="to"
-            type="text"
-            placeholder="address"
-            required
-          />
-        </div>
+        <form className="flex w-full flex-col" onSubmit={sign}>
+          <div className="mb-8 w-full">
+            <label className="mb-2 block text-sm font-bold" htmlFor="name">
+              to
+            </label>
+            <input
+              value={state?.to}
+              onChange={handleChange}
+              className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
+              id="name"
+              name="to"
+              type="text"
+              placeholder="address"
+              required
+            />
+          </div>
 
-        <div className="mb-8 w-full">
-          <label className="mb-2 block text-sm font-bold" htmlFor="name">
-            value
-          </label>
-          <input
-            value={state?.value}
-            onChange={handleChange}
-            className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
-            id="value"
-            name="value"
-            type="number"
-            placeholder="value"
-            required
-          />
-        </div>
+          <div className="mb-8 w-full">
+            <label className="mb-2 block text-sm font-bold" htmlFor="name">
+              value
+            </label>
+            <input
+              value={state?.value}
+              onChange={handleChange}
+              className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
+              id="value"
+              name="value"
+              type="number"
+              step={0.000001}
+              placeholder="value"
+              required
+            />
+          </div>
 
-        <div className="mb-8 flex w-full flex-row items-center justify-between">
-          <button
-            className="focus:shadow-outline w-full rounded-xl border-2 bg-slate-300 py-3 px-4 font-bold shadow-xl hover:border-2 hover:border-[#0db2ac93] hover:bg-slate-100 hover:shadow-sm focus:outline-none dark:bg-slate-800"
-            onClick={sign}
-          >
-            sign
-          </button>
-        </div>
+          <div className="mb-8 flex w-full flex-row items-center justify-between">
+            <button
+              className="focus:shadow-outline w-full rounded-xl border-2 bg-slate-300 py-3 px-4 font-bold shadow-xl hover:border-2 hover:border-[#0db2ac93] hover:bg-slate-100 hover:shadow-sm focus:outline-none dark:bg-slate-800"
+              type="submit"
+            >
+              sign
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   )
