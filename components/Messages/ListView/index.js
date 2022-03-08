@@ -43,11 +43,7 @@ const ListView = () => {
   return (
     <div className="h-full w-full md:w-1/3">
       <ListToolbar />
-      <ListContent
-        address={data?.address}
-        threads={channelThreads}
-        safes={safes}
-      />
+      <ListContent threads={channelThreads} safes={safes} />
     </div>
   )
 }

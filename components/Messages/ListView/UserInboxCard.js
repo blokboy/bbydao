@@ -1,14 +1,16 @@
 import React from "react"
 import { HiOutlineArrowCircleRight } from "react-icons/hi"
 import { useMessageStore } from "stores/useMessageStore"
+import { useAccount } from "wagmi"
 
-const UserInboxCard = ({ address, setInboxView }) => {
+const UserInboxCard = ({ setInboxView }) => {
+  const [{ data, error, loading }, disconnect] = useAccount()
   const setChannelAddress = useMessageStore(set => set.setChannelAddress)
   const setThreadChannel = useMessageStore(set => set.setThreadChannel)
   const channelAddress = useMessageStore(state => state.channelAddress)
 
   const handleClick = () => {
-    setChannelAddress(address)
+    setChannelAddress(data?.address)
     setInboxView()
     setThreadChannel(null)
   }
