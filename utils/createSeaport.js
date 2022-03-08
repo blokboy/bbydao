@@ -1,5 +1,6 @@
 import { OpenSeaPort, Network } from "opensea-js"
 import { ethers } from "ethers"
+//import * as Web3 from 'web3'
 
 export const createSeaport = async () => {
   await window.ethereum.enable()

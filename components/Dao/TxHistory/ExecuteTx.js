@@ -115,6 +115,41 @@ const ExecuteTx = ({ tx, address }) => {
       console.log("transfer ", transfer)
     }
 
+    if(type === 3) {
+      let acct = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      })
+      acct = ethers.utils.getAddress(...acct)
+      console.log("addr ", acct)
+
+      const seaport = await createSeaport()
+      console.log(seaport)
+
+      const desiredAsset = await seaport.api.getAsset({
+        tokenId,
+        tokenAddress: tokenContract,
+      })
+      console.log('asset ', desiredAsset)
+
+      // Expire this auction one day from now.
+      // Note that we convert from the JavaScript timestamp (milliseconds):
+  
+      const expirationTime = Math.round(Date.now() / 1000 + 60 * 60 * 24)
+
+      
+      const listing = await seaport.createSellOrder({
+        asset: {
+          tokenId: desiredAsset.tokenId,
+          tokenAddress: desiredAsset.tokenContract,
+          schemaName: desiredAsset.schemaName === "ERC1155" ? "ERC1155" : "ERC721"
+        },
+        accountAddress: safeContract,
+        startAmount: value,
+        expirationTime
+      })
+      console.log('listing ', listing)
+    }
+
     if (type === 4) {
       try {
         await window.ethereum.request({ method: "eth_requestAccounts" })

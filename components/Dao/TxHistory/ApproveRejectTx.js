@@ -39,6 +39,18 @@ const ApproveRejectTx = ({ tx, address }) => {
         mutateTx(tx)
       }
 
+      if(type === 3) {
+        const tx = {
+          id: id,
+          txHash: txHash,
+          value: value,
+          type: type,
+          approvals: approvals?.length ? [...approvals, address] : [address]
+        }
+
+        mutateTx(tx)
+      }
+
       if (type === 4) {
         // transfer transaction
         await window.ethereum.request({ method: "eth_requestAccounts" })

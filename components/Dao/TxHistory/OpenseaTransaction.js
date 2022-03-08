@@ -13,15 +13,16 @@ const OpenseaTransaction = ({ tx, owners, threshold }) => {
       <div className="flex flex-col rounded-lg bg-slate-100 p-1 shadow-inner dark:bg-slate-800">
       <div className="flex flex-row items-center justify-between rounded-lg bg-slate-300 p-2 shadow dark:bg-slate-900"> 
       <div className="flex flex-row">
-              <span className="mr-1 flex w-20 flex-row justify-center rounded border border-white bg-slate-100 p-1 text-[12px] dark:bg-slate-800">
-                <span>{ethers.utils.formatEther(tx.value ? tx.value : 0).slice(0, 8)}</span>{" "}
-                <span className="text-blue-500">ETH</span>
-              </span>
+              <div className="my-auto mr-1">
+                <img className="rounded-full w-6 h-6 ml-0 border border-white bg-slate-200 dark:bg-slate-900" src={tx.receiver}>
+                </img>
+              </div>
+
 
               {/* render based on type */}
               <span className="p-1 text-[12px] font-semibold">to:</span>
               <span className="flex w-20 justify-center rounded border border-white bg-slate-100 p-1 text-[12px] text-yellow-500 dark:bg-slate-800">
-                OPENSEA
+                OS SALE
               </span>
         </div>
 

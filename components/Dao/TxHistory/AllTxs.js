@@ -38,7 +38,7 @@ const AllTxs = ({ allTxs, owners, threshold }) => {
             )
           }
 
-          if (tx.type === 1) {
+          if (tx.type === 3) {
             return (
               <OpenseaTransaction
                 key={index}
