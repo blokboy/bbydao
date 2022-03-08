@@ -5,8 +5,11 @@ import { useMutation } from "react-query"
 import { createSeaport } from "utils/createSeaport"
 import { createSafeSdk } from "utils/createSafeSdk"
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
+import { useAccount } from "wagmi"
+import { EthSignSignature } from "@gnosis.pm/safe-core-sdk"
 
 const ExecuteTx = ({ tx, address }) => {
+  const [{ data, error, loading: accountLoading }, disconnect] = useAccount()
   const { id, type, value, tokenContract, tokenId, txHash, safeContract, receiver, executor } = tx
   const safeService = new SafeServiceClient(
     "https://safe-transaction.gnosis.io"
@@ -114,23 +117,54 @@ const ExecuteTx = ({ tx, address }) => {
 
     if (type === 4) {
       try {
-        const safeSdk = await createSafeSdk(safeContract)
-        console.log('safe in exec ', safeSdk)
-        const safeTx = await safeService.getTransaction(txHash)
-        console.log('safeTx', safeTx)
+        await window.ethereum.request({ method: "eth_requestAccounts" })
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const signer = provider.getSigner(provider.provider.selectedAddress)
 
-        const executed = await safeSdk.executeTransaction(safeTx)
-        await executed.transactionResponse?.wait()
-        console.log('executed ', executed)
-        /*
-        if(executed) {
+        const safeSdk = await createSafeSdk(safeContract)
+        const safeTx = await safeService.getTransaction(txHash)
+        console.log('safe tx ', safeTx)
+        const confirmations = await safeService.getTransactionConfirmations(safeTx.safeTxHash)
+        console.log('conf ', confirmations.results)
+        const safeTransaction = await safeSdk.createTransaction(safeTx)
+        console.log('safe tx pre mod', safeTransaction)
+
+
+        const safeTxData = {
+          data: { 
+            baseGas: 0,
+            data: safeTx.data,
+            gasPrice: safeTx.gasPrice,
+            gasToken: safeTx.gasToken,
+            nonce: safeTx.nonce,
+            operation: safeTx.operation,
+            refundReceiver: safeTx.refundReceiver,
+            safeTxGas: safeTx.safeTxGas,
+            to: safeTx.to,
+            value: safeTx.value
+           }
+        }
+
+        safeTx.confirmations.forEach(confirmation => {
+          const signature = new EthSignSignature(confirmation.owner, confirmation.signature)
+          safeTransaction.addSignature(signature)
+        })
+
+        console.log('safe tx post mod', safeTransaction)
+        const options = {
+          gasLimit: 100000
+        }
+      
+        const executed = await safeSdk.executeTransaction(safeTransaction, options)
+        const receipt = executed.transactionResponse && (await executeTxResponse.transactionResponse.wait())
+        console.log('executed ', receipt)
+        
+        if(receipt) {
           const tx = {
             id: tx.id
           }
-          
           await deleteOffChainTx(tx)
         }
-        */
       } catch(e) {
         console.log('exec error ', e)
       }

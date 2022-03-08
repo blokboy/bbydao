@@ -58,7 +58,8 @@ const ApproveRejectTx = ({ tx, address }) => {
         }
           const safeSdk = await createSafeSdk(safeContract)
           const safeTx = await safeService.getTransaction(txHash)
-          const sign = await safeSdk.signTransactionHash(safeTx.safeTxHash)
+          const signOffChain = await safeSdk.signTransactionHash(safeTx.safeTxHash)
+          await safeSdk.signTransaction(safeTx)
           console.log('sign ', sign)
           const conf = await safeService.confirmTransaction(safeTx.safeTxHash, sign.data)
 

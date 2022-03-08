@@ -50,6 +50,9 @@ const TransactionModal = ({ safeAddress }) => {
 
   const sign = async e => {
     e.preventDefault()
+    const safeService = new SafeServiceClient(
+      "https://safe-transaction.gnosis.io"
+    )
     await window.ethereum.request({ method: "eth_requestAccounts" })
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner(provider.provider.selectedAddress)
@@ -78,14 +81,13 @@ const TransactionModal = ({ safeAddress }) => {
     setTxWaiting(true)
     try {
       const signedTransaction = await safeSdk.signTransaction(safeTransaction)
+      console.log('signed tx ', signedTransaction)
     } catch (error) {
       setTxWaiting(false)
       console.log("error signing transaction", error)
       return
     }
-    const safeService = new SafeServiceClient(
-      "https://safe-transaction.gnosis.io"
-    )
+
     const transactionConfig = {
       safeAddress,
       safeTransaction,
