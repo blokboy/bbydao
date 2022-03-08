@@ -136,15 +136,14 @@ const ExecuteTx = ({ tx, address }) => {
   
       const expirationTime = Math.round(Date.now() / 1000 + 60 * 60 * 24)
 
-      
       const listing = await seaport.createSellOrder({
         asset: {
           tokenId: desiredAsset.tokenId,
-          tokenAddress: desiredAsset.tokenContract,
-          schemaName: desiredAsset.schemaName === "ERC1155" ? "ERC1155" : "ERC721"
+          tokenAddress: desiredAsset.tokenAddress,
+          schemaName: desiredAsset.schemaName
         },
-        accountAddress: safeContract,
-        startAmount: value,
+        accountAddress: desiredAsset.owner.address,
+        startAmount: Number(value),
         expirationTime
       })
       console.log('listing ', listing)
