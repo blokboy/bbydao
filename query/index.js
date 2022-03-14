@@ -26,8 +26,8 @@ export const getUsers = async () => {
 }
 
 export const getUserFeed = async req => {
-  const res = await api.post('/feed/user', req)
-  return res.data;
+  const res = await api.post("/feed/user", req)
+  return res.data
 }
 
 // update user
@@ -128,7 +128,7 @@ export const getUserThreads = async req => {
 }
 
 // get thread messages
-// { channel: string }
+// { channel: eth address }
 export const getThreadMessages = async req => {
   const res = await api.post("/message/channel", req)
   return res.data

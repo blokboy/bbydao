@@ -19,18 +19,11 @@ const MessageContent = () => {
     }
   )
 
-  const messagesEndRef = React.useRef(null)
-  const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-  }
-  React.useEffect(scrollToBottom, [threadChannel])
-
   if (!messages?.length) {
     return (
       <div className="h-[70%] md:h-[85%] md:p-3">
         <div className="h-full overflow-scroll rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
           No Messages
-          <div ref={messagesEndRef} />
         </div>
       </div>
     )
@@ -42,7 +35,6 @@ const MessageContent = () => {
         {messages?.map(message => (
           <MessageViewCard key={message.id} message={message} />
         ))}
-        <div ref={messagesEndRef} />
       </div>
     </div>
   )

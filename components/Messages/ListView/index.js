@@ -31,7 +31,7 @@ const ListView = () => {
 
   const { data: channelThreads } = useQuery(
     ["threads", channelAddress],
-    () => api.getUserThreads({ channelAddress }),
+    () => api.getUserThreads({ address: channelAddress }),
     {
       staleTime: 180000,
       enabled: !!channelAddress,

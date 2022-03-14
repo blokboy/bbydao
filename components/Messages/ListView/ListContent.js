@@ -32,6 +32,14 @@ const ListContent = ({ threads, safes }) => {
     )
   }
 
+  if (messages.length === 0) {
+    return (
+      <div className="h-[95%] overflow-scroll p-3">
+        <h1>No threads in this channel</h1>
+      </div>
+    )
+  }
+
   return (
     <div className="h-[95%] overflow-scroll p-3">
       {messages.map((thread, i) => {

@@ -20,7 +20,7 @@ const Nav = () => {
   return (
     <nav className="z-50 flex h-16 w-full items-center justify-center bg-slate-300 p-3 dark:bg-slate-900 md:mx-0">
       <Link href="/">
-        <a className="mr-3 transform transition duration-500 ease-in-out hover:-translate-y-0.5">
+        <a className="mr-3 hidden transform transition duration-500 ease-in-out hover:-translate-y-0.5 md:flex">
           <img src="/babydao.png" alt="bbydao" height={84} width={84} />
         </a>
       </Link>

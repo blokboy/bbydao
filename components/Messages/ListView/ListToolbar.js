@@ -7,7 +7,7 @@ const ListToolbar = () => {
 
   return (
     <div className="flex w-full md:h-[5%]">
-      <div className="flex w-full items-center justify-center">
+      <div className="flex w-full flex-col items-center md:flex-row">
         <button
           className={
             "mx-1 rounded-lg bg-slate-300 p-1 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700" +
