@@ -13,17 +13,19 @@ const ListView = () => {
   const { channelAddress } = useMessageStore()
   const [{ data, error, loading }, disconnect] = useAccount()
 
+  // set users safes to state (safes), to pass down to ListContent as props
+  // might switch out to query our backend for bbydaos(safes) that user is a member of
+  const safeService = new SafeServiceClient(
+    "https://safe-transaction.gnosis.io"
+  )
   const [safes, setSafes] = React.useState()
   const getUserSafes = async () => {
     if (!data?.address) return
-    const safeService = new SafeServiceClient(
-      "https://safe-transaction.gnosis.io"
-    )
     const safes = await safeService.getSafesByOwner(data?.address)
     setSafes(safes.safes)
   }
   React.useEffect(() => {
-    console.log("getting user safes...")
+    console.log("getting user safes...", "address:", data?.address)
     getUserSafes()
   }, [loading])
 

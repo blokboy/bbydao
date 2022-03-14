@@ -13,14 +13,11 @@
     @apply bg-slate-300;
     /* @apply dark:bg-gradient-to-br dark:from-slate-800 dark:via-gray-900 dark:to-slate-900; */
     @apply dark:bg-slate-900;
+    @apply font-sans font-bold;
   }
 
   h1 {
-    @apply font-sans font-extrabold;
-  }
-
-  p {
-    @apply font-sans;
+    @apply font-extrabold;
   }
 
   /* width */

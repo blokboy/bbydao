@@ -22,6 +22,9 @@ const DaoInboxCard = ({ safe, setInboxView }) => {
       }
       onClick={handleClick}
     >
+      <div>
+        <div className="h-10 w-10 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
+      </div>
       <div className="ml-3 flex w-11/12 flex-col pl-3">
         <span className="text-sm font-bold">
           {safe?.length > 30 ? safe.substring(0, 10).concat("...") : safe}

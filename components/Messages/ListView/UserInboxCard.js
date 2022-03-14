@@ -16,11 +16,15 @@ const UserInboxCard = ({ setInboxView }) => {
   }
 
   return (
+    // <li
+    //   className={
+    //     "mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-800" +
+    //     (channelAddress === address ? " text-blue-500" : "")
+    //   }
+    //   onClick={handleClick}
+    // >
     <li
-      className={
-        "mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-800" +
-        (channelAddress === address ? " text-blue-500" : "")
-      }
+      className="mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-800"
       onClick={handleClick}
     >
       <div className="ml-3 flex w-11/12 flex-col pl-3">

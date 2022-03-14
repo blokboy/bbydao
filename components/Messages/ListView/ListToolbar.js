@@ -10,7 +10,7 @@ const ListToolbar = () => {
       <div className="flex w-full items-center justify-center">
         <button
           className={
-            "mx-1 rounded-lg bg-slate-300 p-3 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700" +
+            "mx-1 rounded-lg bg-slate-300 p-1 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700" +
             (inboxListView ? " text-blue-500" : "")
           }
           onClick={inboxListView ? null : setInboxListView}
@@ -19,7 +19,7 @@ const ListToolbar = () => {
         </button>
         <button
           className={
-            "mx-1 rounded-lg bg-slate-300 p-3 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700" +
+            "mx-1 rounded-lg bg-slate-300 p-1 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700" +
             (!inboxListView ? " text-blue-500" : "")
           }
           onClick={!inboxListView ? null : setInboxListView}
