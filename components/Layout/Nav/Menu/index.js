@@ -32,16 +32,21 @@ const Menu = () => {
         <div
           className={
             (menuOpen ? "absolute " : "hidden ") +
-            "top-0 right-0 z-50 h-auto w-1/2 origin-top-right translate-y-20 -translate-x-20 rounded-xl border bg-slate-200 px-2 py-2 text-slate-800 shadow dark:bg-slate-900 dark:text-white md:w-1/6"
+              "top-0 right-0 z-50 h-auto w-1/2 origin-top-right translate-y-20 -translate-x-4 rounded-xl border bg-slate-200 px-2 py-2 text-slate-800 shadow dark:bg-slate-900 dark:text-white md:w-48 md:-translate-x-16 md:-mt-2"
           }
         >
           <ul className="py-1" onClick={clickAway}>
-            {data.connected ? <DashboardLink /> : <></>}
-            <MenuThemeToggle />
-            {data.connected ? <MessagesLink /> : <></>}
-            <ExploreLink />
-            {data.connected ? <FeedLink /> : <></>}
+            {data.connected ? (
+              <>
+                <DashboardLink />
+                <MessagesLink />
+                <FeedLink />
+              </>
+            ) : (
+              <ExploreLink />
+            )}
             <AboutLink />
+            <MenuThemeToggle />
           </ul>
         </div>
       </div>

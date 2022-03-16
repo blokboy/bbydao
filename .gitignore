@@ -33,3 +33,6 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# leave out yarn.lock so no competing lock files
+yarn.lock

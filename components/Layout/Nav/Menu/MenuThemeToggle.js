@@ -6,16 +6,17 @@ const MenuThemeToggle = () => {
   const { theme, setTheme } = useTheme()
 
   return (
-    <li className="w-full">
-      <div
-        className="menu-link"
+    <li>
+      <button
+        type="button"
+        className="menu-link cursor-pointer font-bold w-full flex justify-start"
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       >
-        {theme === "light" ? <>Dark Mode</> : <>Light Mode</>}
-        <span className="self-center">
+        <span className="mr-4 self-center">
           <BsMask />
         </span>
-      </div>
+        {theme === "light" ? <>Dark Mode</> : <>Light Mode</>}
+      </button>
     </li>
   )
 }

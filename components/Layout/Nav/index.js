@@ -18,25 +18,32 @@ const Nav = () => {
   })
 
   return (
-    <nav className="z-50 flex h-16 w-full items-center justify-center bg-slate-300 p-3 dark:bg-slate-900 md:mx-0">
-      <Link href="/">
-        <a className="mr-3 hidden transform transition duration-500 ease-in-out hover:-translate-y-0.5 md:flex">
-          <img src="/babydao.png" alt="bbydao" height={84} width={84} />
-        </a>
-      </Link>
-      <div className="hidden w-full flex-row items-center justify-between md:flex">
-        <ToggleSearchModal />
+    <nav className="z-50 flex h-16 w-full items-center justify-between bg-slate-300 p-3 dark:bg-slate-900">
+      <div className="flex md:w-full">
+        <Link href="/">
+          <a className="mr-3 flex w-10 transform transition duration-500 ease-in-out hover:-translate-y-0.5 md:w-auto">
+            <img src="/babydao.png" alt="bbydao" height={84} width={84} />
+          </a>
+        </Link>
+        <div className="hidden w-full flex-row items-center justify-between md:flex">
+          <ToggleSearchModal />
+        </div>
+        <div className="md:hidden">
+          <SearchIcon />
+        </div>
       </div>
-      {data?.connected ? <AccountDisplay /> : <></>}
-      {data?.connected ? <DisconnectButton /> : <ConnectButton />}
-      {data?.connected ? (
-        <NotificationsIcon address={accountData.address} />
-      ) : (
-        <></>
-      )}
-      {data?.connected ? <MessagesIcon address={accountData.address} /> : <></>}
-      <SearchIcon />
-      <Menu />
+      <div className="flex">
+        {data?.connected ? <AccountDisplay /> : null}
+        {data?.connected ? <DisconnectButton /> : <ConnectButton />}
+        {data?.connected ? (
+          <NotificationsIcon address={accountData.address} />
+        ) : null}
+        {data?.connected ? (
+          <MessagesIcon address={accountData.address} />
+        ) : null}
+        <Menu />
+      </div>
+
       <ThemeToggle />
     </nav>
   )

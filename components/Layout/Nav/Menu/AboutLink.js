@@ -4,13 +4,13 @@ import { HiInformationCircle } from "react-icons/hi"
 
 const AboutLink = () => {
   return (
-    <li className="w-full">
+    <li>
       <Link href={"/"}>
-        <a className="menu-link">
-          About
-          <span className="self-center">
+        <a className="menu-link flex justify-start">
+          <span className="self-center mr-4">
             <HiInformationCircle />
           </span>
+          About
         </a>
       </Link>
     </li>
