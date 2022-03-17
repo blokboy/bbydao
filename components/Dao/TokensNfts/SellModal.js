@@ -3,8 +3,6 @@ import { useOsStore } from "stores/useOsStore"
 import { useAccount } from "wagmi"
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import useForm from "hooks/useForm"
-import { ethers } from "ethers"
-import { createSafeSdk } from "utils/createSafeSdk"
 import * as api from 'query'
 import { useMutation } from "react-query"
 

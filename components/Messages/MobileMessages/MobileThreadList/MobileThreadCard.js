@@ -5,9 +5,13 @@ import { HiOutlineArrowCircleRight } from "react-icons/hi"
 const MobileThreadCard = ({ title, thread }) => {
   const { setThreadChannel } = useMessageStore()
   const threadChannel = useMessageStore(state => state.threadChannel)
+  const setMobileThreadView = useMessageStore(
+    state => state.setMobileThreadView
+  )
 
   const handleClickCard = () => {
     setThreadChannel(thread.channel)
+    setMobileThreadView()
   }
 
   return (

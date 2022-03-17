@@ -1,5 +1,4 @@
 import React from "react"
-import Link from "next/link"
 import { HiOutlineArrowCircleRight } from "react-icons/hi"
 import { useMessageStore } from "stores/useMessageStore"
 

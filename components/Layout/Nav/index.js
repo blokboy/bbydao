@@ -22,7 +22,7 @@ const Nav = () => {
       <div className="flex md:w-full">
         <Link href="/">
           <a className="mr-3 flex w-10 transform transition duration-500 ease-in-out hover:-translate-y-0.5 md:w-auto">
-            <img src="/babydao.png" alt="bbydao" height={84} width={84} />
+            <img src="/babydao.png" alt="bbydao" height={60} width={60} />
           </a>
         </Link>
         <div className="hidden w-full flex-row items-center justify-between md:flex">

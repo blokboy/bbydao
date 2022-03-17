@@ -1,10 +1,5 @@
 import React from "react"
-import { ethers } from "ethers"
-import Davatar from "@davatar/react"
-import ApproveRejectTx from "./ApproveRejectTx"
-import ExecuteTx from "./ExecuteTx"
 import { useAccount } from "wagmi"
-import OpenseaTransaction from "./OpenseaTransaction"
 import FriendTransaction from "./FriendTransaction"
 import TransferTransaction from "./TransferTransaction"
 
@@ -30,17 +25,6 @@ const AllTxs = ({ allTxs, owners, threshold }) => {
           if (tx.type === 4) {
             return (
               <TransferTransaction
-                key={index}
-                tx={tx}
-                owners={owners}
-                threshold={threshold}
-              />
-            )
-          }
-
-          if (tx.type === 3) {
-            return (
-              <OpenseaTransaction
                 key={index}
                 tx={tx}
                 owners={owners}

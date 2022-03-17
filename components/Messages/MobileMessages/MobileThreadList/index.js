@@ -11,7 +11,7 @@ const MobileThreadList = () => {
   const [{ data, error, loading }, disconnect] = useAccount()
 
   React.useEffect(() => {
-    if (!data?.address) return
+    if (!data?.address || channelAddress) return
     setChannelAddress(data?.address)
   }, [loading])
 

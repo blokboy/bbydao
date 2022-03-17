@@ -2,7 +2,6 @@ import React from "react"
 import { ethers } from "ethers"
 import * as api from "../../../query"
 import { useMutation } from "react-query"
-import { createSeaport } from "utils/createSeaport"
 import { createSafeSdk } from "utils/createSafeSdk"
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import { useAccount } from "wagmi"
@@ -47,109 +46,19 @@ const ExecuteTx = ({ tx, address }) => {
   const handleExecute = async e => {
     e.preventDefault()
     if (type === 1) {
-      let acct = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      })
-      acct = ethers.utils.getAddress(...acct)
-      console.log("addr ", acct)
-      // opensea offer tx
-      const seaport = await createSeaport()
-      let ethValue = ethers.utils.formatEther(value)
-      ethValue = Number(ethValue)
-      const desiredAsset = await seaport.api.getAsset({
-        tokenId,
-        tokenAddress: tokenContract,
-      })
-
-      const order = {
-        asset: {
-          tokenId: desiredAsset.tokenId,
-          tokenAddress: desiredAsset.tokenAddress,
-          schemaName:
-            desiredAsset.schemaName === "ERC1155" ? "ERC1155" : "ERC721",
-        },
-        accountAddress: safeContract, // contract address can't be input here
-        startAmount: ethValue,
-      }
-
-      const offer = await seaport.createBuyOrder(order)
-      console.log("offer", offer)
+      // zora purchase
     }
 
     if (type === 2) {
-      // opensea purchase tx
-      let acct = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      })
-      acct = ethers.utils.getAddress(...acct)
-      console.log("addr ", acct)
-      // opensea offer tx
-      const seaport = await createSeaport()
-      let ethValue = ethers.utils.formatEther(value)
-      ethValue = Number(ethValue)
-      const desiredAsset = await seaport.api.getAsset({
-        tokenId,
-        tokenAddress: tokenContract,
-      })
-
-      const order = {
-        asset: {
-          tokenId: desiredAsset.tokenId,
-          tokenAddress: desiredAsset.tokenAddress,
-          schemaName:
-            desiredAsset.schemaName === "ERC1155" ? "ERC1155" : "ERC721",
-        },
-        accountAddress: safeContract, // contract address can't be input here
-        startAmount: ethValue,
-      }
-
-      const offer = await seaport.createBuyOrder(order)
-      console.log("offer ", offer)
-
-      const transfer = await seaport.fulfillOrder({
-        order: offer,
-        accountAddress: acct,
-        recipientAddress: safeContract,
-      })
-
-      console.log("transfer ", transfer)
+      // zora offer 
     }
 
     if(type === 3) {
-      let acct = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      })
-      acct = ethers.utils.getAddress(...acct)
-      console.log("addr ", acct)
-
-      const seaport = await createSeaport()
-      console.log(seaport)
-
-      const desiredAsset = await seaport.api.getAsset({
-        tokenId,
-        tokenAddress: tokenContract,
-      })
-      console.log('asset ', desiredAsset)
-
-      // Expire this auction one day from now.
-      // Note that we convert from the JavaScript timestamp (milliseconds):
-  
-      const expirationTime = Math.round(Date.now() / 1000 + 60 * 60 * 24)
-
-      const listing = await seaport.createSellOrder({
-        asset: {
-          tokenId: desiredAsset.tokenId,
-          tokenAddress: desiredAsset.tokenAddress,
-          schemaName: desiredAsset.schemaName
-        },
-        accountAddress: desiredAsset.owner.address,
-        startAmount: Number(value),
-        expirationTime
-      })
-      console.log('listing ', listing)
+      // zora sale 
     }
 
     if (type === 4) {
+      // send tokens
       try {
         await window.ethereum.request({ method: "eth_requestAccounts" })
         const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -204,8 +113,8 @@ const ExecuteTx = ({ tx, address }) => {
       }
     }
 
-    if(type === 6) { // friend request
-
+    if(type === 6) { 
+      // friend request
       if(value === "RESPONSE") {
         // if tx.value === RESPONSE then we just need to edit the current record with their accepted state or delete it if they rejected
         const req = {
@@ -229,8 +138,6 @@ const ExecuteTx = ({ tx, address }) => {
           status: 3 //pending request
         }
 
-        
-
         const reqTx = {
           id: tx.id
         }
@@ -253,37 +160,6 @@ const ExecuteTx = ({ tx, address }) => {
       
       return
     }
-
-    /*
-    // create fee tx for our safe
-    const safeSdk = await createSafeSdk(safeContract)
-    let wei = ethers.utils.parseEther(value)
-    let weiString = wei.toString()
-    let fee = (Number(weiString) * 0.01).toString()
-    const transactions = [
-      {
-        to: process.env.dao,
-        data: ethers.utils.hexlify([1]),
-        value: fee,
-      },
-    ]
-    const safeTransaction = await safeSdk.createTransaction(...transactions)
-    const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
-    try {
-      // Sign the transaction off-chain (in wallet)
-      const signedTransaction = await safeSdk.signTransaction(safeTransaction)
-      // mutate tx on backend
-      const tx = {
-        txHash: txHash,
-        executor: address,
-      }
-      mutateTx(tx)
-    } catch (error) {
-      // user rejected tx
-      console.log("user rejected tx")
-      return
-    }
-    */
   }
 
   return (
