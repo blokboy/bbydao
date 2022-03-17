@@ -1,8 +1,8 @@
 import React from "react"
-import { HiOutlineArrowCircleRight } from "react-icons/hi"
 import { useMessageStore } from "stores/useMessageStore"
+import { HiOutlineArrowCircleRight } from "react-icons/hi"
 
-const ListViewCard = ({ title, thread }) => {
+const MobileThreadCard = ({ title, thread }) => {
   const { setThreadChannel } = useMessageStore()
   const threadChannel = useMessageStore(state => state.threadChannel)
 
@@ -31,4 +31,4 @@ const ListViewCard = ({ title, thread }) => {
   )
 }
 
-export default ListViewCard
+export default MobileThreadCard
