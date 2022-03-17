@@ -69,7 +69,7 @@ const MobileInboxNavigation = () => {
         </div>
       </ClickAwayListener>
       <div className="flex justify-center" onClick={setCreateThreadModalOpen}>
-        <HiOutlinePlusCircle size={26} />
+        <HiOutlinePlusCircle size={28} />
       </div>
     </div>
   )

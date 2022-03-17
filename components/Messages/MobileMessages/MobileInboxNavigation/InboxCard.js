@@ -5,11 +5,16 @@ const InboxCard = ({ safe, clickAway }) => {
   const setChannelAddress = useMessageStore(set => set.setChannelAddress)
   const setThreadChannel = useMessageStore(set => set.setThreadChannel)
   const channelAddress = useMessageStore(state => state.channelAddress)
+  const mobileThreadView = useMessageStore(state => state.mobileThreadView)
+  const setMobileThreadView = useMessageStore(
+    state => state.setMobileThreadView
+  )
 
   const handleClick = () => {
     setChannelAddress(safe)
     clickAway()
     setThreadChannel(null)
+    if (!mobileThreadView) setMobileThreadView()
   }
 
   return (

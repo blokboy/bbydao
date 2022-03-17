@@ -11,4 +11,9 @@ export const useMessageStore = create(set => ({
   inboxListView: false,
   setInboxListView: () =>
     set(state => ({ inboxListView: !state.inboxListView })),
+
+  // mobile thread view toggle
+  mobileThreadView: true,
+  setMobileThreadView: () =>
+    set(state => ({ mobileThreadView: !state.mobileThreadView })),
 }))
