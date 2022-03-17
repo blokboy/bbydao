@@ -1,14 +1,43 @@
 import React from "react"
 import ClickAwayListener from "react-click-away-listener"
+import { FaEthereum } from "react-icons/fa"
 import { useUiStore } from "stores/useUiStore"
 
-const networks = ["ethereum", "arbitrum", "optimism", "avalanche", "polygon"]
+const networks = [
+  {
+    name: "ethereum",
+    icon: <FaEthereum />,
+  },
+  {
+    name: "arbitrum",
+    icon: (
+      <img src="/icons/arbitrum.svg" className="m-auto inline-block h-4 w-4" />
+    ),
+  },
+  {
+    name: "avalanche",
+    icon: <img src="/icons/avax.svg" className="m-auto inline-block h-3 w-4" />,
+  },
+  {
+    name: "optimism",
+    icon: (
+      <img src="/icons/optimism.svg" className="m-auto inline-block h-3 w-4" />
+    ),
+  },
+  {
+    name: "polygon",
+    icon: (
+      <img src="/icons/polygon.svg" className="m-auto inline-block h-3 w-4" />
+    ),
+  },
+]
 
 const ConnectButton = () => {
   const setConnectModalOpen = useUiStore(state => state.setConnectModalOpen)
   const [isDropdownOpen, setDropdownOpen] = React.useState(false)
 
   const handleConnect = React.useCallback(() => {
+    setDropdownOpen(false)
     setConnectModalOpen()
   })
 
@@ -24,18 +53,21 @@ const ConnectButton = () => {
 
   const dropdown = React.useMemo(() => {
     return isDropdownOpen ? (
-      <div className="absolute top-0 right-0 z-50 h-auto w-full origin-top-right translate-y-20 -translate-x-4 rounded-xl border bg-slate-200 px-2 py-2 text-slate-800 shadow dark:bg-slate-900 dark:text-white -mt-2 md:-mr-2 md:-mt-4 md:w-48">
-        <ul className="py-4 px-2">
-          {networks.map(network => (
-            <li key={network} className="mt-2">
-              <button
-                type="button"
-                disabled={network !== "ethereum"}
-                onClick={network === "ethereum" ? handleConnect : () => {}}
-                className="capitalize font-bold w-full text-left text-sm"
-              >
-                {network}
-              </button>
+      <div className="absolute top-0 right-0 z-50 -mt-2 h-auto w-full origin-top-right translate-y-20 translate-x-6 rounded-xl border bg-slate-200 px-2 py-2 text-slate-800 shadow dark:bg-slate-900 dark:text-white md:-mr-2 md:-mt-4 md:w-48">
+        <ul>
+          {networks.map(({ name, icon }) => (
+            <li key={name} className="mt-2">
+              <div className="menu-link">
+                <div className="mr-4 self-center text-center">{icon}</div>
+                <button
+                  type="button"
+                  disabled={name !== "ethereum"}
+                  onClick={name === "ethereum" ? handleConnect : () => {}}
+                  className="w-full text-left text-sm font-bold capitalize disabled:opacity-50"
+                >
+                  {name}
+                </button>
+              </div>
             </li>
           ))}
         </ul>
