@@ -4,13 +4,13 @@ import { BsGrid } from "react-icons/bs"
 
 const ExploreLink = () => {
   return (
-    <li className="w-full">
+    <li>
       <Link href={"/"}>
-        <a className="menu-link">
-          Explore
-          <span className="self-center">
+        <a className="menu-link flex justify-start">
+          <span className="self-center mr-4">
             <BsGrid />
           </span>
+          Explore
         </a>
       </Link>
     </li>
