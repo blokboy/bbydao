@@ -37,9 +37,9 @@ const Nav = () => {
       <div className="flex mr-2">
         {data?.connected ? (
           <>
-            <NotificationsIcon address={accountData.address} />
             <NetworkIconDropdown />
             <MessagesIcon address={accountData.address} />
+            <NotificationsIcon address={accountData.address} />
             <AccountDisplay />
           </>
         ) : null}
