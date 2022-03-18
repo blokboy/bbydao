@@ -2,9 +2,9 @@ import React from "react"
 import { useMessageStore } from "stores/useMessageStore"
 
 const InboxCard = ({ safe, clickAway }) => {
+  const channelAddress = useMessageStore(state => state.channelAddress)
   const setChannelAddress = useMessageStore(set => set.setChannelAddress)
   const setThreadChannel = useMessageStore(set => set.setThreadChannel)
-  const channelAddress = useMessageStore(state => state.channelAddress)
   const mobileThreadView = useMessageStore(state => state.mobileThreadView)
   const setMobileThreadView = useMessageStore(
     state => state.setMobileThreadView

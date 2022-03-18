@@ -9,7 +9,6 @@ import { HiOutlinePlusCircle, HiChevronDown } from "react-icons/hi"
 
 const MobileInboxNavigation = () => {
   const [{ data, error, loading }, disconnect] = useAccount()
-
   const setCreateThreadModalOpen = useUiStore(
     state => state.setCreateThreadModalOpen
   )
@@ -40,6 +39,10 @@ const MobileInboxNavigation = () => {
     }
   }, [isDropdownOpen])
 
+  const handleCreateThread = React.useCallback(() => {
+    setCreateThreadModalOpen(true)
+  }, [setCreateThreadModalOpen])
+
   const dropdown = React.useMemo(() => {
     return isDropdownOpen ? (
       <div className="absolute top-0 right-0 z-50 -mt-2 h-auto w-fit origin-top-right translate-y-20 translate-x-0 rounded-xl border bg-slate-200 px-4 py-2 text-slate-800 shadow dark:bg-slate-900 dark:text-white md:-mr-2 md:-mt-4 md:w-48">
@@ -68,7 +71,7 @@ const MobileInboxNavigation = () => {
           {dropdown}
         </div>
       </ClickAwayListener>
-      <div className="flex justify-center" onClick={setCreateThreadModalOpen}>
+      <div className="flex justify-center" onClick={handleCreateThread}>
         <HiOutlinePlusCircle size={28} />
       </div>
     </div>
