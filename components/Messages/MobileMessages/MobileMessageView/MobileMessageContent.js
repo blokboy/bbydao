@@ -20,16 +20,14 @@ const MobileMessageContent = () => {
 
   if (!messages?.length) {
     return (
-      <div className="h-[70%] md:h-[85%] md:p-3">
-        <div className="h-full overflow-scroll rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
-          No Messages
-        </div>
+      <div className="bg-slate-50 px-3 pb-44 dark:bg-slate-800">
+        No Messages
       </div>
     )
   }
 
   return (
-    <div className="bg-slate-50 px-3 dark:bg-slate-800">
+    <div className="bg-slate-50 px-3 pb-32 pt-4 dark:bg-slate-800">
       {messages?.map(message => (
         <MessageViewCard key={message.id} message={message} />
       ))}
