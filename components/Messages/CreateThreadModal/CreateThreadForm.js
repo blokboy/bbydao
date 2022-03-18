@@ -42,8 +42,13 @@ const CreateThreadForm = ({ closeModal }) => {
         friend.initiator === accountData?.address
           ? friend.targetEns || friend.target
           : friend.initiatorEns,
+      status: friend.status,
     }
   })
+
+  if (friends) {
+    console.log("friends", friends)
+  }
 
   const handleSelectedOptions = options => {
     const selectedAddresses = options.map(option => option.value)
