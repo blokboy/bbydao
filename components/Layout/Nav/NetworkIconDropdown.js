@@ -17,7 +17,6 @@ export default function NetworkIconDropdown() {
     const match = Networks.find(network => network.id === data.chain.id)
     return match || null
   }, [data])
-  console.log(network)
 
   const handleClickAway = React.useCallback(() => {
     if (isDropdownOpen) {
