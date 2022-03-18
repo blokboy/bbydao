@@ -9,7 +9,7 @@ const MobileMessages = () => {
   const mobileThreadView = useMessageStore(state => state.mobileThreadView)
   // const setMobileThreadView = useMessageStore(state => state.setMobileThreadView)
   return (
-    <div className="">
+    <div>
       {mobileThreadView ? (
         <>
           <MobileInboxNavigation />

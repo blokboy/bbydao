@@ -1,10 +1,10 @@
 import React from "react"
-import MessageViewCard from "./MessageViewCard"
+import MessageViewCard from "components/Messages/MessageView/MessageViewCard"
 import { useMessageStore } from "stores/useMessageStore"
 import * as api from "query"
 import { useQuery } from "react-query"
 
-const MessageContent = () => {
+const MobileMessageContent = () => {
   const { threadChannel } = useMessageStore()
   const { data: messages } = useQuery(
     ["thread messages", threadChannel],
@@ -29,14 +29,12 @@ const MessageContent = () => {
   }
 
   return (
-    <div className="h-[70%] md:h-[85%] md:p-3">
-      <div className="h-full overflow-scroll rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
-        {messages?.map(message => (
-          <MessageViewCard key={message.id} message={message} />
-        ))}
-      </div>
+    <div className="bg-slate-50 px-3 dark:bg-slate-800">
+      {messages?.map(message => (
+        <MessageViewCard key={message.id} message={message} />
+      ))}
     </div>
   )
 }
 
-export default MessageContent
+export default MobileMessageContent
