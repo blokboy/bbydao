@@ -6,11 +6,11 @@ const FeedLink = () => {
   return (
     <li className="w-full">
       <Link href={"/feed"}>
-        <a className="menu-link">
-          Feed
-          <span className="self-center">
+        <a className="menu-link justify-start">
+          <span className="mr-3 self-center">
             <BsCollection />
           </span>
+          Explore
         </a>
       </Link>
     </li>
