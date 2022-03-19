@@ -1,5 +1,7 @@
 import React from "react"
 import Link from "next/link"
+import { useConnect, useAccount } from "wagmi"
+
 import NotificationsIcon from "./NotificationsIcon"
 import SearchIcon from "./SearchIcon"
 import MessagesIcon from "./MessagesIcon"
@@ -9,7 +11,7 @@ import AccountDisplay from "./AccountDisplay"
 import ConnectButton from "./ConnectButton"
 import DisconnectButton from "./DisconnectButton"
 import ToggleSearchModal from "./ToggleSearchModal"
-import { useConnect, useAccount } from "wagmi"
+import NetworkIconDropdown from "./NetworkIconDropdown"
 
 const Nav = () => {
   const [{ data, error }, connect] = useConnect()
@@ -32,15 +34,16 @@ const Nav = () => {
           <SearchIcon />
         </div>
       </div>
-      <div className="flex">
-        {data?.connected ? <AccountDisplay /> : null}
-        {data?.connected ? <DisconnectButton /> : <ConnectButton />}
+      <div className="flex mr-2">
         {data?.connected ? (
-          <NotificationsIcon address={accountData.address} />
+          <>
+            <NetworkIconDropdown />
+            <MessagesIcon address={accountData.address} />
+            <NotificationsIcon address={accountData.address} />
+            <AccountDisplay />
+          </>
         ) : null}
-        {data?.connected ? (
-          <MessagesIcon address={accountData.address} />
-        ) : null}
+        {!data?.connected ? <ConnectButton /> : null}
         <Menu />
       </div>
 

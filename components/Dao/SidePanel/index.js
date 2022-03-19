@@ -1,56 +1,31 @@
 import React from "react"
-import MemberCard from "./MemberCard"
-import { useUiStore } from "stores/useUiStore"
 import { useQuery, useMutation } from "react-query"
 import { useAccount, useConnect } from "wagmi"
-import * as api from "../../../query"
 
+import * as api from "../../../query"
+import MemberCard from "./MemberCard"
+import { useUiStore } from "stores/useUiStore"
+import useFriendData from "hooks/useFriendData"
 
 const SidePanel = ({ safeInfo, nftImage }) => {
-  const [{ data, error, loading }, disconnect] = useAccount()
+  const [{ data }] = useAccount()
   const [dropdown, setDropdown] = React.useState(false)
   const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
   const setFollowDaoModalOpen = useUiStore(state => state.setFollowDaoModalOpen)
-
-  const { data: friendData } = useQuery(
-    ["friends", safeInfo.address],
-    () => api.getFriends({ initiator: safeInfo.address }),
-    {
-      refetchOnWindowFocus: false,
-      staleTime: 180000,
-    }
-  )
-
-  const getUserRelationship = friends => {
-    let relationship
-
-    if (!friends?.length) {
-      return
-    }
-
-    for (const friend of friends) {
-      if (friend.initiator == data?.address || friend.target == data?.address) {
-        relationship = friend.status
-        return relationship
-      }
-    }
-
-    return null
-  }
+  const [friendData, { friendStatus, setFriendStatus }, friendActionText] =
+    useFriendData(safeInfo.address)
 
   const parsedList = {
     followers: [],
-    friends: []
+    friends: [],
   }
-  if(friendData?.length) {
-    for(const friend of friendData) {
-      if(friend.status == 4) {
+  if (friendData?.length) {
+    for (const friend of friendData) {
+      if (friend.status == 4) {
         parsedList.followers.push(friend)
       }
     }
   }
-
-  
 
   const { status, mutateAsync } = useMutation(api.reqRelationship)
 
@@ -64,8 +39,8 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     setFriendsModalOpen()
   }
 
-  const handleRequest = () => {
-    if (!data?.address) {
+  const handleFollow = React.useCallback(() => {
+    if (!data || !safeInfo || !friendStatus) {
       return
     }
     const req = {
@@ -75,7 +50,8 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     }
 
     mutateAsync(req)
-  }
+    setFriendStatus({ ...friendStatus, isFollowing: true })
+  }, [data, safeInfo, friendStatus])
 
   return (
     <div className="flex-start mx-1 mb-3 flex h-full flex-col px-4 md:flex-col">
@@ -128,28 +104,24 @@ const SidePanel = ({ safeInfo, nftImage }) => {
       {/* follow or friend buttons when be frens is clicked  */}
       {dropdown ? (
         <div className="flex flex-col items-start">
-          <button 
-            className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700"
-            onClick={() => {
-              if (getUserRelationship(friendData) === 4) {
-                return
-              } else {
-                handleRequest()
-              }
-            }}
+          <button
+            className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 disabled:cursor-not-allowed dark:bg-slate-800 dark:hover:bg-slate-700"
+            disabled={friendStatus.isFollowing}
+            onClick={handleFollow}
           >
-            <h1>{ getUserRelationship(friendData) === 4 ? "following" : "follow"}</h1>
+            <span className="font-bold">
+              {friendStatus.isFollowing ? "following" : "follow"}
+            </span>
           </button>
           <button
-            className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700"
+            className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 disabled:bg-slate-400 disabled:opacity-50 dark:bg-slate-800 dark:hover:bg-slate-700"
             onClick={setFollowDaoModalOpen}
+            disabled={friendStatus.isFriend}
           >
-            <h1>friend</h1>
+            <span className="font-bold">{friendActionText}</span>
           </button>
         </div>
-      ) : (
-        <></>
-      )}
+      ) : null}
 
       {/* make component to represent these (with pics) */}
       {/* modal pops to center of screen to scroll through all members */}

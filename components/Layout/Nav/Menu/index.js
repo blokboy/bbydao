@@ -1,13 +1,14 @@
 import React from "react"
 import ClickAwayListener from "react-click-away-listener"
 import { HiDotsHorizontal } from "react-icons/hi"
+import { useConnect } from "wagmi"
+
 import DashboardLink from "./DashboardLink"
 import MenuThemeToggle from "./MenuThemeToggle"
 import MessagesLink from "./MessagesLink"
 import ExploreLink from "./ExploreLink"
 import FeedLink from "./FeedLink"
 import AboutLink from "./AboutLink"
-import { useConnect } from "wagmi"
 
 const Menu = () => {
   const [menuOpen, setMenuOpen] = React.useState(false)

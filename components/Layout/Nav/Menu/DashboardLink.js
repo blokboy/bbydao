@@ -9,11 +9,11 @@ const DashboardLink = () => {
   return (
     <li className="w-full">
       <Link href={data?.address ? `/user/${data.address}` : "/"}>
-        <a className="menu-link">
-          Dashboard
-          <span className="self-center">
+        <a className="menu-link justify-start">
+          <span className="mr-3 self-center">
             <BsPersonCircle />
           </span>
+          Dashboard
         </a>
       </Link>
     </li>
