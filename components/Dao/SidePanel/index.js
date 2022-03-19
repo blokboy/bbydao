@@ -2,75 +2,18 @@ import React from "react"
 import { useQuery, useMutation } from "react-query"
 import { useAccount, useConnect } from "wagmi"
 
+import * as api from "../../../query"
 import MemberCard from "./MemberCard"
 import { useUiStore } from "stores/useUiStore"
-import * as api from "../../../query"
+import useFriendData from "hooks/useFriendData"
 
 const SidePanel = ({ safeInfo, nftImage }) => {
-  const [{ data, error, loading }, disconnect] = useAccount()
+  const [{ data }] = useAccount()
   const [dropdown, setDropdown] = React.useState(false)
-  const [friendStatus, setFriendStatus] = React.useState(null)
   const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
   const setFollowDaoModalOpen = useUiStore(state => state.setFollowDaoModalOpen)
-
-  const { data: friendData } = useQuery(
-    ["friends", safeInfo.address],
-    () => api.getFriends({ initiator: safeInfo.address }),
-    {
-      refetchOnWindowFocus: false,
-      staleTime: 180000,
-    }
-  )
-
-  const handleFriendStatus = React.useCallback(() => {
-    if (!data || !friendData || friendStatus) {
-      return
-    }
-
-    const match = friendData.find(friend =>
-      [friend.initiator, friend.target].includes(data.address)
-    )
-
-    if (!match) {
-      setFriendStatus({
-        isFriend: false,
-        isFollowing: false,
-        isRequested: false,
-      })
-      return
-    }
-
-    const { status } = match
-
-    setFriendStatus({
-      isFriend: status === 1,
-      isFollowing: status === 4,
-      isRequested: status === 3,
-    })
-  }, [data, friendData, friendStatus])
-
-  React.useEffect(() => {
-    if (!friendStatus) {
-      handleFriendStatus()
-    }
-  }, [friendStatus, handleFriendStatus])
-
-  const getUserRelationship = friends => {
-    let relationship
-
-    if (!friends?.length) {
-      return
-    }
-
-    for (const friend of friends) {
-      if (friend.initiator == data?.address || friend.target == data?.address) {
-        relationship = friend.status
-        return relationship
-      }
-    }
-
-    return null
-  }
+  const [friendData, { friendStatus, setFriendStatus }, friendActionText] =
+    useFriendData(safeInfo.address)
 
   const parsedList = {
     followers: [],
@@ -95,24 +38,6 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     setFriendsModalAddress(safeInfo.address)
     setFriendsModalOpen()
   }
-
-  const friendActionText = React.useMemo(() => {
-    if (!friendStatus) {
-      return
-    }
-
-    let text = ""
-
-    if (friendStatus.isRequested) {
-      text = "pending"
-    } else if (friendStatus.isFriend) {
-      text = "frens"
-    } else {
-      text = "request"
-    }
-
-    return text
-  }, [friendStatus])
 
   const handleFollow = React.useCallback(() => {
     if (!data || !safeInfo || !friendStatus) {
