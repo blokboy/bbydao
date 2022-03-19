@@ -1,17 +1,19 @@
 import React from "react"
 import { useMessageStore } from "stores/useMessageStore"
+import { useAccount } from "wagmi"
 
-const InboxCard = ({ safe, clickAway }) => {
-  const channelAddress = useMessageStore(state => state.channelAddress)
+const DesktopMainInboxCard = ({ clickAway }) => {
+  const [{ data, error, loading }, disconnect] = useAccount()
   const setChannelAddress = useMessageStore(set => set.setChannelAddress)
   const setThreadChannel = useMessageStore(set => set.setThreadChannel)
+  const channelAddress = useMessageStore(state => state.channelAddress)
   const mobileThreadView = useMessageStore(state => state.mobileThreadView)
   const setMobileThreadView = useMessageStore(
     state => state.setMobileThreadView
   )
 
   const handleClick = () => {
-    setChannelAddress(safe)
+    setChannelAddress(data?.address)
     clickAway()
     setThreadChannel(null)
     if (!mobileThreadView) setMobileThreadView()
@@ -19,11 +21,9 @@ const InboxCard = ({ safe, clickAway }) => {
 
   return (
     <li className="py-2" onClick={handleClick}>
-      <button className="font-bold">
-        {safe?.length > 30 ? safe.substring(0, 10).concat("...") : safe}
-      </button>
+      <button className="font-bold">Main Inbox</button>
     </li>
   )
 }
 
-export default InboxCard
+export default DesktopMainInboxCard

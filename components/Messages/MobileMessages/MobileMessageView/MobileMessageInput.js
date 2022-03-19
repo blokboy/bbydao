@@ -5,7 +5,7 @@ import { useMessageStore } from "stores/useMessageStore"
 import { useAccount } from "wagmi"
 import useForm from "hooks/useForm"
 
-const MessageForm = () => {
+const MobileMessageInput = () => {
   const { state, setState, handleChange } = useForm()
   const queryClient = useQueryClient()
   const { threadChannel } = useMessageStore()
@@ -42,12 +42,12 @@ const MessageForm = () => {
 
   return (
     <form
-      className="flex h-[15%] w-full flex-row items-center p-3 md:h-[10%]"
+      className="fixed inset-x-0 bottom-0 flex h-20 flex-row p-3 dark:bg-slate-800"
       onSubmit={handleSubmit}
     >
       <textarea
         autoFocus
-        className="h-full w-[90%] resize-none rounded-xl bg-slate-100 p-3 text-white focus:text-slate-900 focus:outline-none dark:bg-slate-800 dark:focus:text-slate-100"
+        className="h-full w-[90%] resize-none rounded-xl bg-slate-100 p-3 text-white focus:text-slate-900 focus:outline-none dark:bg-slate-700 dark:focus:text-slate-100"
         type="textarea"
         name="message"
         placeholder="Message..."
@@ -57,7 +57,7 @@ const MessageForm = () => {
         required
       />
       <button
-        className="ml-3 flex items-center rounded-xl border bg-slate-200 px-4 py-3 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
+        className="mx-3 flex items-center rounded-xl border bg-slate-200 p-3 font-bold shadow-xl focus:outline-none dark:bg-slate-700"
         type="submit"
       >
         send
@@ -66,4 +66,4 @@ const MessageForm = () => {
   )
 }
 
-export default MessageForm
+export default MobileMessageInput

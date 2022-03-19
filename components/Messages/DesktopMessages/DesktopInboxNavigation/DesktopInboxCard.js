@@ -1,7 +1,7 @@
 import React from "react"
 import { useMessageStore } from "stores/useMessageStore"
 
-const InboxCard = ({ safe, clickAway }) => {
+const DesktopInboxCard = ({ safe, clickAway }) => {
   const channelAddress = useMessageStore(state => state.channelAddress)
   const setChannelAddress = useMessageStore(set => set.setChannelAddress)
   const setThreadChannel = useMessageStore(set => set.setThreadChannel)
@@ -26,4 +26,4 @@ const InboxCard = ({ safe, clickAway }) => {
   )
 }
 
-export default InboxCard
+export default DesktopInboxCard

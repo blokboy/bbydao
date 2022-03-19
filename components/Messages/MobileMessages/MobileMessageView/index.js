@@ -1,7 +1,7 @@
 import React from "react"
 import { useMessageStore } from "stores/useMessageStore"
-import MessageContent from "components/Messages/MessageView/MessageContent"
-import MessageForm from "components/Messages/MessageView/MessageForm"
+import MobileMessageContent from "./MobileMessageContent"
+import MobileMessageInput from "./MobileMessageInput"
 import { HiArrowCircleLeft } from "react-icons/hi"
 
 const MobileMessageView = () => {
@@ -12,15 +12,15 @@ const MobileMessageView = () => {
 
   return (
     <div>
-      <div className="grid w-full grid-cols-3 items-center justify-center p-3">
+      <div className="sticky top-0 grid w-full grid-cols-3 items-center justify-center p-3 dark:bg-slate-900">
         <button className="flex items-center" onClick={setMobileThreadView}>
           <HiArrowCircleLeft size={28} />
         </button>
         <div className="col-span-2" />
         <div className="col-span-3" />
       </div>
-      <MessageContent />
-      {/* <MessageForm /> */}
+      <MobileMessageContent />
+      <MobileMessageInput />
     </div>
   )
 }

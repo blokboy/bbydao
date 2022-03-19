@@ -6,7 +6,7 @@ import useForm from "hooks/useForm"
 import * as api from "query"
 import { useQuery, useMutation } from "react-query"
 import { useAccount } from "wagmi"
-import { useMessageStore } from "../../../stores/useMessageStore"
+import { useMessageStore } from "stores/useMessageStore"
 
 const CreateThreadForm = ({ closeModal }) => {
   const router = useRouter()
@@ -14,6 +14,7 @@ const CreateThreadForm = ({ closeModal }) => {
   const [selectedOptions, setSelectedOptions] = React.useState([])
   const [{ data: accountData }] = useAccount()
   const setThreadChannel = useMessageStore(state => state.setThreadChannel)
+  const channelAddress = useMessageStore(state => state.channelAddress)
 
   const { data: friendData } = useQuery(
     ["friends", accountData?.address],
@@ -41,8 +42,13 @@ const CreateThreadForm = ({ closeModal }) => {
         friend.initiator === accountData?.address
           ? friend.targetEns || friend.target
           : friend.initiatorEns,
+      status: friend.status,
     }
   })
+
+  if (friends) {
+    console.log("friends", friends)
+  }
 
   const handleSelectedOptions = options => {
     const selectedAddresses = options.map(option => option.value)
@@ -56,6 +62,13 @@ const CreateThreadForm = ({ closeModal }) => {
     }
     e.preventDefault()
     let arr = [accountData?.address, ...selectedOptions]
+
+    // handles case where user creates a thread from within an bbyDAOs inbox
+    // the bbyDAOs address is included so that thread will be created in the bbyDAOs inbox
+    if (channelAddress !== accountData?.address) {
+      arr.push(channelAddress)
+    }
+
     const req = {
       sender: accountData?.address,
       body: state.body,
@@ -72,6 +85,12 @@ const CreateThreadForm = ({ closeModal }) => {
       <div className="mb-8 w-full text-center text-xl font-bold">
         start message thread
       </div>
+
+      {channelAddress !== accountData?.address && (
+        <span className="pb-3 text-sm text-green-500">
+          this thread will be created for {channelAddress.substring(0, 6)}...
+        </span>
+      )}
 
       <label className="mb-2 block text-sm font-bold" htmlFor="name">
         invites
