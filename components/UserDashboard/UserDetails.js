@@ -1,6 +1,6 @@
 import React from "react"
 import Link from "next/link"
-import { useMutation, useQuery } from "react-query"
+import { useMutation } from "react-query"
 
 import * as api from "../../query"
 import { useUiStore } from "stores/useUiStore"
@@ -37,7 +37,12 @@ const UserDetails = ({ address, ens }) => {
   )
   const setFriendsModalOpen = useUiStore(state => state.setFriendsModalOpen)
 
-  const { status, mutateAsync } = useMutation(api.reqRelationship)
+  const setUnfriendModalTargetAddress = useUiStore(
+    state => state.setUnfriendModalTargetAddress
+  )
+  const setUnfriendModalOpen = useUiStore(state => state.setUnfriendModalOpen)
+
+  const { mutateAsync } = useMutation(api.reqRelationship)
 
   const handleRequest = React.useCallback(() => {
     if (!data) {
@@ -54,10 +59,15 @@ const UserDetails = ({ address, ens }) => {
     setFriendStatus({ ...friendStatus, isRequested: true })
   }, [address, data, friendStatus])
 
-  const handleOpenFriendsModal = () => {
+  const handleOpenFriendsModal = React.useCallback(() => {
     setFriendsModalAddress(address)
     setFriendsModalOpen()
-  }
+  }, [address])
+
+  const handleOpenUnfriendModal = React.useCallback(() => {
+    setUnfriendModalTargetAddress(address)
+    setUnfriendModalOpen()
+  }, [address])
 
   const friendActionSection = React.useMemo(() => {
     if (
@@ -73,7 +83,7 @@ const UserDetails = ({ address, ens }) => {
         {connectData.connected && friendStatus.isFriend ? (
           <button
             type="button"
-            disabled
+            onClick={handleOpenUnfriendModal}
             className="mr-3 flex w-max transform flex-row rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow transition duration-500 ease-in-out hover:-translate-x-0.5 hover:bg-white hover:bg-gradient-to-l dark:hover:bg-slate-700"
           >
             <span className="block rounded-full bg-slate-200 px-6 py-[0.45rem] font-bold text-[#FC8D4D] hover:bg-opacity-50 hover:text-white dark:bg-slate-900 dark:hover:bg-opacity-75">
@@ -84,15 +94,24 @@ const UserDetails = ({ address, ens }) => {
           <button
             className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white disabled:cursor-not-allowed dark:bg-slate-900 dark:hover:bg-slate-700"
             type="button"
-            onClick={handleRequest}
-            disabled={friendStatus.isRequested}
+            onClick={
+              friendStatus.isRequested ? handleOpenUnfriendModal : handleRequest
+            }
           >
             {friendActionText}
           </button>
         )}
       </>
     )
-  }, [address, connectData, data, friendStatus, friendActionText])
+  }, [
+    address,
+    connectData,
+    data,
+    friendStatus,
+    friendActionText,
+    handleOpenUnfriendModal,
+    handleRequest,
+  ])
 
   return (
     <div className="mt-4 flex flex-col items-center text-center md:items-start md:text-left">
@@ -111,14 +130,18 @@ const UserDetails = ({ address, ens }) => {
       <div className="mt-4 ml-4 mb-4 mr-4 flex flex-col">
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
           <h1>
-            {parsedList.following?.length}{" "}
-            {parsedList.following?.length > 1 ? "follows" : "follow"}
+            <span>{parsedList.following?.length} </span>
+            <span>
+              {parsedList.following?.length > 1 ? "follows" : "follow"}
+            </span>
           </h1>
         </button>
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
           <h1>
-            {parsedList.friends?.length}{" "}
-            {parsedList.friends?.length === 1 ? "friend" : "friends"}
+            <span>{parsedList.friends?.length} </span>
+            <span>
+              {parsedList.friends?.length === 1 ? "friend" : "friends"}
+            </span>
           </h1>
         </button>
       </div>
