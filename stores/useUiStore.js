@@ -39,12 +39,15 @@ export const useUiStore = create(set => ({
 
   // unfriend modal display
   unfriendModalOpen: false,
-  setUnfriendModalOpen: () =>
-    set(state => ({ unfriendModalOpen: !state.unfriendModalOpen })),
+  setUnfriendModalOpen: unfriendModalOpen =>
+    set(state => ({ unfriendModalOpen })),
 
-  unfriendModalTargetAddress: null,
-  setUnfriendModalTargetAddress: address =>
-    set(state => ({ unfriendModalTargetAddress: address })),
+  unfriendModalFriendStatus: null,
+  setUnfriendModalFriendStatus: friendStatus =>
+    set(state => ({
+      unfriendModalFriendStatus: friendStatus,
+      unfriendModalOpen: !state.unfriendModalOpen,
+    })),
 
   // notification count on nav
   notificationCount: null,
