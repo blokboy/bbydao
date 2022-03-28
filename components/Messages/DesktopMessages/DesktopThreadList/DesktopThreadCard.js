@@ -25,7 +25,7 @@ const DesktopThreadCard = ({ title, thread }) => {
       <div className="ml-3 flex w-11/12 flex-col pl-3">
         <span className="text-sm font-bold">
           {" "}
-          {title?.length > 30 ? title.substring(0, 10).concat("...") : title}
+          {title?.length > 30 ? title.substring(0, 10).concat(title.substring(title.length - 4, title.length)) : title}
         </span>
       </div>
       <div className="self-center">
