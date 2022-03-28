@@ -10,7 +10,7 @@ import useFriendData from "hooks/useFriendData"
 const UserDetails = ({ address, ens }) => {
   const [{ data: connectData, error: connectError }, connect] = useConnect()
   const [{ data, error, loading }, disconnect] = useAccount()
-  const [friendData, { friendStatus, setFriendStatus }, friendActionText] =
+  const [friendData, { friendStatus, refetch }, friendActionText] =
     useFriendData(address)
 
   const parsedList = React.useMemo(() => {
@@ -37,12 +37,16 @@ const UserDetails = ({ address, ens }) => {
   )
   const setFriendsModalOpen = useUiStore(state => state.setFriendsModalOpen)
 
-  const setUnfriendModalTargetAddress = useUiStore(
-    state => state.setUnfriendModalTargetAddress
+  const setUnfriendModalFriendStatus = useUiStore(
+    state => state.setUnfriendModalFriendStatus
   )
   const setUnfriendModalOpen = useUiStore(state => state.setUnfriendModalOpen)
 
-  const { mutateAsync } = useMutation(api.reqRelationship)
+  const { mutateAsync } = useMutation(api.reqRelationship, {
+    onSuccess: () => {
+      refetch()
+    },
+  })
 
   const handleRequest = React.useCallback(() => {
     if (!data) {
@@ -56,8 +60,7 @@ const UserDetails = ({ address, ens }) => {
     }
 
     mutateAsync(req)
-    setFriendStatus({ ...friendStatus, isRequested: true })
-  }, [address, data, friendStatus])
+  }, [address, data])
 
   const handleOpenFriendsModal = React.useCallback(() => {
     setFriendsModalAddress(address)
@@ -65,9 +68,8 @@ const UserDetails = ({ address, ens }) => {
   }, [address])
 
   const handleOpenUnfriendModal = React.useCallback(() => {
-    setUnfriendModalTargetAddress(address)
-    setUnfriendModalOpen()
-  }, [address])
+    setUnfriendModalFriendStatus({ ...friendStatus, refetch })
+  }, [address, friendStatus])
 
   const friendActionSection = React.useMemo(() => {
     if (
@@ -92,8 +94,9 @@ const UserDetails = ({ address, ens }) => {
           </button>
         ) : (
           <button
-            className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white disabled:cursor-not-allowed dark:bg-slate-900 dark:hover:bg-slate-700"
+            className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white disabled:cursor-not-allowed disabled:cursor-not-allowed dark:bg-slate-900 dark:hover:bg-slate-700"
             type="button"
+            disabled={!friendStatus.data && friendStatus.isRequested}
             onClick={
               friendStatus.isRequested ? handleOpenUnfriendModal : handleRequest
             }

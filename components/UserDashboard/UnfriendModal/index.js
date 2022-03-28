@@ -7,25 +7,31 @@ import { useMutation } from "react-query"
 import { useAccount } from "wagmi"
 import * as api from "../../../query"
 import { useUiStore } from "stores/useUiStore"
-import useFriendData from "hooks/useFriendData"
 
 export default function UnfriendModal() {
-  const unfriendModalTargetAddress = useUiStore(
-    state => state.unfriendModalTargetAddress
-  )
   const unfriendModalOpen = useUiStore(state => state.unfriendModalOpen)
-  const setUnfriendModalOpen = useUiStore(state => state.setUnfriendModalOpen)
+  // const setUnfriendModalOpen = useUiStore(state => state.setUnfriendModalOpen)
+
+  const friendStatus = useUiStore(state => state.unfriendModalFriendStatus)
+  const setFriendStatus = useUiStore(
+    state => state.setUnfriendModalFriendStatus
+  )
 
   const router = useRouter()
   const [{ data }] = useAccount()
-  const [, { friendStatus, setFriendStatus }] = useFriendData(
-    unfriendModalTargetAddress
-  )
-  const { mutateAsync } = useMutation(api.reqRelationship)
+
+  const [isMakingRequest, setMakingRequest] = React.useState(false)
+
+  const { mutateAsync } = useMutation(api.updateRelationship, {
+    onSuccess: () => {
+      friendStatus?.refetch()
+      setMakingRequest(false)
+    },
+  })
 
   const closeModal = React.useCallback(() => {
     if (unfriendModalOpen) {
-      setUnfriendModalOpen()
+      setFriendStatus(null)
     }
   }, [unfriendModalOpen])
 
@@ -39,20 +45,19 @@ export default function UnfriendModal() {
   }, [friendStatus])
 
   const handleUnfriend = React.useCallback(() => {
-    if (!data) {
+    if (!data || !friendStatus.data) {
       return
     }
 
     mutateAsync({
-      initiator: data.address,
-      target: unfriendModalTargetAddress,
+      id: friendStatus.data.id,
       status: 0,
     })
 
-    setFriendStatus({ ...friendStatus, isFriend: false, isRequested: false })
+    setMakingRequest(true)
+
     closeModal()
-    router.push({ pathname: router.pathname, query: { ...router.query } })
-  }, [data, friendStatus, closeModal, router])
+  }, [data, friendStatus, closeModal, router, setMakingRequest])
 
   return unfriendModalOpen
     ? createPortal(
@@ -71,10 +76,15 @@ export default function UnfriendModal() {
               <p>{modalText}</p>
               <button
                 type="button"
-                className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white disabled:cursor-not-allowed dark:bg-slate-900 dark:hover:bg-slate-700"
+                className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white disabled:cursor-not-allowed disabled:cursor-not-allowed dark:bg-slate-900 dark:hover:bg-slate-700"
                 onClick={handleUnfriend}
+                disabled={isMakingRequest}
               >
-                unfren
+                {isMakingRequest ? (
+                  "updating fren status..."
+                ) : (
+                  <>{friendStatus.isRequested ? "cancel request" : "unfren"}</>
+                )}
               </button>
             </div>
           </div>

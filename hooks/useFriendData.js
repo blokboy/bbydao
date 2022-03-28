@@ -6,9 +6,8 @@ import * as api from "../query"
 
 export default function useFriendStatus(address) {
   const [{ data, error, loading }] = useAccount()
-  const [friendStatus, setFriendStatus] = React.useState(null)
 
-  const { data: friendData } = useQuery(
+  const { data: friendData, refetch } = useQuery(
     ["friends", address],
     () => api.getFriends({ initiator: address }),
     {
@@ -17,9 +16,17 @@ export default function useFriendStatus(address) {
     }
   )
 
-  const handleFriendStatus = React.useCallback(() => {
-    if (!data || !friendData || friendStatus) {
-      return
+  const friendStatus = React.useMemo(() => {
+    const initFriendStatus = {
+      data: null,
+      isSet: false,
+      isFriend: false,
+      isFollowing: false,
+      isRequested: false,
+    }
+
+    if (!data || !friendData) {
+      return { ...initFriendStatus }
     }
 
     const match = friendData.find(friend =>
@@ -27,22 +34,22 @@ export default function useFriendStatus(address) {
     )
 
     if (!match) {
-      setFriendStatus({
-        isFriend: false,
-        isFollowing: false,
-        isRequested: false,
-      })
-      return
+      return {
+        ...initFriendStatus,
+        isSet: true,
+      }
     }
 
     const { status } = match
 
-    setFriendStatus({
+    return {
+      data: { ...match },
+      isSet: true,
       isFriend: status === 1,
       isFollowing: status === 4,
       isRequested: status === 3,
-    })
-  }, [data, friendData, friendStatus])
+    }
+  }, [data, friendData])
 
   const friendActionText = React.useMemo(() => {
     if (!friendStatus) {
@@ -62,11 +69,12 @@ export default function useFriendStatus(address) {
     return text
   }, [friendStatus])
 
-  React.useEffect(() => {
-    if (!friendStatus) {
-      handleFriendStatus()
-    }
-  }, [friendStatus, handleFriendStatus])
-
-  return [friendData, { friendStatus, setFriendStatus }, friendActionText]
+  return [
+    friendData,
+    {
+      friendStatus,
+      refetch: () => refetch({ throwOnError: false, cancelRefetch: false }),
+    },
+    friendActionText,
+  ]
 }
