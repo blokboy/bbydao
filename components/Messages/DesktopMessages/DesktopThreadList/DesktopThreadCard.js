@@ -13,6 +13,20 @@ const DesktopThreadCard = ({ title, thread }) => {
     setThreadChannel(thread.channel)
     setMobileThreadView()
   }
+  
+  const parseTitle = (_addresses) => {
+    const parsedTitles = []
+
+    const addresses = _addresses.split(',')
+    for(const addr of addresses) {
+      const str = addr.substring(0, 6).concat('...').concat(addr.substring(38, 42))
+      parsedTitles.push(str)
+    }
+
+    return parsedTitles
+  }
+
+  console.log('parsed titles ', parseTitle(title))
 
   return (
     <li
@@ -25,7 +39,7 @@ const DesktopThreadCard = ({ title, thread }) => {
       <div className="ml-3 flex w-11/12 flex-col pl-3">
         <span className="text-sm font-bold">
           {" "}
-          {title?.length > 30 ? title.substring(0, 10).concat(title.substring(title.length - 4, title.length)) : title}
+          {title?.length > 42 ? title.substring(0, 6).concat("...").concat(title.substring(38,42)) : title }
         </span>
       </div>
       <div className="self-center">
