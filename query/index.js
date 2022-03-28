@@ -76,11 +76,11 @@ export const deleteNotification = async req => {
 }
 
 // storeTxOffChain
-/* { 
+/* {
   creator: string,
-  txHash: string, 
-  tokenContract: string, 
-  tokenId: string, 
+  txHash: string,
+  tokenContract: string,
+  tokenId: string,
   safeContract: string,
   value: string,
   type: enum
@@ -111,6 +111,14 @@ export const deleteOffChainTx = async req => {
 // { name: string, type: enum, address: string, members:string[] }
 export const createDao = async req => {
   const res = await api.post("/dao/create", req)
+  return res.data
+}
+
+
+//get dao
+// { address: string }
+export const getDao = async req => {
+  const res = await api.get("/dao/dao", req)
   return res.data
 }
 
