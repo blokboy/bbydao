@@ -20,7 +20,7 @@ const DesktopInboxCard = ({ safe, clickAway }) => {
   return (
     <li className="py-2" onClick={handleClick}>
       <button className="font-bold">
-        {safe?.length > 30 ? safe.substring(0, 10).concat("...") : safe}
+        {safe?.length > 30 ? safe.substring(0, 6).concat("...").concat(safe.substring(safe.length - 4, safe.length)) : safe}
       </button>
     </li>
   )

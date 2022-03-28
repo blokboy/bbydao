@@ -69,7 +69,7 @@ const DesktopInboxNavigation = () => {
             className="flex w-full justify-between rounded-xl p-2 font-bold dark:bg-slate-800"
             onClick={handleInboxDropdown}
           >
-            inbox
+            Inboxes
             <HiChevronDown size={20} />
           </button>
           {dropdown}
