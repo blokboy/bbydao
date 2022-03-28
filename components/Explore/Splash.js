@@ -1,9 +1,9 @@
-import ConnectButton from "components/Layout/Nav/ConnectButton"
-import React from "react"
+import ConnectButton              from "components/Layout/Nav/ConnectButton"
+import { useRouter }              from "next/router"
+import React, { useEffect }       from "react"
 import { useConnect, useAccount } from "wagmi"
 
 const Splash = () => {
-  const [{ data, error }, connect] = useConnect()
   const [{ data: accountData }, disconnect] = useAccount({
     fetchEns: true,
   })

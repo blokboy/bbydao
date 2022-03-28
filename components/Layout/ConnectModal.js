@@ -1,9 +1,13 @@
-import React from "react"
-import { useUiStore } from "stores/useUiStore"
+import { useRouter }              from "next/router"
+import React                      from "react"
+import { useUiStore }             from "stores/useUiStore"
 import { useConnect, useAccount } from "wagmi"
-import { HiX } from "react-icons/hi"
+import { HiX }                    from "react-icons/hi"
 
 const ConnectModal = () => {
+  const router = useRouter()
+  const {pathname} = router
+  const isLanding = pathname === '/'
   const [{ data, error }, connect] = useConnect()
   const [{ data: accountData }, disconnect] = useAccount({
     fetchEns: true,
@@ -29,7 +33,12 @@ const ConnectModal = () => {
             <button
               className="mb-4 w-2/4 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow hover:bg-gradient-to-l"
               key={connector.id}
-              onClick={() => connect(connector)}
+              onClick={async () => {
+                const connected = await connect(connector)
+                if(connected?.data?.account.length > 0 && isLanding) {
+                    router.push(`/user/${connected?.data.account}`)
+                }
+              }}
             >
               <span className="block rounded-full bg-slate-200 px-8 py-3 font-medium text-black hover:bg-opacity-50 dark:bg-slate-900 dark:text-white dark:hover:bg-opacity-75">
                 {connector.name}
