@@ -71,7 +71,7 @@ const AccountDisplay = () => {
 
   return data ? (
     <ClickAwayListener onClickAway={handleClickAway}>
-      <div className="relative mr-3 rounded-full bg-slate-200 hover:bg-slate-100">
+      <div className="relative mr-3 rounded-full bg-slate-200 hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-800">
         <button
           type="button"
           className="flex w-max cursor-pointer flex-row rounded-full border border-slate-400 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text px-4 py-2 font-semibold text-transparent shadow md:w-min"
