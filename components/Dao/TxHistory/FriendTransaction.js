@@ -1,5 +1,6 @@
 import React from "react"
 import { ethers } from "ethers"
+import { useRouter } from "next/router"
 import Davatar from "@davatar/react"
 import ApproveRejectTx from "./ApproveRejectTx"
 import ExecuteTx from "./ExecuteTx"
@@ -7,6 +8,7 @@ import { useAccount } from "wagmi"
 
 const FriendTransaction = ({ tx, owners, threshold }) => {
   const [{ data, error, loading }, disconnect] = useAccount()
+  const router = useRouter()
 
   return (
     <div className="w-full">
@@ -22,7 +24,8 @@ const FriendTransaction = ({ tx, owners, threshold }) => {
             <span
               className="flex w-20 justify-center cursor-pointer rounded border border-white bg-slate-100 p-1 text-[12px] text-yellow-500 dark:bg-slate-800"
               onClick={() => {
-                navigator.clipboard.writeText(tx?.receiver ? tx.receiver : "")
+                //navigator.clipboard.writeText(tx?.receiver ? tx.receiver : "")
+                router.push(`/dao/${tx.receiver}`)
               }}
             >
               {tx?.receiver ? tx.receiver.slice(0, 4).concat("...") : "DAO"}
