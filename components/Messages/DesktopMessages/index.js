@@ -10,7 +10,7 @@ const DesktopMessages = () => {
         <DesktopInboxNavigation />
         <DesktopThreadList />
       </div>
-      <div className="flex flex-col md:w-2/3">
+      <div className="flex flex-col p-4 md:w-2/3">
         <DesktopMessageView />
       </div>
     </div>
