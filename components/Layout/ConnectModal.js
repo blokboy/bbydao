@@ -27,7 +27,7 @@ const ConnectModal = () => {
         {data.connectors.map(connector =>
           connector.ready ? (
             <button
-              className="mb-4 w-2/4 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow hover:bg-gradient-to-l"
+              className="mb-4 w-3/4 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow hover:bg-gradient-to-l"
               key={connector.id}
               onClick={() => connect(connector)}
             >
