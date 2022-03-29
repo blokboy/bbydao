@@ -46,10 +46,6 @@ const CreateThreadForm = ({ closeModal }) => {
     }
   })
 
-  if (friends) {
-    console.log("friends", friends)
-  }
-
   const handleSelectedOptions = options => {
     const selectedAddresses = options.map(option => option.value)
     setSelectedOptions(selectedAddresses)

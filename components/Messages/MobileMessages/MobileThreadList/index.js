@@ -36,7 +36,7 @@ const MobileThreadList = () => {
   }
 
   return (
-    <div className="h-screen p-3">
+    <div className="p-3">
       {messages.map((thread, i) => {
         return <MobileThreadCard key={i} title={thread[0]} thread={thread[1]} />
       })}
