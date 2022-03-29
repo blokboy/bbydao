@@ -1,6 +1,6 @@
 import React from "react"
 
-const MessageViewCard = ({ message }) => {
+const MessageCard = ({ message }) => {
   return (
     <li className="mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-900">
       <div className="mr-4">
@@ -14,4 +14,4 @@ const MessageViewCard = ({ message }) => {
   )
 }
 
-export default MessageViewCard
+export default MessageCard
