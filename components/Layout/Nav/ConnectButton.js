@@ -1,11 +1,14 @@
-import React from "react"
-import ClickAwayListener from "react-click-away-listener"
+import { useRouter }        from "next/router"
+import React, { useEffect } from "react"
+import ClickAwayListener    from "react-click-away-listener"
+import { useConnect }       from "wagmi"
 
 import NetworkDropdown from "./NetworkDropdown"
 import { FaEthereum } from "react-icons/fa"
 
 const ConnectButton = () => {
   const [isDropdownOpen, setDropdownOpen] = React.useState(false)
+  const [{ data, error }, connect] = useConnect()
 
   const handleClickAway = React.useCallback(() => {
     if (isDropdownOpen) {
@@ -16,6 +19,7 @@ const ConnectButton = () => {
   const handleNetworkSelection = React.useCallback(() => {
     setDropdownOpen(true)
   }, [])
+
 
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
