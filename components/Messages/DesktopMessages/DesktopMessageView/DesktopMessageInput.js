@@ -58,6 +58,13 @@ const DesktopMessageInput = () => {
   const ref = React.useRef(null)
   const handleEmojiClick = e => {
     const cursor = ref.current.selectionStart
+    if (cursor === 0 || !state.message) {
+      setState({
+        message: e.native,
+      })
+      const newCursor = cursor + e.native.length
+      setTimeout(() => ref.current.setSelectionRange(newCursor, newCursor), 10)
+    }
     const text =
       state.message.slice(0, cursor) + e.native + state.message.slice(cursor)
     setState({ message: text })
