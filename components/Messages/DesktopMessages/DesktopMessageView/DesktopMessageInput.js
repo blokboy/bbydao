@@ -1,9 +1,15 @@
 import React from "react"
+import { useTheme } from "next-themes"
 import * as api from "query"
 import { useQueryClient, useMutation } from "react-query"
 import { useMessageStore } from "stores/useMessageStore"
 import { useAccount } from "wagmi"
 import useForm from "hooks/useForm"
+import { HiOutlineEmojiHappy } from "react-icons/hi"
+
+import ClickAwayListener from "react-click-away-listener"
+import "emoji-mart/css/emoji-mart.css"
+import { Picker } from "emoji-mart"
 
 const DesktopMessageInput = () => {
   const { state, setState, handleChange } = useForm()
@@ -40,6 +46,40 @@ const DesktopMessageInput = () => {
     setState({})
   }
 
+  // emoji picker functionality
+  // toggle emoji picker on click
+  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false)
+  const { theme, setTheme } = useTheme()
+
+  const handleShowEmojiPicker = () => {
+    setShowEmojiPicker(!showEmojiPicker)
+  }
+
+  const ref = React.useRef(null)
+  const handleEmojiClick = e => {
+    const cursor = ref.current.selectionStart
+    const text =
+      state.message.slice(0, cursor) + e.native + state.message.slice(cursor)
+    setState({ message: text })
+    const newCursor = cursor + e.native.length
+    setTimeout(() => ref.current.setSelectionRange(newCursor, newCursor), 10)
+  }
+
+  const emojiPicker = React.useMemo(() => {
+    return (
+      <Picker
+        onSelect={handleEmojiClick}
+        theme={theme === "dark" ? "dark" : "light"}
+        style={{
+          backgroundColor: theme === "dark" ? "rgb(15 23 42)" : "white",
+        }}
+        emoji="desert_island"
+        title="bbyDAO"
+        native={true}
+      />
+    )
+  }, [state, theme])
+
   return (
     <form
       className="flex h-[15%] w-full flex-row items-center p-3 md:h-[10%]"
@@ -55,9 +95,28 @@ const DesktopMessageInput = () => {
         value={state.message || ""}
         onChange={handleChange}
         required
+        ref={ref}
       />
+      <div className="relative flex">
+        {/* emoji picker */}
+        {showEmojiPicker ? (
+          <ClickAwayListener onClickAway={handleShowEmojiPicker}>
+            <div className="absolute -top-20 left-0 z-50 -translate-y-96 -translate-x-48">
+              {emojiPicker}
+            </div>
+          </ClickAwayListener>
+        ) : null}
+
+        <button
+          className="ml-3 flex items-center rounded-full border bg-slate-200 p-3 font-bold shadow-xl hover:bg-slate-100 focus:outline-none dark:bg-slate-700 dark:hover:bg-slate-600"
+          type="button"
+          onClick={handleShowEmojiPicker}
+        >
+          <HiOutlineEmojiHappy size={24} />
+        </button>
+      </div>
       <button
-        className="mx-3 flex items-center rounded-xl border bg-slate-200 p-3 font-bold shadow-xl focus:outline-none dark:bg-slate-700"
+        className="mx-3 flex items-center rounded-xl border bg-slate-200 p-3 font-bold shadow-xl hover:bg-slate-100 focus:outline-none dark:bg-slate-700 dark:hover:bg-slate-600"
         type="submit"
       >
         send
