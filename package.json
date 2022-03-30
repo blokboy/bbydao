@@ -25,6 +25,7 @@
     "classnames": "^2.3.1",
     "cookie": "^0.4.1",
     "d3": "^7.3.0",
+    "dayjs": "^1.11.0",
     "emoji-mart": "^3.0.1",
     "ethereum-checksum-address": "^0.0.1",
     "ethers": "^5.5.3",
