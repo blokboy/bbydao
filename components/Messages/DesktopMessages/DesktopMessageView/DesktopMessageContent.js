@@ -6,6 +6,7 @@ import { useQuery } from "react-query"
 
 const DesktopMessageContent = () => {
   const { threadChannel } = useMessageStore()
+
   const { data: messages } = useQuery(
     ["thread messages", threadChannel],
     () => api.getThreadMessages({ channel: threadChannel }),

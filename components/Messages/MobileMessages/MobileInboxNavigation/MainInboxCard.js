@@ -21,7 +21,7 @@ const MainInboxCard = ({ clickAway }) => {
 
   return (
     <li className="py-2" onClick={handleClick}>
-      <button className="font-bold">Main Inbox</button>
+      <button className="font-bold">Personal Inbox</button>
     </li>
   )
 }
