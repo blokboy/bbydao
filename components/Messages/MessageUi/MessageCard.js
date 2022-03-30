@@ -13,12 +13,21 @@ const MessageCard = ({ message }) => {
     const now = new Date()
     const difference = Math.abs(then.getTime() - now.getTime())
     const hours = difference / (60 * 60 * 1000)
+    const currentYear = now.getFullYear()
+    const messageYear = then.getFullYear()
+    let timestamp = ''
 
     if (hours < 24) {
-      return dayjs(message.updatedAt).format("h:mm A")
+      timestamp = `Today at ${dayjs(message.updatedAt).format("h:mm A")}`
     } else {
-      return dayjs(message.updatedAt).format("MMM D, YYYY h:mm A")
+      if (currentYear === messageYear) {
+        timestamp = dayjs(message.updatedAt).format("MMM D, h:mm A")
+      } else {
+        timestamp = dayjs(message.updatedAt).format("MMM D, YYYY h:mm A")
+      }
     }
+
+    return timestamp
   }
 
   return (
