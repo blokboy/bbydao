@@ -8,7 +8,9 @@ import useForm from "hooks/useForm"
 import { HiOutlineEmojiHappy } from "react-icons/hi"
 
 import ClickAwayListener from "react-click-away-listener"
-import "emoji-mart/css/emoji-mart.css"
+//import "emoji-mart/css/emoji-mart.css"
+// import "styles/emoji-mart.css"
+
 import { Picker } from "emoji-mart"
 
 const DesktopMessageInput = () => {
@@ -77,11 +79,8 @@ const DesktopMessageInput = () => {
       <Picker
         onSelect={handleEmojiClick}
         theme={theme === "dark" ? "dark" : "light"}
-        style={{
-          backgroundColor: theme === "dark" ? "rgb(15 23 42)" : "white",
-        }}
         emoji="desert_island"
-        title="bbyDAO"
+        title=""
         native={true}
       />
     )

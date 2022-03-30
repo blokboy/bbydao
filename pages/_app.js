@@ -1,4 +1,5 @@
 import "../styles/globals.css"
+import "../styles/emoji-mart.css"
 import React from "react"
 import Router from "next/router"
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query"
