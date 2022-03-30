@@ -8,6 +8,37 @@ const MessageCard = ({ message }) => {
   //   address: message?.sender,
   // })
 
+  // timestamp that prints out diff from current time
+  const diffTimestap = () => {
+    const date = dayjs(message?.updatedAt)
+    const now = dayjs()
+    const diff = now.diff(date, "minute")
+    if (diff < 1) {
+      return "just now"
+    }
+    if (diff < 60) {
+      return `${diff} minutes ago`
+    }
+    if (diff < 60 * 24) {
+      return `${Math.round(diff / 60)} hours ago`
+    }
+    if (diff < 60 * 24 * 7) {
+      return `${Math.round(diff / 60 / 24)} days ago`
+    }
+    if (diff < 60 * 24 * 30) {
+      return `${Math.round(diff / 60 / 24 / 7)} weeks ago`
+    }
+    if (diff < 60 * 24 * 365) {
+      const monthCalc = Math.round(diff / 60 / 24 / 30)
+      if (monthCalc === 1) {
+        return `${monthCalc} month ago`
+      } else {
+        return `${monthCalc} months ago`
+      }
+    }
+  }
+
+  // more precise timestamp - will develop a feature to show the exact time
   const prettyTimestamp = () => {
     const then = new Date(message.updatedAt)
     const now = new Date()
@@ -15,7 +46,7 @@ const MessageCard = ({ message }) => {
     const hours = difference / (60 * 60 * 1000)
     const currentYear = now.getFullYear()
     const messageYear = then.getFullYear()
-    let timestamp = ''
+    let timestamp = ""
 
     if (hours < 24) {
       timestamp = `Today at ${dayjs(message.updatedAt).format("h:mm A")}`
@@ -41,7 +72,7 @@ const MessageCard = ({ message }) => {
           {message?.sender.substring(0, 8) + "..."}
         </span>
         <div>{message?.body}</div>
-        <div className="font-thin text-xs mt-2">{prettyTimestamp()}</div>
+        <div className="mt-2 text-xs font-thin">{diffTimestap()}</div>
       </div>
     </li>
   )
