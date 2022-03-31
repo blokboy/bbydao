@@ -1,5 +1,6 @@
-import dayjs from "dayjs"
-import React from "react"
+import dayjs               from "dayjs"
+import { AnimatePresence, motion } from "framer-motion"
+import React, { useState }         from "react"
 // import { useEnsLookup } from "wagmi"
 
 const MessageCard = ({ message }) => {
@@ -94,12 +95,54 @@ const MessageCard = ({ message }) => {
     return timestamp
   }
 
+  const handleMouseEnter = () => {
+    setIsActive(true)
+  }
+
+  const handleMouseLeave = () => {
+    setIsActive(false)
+  }
+
+  const [isActive, setIsActive] = useState(false)
+  const variants = {
+    initial: {
+      opacity: 0,
+    },
+    animate: {
+      opacity: 1,
+      transition: {
+        delay: .125
+      }
+    },
+    exit: {
+      opacity: 0
+    }
+  }
+
   return (
-    <li className="mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-900">
+    <li
+      className="relative mb-2 flex w-full flex-row rounded-lg bg-slate-200 hover:bg-slate-100 p-3 dark:bg-slate-900 dark:hover:bg-slate-800"
+      onMouseEnter={() => handleMouseEnter()}
+      onMouseLeave={() => handleMouseLeave()}
+    >
+      <AnimatePresence>
+        <motion.div
+          variants={variants}
+          initial="initial"
+          animate={isActive ? "animate" : "exit"}
+          exit="exit"
+          className="absolute right-4 bg-slate-300 p-2 rounded"
+        >
+          BAR
+        </motion.div>
+      </AnimatePresence>
+
       <div className="mr-4">
         <div className="h-10 w-10 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
       </div>
-      <div className="flex w-11/12 flex-col">
+      <div
+        className="flex w-11/12 flex-col"
+      >
         <span className="font-bold">
           {/* {data && !loading ? data : message?.sender.substring(0, 8) + "..."} */}
           {message?.sender.substring(0, 8) + "..."}
