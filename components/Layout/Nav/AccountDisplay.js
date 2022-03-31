@@ -84,7 +84,7 @@ const AccountDisplay = () => {
               "..." +
               data.address.substring(
                 data.address.length - 5,
-                data.address.length - 1
+                data.address.length
               )
             : null}
         </button>
