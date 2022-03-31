@@ -1,6 +1,11 @@
-import dayjs               from "dayjs"
+import dayjs                       from "dayjs"
 import { AnimatePresence, motion } from "framer-motion"
 import React, { useState }         from "react"
+import { HiOutlineEmojiHappy } from "react-icons/hi"
+import { MdAddReaction } from "react-icons/md"
+import { Picker } from "emoji-mart"
+
+
 // import { useEnsLookup } from "wagmi"
 
 const MessageCard = ({ message }) => {
@@ -30,8 +35,8 @@ const MessageCard = ({ message }) => {
     const stamps = [
       {
         expirationInMinutes: 1,
-        timeSince: '',
-        timeAgo: 'just now'
+        timeSince: "",
+        timeAgo: "just now"
       },
       {
         expirationInMinutes: minutesIn.hour,
@@ -62,11 +67,11 @@ const MessageCard = ({ message }) => {
         expirationInMinutes: minutesIn.year * 1000,
         timeSince: Math.round(minutesSince / hour / day / month),
         timeAgo: `years`
-      },
+      }
     ]
 
     for (const stamp of stamps) {
-      if(minutesSince < stamp.expirationInMinutes) {
+      if (minutesSince < stamp.expirationInMinutes) {
         return `${stamp.timeSince} ${stamp.timeSince === 1 ? stamp.timeAgo.replace("s", "") : stamp.timeAgo}`
       }
     }
@@ -106,7 +111,7 @@ const MessageCard = ({ message }) => {
   const [isActive, setIsActive] = useState(false)
   const variants = {
     initial: {
-      opacity: 0,
+      opacity: 0
     },
     animate: {
       opacity: 1,
@@ -118,6 +123,19 @@ const MessageCard = ({ message }) => {
       opacity: 0
     }
   }
+  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false)
+  const handleShowEmojiPicker = () => {
+
+    // setShowEmojiPicker(!showEmojiPicker)
+  }
+  // const emojiPicker = () =>
+  //   <Picker
+  //     onSelect={handleEmojiClick}
+  //     theme={theme === "dark" ? "dark" : "light"}
+  //     emoji="desert_island"
+  //     title=""
+  //     native={true}
+  //   />
 
   return (
     <li
@@ -133,7 +151,13 @@ const MessageCard = ({ message }) => {
           exit="exit"
           className="absolute right-4 bg-slate-300 p-2 rounded"
         >
-          BAR
+          <button
+            className="ml-3 flex items-center rounded-full border bg-slate-200 p-1 font-bold shadow-xl hover:bg-slate-100 focus:outline-none dark:bg-slate-700 dark:hover:bg-slate-600"
+            type="button"
+            onClick={handleShowEmojiPicker}
+          >
+            <MdAddReaction size={16} />
+          </button>
         </motion.div>
       </AnimatePresence>
 
