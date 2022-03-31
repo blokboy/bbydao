@@ -1,9 +1,8 @@
 import dayjs                       from "dayjs"
+import { Emoji }                   from "emoji-mart"
 import { AnimatePresence, motion } from "framer-motion"
 import React, { useState }         from "react"
-import { HiOutlineEmojiHappy } from "react-icons/hi"
-import { MdAddReaction } from "react-icons/md"
-import { Picker } from "emoji-mart"
+import { MdAddReaction }           from "react-icons/md"
 
 
 // import { useEnsLookup } from "wagmi"
@@ -111,15 +110,15 @@ const MessageCard = ({ message }) => {
   const [isActive, setIsActive] = useState(false)
   const variants = {
     initial: {
+      y: 3,
       opacity: 0
     },
     animate: {
-      opacity: 1,
-      transition: {
-        delay: .125
-      }
+      y: 0,
+      opacity: 1
     },
     exit: {
+      y: 3,
       opacity: 0
     }
   }
@@ -149,15 +148,23 @@ const MessageCard = ({ message }) => {
           initial="initial"
           animate={isActive ? "animate" : "exit"}
           exit="exit"
-          className="absolute right-4 bg-slate-300 p-2 rounded"
+          className="flex items-center absolute right-4 bg-slate-300 rounded border border-slate-400"
         >
-          <button
-            className="ml-3 flex items-center rounded-full border bg-slate-200 p-1 font-bold shadow-xl hover:bg-slate-100 focus:outline-none dark:bg-slate-700 dark:hover:bg-slate-600"
-            type="button"
-            onClick={handleShowEmojiPicker}
+          <span
+            onClick={() => console.log('set emoji picker')}
+            className="flex p-1"
           >
             <MdAddReaction size={16} />
-          </button>
+          </span>
+          <span className="flex p-1">
+            <Emoji
+              emoji={{ id: 'heart', skin: 3 }}
+              size={16}
+              onClick={() => console.log('react')}
+            />
+          </span>
+
+
         </motion.div>
       </AnimatePresence>
 
