@@ -9,31 +9,32 @@ const MessageCard = ({ message }) => {
   // })
 
   // timestamp that prints out diff from current time
-  const diffTimestap = () => {
+  const diffTimestamp = () => {
     const date = dayjs(message?.updatedAt)
     const now = dayjs()
     const diff = now.diff(date, "minute")
-    if (diff < 1) {
-      return "just now"
-    }
-    if (diff < 60) {
-      return `${diff} minutes ago`
-    }
-    if (diff < 60 * 24) {
-      return `${Math.round(diff / 60)} hours ago`
-    }
-    if (diff < 60 * 24 * 7) {
-      return `${Math.round(diff / 60 / 24)} days ago`
-    }
-    if (diff < 60 * 24 * 30) {
-      return `${Math.round(diff / 60 / 24 / 7)} weeks ago`
-    }
-    if (diff < 60 * 24 * 365) {
-      const monthCalc = Math.round(diff / 60 / 24 / 30)
-      if (monthCalc === 1) {
-        return `${monthCalc} month ago`
-      } else {
-        return `${monthCalc} months ago`
+    const hour = 60
+    const day = 24
+    const week = 7
+    const month = 30
+    const year = 365
+
+    const times = [
+      [1, '', `just now`],
+      [hour, diff, `minutes ago`],
+      [hour * day, Math.round(diff / hour), `hours ago`],
+      [hour * day * week, Math.round(diff / hour / day), `days ago`],
+      [hour * day * month, Math.round(diff / hour / day / week), `weeks ago`],
+      [hour * day * year, Math.round(diff / hour / day / month), `months`]
+    ]
+
+    for (const time of times) {
+      const unit =time[1]
+      if(diff < time[0]) {
+        if(unit === 1) {
+          return `${unit} ${time[2].replace("s", "")}`
+        }
+        return `${unit} ${time[2]}`
       }
     }
   }
@@ -72,7 +73,7 @@ const MessageCard = ({ message }) => {
           {message?.sender.substring(0, 8) + "..."}
         </span>
         <div>{message?.body}</div>
-        <div className="mt-2 text-xs font-thin">{diffTimestap()}</div>
+        <div className="mt-3 text-sm font-thin">{diffTimestamp()}</div>
       </div>
     </li>
   )
