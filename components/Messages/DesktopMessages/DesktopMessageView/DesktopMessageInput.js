@@ -66,12 +66,13 @@ const DesktopMessageInput = () => {
       })
       const newCursor = cursor + e.native.length
       setTimeout(() => ref.current.setSelectionRange(newCursor, newCursor), 10)
+    } else {
+      const text =
+        state.message.slice(0, cursor) + e.native + state.message.slice(cursor)
+      setState({ message: text })
+      const newCursor = cursor + e.native.length
+      setTimeout(() => ref.current.setSelectionRange(newCursor, newCursor), 10)
     }
-    const text =
-      state.message.slice(0, cursor) + e.native + state.message.slice(cursor)
-    setState({ message: text })
-    const newCursor = cursor + e.native.length
-    setTimeout(() => ref.current.setSelectionRange(newCursor, newCursor), 10)
   }
 
   const emojiPicker = React.useMemo(() => {

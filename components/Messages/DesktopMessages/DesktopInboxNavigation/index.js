@@ -4,6 +4,7 @@ import DesktopMainInboxCard from "./DesktopMainInboxCard"
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import { useAccount } from "wagmi"
 import { useUiStore } from "stores/useUiStore"
+import { useMessageStore } from "stores/useMessageStore"
 import ClickAwayListener from "react-click-away-listener"
 import { HiOutlinePlusCircle, HiChevronDown } from "react-icons/hi"
 
@@ -12,6 +13,7 @@ const DesktopInboxNavigation = () => {
   const setCreateThreadModalOpen = useUiStore(
     state => state.setCreateThreadModalOpen
   )
+  const channelAddress = useMessageStore(state => state.channelAddress)
 
   const safeService = new SafeServiceClient(
     "https://safe-transaction.gnosis.io"
@@ -69,7 +71,9 @@ const DesktopInboxNavigation = () => {
             className="flex w-full justify-between rounded-xl p-2 font-bold dark:bg-slate-800"
             onClick={handleInboxDropdown}
           >
-            Inboxes
+            {data?.address === channelAddress
+              ? "personal"
+              : channelAddress?.substring(0, 6).concat("...")}
             <HiChevronDown size={20} />
           </button>
           {dropdown}

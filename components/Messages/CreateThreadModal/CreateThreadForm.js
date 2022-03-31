@@ -69,6 +69,7 @@ const CreateThreadForm = ({ closeModal }) => {
       sender: accountData?.address,
       body: state.body,
       addresses: arr,
+      channelName: state.name,
     }
     mutateAsync(req)
     setState({})
