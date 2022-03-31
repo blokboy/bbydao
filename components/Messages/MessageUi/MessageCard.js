@@ -9,32 +9,59 @@ const MessageCard = ({ message }) => {
   // })
 
   // timestamp that prints out diff from current time
-  const diffTimestamp = () => {
+  const diffTimeStamp = () => {
     const date = dayjs(message?.updatedAt)
     const now = dayjs()
-    const diff = now.diff(date, "minute")
+    const minutesSince = now.diff(date, "minute")
     const hour = 60
     const day = 24
     const week = 7
     const month = 30
     const year = 365
+    const minutesIn = {
+      hour: hour,
+      day: hour * day,
+      week: hour * day * week,
+      month: hour * day * month,
+      year: hour * day * year
+    }
 
-    const times = [
-      [1, '', `just now`],
-      [hour, diff, `minutes ago`],
-      [hour * day, Math.round(diff / hour), `hours ago`],
-      [hour * day * week, Math.round(diff / hour / day), `days ago`],
-      [hour * day * month, Math.round(diff / hour / day / week), `weeks ago`],
-      [hour * day * year, Math.round(diff / hour / day / month), `months`]
+    const stamps = [
+      {
+        expirationInMinutes: 1,
+        timeSince: '',
+        timeAgo: 'just now'
+      },
+      {
+        expirationInMinutes: minutesIn.hour,
+        timeSince: minutesSince,
+        timeAgo: `minutes ago`
+      },
+      {
+        expirationInMinutes: minutesIn.day,
+        timeSince: Math.round(minutesSince / hour),
+        timeAgo: `hours ago`
+      },
+      {
+        expirationInMinutes: minutesIn.week,
+        timeSince: Math.round(minutesSince / hour / day),
+        timeAgo: `days ago`
+      },
+      {
+        expirationInMinutes: minutesIn.month,
+        timeSince: Math.round(minutesSince / hour / day / week),
+        timeAgo: `weeks ago`
+      },
+      {
+        expirationInMinutes: minutesIn.year,
+        timeSince: Math.round(minutesSince / hour / day / month),
+        timeAgo: `months`
+      }
     ]
 
-    for (const time of times) {
-      const unit = time[1]
-      if(diff < time[0]) {
-        if(unit === 1) {
-          return `${unit} ${time[2].replace("s", "")}`
-        }
-        return `${unit} ${time[2]}`
+    for (const stamp of stamps) {
+      if(minutesSince < stamp.expirationInMinutes) {
+        return `${stamp.timeSince} ${stamp.timeSince === 1 ? stamp.timeAgo.replace("s", "") : stamp.timeAgo}`
       }
     }
   }
@@ -73,7 +100,7 @@ const MessageCard = ({ message }) => {
           {message?.sender.substring(0, 8) + "..."}
         </span>
         <div>{message?.body}</div>
-        <div className="mt-3 text-sm font-thin">{diffTimestamp()}</div>
+        <div className="mt-3 text-sm font-thin">{diffTimeStamp()}</div>
       </div>
     </li>
   )
