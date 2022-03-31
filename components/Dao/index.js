@@ -4,6 +4,7 @@ import TransactionModal from "./TransactionModal"
 import SidePanel from "./SidePanel"
 import Graph from "./Graph"
 import TokensNfts from "./TokensNfts"
+import Nurseries from "./Nurseries"
 import TxHistory from "./TxHistory"
 import ProposalHistory from "./ProposalHistory"
 import SellModal from "./TokensNfts/SellModal"
@@ -37,6 +38,7 @@ const Dao = ({ data }) => {
             <TokensNfts tokens={data.usd} collectibles={data.collectibles} />
           </div>
           <div className="flex w-full flex-col md:w-1/2">
+            <Nurseries nurseries={null} />
             <TxHistory
               allTxs={data.allTxs}
               owners={data.safeInfo.owners}
