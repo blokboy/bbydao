@@ -1,5 +1,5 @@
 import dayjs                       from "dayjs"
-import { Emoji }                   from "emoji-mart"
+import { Emoji, Picker }           from "emoji-mart"
 import { AnimatePresence, motion } from "framer-motion"
 import React, { useState }         from "react"
 import { MdAddReaction }           from "react-icons/md"
@@ -105,9 +105,12 @@ const MessageCard = ({ message }) => {
 
   const handleMouseLeave = () => {
     setIsActive(false)
+    setIsPickerActive(false)
   }
 
   const [isActive, setIsActive] = useState(false)
+  const [isPickerActive, setIsPickerActive] = useState(false)
+
   const variants = {
     initial: {
       y: 3,
@@ -122,19 +125,21 @@ const MessageCard = ({ message }) => {
       opacity: 0
     }
   }
-  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false)
-  const handleShowEmojiPicker = () => {
-
-    // setShowEmojiPicker(!showEmojiPicker)
+  const pickerVariants = {
+    initial: {
+      height: 0,
+      opacity: 0
+    },
+    animate: {
+      height: "auto",
+      pointerEvents: "auto",
+      opacity: 1
+    },
+    exit: {
+      display: "none",
+      pointerEvents: "none"
+    }
   }
-  // const emojiPicker = () =>
-  //   <Picker
-  //     onSelect={handleEmojiClick}
-  //     theme={theme === "dark" ? "dark" : "light"}
-  //     emoji="desert_island"
-  //     title=""
-  //     native={true}
-  //   />
 
   return (
     <li
@@ -150,21 +155,38 @@ const MessageCard = ({ message }) => {
           exit="exit"
           className="flex items-center absolute right-4 bg-slate-300 rounded border border-slate-400"
         >
+          <span className="flex p-1">
+            <Emoji
+              emoji={{ id: "heart", skin: 3 }}
+              size={16}
+              onClick={() => {
+                console.log("react")
+              }}
+              onOver={(emoji, event) => {
+              }}
+              onLeave={(emoji, event) => {
+              }}
+            />
+          </span>
           <span
-            onClick={() => console.log('set emoji picker')}
-            className="flex p-1"
+            onClick={() => {
+              console.log("set emoji picker")
+              setIsPickerActive(true)
+            }}
+            className="flex p-1 cursor-pointer"
           >
             <MdAddReaction size={16} />
           </span>
-          <span className="flex p-1">
-            <Emoji
-              emoji={{ id: 'heart', skin: 3 }}
-              size={16}
-              onClick={() => console.log('react')}
-            />
-          </span>
-
-
+          {console.log("aaa", isPickerActive)}
+          <motion.div
+            variants={pickerVariants}
+            initial="initial"
+            animate={isPickerActive ? "animate" : "exit"}
+            exit="exit"
+            className="absolute bottom-8 right-0 z-99 pointer-events-none"
+          >
+            <Picker />
+          </motion.div>
         </motion.div>
       </AnimatePresence>
 
