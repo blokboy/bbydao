@@ -56,7 +56,12 @@ const MessageCard = ({ message }) => {
         expirationInMinutes: minutesIn.year,
         timeSince: Math.round(minutesSince / hour / day / month),
         timeAgo: `months`
-      }
+      },
+      {
+        expirationInMinutes: minutesIn.year * 1000,
+        timeSince: Math.round(minutesSince / hour / day / month),
+        timeAgo: `years`
+      },
     ]
 
     for (const stamp of stamps) {
