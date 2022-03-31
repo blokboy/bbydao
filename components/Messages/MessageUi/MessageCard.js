@@ -29,7 +29,7 @@ const MessageCard = ({ message }) => {
     ]
 
     for (const time of times) {
-      const unit =time[1]
+      const unit = time[1]
       if(diff < time[0]) {
         if(unit === 1) {
           return `${unit} ${time[2].replace("s", "")}`
