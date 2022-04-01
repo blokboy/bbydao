@@ -171,6 +171,21 @@ const MessageCard = ({ message }) => {
     }
   })
 
+  const handleEmojiReaction = (emoji) => {
+    const req = {
+      id: message.id,
+      reactions: {
+        [message.sender]: emoji
+      }
+    }
+
+    updateMessage(
+      reaction?.[message.sender].unified === emoji.unified
+        ? { id: message.id, reactions: null }
+        : req
+    )
+  }
+
   return (
     <li
       className="relative mb-2 flex w-full flex-row rounded-lg bg-slate-200 hover:bg-slate-100 p-3 dark:bg-slate-900 dark:hover:bg-slate-800"
@@ -191,17 +206,7 @@ const MessageCard = ({ message }) => {
               emoji={{ id: "heart", skin: 3 }}
               size={16}
               onClick={(emoji, event) => {
-                const req = {
-                  id: message.id,
-                  reactions: {
-                    [message.sender]: emoji
-                  }
-                }
-                if (reaction?.[message.sender].unified === emoji.unified) {
-                  updateMessage({ id: message.id, reactions: null })
-                } else {
-                  updateMessage(req)
-                }
+                handleEmojiReaction(emoji)
               }}
             />
           </span>
@@ -227,18 +232,7 @@ const MessageCard = ({ message }) => {
                 ref={pickerRef}
                 theme={theme}
                 onSelect={(emoji) => {
-                  const req = {
-                    id: message.id,
-                    reactions: {
-                      [message.sender]: emoji
-                    }
-                  }
-
-                  if (reaction?.[message.sender].unified === emoji.unified) {
-                    updateMessage({ id: message.id, reactions: null })
-                  } else {
-                    updateMessage(req)
-                  }
+                  handleEmojiReaction(emoji)
                 }}
               />
             </motion.div>
