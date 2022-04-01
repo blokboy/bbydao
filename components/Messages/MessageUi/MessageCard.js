@@ -4,7 +4,9 @@ import { AnimatePresence, motion }            from "framer-motion"
 import { useTheme }                           from "next-themes"
 import React, { useEffect, useRef, useState } from "react"
 import { MdAddReaction }                      from "react-icons/md"
+import { useMutation }                        from "react-query"
 import { walletSnippet }                      from "utils/helpers"
+import * as api                               from "../../../query"
 
 
 // import { useEnsLookup } from "wagmi"
@@ -151,13 +153,25 @@ const MessageCard = ({ message }) => {
   const cardRef = useRef(null)
 
   useEffect(() => {
-    console.log("WR", pickerWrapperRef)
+    console.log('message', message)
     // console.log('RE', pickerRef?.current)
     // console.log('CA', cardRef?.current?.offsetTop)
     const cardOffsetHeight = cardRef?.current?.offsetTop
 
 
   }, [pickerRef])
+
+
+  const {
+    data,
+    error,
+    mutateAsync: updateMessage,
+  } = useMutation(api.mutateMessage, {
+    onSuccess: (data) => {
+      //setReaction(e)
+      console.log('data')
+    }
+  })
 
   return (
     <li
@@ -207,8 +221,17 @@ const MessageCard = ({ message }) => {
                 ref={pickerRef}
                 theme={theme}
                 onSelect={(e) => {
-                  console.log('e', e)
-                  setReaction(e)
+                  const req = {
+                    id: message.id,
+                    reactions: {
+                      [message.sender]: e
+                    }
+                  }
+
+                  updateMessage(req)
+
+                //  console.log('e', req)
+
 
                 }}
               />

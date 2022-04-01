@@ -76,11 +76,11 @@ export const deleteNotification = async req => {
 }
 
 // storeTxOffChain
-/* { 
+/* {
   creator: string,
-  txHash: string, 
-  tokenContract: string, 
-  tokenId: string, 
+  txHash: string,
+  tokenContract: string,
+  tokenId: string,
   safeContract: string,
   value: string,
   type: enum
@@ -139,6 +139,12 @@ export const getThreadMessages = async req => {
 // { sender: string (req), body: string (req), channel: string (semi-req), addresses: (semi-req) }
 export const createMessage = async req => {
   const res = await api.post("/message", req)
+  return res.data
+}
+
+//{id: string (req), dao: string (opt), body: string (opt), seen: bool (opt) reactions: obj (opt)}
+export const mutateMessage = async req => {
+  const res = await api.put("/message", req)
   return res.data
 }
 
