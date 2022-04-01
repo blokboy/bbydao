@@ -252,42 +252,44 @@ const MessageCard = ({ message }) => {
             {diffTimeStamp()}
           </div>
         </div>
-        <div className="font-normal py-1">{message?.body}</div>
-
+        <div className="font-normal py-1">
+          {message?.body}
+        </div>
         {reactions !== null && (
           <div className="inline-flex">
 
-            <div className="flex bg-slate-900 px-3 py-1 rounded-full">
-              {Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
-                const count = Object.entries(reactions)?.filter(item => item[1].id === currentValue[1].id).length
-                const emojiItem = {
-                  id: currentValue[1].id,
-                  skin: currentValue[1].skin,
-                  count
-                }
-
-                if (accumulator.filter(item => item.id === currentValue[1].id && item.skin === currentValue[1].skin) < 1)
-                  accumulator.push(emojiItem)
-
-                return accumulator
-
-              }, []).map((item) => {
-                return (
-                  <div className="flex">
-                    <Emoji
-                      emoji={{
-                        id: item?.id,
-                        skin: item?.skin
-                      }}
-                      size={16}
-                    />
-                    <div className="pl-1 text-white text-xs font-light">{item.count}</div>
-                  </div>
-
-                )
-              })
+            {Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
+              const count = Object.entries(reactions)?.filter(item => item[1].id === currentValue[1].id).length
+              const emojiItem = {
+                id: currentValue[1].id,
+                skin: currentValue[1].skin,
+                count
               }
-            </div>
+
+              if (accumulator.filter(item => item.id === currentValue[1].id && item.skin === currentValue[1].skin) < 1)
+                accumulator.push(emojiItem)
+
+              return accumulator
+
+            }, []).map((item) => {
+              return (
+                <div
+                  className="flex bg-slate-900 px-3 py-1 rounded-full mr-1"
+                  onClick={() => handleEmojiReaction({ id: item.id, skin: item.skin })}
+                >
+                  <Emoji
+                    emoji={{
+                      id: item?.id,
+                      skin: item?.skin
+                    }}
+                    size={16}
+                  />
+                  <div className="pl-1 text-white text-[.825rem] font-light">
+                    {item.count}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         )}
       </div>
