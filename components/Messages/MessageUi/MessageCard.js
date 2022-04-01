@@ -117,6 +117,7 @@ const MessageCard = ({ message }) => {
   const [isActive, setIsActive] = useState(false)
   const [isPickerActive, setIsPickerActive] = useState(false)
   const [reactions, setReactions] = useState(message.reactions)
+  const [filteredReactions, setFilteredReactions] = useState(reactions)
 
   const variants = {
     initial: {
@@ -213,7 +214,6 @@ const MessageCard = ({ message }) => {
           <span
             onClick={() => {
               setIsPickerActive(true)
-              console.log("WR", pickerRef)
 
             }}
             className="flex p-1 cursor-pointer"
@@ -255,18 +255,39 @@ const MessageCard = ({ message }) => {
         <div className="font-normal py-1">{message?.body}</div>
 
         {reactions !== null && (
-          <div className="inline-flex bg-slate-100 dark:bg-slate-900">
-            {Object.entries(reactions).map((reaction) => {
-              return (
-                <Emoji
-                  emoji={{
-                    id: reaction?.[1]?.id,
-                    skin: reaction?.[1]?.skin
-                  }}
-                  size={18}
-                />
-              )
-            })}
+          <div className="inline-flex">
+
+            <div className="flex bg-slate-900 px-3 py-1 rounded-full">
+              {Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
+                const count = Object.entries(reactions)?.filter(item => item[1].id === currentValue[1].id).length
+                const emojiItem = {
+                  id: currentValue[1].id,
+                  skin: currentValue[1].skin,
+                  count
+                }
+
+                if (accumulator.filter(item => item.id === currentValue[1].id && item.skin === currentValue[1].skin) < 1)
+                  accumulator.push(emojiItem)
+
+                return accumulator
+
+              }, []).map((item) => {
+                return (
+                  <div className="flex">
+                    <Emoji
+                      emoji={{
+                        id: item?.id,
+                        skin: item?.skin
+                      }}
+                      size={16}
+                    />
+                    <div className="pl-1 text-white text-xs font-light">{item.count}</div>
+                  </div>
+
+                )
+              })
+              }
+            </div>
           </div>
         )}
       </div>
