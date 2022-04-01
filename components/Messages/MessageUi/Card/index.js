@@ -163,7 +163,12 @@ const MessageCard = ({ message }) => {
 
     updateMessage(
       data?.reactions?.[message.sender].id === emoji.id
-        ? { id: message.id, reactions: null }
+        ? {
+            id: message.id,
+            reactions: {
+              [message.sender]: null
+            }
+      }
         : req
     )
   }
