@@ -110,6 +110,7 @@ const MessageCard = ({ message }) => {
 
   const [isActive, setIsActive] = useState(false)
   const [isPickerActive, setIsPickerActive] = useState(false)
+  const [reactions, setReactions] = useState(message.reactions)
 
   const variants = {
     initial: {
@@ -145,7 +146,12 @@ const MessageCard = ({ message }) => {
     data,
     error,
     mutateAsync: updateMessage
-  } = useMutation(api.mutateMessage)
+  } = useMutation(api.mutateMessage, {
+    onSuccess: (e) => {
+      setReactions(e?.reactions)
+    }
+  })
+
 
   const handleEmojiReaction = (emoji) => {
     const req = {
@@ -198,8 +204,8 @@ const MessageCard = ({ message }) => {
           {message?.body}
         </div>
         <div className="inline-flex">
-          {!!data?.reactions && Object.entries(data?.reactions).reduce(function(accumulator = [], currentValue) {
-            const count = Object.entries(data?.reactions)?.filter(item => item[1].id === currentValue[1].id).length
+          {!!reactions && Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
+            const count = Object.entries(reactions)?.filter(item => item[1].id === currentValue[1].id).length
             const emojiItem = {
               id: currentValue[1].id,
               skin: currentValue[1].skin,

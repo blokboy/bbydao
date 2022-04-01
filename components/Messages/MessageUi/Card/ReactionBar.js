@@ -55,6 +55,7 @@ const ReactionBar = ({
               theme={theme}
               onSelect={(emoji) => {
                 handleEmojiReaction(emoji)
+                setIsPickerActive(false)
               }}
             />
           </motion.div>
