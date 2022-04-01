@@ -4,21 +4,15 @@ import { AnimatePresence, motion }            from "framer-motion"
 import { useTheme }                           from "next-themes"
 import * as api                               from "query"
 import React, { useEffect, useRef, useState } from "react"
+import { isMobile }                           from "react-device-detect"
 import { MdAddReaction }                      from "react-icons/md"
 import { useMutation }                        from "react-query"
 import { walletSnippet }                      from "utils/helpers"
-
 
 // import { useEnsLookup } from "wagmi"
 
 const MessageCard = ({ message }) => {
   const { theme, setTheme } = useTheme()
-
-  // causes a lot of requests when loading messages
-  // const [{ data, error, loading }, lookupAddress] = useEnsLookup({
-  //   address: message?.sender,
-  // })
-
   // timestamp that prints out diff from current time
   const diffTimeStamp = () => {
     const date = dayjs(message?.createdAt)
@@ -116,8 +110,6 @@ const MessageCard = ({ message }) => {
 
   const [isActive, setIsActive] = useState(false)
   const [isPickerActive, setIsPickerActive] = useState(false)
-  const [reactions, setReactions] = useState(message.reactions)
-  const [filteredReactions, setFilteredReactions] = useState(reactions)
 
   const variants = {
     initial: {
@@ -148,16 +140,11 @@ const MessageCard = ({ message }) => {
       pointerEvents: "none"
     }
   }
-
   const pickerWrapperRef = useRef(null)
   const pickerRef = useRef(null)
   const cardRef = useRef(null)
 
   useEffect(() => {
-    // console.log('RE', pickerRef?.current)
-    // console.log('CA', cardRef?.current?.offsetTop)
-    const cardOffsetHeight = cardRef?.current?.offsetTop
-
 
   }, [pickerRef])
 
@@ -167,9 +154,7 @@ const MessageCard = ({ message }) => {
     error,
     mutateAsync: updateMessage
   } = useMutation(api.mutateMessage, {
-    onSuccess: (data) => {
-      setReactions(data?.reactions)
-    }
+
   })
 
   const handleEmojiReaction = (emoji) => {
@@ -181,7 +166,7 @@ const MessageCard = ({ message }) => {
     }
 
     updateMessage(
-      reactions?.[message.sender].id === emoji.id
+      data?.reactions?.[message.sender].id === emoji.id
         ? { id: message.id, reactions: null }
         : req
     )
@@ -220,23 +205,25 @@ const MessageCard = ({ message }) => {
           >
             <MdAddReaction size={16} />
           </span>
-          <div ref={pickerWrapperRef}>
-            <motion.div
-              variants={pickerVariants}
-              initial="initial"
-              animate={isPickerActive ? "animate" : "exit"}
-              exit="exit"
-              className="absolute bottom-8 right-0 z-99 pointer-events-none"
-            >
-              <Picker
-                ref={pickerRef}
-                theme={theme}
-                onSelect={(emoji) => {
-                  handleEmojiReaction(emoji)
-                }}
-              />
-            </motion.div>
-          </div>
+          {!isMobile && (
+            <div ref={pickerWrapperRef}>
+              <motion.div
+                variants={pickerVariants}
+                initial="initial"
+                animate={isPickerActive ? "animate" : "exit"}
+                exit="exit"
+                className="absolute bottom-0 right-14 z-99 pointer-events-none"
+              >
+                <Picker
+                  ref={pickerRef}
+                  theme={theme}
+                  onSelect={(emoji) => {
+                    handleEmojiReaction(emoji)
+                  }}
+                />
+              </motion.div>
+            </div>
+          )}
         </motion.div>
       </AnimatePresence>
 
@@ -255,43 +242,67 @@ const MessageCard = ({ message }) => {
         <div className="font-normal py-1">
           {message?.body}
         </div>
-        {reactions !== null && (
-          <div className="inline-flex">
+        <div className="inline-flex">
+          {!!data?.reactions && Object.entries(data?.reactions).reduce(function(accumulator = [], currentValue) {
+            const count = Object.entries(data?.reactions)?.filter(item => item[1].id === currentValue[1].id).length
+            const emojiItem = {
+              id: currentValue[1].id,
+              skin: currentValue[1].skin,
+              count
+            }
 
-            {Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
-              const count = Object.entries(reactions)?.filter(item => item[1].id === currentValue[1].id).length
-              const emojiItem = {
-                id: currentValue[1].id,
-                skin: currentValue[1].skin,
-                count
-              }
+            if (accumulator.filter(item => item.id === currentValue[1].id && item.skin === currentValue[1].skin) < 1)
+              accumulator.push(emojiItem)
 
-              if (accumulator.filter(item => item.id === currentValue[1].id && item.skin === currentValue[1].skin) < 1)
-                accumulator.push(emojiItem)
+            return accumulator
 
-              return accumulator
-
-            }, []).map((item) => {
-              return (
-                <div
-                  className="flex bg-slate-900 px-3 py-1 rounded-full mr-1"
-                  onClick={() => handleEmojiReaction({ id: item.id, skin: item.skin })}
-                >
-                  <Emoji
-                    emoji={{
-                      id: item?.id,
-                      skin: item?.skin
-                    }}
-                    size={16}
-                  />
-                  <div className="pl-1 text-white text-[.825rem] font-light">
-                    {item.count}
-                  </div>
+          }, []).map((item) => {
+            return (
+              <div
+                className="flex items-center bg-slate-900 px-3 py-1 rounded-full mr-1 hover:cursor-pointer"
+                onClick={() => handleEmojiReaction({ id: item.id, skin: item.skin })}
+              >
+                <Emoji
+                  emoji={{
+                    id: item?.id,
+                    skin: item?.skin
+                  }}
+                  size={16}
+                />
+                <div className="pl-1 text-white text-xs font-light">
+                  {item.count}
                 </div>
-              )
-            })}
-          </div>
-        )}
+              </div>
+            )
+          })}
+          {isMobile && (
+            <span
+              onClick={() => {
+                setIsPickerActive(true)
+              }}
+              className="flex items-center bg-slate-100 sm:bg-slate-200 px-3 py-1 rounded-full mr-1"
+            >
+              <MdAddReaction size={16} />
+              <div ref={pickerWrapperRef}>
+                <motion.div
+                  variants={pickerVariants}
+                  initial="initial"
+                  animate={isPickerActive ? "animate" : "exit"}
+                  exit="exit"
+                  className="absolute bottom-8 right-0 z-99 pointer-events-none"
+                >
+                  <Picker
+                    ref={pickerRef}
+                    theme={theme}
+                    onSelect={(emoji) => {
+                      handleEmojiReaction(emoji)
+                    }}
+                  />
+                </motion.div>
+             </div>
+            </span>
+          )}
+        </div>
       </div>
     </li>
   )
