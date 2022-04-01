@@ -36,7 +36,8 @@ const DesktopMessageContent = () => {
 
   return (
     <div className="mb-3 flex-1 overflow-auto overflow-x-hidden rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
-      {messages?.map(message => (
+
+      {messages?.sort((a, b) => (a.createdAt > b.createdAt) ? 1 : -1)?.map(message => (
         <MessageCard key={message.id} message={message} />
       ))}
       <div ref={messagesEndRef} />
