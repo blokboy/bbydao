@@ -1,5 +1,5 @@
 import React               from "react"
-import Index               from "../../MessageUi/Card"
+import MessageCard         from "../../MessageUi/Card"
 import { useMessageStore } from "stores/useMessageStore"
 import * as api from "query"
 import { useQuery } from "react-query"
@@ -36,7 +36,7 @@ const MobileMessageContent = () => {
   return (
     <div className="bg-slate-50 px-3 pb-20 pt-4 dark:bg-slate-800">
       {messages?.map(message => (
-        <Index key={message.id} message={message} />
+        <MessageCard key={message.id} message={message} />
       ))}
       <div ref={messagesEndRef} />
     </div>

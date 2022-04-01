@@ -1,20 +1,17 @@
 import dayjs                                  from "dayjs"
-import { Emoji, Picker }                      from "emoji-mart"
-import { AnimatePresence, motion }            from "framer-motion"
 import { useTheme }                           from "next-themes"
 import * as api                               from "query"
 import React, { useEffect, useRef, useState } from "react"
 import { isMobile }                           from "react-device-detect"
-import { MdAddReaction }                      from "react-icons/md"
 import { useMutation }                        from "react-query"
-import { walletSnippet } from "utils/helpers"
-import EmojiButton       from "./EmojiButton"
-import MobileEmojiPicker from "./MobileEmojiPicker"
-import ReactionBar       from "./ReactionBar"
+import { walletSnippet }                      from "utils/helpers"
+import EmojiButton                            from "./EmojiButton"
+import MobileEmojiPickerButton                from "./MobileEmojiPickerButton"
+import ReactionBar                            from "./ReactionBar"
 
 // import { useEnsLookup } from "wagmi"
 
-const Index = ({ message }) => {
+const MessageCard = ({ message }) => {
   const { theme, setTheme } = useTheme()
   // timestamp that prints out diff from current time
   const diffTimeStamp = () => {
@@ -187,16 +184,18 @@ const Index = ({ message }) => {
       />
 
       <div className="mr-4">
-        <div className="h-10 w-10 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
+        <div className="h-10 w-10 rounded-full border border-white bg-slate-200 dark:bg-slate-900" />
       </div>
       <div className="flex w-11/12 flex-col">
         <div className="flex items-center">
-          <span className="font-bold">
-            {walletSnippet(message?.sender)}
-          </span>
-          <div className="pl-2 text-[.8rem] font-thin">
-            {diffTimeStamp()}
-          </div>
+          <span
+            className="font-bold"
+            children={walletSnippet(message?.sender)}
+          />
+          <div
+            className="pl-2 text-[.8rem] font-thin"
+            children={diffTimeStamp()}
+          />
         </div>
         <div className="font-normal py-1">
           {message?.body}
@@ -224,7 +223,7 @@ const Index = ({ message }) => {
             )
           })}
           {isMobile && (
-            <MobileEmojiPicker
+            <MobileEmojiPickerButton
               theme={theme}
               pickerVariants={pickerVariants}
               handleEmojiReaction={handleEmojiReaction}
@@ -236,4 +235,4 @@ const Index = ({ message }) => {
   )
 }
 
-export default Index
+export default MessageCard

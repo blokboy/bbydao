@@ -3,7 +3,7 @@ import { motion }          from "framer-motion"
 import React, { useState } from "react"
 import { MdAddReaction }   from "react-icons/md"
 
-const MobileEmojiPicker = ({ theme, pickerVariants, handleEmojiReaction }) => {
+const MobileEmojiPickerButton = ({ theme, pickerVariants, handleEmojiReaction }) => {
   const [isPickerActive, setIsPickerActive] = useState(false)
 
   return (
@@ -34,4 +34,4 @@ const MobileEmojiPicker = ({ theme, pickerVariants, handleEmojiReaction }) => {
   )
 }
 
-export default MobileEmojiPicker
+export default MobileEmojiPickerButton
