@@ -1,10 +1,17 @@
 import { Emoji, Picker }           from "emoji-mart"
 import { AnimatePresence, motion } from "framer-motion"
-import React, { useState }         from "react"
+import React                       from "react"
 import { MdAddReaction }           from "react-icons/md"
 
-const ReactionBar = ({isActive, handleEmojiReaction, theme, pickerVariants, variants}) => {
-  const [isPickerActive, setIsPickerActive] = useState(false)
+const ReactionBar = ({
+                       isActive,
+                       handleEmojiReaction,
+                       theme,
+                       pickerVariants,
+                       variants,
+                       setIsPickerActive,
+                       isPickerActive
+                     }) => {
 
   return (
     <div>
@@ -34,12 +41,13 @@ const ReactionBar = ({isActive, handleEmojiReaction, theme, pickerVariants, vari
           >
             <MdAddReaction size={16} />
           </span>
+
           <motion.div
             variants={pickerVariants}
             initial="initial"
             animate={isPickerActive ? "animate" : "exit"}
             exit="exit"
-            className="absolute bottom-0 right-14 z-99 pointer-events-none"
+            className="absolute top-0 right-14 z-50 pointer-events-none"
           >
             <Picker
               theme={theme}
@@ -48,6 +56,8 @@ const ReactionBar = ({isActive, handleEmojiReaction, theme, pickerVariants, vari
               }}
             />
           </motion.div>
+
+
         </motion.div>
       </AnimatePresence>
     </div>

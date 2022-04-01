@@ -105,9 +105,12 @@ const MessageCard = ({ message }) => {
 
   const handleMouseLeave = () => {
     setIsActive(false)
+
+    setIsPickerActive(false)
   }
 
   const [isActive, setIsActive] = useState(false)
+  const [isPickerActive, setIsPickerActive] = useState(false)
 
   const variants = {
     initial: {
@@ -175,13 +178,17 @@ const MessageCard = ({ message }) => {
       onMouseLeave={() => handleMouseLeave()}
       ref={cardRef}
     >
-      <ReactionBar
-        isActive={isActive}
-        handleEmojiReaction={handleEmojiReaction}
-        theme={theme}
-        pickerVariants={pickerVariants}
-        variants={variants}
-      />
+      {!isMobile && (
+        <ReactionBar
+          isActive={isActive}
+          handleEmojiReaction={handleEmojiReaction}
+          theme={theme}
+          pickerVariants={pickerVariants}
+          variants={variants}
+          setIsPickerActive={setIsPickerActive}
+          isPickerActive={isPickerActive}
+        />
+      )}
 
       <div className="mr-4">
         <div className="h-10 w-10 rounded-full border border-white bg-slate-200 dark:bg-slate-900" />
@@ -227,6 +234,8 @@ const MessageCard = ({ message }) => {
               theme={theme}
               pickerVariants={pickerVariants}
               handleEmojiReaction={handleEmojiReaction}
+              setIsPickerActive={setIsPickerActive}
+              isPickerActive={isPickerActive}
             />
           )}
         </div>

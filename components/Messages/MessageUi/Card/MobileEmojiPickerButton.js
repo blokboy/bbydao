@@ -3,8 +3,7 @@ import { motion }          from "framer-motion"
 import React, { useState } from "react"
 import { MdAddReaction }   from "react-icons/md"
 
-const MobileEmojiPickerButton = ({ theme, pickerVariants, handleEmojiReaction }) => {
-  const [isPickerActive, setIsPickerActive] = useState(false)
+const MobileEmojiPickerButton = ({ theme, pickerVariants, handleEmojiReaction, setIsPickerActive, isPickerActive}) => {
 
   return (
     <span
