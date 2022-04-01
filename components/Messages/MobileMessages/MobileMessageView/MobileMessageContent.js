@@ -35,7 +35,7 @@ const MobileMessageContent = () => {
 
   return (
     <div className="bg-slate-50 px-3 pb-20 pt-4 dark:bg-slate-800">
-      {messages?.sort((a, b) => (a.createdAt > b.createdAt) ? 1 : -1)?.map(message => (
+      {messages?.map(message => (
         <MessageCard key={message.id} message={message} />
       ))}
       <div ref={messagesEndRef} />
