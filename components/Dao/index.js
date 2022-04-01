@@ -38,7 +38,7 @@ const Dao = ({ data }) => {
             <TokensNfts tokens={data.usd} collectibles={data.collectibles} />
           </div>
           <div className="flex w-full flex-col md:w-1/2">
-            <Nurseries nurseries={null} />
+            <Nurseries nurseries={null} owners={data.safeInfo.owners} />
             <TxHistory
               allTxs={data.allTxs}
               owners={data.safeInfo.owners}
