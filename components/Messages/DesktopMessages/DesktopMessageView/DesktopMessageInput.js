@@ -1,17 +1,16 @@
-import React from "react"
-import { useTheme } from "next-themes"
-import * as api from "query"
-import { useQueryClient, useMutation } from "react-query"
-import { useMessageStore } from "stores/useMessageStore"
-import { useAccount } from "wagmi"
-import useForm from "hooks/useForm"
-import { HiOutlineEmojiHappy } from "react-icons/hi"
-
-import ClickAwayListener from "react-click-away-listener"
 //import "emoji-mart/css/emoji-mart.css"
 // import "styles/emoji-mart.css"
+import { Picker }   from "emoji-mart"
+import useForm      from "hooks/useForm"
+import { useTheme } from "next-themes"
+import * as api     from "query"
+import React        from "react"
 
-import { Picker } from "emoji-mart"
+import ClickAwayListener               from "react-click-away-listener"
+import { HiOutlineEmojiHappy }         from "react-icons/hi"
+import { useMutation, useQueryClient } from "react-query"
+import { useMessageStore }             from "stores/useMessageStore"
+import { useAccount }                  from "wagmi"
 
 const DesktopMessageInput = () => {
   const { state, setState, handleChange } = useForm()
@@ -21,13 +20,13 @@ const DesktopMessageInput = () => {
   const {
     data,
     error,
-    mutateAsync: createMessage,
+    mutateAsync: createMessage
   } = useMutation(api.createMessage, {
     onSettled: async () => {
       await queryClient.invalidateQueries(["thread messages", threadChannel], {
-        refetchActive: true,
+        refetchActive: true
       })
-    },
+    }
   })
 
   const [{ data: accountData, error: accountError, loading: accountLoading }] =
@@ -42,7 +41,7 @@ const DesktopMessageInput = () => {
     const req = {
       sender: accountData.address,
       channel: threadChannel,
-      body: state.message,
+      body: state.message
     }
     createMessage(req)
     setState({})
@@ -62,7 +61,7 @@ const DesktopMessageInput = () => {
     const cursor = ref.current.selectionStart
     if (cursor === 0 || !state.message) {
       setState({
-        message: e.native,
+        message: e.native
       })
       const newCursor = cursor + e.native.length
       setTimeout(() => ref.current.setSelectionRange(newCursor, newCursor), 10)

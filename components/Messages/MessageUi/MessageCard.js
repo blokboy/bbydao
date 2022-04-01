@@ -2,11 +2,11 @@ import dayjs                                  from "dayjs"
 import { Emoji, Picker }                      from "emoji-mart"
 import { AnimatePresence, motion }            from "framer-motion"
 import { useTheme }                           from "next-themes"
+import * as api                               from "query"
 import React, { useEffect, useRef, useState } from "react"
 import { MdAddReaction }                      from "react-icons/md"
 import { useMutation }                        from "react-query"
 import { walletSnippet }                      from "utils/helpers"
-import * as api                               from "../../../query"
 
 
 // import { useEnsLookup } from "wagmi"
@@ -21,7 +21,7 @@ const MessageCard = ({ message }) => {
 
   // timestamp that prints out diff from current time
   const diffTimeStamp = () => {
-    const date = dayjs(message?.updatedAt)
+    const date = dayjs(message?.createdAt)
     const now = dayjs()
     const minutesSince = now.diff(date, "minute")
     const hour = 60
@@ -164,7 +164,7 @@ const MessageCard = ({ message }) => {
   const {
     data,
     error,
-    mutateAsync: updateMessage,
+    mutateAsync: updateMessage
   } = useMutation(api.mutateMessage, {
     onSuccess: (data) => {
       setReaction(data?.reactions)
@@ -197,7 +197,11 @@ const MessageCard = ({ message }) => {
                     [message.sender]: emoji
                   }
                 }
-                updateMessage(req)
+                if (reaction?.[message.sender].unified === emoji.unified) {
+                  updateMessage({ id: message.id, reactions: null })
+                } else {
+                  updateMessage(req)
+                }
               }}
             />
           </span>
@@ -222,14 +226,19 @@ const MessageCard = ({ message }) => {
               <Picker
                 ref={pickerRef}
                 theme={theme}
-                onSelect={(e) => {
+                onSelect={(emoji) => {
                   const req = {
                     id: message.id,
                     reactions: {
-                      [message.sender]: e
+                      [message.sender]: emoji
                     }
                   }
-                  updateMessage(req)
+
+                  if (reaction?.[message.sender].unified === emoji.unified) {
+                    updateMessage({ id: message.id, reactions: null })
+                  } else {
+                    updateMessage(req)
+                  }
                 }}
               />
             </motion.div>
@@ -255,7 +264,7 @@ const MessageCard = ({ message }) => {
         <div className="font-normal py-1">{message?.body}</div>
         {reaction !== null && (
           <div className="inline-flex bg-slate-100 dark:bg-slate-900">
-            <Emoji emoji={{ id: reaction?.[message?.sender]?.id, skin: 1 }} size={18}  />
+            <Emoji emoji={{ id: reaction?.[message?.sender]?.id, skin: 1 }} size={18} />
           </div>
         )}
       </div>
