@@ -116,7 +116,7 @@ const MessageCard = ({ message }) => {
 
   const [isActive, setIsActive] = useState(false)
   const [isPickerActive, setIsPickerActive] = useState(false)
-  const [reaction, setReaction] = useState(undefined)
+  const [reaction, setReaction] = useState(message.reactions)
 
   const variants = {
     initial: {
@@ -153,7 +153,6 @@ const MessageCard = ({ message }) => {
   const cardRef = useRef(null)
 
   useEffect(() => {
-    console.log('message', message)
     // console.log('RE', pickerRef?.current)
     // console.log('CA', cardRef?.current?.offsetTop)
     const cardOffsetHeight = cardRef?.current?.offsetTop
@@ -168,8 +167,7 @@ const MessageCard = ({ message }) => {
     mutateAsync: updateMessage,
   } = useMutation(api.mutateMessage, {
     onSuccess: (data) => {
-      //setReaction(e)
-      console.log('data')
+      setReaction(data?.reactions)
     }
   })
 
@@ -193,16 +191,20 @@ const MessageCard = ({ message }) => {
               emoji={{ id: "heart", skin: 3 }}
               size={16}
               onClick={(emoji, event) => {
-                console.log("react", emoji)
+                const req = {
+                  id: message.id,
+                  reactions: {
+                    [message.sender]: emoji
+                  }
+                }
+                updateMessage(req)
               }}
             />
           </span>
           <span
             onClick={() => {
-              console.log("set emoji picker")
               setIsPickerActive(true)
               console.log("WR", pickerRef)
-
 
             }}
             className="flex p-1 cursor-pointer"
@@ -227,12 +229,7 @@ const MessageCard = ({ message }) => {
                       [message.sender]: e
                     }
                   }
-
                   updateMessage(req)
-
-                //  console.log('e', req)
-
-
                 }}
               />
             </motion.div>
@@ -256,9 +253,9 @@ const MessageCard = ({ message }) => {
         </div>
 
         <div className="font-normal py-1">{message?.body}</div>
-        {!!reaction && (
+        {reaction !== null && (
           <div className="inline-flex bg-slate-100 dark:bg-slate-900">
-            <Emoji emoji={{ id: reaction?.id, skin: 1 }} size={18}  />
+            <Emoji emoji={{ id: reaction?.[message?.sender]?.id, skin: 1 }} size={18}  />
           </div>
         )}
       </div>
