@@ -58,8 +58,6 @@ const ReactionBar = ({
               }}
             />
           </motion.div>
-
-
         </motion.div>
       </AnimatePresence>
     </div>

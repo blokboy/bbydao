@@ -1,9 +1,9 @@
 import { Picker }        from "emoji-mart"
-import { motion }          from "framer-motion"
-import React, { useState } from "react"
-import { MdAddReaction }   from "react-icons/md"
+import { motion }        from "framer-motion"
+import React             from "react"
+import { MdAddReaction } from "react-icons/md"
 
-const MobileEmojiPickerButton = ({ theme, pickerVariants, handleEmojiReaction, setIsPickerActive, isPickerActive}) => {
+const MobileEmojiPickerButton = ({ theme, pickerVariants, handleEmojiReaction, setIsPickerActive, isPickerActive }) => {
 
   return (
     <span

@@ -105,7 +105,6 @@ const MessageCard = ({ message }) => {
 
   const handleMouseLeave = () => {
     setIsActive(false)
-
     setIsPickerActive(false)
   }
 
@@ -141,9 +140,6 @@ const MessageCard = ({ message }) => {
       pointerEvents: "none"
     }
   }
-  const pickerWrapperRef = useRef(null)
-  const pickerRef = useRef(null)
-  const cardRef = useRef(null)
 
   const {
     data,
@@ -166,17 +162,11 @@ const MessageCard = ({ message }) => {
     )
   }
 
-  useEffect(() => {
-
-  }, [pickerRef])
-
-
   return (
     <li
       className="relative mb-2 flex w-full flex-row rounded-lg bg-slate-200 hover:bg-slate-100 p-3 dark:bg-slate-900 dark:hover:bg-slate-800"
       onMouseEnter={() => handleMouseEnter()}
       onMouseLeave={() => handleMouseLeave()}
-      ref={cardRef}
     >
       {!isMobile && (
         <ReactionBar
@@ -221,10 +211,10 @@ const MessageCard = ({ message }) => {
 
             return accumulator
 
-          }, []).map((item) => {
+          }, []).map((emoji) => {
             return (
               <EmojiButton
-                item={item}
+                emoji={emoji}
                 handleEmojiReaction={handleEmojiReaction}
                 them={theme}
               />
