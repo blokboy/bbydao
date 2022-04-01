@@ -1,13 +1,17 @@
-import dayjs                       from "dayjs"
-import { Emoji, Picker }           from "emoji-mart"
-import { AnimatePresence, motion } from "framer-motion"
-import React, { useState }         from "react"
-import { MdAddReaction }           from "react-icons/md"
+import dayjs                                  from "dayjs"
+import { Emoji, Picker }                      from "emoji-mart"
+import { AnimatePresence, motion }            from "framer-motion"
+import { useTheme }                           from "next-themes"
+import React, { useEffect, useRef, useState } from "react"
+import { MdAddReaction }                      from "react-icons/md"
+import { walletSnippet }                      from "utils/helpers"
 
 
 // import { useEnsLookup } from "wagmi"
 
 const MessageCard = ({ message }) => {
+  const { theme, setTheme } = useTheme()
+
   // causes a lot of requests when loading messages
   // const [{ data, error, loading }, lookupAddress] = useEnsLookup({
   //   address: message?.sender,
@@ -110,6 +114,7 @@ const MessageCard = ({ message }) => {
 
   const [isActive, setIsActive] = useState(false)
   const [isPickerActive, setIsPickerActive] = useState(false)
+  const [reaction, setReaction] = useState(undefined)
 
   const variants = {
     initial: {
@@ -141,11 +146,25 @@ const MessageCard = ({ message }) => {
     }
   }
 
+  const pickerWrapperRef = useRef(null)
+  const pickerRef = useRef(null)
+  const cardRef = useRef(null)
+
+  useEffect(() => {
+    console.log("WR", pickerWrapperRef)
+    // console.log('RE', pickerRef?.current)
+    // console.log('CA', cardRef?.current?.offsetTop)
+    const cardOffsetHeight = cardRef?.current?.offsetTop
+
+
+  }, [pickerRef])
+
   return (
     <li
       className="relative mb-2 flex w-full flex-row rounded-lg bg-slate-200 hover:bg-slate-100 p-3 dark:bg-slate-900 dark:hover:bg-slate-800"
       onMouseEnter={() => handleMouseEnter()}
       onMouseLeave={() => handleMouseLeave()}
+      ref={cardRef}
     >
       <AnimatePresence>
         <motion.div
@@ -159,12 +178,8 @@ const MessageCard = ({ message }) => {
             <Emoji
               emoji={{ id: "heart", skin: 3 }}
               size={16}
-              onClick={() => {
-                console.log("react")
-              }}
-              onOver={(emoji, event) => {
-              }}
-              onLeave={(emoji, event) => {
+              onClick={(emoji, event) => {
+                console.log("react", emoji)
               }}
             />
           </span>
@@ -172,36 +187,57 @@ const MessageCard = ({ message }) => {
             onClick={() => {
               console.log("set emoji picker")
               setIsPickerActive(true)
+              console.log("WR", pickerRef)
+
+
             }}
             className="flex p-1 cursor-pointer"
           >
             <MdAddReaction size={16} />
           </span>
-          {console.log("aaa", isPickerActive)}
-          <motion.div
-            variants={pickerVariants}
-            initial="initial"
-            animate={isPickerActive ? "animate" : "exit"}
-            exit="exit"
-            className="absolute bottom-8 right-0 z-99 pointer-events-none"
-          >
-            <Picker />
-          </motion.div>
+          <div ref={pickerWrapperRef}>
+            <motion.div
+              variants={pickerVariants}
+              initial="initial"
+              animate={isPickerActive ? "animate" : "exit"}
+              exit="exit"
+              className="absolute bottom-8 right-0 z-99 pointer-events-none"
+            >
+              <Picker
+                ref={pickerRef}
+                theme={theme}
+                onSelect={(e) => {
+                  console.log('e', e)
+                  setReaction(e)
+
+                }}
+              />
+            </motion.div>
+          </div>
+
         </motion.div>
       </AnimatePresence>
 
       <div className="mr-4">
         <div className="h-10 w-10 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
       </div>
-      <div
-        className="flex w-11/12 flex-col"
-      >
-        <span className="font-bold">
+      <div className="flex w-11/12 flex-col">
+        <div className="flex items-center">
+          <span className="font-bold">
           {/* {data && !loading ? data : message?.sender.substring(0, 8) + "..."} */}
-          {message?.sender.substring(0, 8) + "..."}
-        </span>
-        <div>{message?.body}</div>
-        <div className="mt-3 text-sm font-thin">{diffTimeStamp()}</div>
+            {walletSnippet(message?.sender)}
+          </span>
+          <div className="pl-2 text-[.8rem] font-thin">
+            {diffTimeStamp()}
+          </div>
+        </div>
+
+        <div className="font-normal py-1">{message?.body}</div>
+        {!!reaction && (
+          <div className="inline-flex bg-slate-100 dark:bg-slate-900">
+            <Emoji emoji={{ id: reaction?.id, skin: 1 }} size={18}  />
+          </div>
+        )}
       </div>
     </li>
   )

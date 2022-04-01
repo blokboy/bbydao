@@ -1,7 +1,8 @@
-import React from "react"
-import Link from "next/link"
-import Davatar from "@davatar/react"
-import { useEnsLookup } from "wagmi"
+import React             from "react"
+import Link              from "next/link"
+import Davatar           from "@davatar/react"
+import { useEnsLookup }  from "wagmi"
+import { walletSnippet } from "../../../utils/helpers"
 
 const MemberCard = ({ member }) => {
   const [{ data, error, loading }, lookupAddress] = useEnsLookup({
@@ -21,9 +22,7 @@ const MemberCard = ({ member }) => {
             ) : data && !loading ? (
               data
             ) : !data && !loading ? (
-              member.substring(0, 6) +
-              "..." +
-              member.substring(member.length - 5, member.length - 1)
+              walletSnippet(member)
             ) : (
               <div className="flex w-full animate-pulse space-x-2">
                 <div className="h-4 w-8/12 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32]"></div>

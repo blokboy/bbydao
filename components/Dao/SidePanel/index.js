@@ -2,10 +2,11 @@ import React from "react"
 import { useQuery, useMutation } from "react-query"
 import { useAccount, useConnect } from "wagmi"
 
-import * as api from "../../../query"
-import MemberCard from "./MemberCard"
-import { useUiStore } from "stores/useUiStore"
-import useFriendData from "hooks/useFriendData"
+import * as api          from "../../../query"
+import { walletSnippet } from "../../../utils/helpers"
+import MemberCard        from "./MemberCard"
+import { useUiStore }    from "stores/useUiStore"
+import useFriendData     from "hooks/useFriendData"
 
 const SidePanel = ({ safeInfo, nftImage }) => {
   const [{ data }] = useAccount()
@@ -68,12 +69,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
             )
           }}
         >
-          {safeInfo.address.substring(0, 6) +
-            "..." +
-            safeInfo.address.substring(
-              safeInfo.address.length - 5,
-              safeInfo.address.length - 1
-            )}
+          {walletSnippet(safeInfo)}
         </span>
       </div>
 

@@ -1,6 +1,7 @@
-import React from "react"
-import { ethers } from "ethers"
-import { useOsStore } from "stores/useOsStore"
+import React             from "react"
+import { ethers }        from "ethers"
+import { useOsStore }    from "stores/useOsStore"
+import { walletSnippet } from "../../../utils/helpers"
 
 const AssetCard = ({ asset }) => {
   const setOsOfferModalOpen = useOsStore(state => state.setOsOfferModalOpen)
@@ -47,12 +48,7 @@ const AssetCard = ({ asset }) => {
           <div className="flex flex-col">
             <span className="text-xs font-semibold">owner:</span>
             <span className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text font-semibold text-transparent">
-              {asset?.owner.substring(0, 6) +
-                "..." +
-                asset?.owner.substring(
-                  asset?.owner.length - 5,
-                  asset?.owner.length - 1
-                )}
+              {walletSnippet(asset?.owner)}
             </span>
           </div>
         </div>

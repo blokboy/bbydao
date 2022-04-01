@@ -1,10 +1,11 @@
-import React from "react"
-import { useOsStore } from "stores/useOsStore"
-import { useAccount } from "wagmi"
+import React             from "react"
+import { useOsStore }    from "stores/useOsStore"
+import { useAccount }    from "wagmi"
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
-import useForm from "hooks/useForm"
-import * as api from 'query'
-import { useMutation } from "react-query"
+import useForm           from "hooks/useForm"
+import * as api          from 'query'
+import { useMutation }   from "react-query"
+import { walletSnippet } from "../../../utils/helpers"
 
 const SellModal = ({ safeAddress }) => {
   const osSellModalOpen = useOsStore(state => state.osSellModalOpen)
@@ -99,9 +100,7 @@ const SellModal = ({ safeAddress }) => {
                       value={safe}
                     />
                     <label className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text pl-4 font-semibold text-transparent">
-                      {safe.substring(0, 6) +
-                        "..." +
-                        safe.substring(safe.length - 5, safe.length - 1)}
+                      {walletSnippet(safe)}
                     </label>
                   </div>
                 ))

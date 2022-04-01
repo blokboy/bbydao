@@ -13,7 +13,7 @@ const DesktopThreadCard = ({ title, thread }) => {
     setThreadChannel(thread.channel)
     setMobileThreadView()
   }
-  
+
   const parseTitle = (_addresses) => {
     const parsedTitles = []
 
@@ -25,8 +25,6 @@ const DesktopThreadCard = ({ title, thread }) => {
 
     return parsedTitles
   }
-
-  console.log('parsed titles ', parseTitle(title))
 
   return (
     <li

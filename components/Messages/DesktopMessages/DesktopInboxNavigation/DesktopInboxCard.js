@@ -1,5 +1,6 @@
-import React from "react"
+import React               from "react"
 import { useMessageStore } from "stores/useMessageStore"
+import { walletSnippet }   from "utils/helpers"
 
 const DesktopInboxCard = ({ safe, clickAway }) => {
   const channelAddress = useMessageStore(state => state.channelAddress)
@@ -20,7 +21,7 @@ const DesktopInboxCard = ({ safe, clickAway }) => {
   return (
     <li className="py-2" onClick={handleClick}>
       <button className="font-bold">
-        {safe?.length > 30 ? safe.substring(0, 6).concat("...").concat(safe.substring(safe.length - 4, safe.length)) : safe}
+        {safe?.length > 30 ? walletSnippet(safe) : safe}
       </button>
     </li>
   )
