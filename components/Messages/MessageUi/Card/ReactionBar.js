@@ -21,7 +21,7 @@ const ReactionBar = ({
           initial="initial"
           animate={isActive ? "animate" : "exit"}
           exit="exit"
-          className="flex items-center absolute right-4 bg-slate-300 rounded border border-slate-400"
+          className="flex items-center absolute right-4 bg-slate-300 dark:bg-slate-700 rounded border border-slate-400 dark:border-slate-800"
         >
           <span className="flex p-1">
             <Emoji
@@ -39,7 +39,9 @@ const ReactionBar = ({
             }}
             className="flex p-1 cursor-pointer"
           >
-            <MdAddReaction size={16} />
+            <MdAddReaction
+              size={16}
+            />
           </span>
 
           <motion.div

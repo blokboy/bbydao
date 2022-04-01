@@ -226,6 +226,7 @@ const MessageCard = ({ message }) => {
               <EmojiButton
                 item={item}
                 handleEmojiReaction={handleEmojiReaction}
+                them={theme}
               />
             )
           })}
