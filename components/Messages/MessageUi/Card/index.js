@@ -209,8 +209,8 @@ const MessageCard = ({ message }) => {
           {message?.body}
         </div>
         <div className="inline-flex">
-          {!!reactions && Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
-            const count = Object.entries(reactions)?.filter(item => item[1].id === currentValue[1].id).length
+          {!!reactions[message?.sender] && Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
+            const count = Object.entries(reactions)?.filter(item => item[1]?.id === currentValue[1].id).length
             const emojiItem = {
               id: currentValue[1].id,
               skin: currentValue[1].skin,
