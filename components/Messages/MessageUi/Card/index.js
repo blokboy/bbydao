@@ -7,11 +7,14 @@ import React, { useEffect, useRef, useState } from "react"
 import { isMobile }                           from "react-device-detect"
 import { MdAddReaction }                      from "react-icons/md"
 import { useMutation }                        from "react-query"
-import { walletSnippet }                      from "utils/helpers"
+import { walletSnippet } from "utils/helpers"
+import EmojiButton       from "./EmojiButton"
+import MobileEmojiPicker from "./MobileEmojiPicker"
+import ReactionBar       from "./ReactionBar"
 
 // import { useEnsLookup } from "wagmi"
 
-const MessageCard = ({ message }) => {
+const Index = ({ message }) => {
   const { theme, setTheme } = useTheme()
   // timestamp that prints out diff from current time
   const diffTimeStamp = () => {
@@ -105,11 +108,9 @@ const MessageCard = ({ message }) => {
 
   const handleMouseLeave = () => {
     setIsActive(false)
-    setIsPickerActive(false)
   }
 
   const [isActive, setIsActive] = useState(false)
-  const [isPickerActive, setIsPickerActive] = useState(false)
 
   const variants = {
     initial: {
@@ -144,18 +145,11 @@ const MessageCard = ({ message }) => {
   const pickerRef = useRef(null)
   const cardRef = useRef(null)
 
-  useEffect(() => {
-
-  }, [pickerRef])
-
-
   const {
     data,
     error,
     mutateAsync: updateMessage
-  } = useMutation(api.mutateMessage, {
-
-  })
+  } = useMutation(api.mutateMessage)
 
   const handleEmojiReaction = (emoji) => {
     const req = {
@@ -172,6 +166,11 @@ const MessageCard = ({ message }) => {
     )
   }
 
+  useEffect(() => {
+
+  }, [pickerRef])
+
+
   return (
     <li
       className="relative mb-2 flex w-full flex-row rounded-lg bg-slate-200 hover:bg-slate-100 p-3 dark:bg-slate-900 dark:hover:bg-slate-800"
@@ -179,53 +178,13 @@ const MessageCard = ({ message }) => {
       onMouseLeave={() => handleMouseLeave()}
       ref={cardRef}
     >
-      <AnimatePresence>
-        <motion.div
-          variants={variants}
-          initial="initial"
-          animate={isActive ? "animate" : "exit"}
-          exit="exit"
-          className="flex items-center absolute right-4 bg-slate-300 rounded border border-slate-400"
-        >
-          <span className="flex p-1">
-            <Emoji
-              emoji={{ id: "heart", skin: 3 }}
-              size={16}
-              onClick={(emoji, event) => {
-                handleEmojiReaction(emoji)
-              }}
-            />
-          </span>
-          <span
-            onClick={() => {
-              setIsPickerActive(true)
-
-            }}
-            className="flex p-1 cursor-pointer"
-          >
-            <MdAddReaction size={16} />
-          </span>
-          {!isMobile && (
-            <div ref={pickerWrapperRef}>
-              <motion.div
-                variants={pickerVariants}
-                initial="initial"
-                animate={isPickerActive ? "animate" : "exit"}
-                exit="exit"
-                className="absolute bottom-0 right-14 z-99 pointer-events-none"
-              >
-                <Picker
-                  ref={pickerRef}
-                  theme={theme}
-                  onSelect={(emoji) => {
-                    handleEmojiReaction(emoji)
-                  }}
-                />
-              </motion.div>
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
+      <ReactionBar
+        isActive={isActive}
+        handleEmojiReaction={handleEmojiReaction}
+        theme={theme}
+        pickerVariants={pickerVariants}
+        variants={variants}
+      />
 
       <div className="mr-4">
         <div className="h-10 w-10 rounded-full border border-white bg-slate-200 dark:bg-slate-900"></div>
@@ -258,49 +217,18 @@ const MessageCard = ({ message }) => {
 
           }, []).map((item) => {
             return (
-              <div
-                className="flex items-center bg-slate-900 px-3 py-1 rounded-full mr-1 hover:cursor-pointer"
-                onClick={() => handleEmojiReaction({ id: item.id, skin: item.skin })}
-              >
-                <Emoji
-                  emoji={{
-                    id: item?.id,
-                    skin: item?.skin
-                  }}
-                  size={16}
-                />
-                <div className="pl-1 text-white text-xs font-light">
-                  {item.count}
-                </div>
-              </div>
+              <EmojiButton
+                item={item}
+                handleEmojiReaction={handleEmojiReaction}
+              />
             )
           })}
           {isMobile && (
-            <span
-              onClick={() => {
-                setIsPickerActive(true)
-              }}
-              className="flex items-center bg-slate-100 sm:bg-slate-200 px-3 py-1 rounded-full mr-1"
-            >
-              <MdAddReaction size={16} />
-              <div ref={pickerWrapperRef}>
-                <motion.div
-                  variants={pickerVariants}
-                  initial="initial"
-                  animate={isPickerActive ? "animate" : "exit"}
-                  exit="exit"
-                  className="absolute bottom-8 right-0 z-99 pointer-events-none"
-                >
-                  <Picker
-                    ref={pickerRef}
-                    theme={theme}
-                    onSelect={(emoji) => {
-                      handleEmojiReaction(emoji)
-                    }}
-                  />
-                </motion.div>
-             </div>
-            </span>
+            <MobileEmojiPicker
+              theme={theme}
+              pickerVariants={pickerVariants}
+              handleEmojiReaction={handleEmojiReaction}
+            />
           )}
         </div>
       </div>
@@ -308,4 +236,4 @@ const MessageCard = ({ message }) => {
   )
 }
 
-export default MessageCard
+export default Index

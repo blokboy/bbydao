@@ -1,5 +1,5 @@
-import React from "react"
-import MessageCard from "../../MessageUi/MessageCard"
+import React               from "react"
+import Index               from "../../MessageUi/Card"
 import { useMessageStore } from "stores/useMessageStore"
 import * as api from "query"
 import { useQuery } from "react-query"
@@ -37,7 +37,7 @@ const DesktopMessageContent = () => {
   return (
     <div className="mb-3 flex-1 overflow-auto overflow-x-hidden rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
       {messages?.map(message => (
-        <MessageCard key={message.id} message={message} />
+        <Index key={message.id} message={message} />
       ))}
       <div ref={messagesEndRef} />
     </div>
