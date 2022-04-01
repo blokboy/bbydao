@@ -161,9 +161,12 @@ const MessageCard = ({ message }) => {
       }
     }
 
+
+
     updateMessage(
-      data?.reactions?.[message.sender].id === emoji.id
+      data?.reactions?.[message.sender]?.id === emoji.id
         ? {
+            // Not sure if we are achieving removing a reaction in a different way?
             id: message.id,
             reactions: {
               [message.sender]: null
@@ -228,6 +231,7 @@ const MessageCard = ({ message }) => {
                 emoji={emoji}
                 handleEmojiReaction={handleEmojiReaction}
                 them={theme}
+                key={emoji.id}
               />
             )
           })}
