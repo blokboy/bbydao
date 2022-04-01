@@ -6,7 +6,7 @@ const CreateNurseryBtn = () => {
       <span className="text-md my-2">
         this bbyDAO is not a part of any nurseries.
       </span>
-      <button className="w-1/2 rounded-lg bg-slate-300 p-3 font-bold shadow-xl active:shadow-lg dark:bg-slate-800">
+      <button className="w-1/2 rounded-lg bg-slate-300 p-3 font-bold shadow-xl hover:bg-slate-200 active:shadow-lg dark:bg-slate-800 dark:hover:hover:bg-slate-700">
         create nursery
       </button>
     </div>

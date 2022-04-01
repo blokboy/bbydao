@@ -7,13 +7,13 @@ import { useAccount } from "wagmi"
 const Nurseries = ({ nurseries, owners }) => {
   const [{ data, error, loading }, disconnect] = useAccount()
 
-  if (!nurseries && !owners.includes(data?.address)) {
-    return <NoNurseries />
-  }
+  // if (!nurseries && !owners.includes(data?.address)) {
+  //   return <NoNurseries />
+  // }
 
-  if (!nurseries && owners.includes(data?.address)) {
-    return <CreateNurseryBtn />
-  }
+  // if (!nurseries && owners.includes(data?.address)) {
+  //   return <CreateNurseryBtn />
+  // }
 
   return <NurseryList nurseries={nurseries} />
 }
