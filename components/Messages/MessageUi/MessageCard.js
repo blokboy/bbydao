@@ -116,7 +116,7 @@ const MessageCard = ({ message }) => {
 
   const [isActive, setIsActive] = useState(false)
   const [isPickerActive, setIsPickerActive] = useState(false)
-  const [reaction, setReaction] = useState(message.reactions)
+  const [reactions, setReactions] = useState(message.reactions)
 
   const variants = {
     initial: {
@@ -167,7 +167,7 @@ const MessageCard = ({ message }) => {
     mutateAsync: updateMessage
   } = useMutation(api.mutateMessage, {
     onSuccess: (data) => {
-      setReaction(data?.reactions)
+      setReactions(data?.reactions)
     }
   })
 
@@ -180,7 +180,7 @@ const MessageCard = ({ message }) => {
     }
 
     updateMessage(
-      reaction?.[message.sender].unified === emoji.unified
+      reactions?.[message.sender].id === emoji.id
         ? { id: message.id, reactions: null }
         : req
     )
@@ -237,7 +237,6 @@ const MessageCard = ({ message }) => {
               />
             </motion.div>
           </div>
-
         </motion.div>
       </AnimatePresence>
 
@@ -247,18 +246,27 @@ const MessageCard = ({ message }) => {
       <div className="flex w-11/12 flex-col">
         <div className="flex items-center">
           <span className="font-bold">
-          {/* {data && !loading ? data : message?.sender.substring(0, 8) + "..."} */}
             {walletSnippet(message?.sender)}
           </span>
           <div className="pl-2 text-[.8rem] font-thin">
             {diffTimeStamp()}
           </div>
         </div>
-
         <div className="font-normal py-1">{message?.body}</div>
-        {reaction !== null && (
+
+        {reactions !== null && (
           <div className="inline-flex bg-slate-100 dark:bg-slate-900">
-            <Emoji emoji={{ id: reaction?.[message?.sender]?.id, skin: 1 }} size={18} />
+            {Object.entries(reactions).map((reaction) => {
+              return (
+                <Emoji
+                  emoji={{
+                    id: reaction?.[1]?.id,
+                    skin: reaction?.[1]?.skin
+                  }}
+                  size={18}
+                />
+              )
+            })}
           </div>
         )}
       </div>
