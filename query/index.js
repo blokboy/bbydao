@@ -118,7 +118,7 @@ export const createDao = async req => {
 //get dao
 // { address: string }
 export const getDao = async req => {
-  const res = await api.get("/dao/dao", req)
+  const res = await api.post("/dao/dao", req)
   return res.data
 }
 

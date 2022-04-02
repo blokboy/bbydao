@@ -8,10 +8,10 @@ const DaoDetail = ({ safe }) => {
   if (!safe) {
     return <></>
   }
-
-  const { data } = useQuery(
-    ["daoDetail"],
-    () => api.getDao({ safe }),
+  console.log(safe);
+  const { data, error, isLoading } = useQuery(
+    [`${safe}`],
+    () => api.getDao({ address: safe }),
     { staleTime: 180000 }
   )
 
