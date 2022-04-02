@@ -71,7 +71,11 @@ const DaoDetail = ({ safe }) => {
               <Davatar size={175} address={safe} generatedAvatarType="blockies" />
             )}
             <span className="mt-2 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-sm text-transparent">
-              {!!daoData?.name ? daoData.name : safe.substring(0, 12) + "..."}
+              {!!daoData?.name ? daoData.name : (
+              <div className="flex w-full animate-pulse space-x-2">
+                <div className="h-4 w-8/12 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32]"></div>
+              </div>
+            )}
             </span>
           </div>
         </a>
