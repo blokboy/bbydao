@@ -1,5 +1,5 @@
 import React from "react"
-import { FaEthereum } from "react-icons/fa"
+import { FaEthereum, FaDonate } from "react-icons/fa"
 import { HiBadgeCheck } from "react-icons/hi"
 
 const CollectionInfo = ({
@@ -17,7 +17,7 @@ const CollectionInfo = ({
 
   const descriptionText = React.useMemo(() => {
     return (
-      <p className="p-4">
+      <p className="p-4 break-word overflow-hidden">
         {isFullDescription ? description : `${description.slice(0, 180)}...`}
       </p>
     )
@@ -36,17 +36,19 @@ const CollectionInfo = ({
   }, [isFullDescription])
 
   const statsClasses =
-    "p-4 flex flex-col w-full items-center justify-center"
+    "p-4 flex flex-col lg:w-full items-center justify-center w-1/2"
 
   return (
-    <div className="sticky top-4 flex w-full flex-col rounded-xl bg-slate-100 p-4 shadow dark:bg-slate-800">
-      <div className="flex items-center justify-center text-center text-2xl">
-        <div className="mr-4">{name}</div>
-        <div className="mr-4"> - </div>
-        <div className="font-mono">${ticker}</div>
+    <div className="flex w-full flex-col rounded-xl bg-slate-100 p-4 shadow dark:bg-slate-800 lg:sticky lg:top-4">
+      <div className="relative px-4">
+        <div className="mr-4 w-full max-w-xs text-2xl">{name}</div>
+        {ticker ? <div className="mt-2">${ticker}</div> : null}
+        <button type="button" className="absolute hover:shadow-lg top-1 right-1 text-xl">
+          <FaDonate />
+        </button>
       </div>
 
-      <ul className="mt-4 flex items-center justify-between">
+      <ul className="mt-4 flex flex-wrap items-center justify-between lg:flex-nowrap">
         <li className={statsClasses}>
           <div>{totalSupply}</div>
           <div>items</div>

@@ -16,6 +16,7 @@ const OpenSeaCollection = ({ data, slug }) => {
 
     return data.collection
   }, [data])
+  console.log(collection)
 
   const contract = useERC721Contract(collection?.address)
 
