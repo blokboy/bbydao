@@ -85,7 +85,7 @@ const CreateThreadForm = ({ closeModal }) => {
 
       {channelAddress !== accountData?.address && (
         <span className="pb-3 text-sm text-green-500">
-          this thread will be created for {channelAddress.substring(0, 6)}...
+          this thread will be created for {channelAddress?.substring(0, 6)}...
         </span>
       )}
 

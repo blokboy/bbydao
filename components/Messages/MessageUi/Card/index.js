@@ -1,18 +1,22 @@
-import dayjs                                  from "dayjs"
-import { useTheme }                           from "next-themes"
-import * as api                               from "query"
-import React, { useEffect, useRef, useState } from "react"
-import { isMobile }                           from "react-device-detect"
-import { useMutation }                        from "react-query"
-import { walletSnippet }                      from "utils/helpers"
-import EmojiButton                            from "./EmojiButton"
-import MobileEmojiPickerButton                from "./MobileEmojiPickerButton"
-import ReactionBar                            from "./ReactionBar"
+import dayjs                            from "dayjs"
+import { useTheme }                     from "next-themes"
+import * as api                         from "query"
+import React, { useState }              from "react"
+import { isMobile }                     from "react-device-detect"
+import { useMutation }                  from "react-query"
+import { isEmptyObject, walletSnippet } from "utils/helpers"
+import { useAccount }                   from "wagmi"
+import EmojiButton                      from "./EmojiButton"
+import MobileEmojiPickerButton          from "./MobileEmojiPickerButton"
+import ReactionBar                      from "./ReactionBar"
 
 // import { useEnsLookup } from "wagmi"
 
 const MessageCard = ({ message }) => {
   const { theme, setTheme } = useTheme()
+  const [
+    { data: accountData }
+  ] = useAccount()
   // timestamp that prints out diff from current time
   const diffTimeStamp = () => {
     const date = dayjs(message?.createdAt)
@@ -157,18 +161,21 @@ const MessageCard = ({ message }) => {
     const req = {
       id: message.id,
       reactions: {
-        [message.sender]: emoji
+        ...reactions,
+        [accountData?.address]: emoji
       }
     }
+
     updateMessage(
-      data?.reactions?.[message.sender]?.id === emoji.id
+      data?.reactions?.[accountData?.address]?.id === emoji.id
         ? {
-            // Not sure if we are achieving removing a reaction in a different way?
-            id: message.id,
-            reactions: {
-              [message.sender]: null
-            }
-      }
+          // Not sure if we are achieving removing a reaction in a different way?
+          id: message.id,
+          reactions: {
+            ...reactions,
+            [accountData?.address]: null
+          }
+        }
         : req
     )
   }
@@ -209,15 +216,15 @@ const MessageCard = ({ message }) => {
           {message?.body}
         </div>
         <div className="inline-flex">
-          {!!reactions[message?.sender] && Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
-            const count = Object.entries(reactions)?.filter(item => item[1]?.id === currentValue[1].id).length
+          {!isEmptyObject(reactions) && Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
+            const count = Object.entries(reactions)?.filter(item => item[1]?.id === currentValue[1]?.id).length
             const emojiItem = {
-              id: currentValue[1].id,
-              skin: currentValue[1].skin,
+              id: currentValue[1]?.id,
+              skin: currentValue[1]?.skin,
               count
             }
 
-            if (accumulator.filter(item => item.id === currentValue[1].id && item.skin === currentValue[1].skin) < 1)
+            if (accumulator.filter(item => item.id === currentValue?.[1]?.id && item.skin === currentValue?.[1]?.skin) < 1 && currentValue?.[1] !== null)
               accumulator.push(emojiItem)
 
             return accumulator
