@@ -1,4 +1,6 @@
 import React from "react"
+import { HiOutlineUsers } from "react-icons/hi"
+import { BsGear } from "react-icons/bs"
 
 const NurseryStats = () => {
   return (
@@ -7,11 +9,11 @@ const NurseryStats = () => {
         <div className="rounded-xl border bg-slate-100 px-2 py-1 dark:bg-slate-800">
           delegates
         </div>
-        <button className="rounded-xl border p-1 hover:bg-slate-200 dark:hover:bg-slate-700">
-          btn
+        <button className="icon-util-btn">
+          <HiOutlineUsers size={18} />
         </button>
-        <button className="rounded-xl border p-1 hover:bg-slate-200 dark:hover:bg-slate-700">
-          btn
+        <button className="icon-util-btn">
+          <BsGear size={18} />
         </button>
       </div>
       <div className="rounded-xl border p-2">

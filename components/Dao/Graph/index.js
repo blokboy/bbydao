@@ -24,7 +24,7 @@ const Graph = ({ safeAddress }) => {
           </div>
         </div>
         <div className="flex flex-col justify-between space-y-2">
-          <button className="rounded-xl border p-1 hover:bg-slate-200 dark:hover:bg-slate-700">
+          <button className="icon-util-btn">
             <HiAdjustments size={18} />
           </button>
           <CurrencyIconDropdown />
