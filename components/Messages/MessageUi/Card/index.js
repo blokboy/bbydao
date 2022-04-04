@@ -109,29 +109,6 @@ const MessageCard = ({ message }) => {
     }
   }
 
-  // more precise timestamp - will develop a feature to show the exact time
-  const prettyTimestamp = () => {
-    const then = new Date(message.updatedAt)
-    const now = new Date()
-    const difference = Math.abs(then.getTime() - now.getTime())
-    const hours = difference / (60 * 60 * 1000)
-    const currentYear = now.getFullYear()
-    const messageYear = then.getFullYear()
-    let timestamp = ""
-
-    if (hours < 24) {
-      timestamp = `Today at ${dayjs(message.updatedAt).format("h:mm A")}`
-    } else {
-      if (currentYear === messageYear) {
-        timestamp = dayjs(message.updatedAt).format("MMM D, h:mm A")
-      } else {
-        timestamp = dayjs(message.updatedAt).format("MMM D, YYYY h:mm A")
-      }
-    }
-
-    return timestamp
-  }
-
   const handleMouseEnter = () => {
     setIsActive(true)
   }
@@ -148,7 +125,6 @@ const MessageCard = ({ message }) => {
       setReactions(e?.reactions)
     }
   })
-
 
   const handleEmojiReaction = (emoji) => {
     const alreadyExists = reactions?.[accountData?.address]?.id === emoji.id

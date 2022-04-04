@@ -53,6 +53,8 @@ const ReactionBar = ({
           >
             <Picker
               theme={theme}
+              showSkinTones={true}
+              title={''}
               onSelect={(emoji) => {
                 handleEmojiReaction(emoji)
                 setIsPickerActive(false)

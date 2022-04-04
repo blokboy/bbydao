@@ -34,7 +34,7 @@ const MobileMessageContent = () => {
   }
 
   return (
-    <div className="bg-slate-50 px-3 pb-2 sm:pb-20 pt-4 dark:bg-slate-800">
+    <div className="bg-slate-50 px-3 pb-20 sm:pb-2 pt-4 dark:bg-slate-800">
       {messages?.map(message => (
         <MessageCard key={message.id} message={message} />
       ))}

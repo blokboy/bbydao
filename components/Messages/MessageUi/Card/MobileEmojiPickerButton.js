@@ -19,9 +19,11 @@ const MobileEmojiPickerButton = ({ theme, pickerVariants, handleEmojiReaction, s
           initial="initial"
           animate={isPickerActive ? "animate" : "exit"}
           exit="exit"
-          className="absolute bottom-8 right-0 z-99 pointer-events-none"
+          className="absolute top-24 right-0 z-10 pointer-events-none"
         >
           <Picker
+            showSkinTones={true}
+            title={''}
             theme={theme}
             onSelect={(emoji) => {
               handleEmojiReaction(emoji)
