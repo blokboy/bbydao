@@ -2,7 +2,7 @@ import React from "react"
 import { useBalance } from "wagmi"
 import { useUiStore } from "stores/useUiStore"
 import { HiAdjustments } from "react-icons/hi"
-import { FaEthereum } from "react-icons/fa"
+import CurrencyIconDropdown from "./CurrencyIconDropdown"
 
 const Graph = ({ safeAddress }) => {
   const setTxModalOpen = useUiStore(state => state.setTxModalOpen)
@@ -27,9 +27,7 @@ const Graph = ({ safeAddress }) => {
           <button className="rounded-xl border p-1 hover:bg-slate-200 dark:hover:bg-slate-700">
             <HiAdjustments size={18} />
           </button>
-          <button className="rounded-xl border p-1 hover:bg-slate-200 dark:hover:bg-slate-700">
-            <FaEthereum size={18} />
-          </button>
+          <CurrencyIconDropdown />
         </div>
       </div>
 
