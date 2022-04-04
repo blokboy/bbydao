@@ -28,7 +28,7 @@ const DesktopMessageContent = () => {
 
   if (!messages?.length) {
     return (
-      <div className="flex-1 bg-slate-50 px-3 pb-44 dark:bg-slate-800">
+      <div className="flex-1 bg-slate-50 p-3 pb-44 dark:bg-slate-800">
         No Messages
       </div>
     )

@@ -10,7 +10,7 @@ const MobileEmojiPickerButton = ({ theme, pickerVariants, handleEmojiReaction, s
       onClick={() => {
         setIsPickerActive(true)
       }}
-      className="flex items-center bg-slate-100 sm:bg-slate-200 px-3 py-1 rounded-full mr-1"
+      className="flex items-center bg-slate-300 dark:bg-slate-700 sm:bg-slate-200 px-3 py-1 rounded-full mr-1"
     >
       <MdAddReaction size={16} />
       <div>

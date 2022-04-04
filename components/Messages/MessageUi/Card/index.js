@@ -1,22 +1,51 @@
-import dayjs                            from "dayjs"
-import { useTheme }                     from "next-themes"
-import * as api                         from "query"
-import React, { useState }              from "react"
-import { isMobile }                     from "react-device-detect"
-import { useMutation }                  from "react-query"
-import { isEmptyObject, walletSnippet } from "utils/helpers"
-import { useAccount }                   from "wagmi"
-import EmojiButton                      from "./EmojiButton"
-import MobileEmojiPickerButton          from "./MobileEmojiPickerButton"
-import ReactionBar                      from "./ReactionBar"
-
-// import { useEnsLookup } from "wagmi"
+import dayjs                   from "dayjs"
+import { useTheme }            from "next-themes"
+import * as api                from "query"
+import React, { useState }     from "react"
+import { isMobile }            from "react-device-detect"
+import { useMutation }         from "react-query"
+import { walletSnippet }       from "utils/helpers"
+import { useAccount }          from "wagmi"
+import EmojiButton             from "./EmojiButton"
+import MobileEmojiPickerButton from "./MobileEmojiPickerButton"
+import ReactionBar             from "./ReactionBar"
 
 const MessageCard = ({ message }) => {
-  const { theme, setTheme } = useTheme()
-  const [
-    { data: accountData }
-  ] = useAccount()
+  const [isActive, setIsActive] = useState(false)
+  const [isPickerActive, setIsPickerActive] = useState(false)
+  const [reactions, setReactions] = useState(message.reactions)
+  const reactionBarVariants = {
+    initial: {
+      y: 3,
+      opacity: 0
+    },
+    animate: {
+      y: 0,
+      opacity: 1
+    },
+    exit: {
+      y: 3,
+      opacity: 0
+    }
+  }
+  const pickerVariants = {
+    initial: {
+      height: 0,
+      opacity: 0
+    },
+    animate: {
+      height: "auto",
+      pointerEvents: "auto",
+      opacity: 1
+    },
+    exit: {
+      display: "none",
+      pointerEvents: "none"
+    }
+  }
+  const { theme } = useTheme()
+  const [{ data: accountData }] = useAccount()
+
   // timestamp that prints out diff from current time
   const diffTimeStamp = () => {
     const date = dayjs(message?.createdAt)
@@ -112,43 +141,7 @@ const MessageCard = ({ message }) => {
     setIsPickerActive(false)
   }
 
-  const [isActive, setIsActive] = useState(false)
-  const [isPickerActive, setIsPickerActive] = useState(false)
-  const [reactions, setReactions] = useState(message.reactions)
-
-  const variants = {
-    initial: {
-      y: 3,
-      opacity: 0
-    },
-    animate: {
-      y: 0,
-      opacity: 1
-    },
-    exit: {
-      y: 3,
-      opacity: 0
-    }
-  }
-  const pickerVariants = {
-    initial: {
-      height: 0,
-      opacity: 0
-    },
-    animate: {
-      height: "auto",
-      pointerEvents: "auto",
-      opacity: 1
-    },
-    exit: {
-      display: "none",
-      pointerEvents: "none"
-    }
-  }
-
   const {
-    data,
-    error,
     mutateAsync: updateMessage
   } = useMutation(api.mutateMessage, {
     onSuccess: (e) => {
@@ -158,26 +151,18 @@ const MessageCard = ({ message }) => {
 
 
   const handleEmojiReaction = (emoji) => {
+    const alreadyExists = reactions?.[accountData?.address]?.id === emoji.id
     const req = {
       id: message.id,
       reactions: {
         ...reactions,
-        [accountData?.address]: emoji
+        [accountData?.address]: !alreadyExists ? emoji : null
       }
     }
 
-    updateMessage(
-      data?.reactions?.[accountData?.address]?.id === emoji.id
-        ? {
-          // Not sure if we are achieving removing a reaction in a different way?
-          id: message.id,
-          reactions: {
-            ...reactions,
-            [accountData?.address]: null
-          }
-        }
-        : req
-    )
+    /* prevent unconnected account from reacting */
+    if (!!accountData?.address)
+      updateMessage(req)
   }
 
   return (
@@ -186,18 +171,6 @@ const MessageCard = ({ message }) => {
       onMouseEnter={() => handleMouseEnter()}
       onMouseLeave={() => handleMouseLeave()}
     >
-      {!isMobile && (
-        <ReactionBar
-          isActive={isActive}
-          handleEmojiReaction={handleEmojiReaction}
-          theme={theme}
-          pickerVariants={pickerVariants}
-          variants={variants}
-          setIsPickerActive={setIsPickerActive}
-          isPickerActive={isPickerActive}
-        />
-      )}
-
       <div className="mr-4">
         <div className="h-10 w-10 rounded-full border border-white bg-slate-200 dark:bg-slate-900" />
       </div>
@@ -212,11 +185,12 @@ const MessageCard = ({ message }) => {
             children={diffTimeStamp()}
           />
         </div>
-        <div className="font-normal py-1">
-          {message?.body}
-        </div>
+        <div
+          className="font-normal py-1"
+          children={message?.body}
+        />
         <div className="inline-flex">
-          {!isEmptyObject(reactions) && Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
+          {reactions !== null && Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
             const count = Object.entries(reactions)?.filter(item => item[1]?.id === currentValue[1]?.id).length
             const emojiItem = {
               id: currentValue[1]?.id,
@@ -239,7 +213,7 @@ const MessageCard = ({ message }) => {
               />
             )
           })}
-          {isMobile && (
+          {(isMobile && (
             <MobileEmojiPickerButton
               theme={theme}
               pickerVariants={pickerVariants}
@@ -247,7 +221,17 @@ const MessageCard = ({ message }) => {
               setIsPickerActive={setIsPickerActive}
               isPickerActive={isPickerActive}
             />
-          )}
+          ) || (
+            <ReactionBar
+              isActive={isActive}
+              handleEmojiReaction={handleEmojiReaction}
+              theme={theme}
+              pickerVariants={pickerVariants}
+              variants={reactionBarVariants}
+              setIsPickerActive={setIsPickerActive}
+              isPickerActive={isPickerActive}
+            />
+          ))}
         </div>
       </div>
     </li>
