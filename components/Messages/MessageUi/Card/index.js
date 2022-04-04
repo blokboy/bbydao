@@ -167,7 +167,7 @@ const MessageCard = ({ message }) => {
 
   return (
     <li
-      className="relative mb-2 flex w-full flex-row rounded-lg bg-slate-200 hover:bg-slate-100 p-3 dark:bg-slate-900 dark:hover:bg-slate-800"
+      className="relative mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-900"
       onMouseEnter={() => handleMouseEnter()}
       onMouseLeave={() => handleMouseLeave()}
     >

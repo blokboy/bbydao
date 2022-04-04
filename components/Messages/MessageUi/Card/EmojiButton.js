@@ -4,7 +4,7 @@ import React     from "react"
 const EmojiButton = ({handleEmojiReaction, emoji}) => {
   return (
     <div
-      className="flex items-center bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full mr-1 hover:cursor-pointer"
+      className="flex items-center bg-slate-100 hover:bg-slate-300 dark:bg-slate-700 px-3 py-1 rounded-full mr-1 hover:cursor-pointer"
       onClick={() => handleEmojiReaction({ id: emoji.id, skin: emoji.skin })}
     >
       <Emoji

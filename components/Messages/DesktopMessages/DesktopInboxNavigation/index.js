@@ -68,7 +68,7 @@ const DesktopInboxNavigation = () => {
       <ClickAwayListener onClickAway={handleClickAway}>
         <div className="relative">
           <button
-            className="flex w-full justify-between rounded-xl p-2 font-bold dark:bg-slate-800"
+            className="flex items-center w-full justify-between rounded-xl p-2 px-4 font-bold bg-slate:700 dark:bg-slate-800"
             onClick={handleInboxDropdown}
           >
             {data?.address === channelAddress

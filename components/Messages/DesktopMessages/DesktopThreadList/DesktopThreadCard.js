@@ -14,6 +14,8 @@ const DesktopThreadCard = ({ title, thread }) => {
     setMobileThreadView()
   }
 
+  const isActive = threadChannel === thread.channel
+
   const parseTitle = (_addresses) => {
     const parsedTitles = []
 
@@ -29,8 +31,8 @@ const DesktopThreadCard = ({ title, thread }) => {
   return (
     <li
       className={
-        "mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-800" +
-        (threadChannel === thread.channel ? " text-blue-500" : "")
+        "mb-2 flex w-full flex-row rounded-lg bg-slate-200 hover:bg-slate-100 p-3 dark:bg-slate-800 hover:cursor-pointer dark:hover:bg-slate-700" +
+        (isActive ? "  text-[#FC8D4D]" : "")
       }
       onClick={handleClickCard}
     >
