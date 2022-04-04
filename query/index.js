@@ -114,6 +114,14 @@ export const createDao = async req => {
   return res.data
 }
 
+
+//get dao
+// { address: string }
+export const getDao = async req => {
+  const res = await api.post("/dao/dao", req)
+  return res.data
+}
+
 // update dao properties
 // {  id: id, name: string, imgUri: string }
 export const updateDao = async req => {

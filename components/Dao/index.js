@@ -4,6 +4,7 @@ import { useOsStore }    from "stores/useOsStore"
 import { useUiStore }    from "stores/useUiStore"
 import { walletSnippet } from "utils/helpers"
 import Graph             from "./Graph"
+import Nurseries         from "./Nurseries"
 import ProposalHistory   from "./ProposalHistory"
 import SidePanel         from "./SidePanel"
 import FollowModal       from "./SidePanel/FollowModal"
@@ -11,6 +12,7 @@ import TokensNfts        from "./TokensNfts"
 import SellModal         from "./TokensNfts/SellModal"
 import TransactionModal  from "./TransactionModal"
 import TxHistory         from "./TxHistory"
+
 
 const Dao = ({ data }) => {
   const osSellModalOpen = useOsStore(state => state.osSellModalOpen)
@@ -38,6 +40,7 @@ const Dao = ({ data }) => {
             <TokensNfts tokens={data.usd} collectibles={data.collectibles} />
           </div>
           <div className="flex w-full flex-col md:w-1/2">
+            <Nurseries nurseries={null} owners={data.safeInfo.owners} />
             <TxHistory
               allTxs={data.allTxs}
               owners={data.safeInfo.owners}

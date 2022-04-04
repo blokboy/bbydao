@@ -29,7 +29,7 @@ const AssetCard = ({ asset }) => {
   }
 
   return (
-    <div className="flex w-full flex-col rounded-xl bg-slate-100 p-3 dark:bg-slate-800">
+    <div className="flex w-full flex-col rounded-xl bg-slate-100 p-4 dark:bg-slate-800">
       <div className="flex flex-row justify-between">
         {/* asset name & number of sales */}
         <span className="text-xs font-bold">{asset?.name}</span>
