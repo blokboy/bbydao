@@ -126,7 +126,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
       {/* make component to represent these (with pics) */}
       {/* modal pops to center of screen to scroll through all members */}
       <h1>members</h1>
-      <div className="h-72 overflow-auto p-1">
+      <div className="overflow-auto p-1">
         {safeInfo.owners.map((member, index) => (
           <MemberCard key={index} member={member} />
         ))}
