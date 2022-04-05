@@ -141,6 +141,24 @@ const MessageCard = ({ message }) => {
       updateMessage(req)
   }
 
+  const reducedReactions = React.useMemo(() => {
+    return reactions !== null && Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
+      const count = Object.entries(reactions)?.filter(item => item[1]?.id === currentValue[1]?.id).length
+      const emojiItem = {
+        id: currentValue[1]?.id,
+        skin: currentValue[1]?.skin,
+        count
+      }
+
+      if (accumulator.filter(item => item.id === currentValue?.[1]?.id && item.skin === currentValue?.[1]?.skin) < 1 && currentValue?.[1] !== null)
+        accumulator.push(emojiItem)
+
+
+      return accumulator
+
+    }, [])
+  }, [reactions])
+
   return (
     <li
       className="relative mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-900"
@@ -166,20 +184,7 @@ const MessageCard = ({ message }) => {
           children={message?.body}
         />
         <div className="inline-flex">
-          {reactions !== null && Object.entries(reactions).reduce(function(accumulator = [], currentValue) {
-            const count = Object.entries(reactions)?.filter(item => item[1]?.id === currentValue[1]?.id).length
-            const emojiItem = {
-              id: currentValue[1]?.id,
-              skin: currentValue[1]?.skin,
-              count
-            }
-
-            if (accumulator.filter(item => item.id === currentValue?.[1]?.id && item.skin === currentValue?.[1]?.skin) < 1 && currentValue?.[1] !== null)
-              accumulator.push(emojiItem)
-
-            return accumulator
-
-          }, []).map((emoji) => {
+          {reducedReactions.map((emoji) => {
             return (
               <EmojiButton
                 emoji={emoji}
