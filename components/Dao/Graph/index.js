@@ -1,7 +1,7 @@
 import React from "react"
 import { useBalance } from "wagmi"
 import { useUiStore } from "stores/useUiStore"
-import { HiAdjustments } from "react-icons/hi"
+import BalanceOptionsIcon from "./BalanceOptionsIcon"
 import CurrencyIconDropdown from "./CurrencyIconDropdown"
 
 const Graph = ({ safeAddress }) => {
@@ -18,15 +18,22 @@ const Graph = ({ safeAddress }) => {
           <div className="flex flex-row justify-start">Net Worth</div>
           <div className="flex flex-row justify-start space-x-2">
             <div className="text-3xl font-bold">Ξ</div>
-            <div className="text-3xl font-bold">
-              {balanceData?.formatted.substring(0, 5)}
-            </div>
+            {loading ? (
+              // loading state
+              <></>
+            ) : error ? (
+              <div className="animate-fade-in text-3xl font-bold text-red-500">
+                N/A
+              </div>
+            ) : balanceData && !loading && !error ? (
+              <div className="animate-fade-in text-3xl font-bold">
+                {balanceData?.formatted.substring(0, 5)}
+              </div>
+            ) : null}
           </div>
         </div>
         <div className="flex flex-col justify-between space-y-2">
-          <button className="icon-util-btn">
-            <HiAdjustments size={18} />
-          </button>
+          <BalanceOptionsIcon />
           <CurrencyIconDropdown />
         </div>
       </div>
