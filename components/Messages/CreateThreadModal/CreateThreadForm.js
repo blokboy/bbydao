@@ -1,12 +1,13 @@
-import React from "react"
-import { useRouter } from "next/router"
-import Select from "react-select"
-import { customStyles } from "./customStyles"
-import useForm from "hooks/useForm"
-import * as api from "query"
+import React                     from "react"
+import { useRouter }             from "next/router"
+import Select                    from "react-select"
+import { walletSnippet }         from "../../../utils/helpers"
+import { customStyles }          from "./customStyles"
+import useForm                   from "hooks/useForm"
+import * as api                  from "query"
 import { useQuery, useMutation } from "react-query"
-import { useAccount } from "wagmi"
-import { useMessageStore } from "stores/useMessageStore"
+import { useAccount }            from "wagmi"
+import { useMessageStore }       from "stores/useMessageStore"
 
 const CreateThreadForm = ({ closeModal }) => {
   const router = useRouter()
@@ -85,7 +86,7 @@ const CreateThreadForm = ({ closeModal }) => {
 
       {channelAddress !== accountData?.address && (
         <span className="pb-3 text-sm text-green-500">
-          this thread will be created for {channelAddress?.substring(0, 6)}...
+          this thread will be created for {walletSnippet(channelAddress)}
         </span>
       )}
 

@@ -1,6 +1,7 @@
-import React from "react"
-import { useMessageStore } from "stores/useMessageStore"
+import React                         from "react"
+import { useMessageStore }           from "stores/useMessageStore"
 import { HiOutlineArrowCircleRight } from "react-icons/hi"
+import { walletSnippet }             from "utils/helpers"
 
 const DesktopThreadCard = ({ title, thread }) => {
   const { setThreadChannel } = useMessageStore()
@@ -19,9 +20,9 @@ const DesktopThreadCard = ({ title, thread }) => {
   const parseTitle = (_addresses) => {
     const parsedTitles = []
 
-    const addresses = _addresses.split(',')
+    const addresses = _addresses.replace(/\s/g, '').split(',')
     for(const addr of addresses) {
-      const str = addr.substring(0, 6).concat('...').concat(addr.substring(38, 42))
+      const str = walletSnippet(addr)
       parsedTitles.push(str)
     }
 
@@ -39,7 +40,7 @@ const DesktopThreadCard = ({ title, thread }) => {
       <div className="ml-3 flex w-11/12 flex-col pl-3">
         <span className="text-sm font-bold">
           {" "}
-          {title?.length > 42 ? title.substring(0, 6).concat("...").concat(title.substring(38,42)) : title }
+          {parseTitle(title)[0]}
         </span>
       </div>
       <div className="self-center">

@@ -1,7 +1,18 @@
-import React from "react"
+import { isAddress } from "ethers/lib/utils"
+import React         from "react"
 
-export const walletSnippet = (addr) =>
-    addr.substring(0, 5) + '...' + addr.substring(addr.length - 5, addr.length)
+export const walletSnippet = (addr) => {
+  let snippet = ''
+  if(!!addr) {
+    if(isAddress(addr)) {
+      snippet = addr.substring(0, 5) + '...' + addr.substring(addr.length - 5, addr.length)
+    } else {
+      snippet = addr
+    }
+
+    return snippet
+  }
+}
 
 export const debounce = (func, wait) => {
   let timeout
