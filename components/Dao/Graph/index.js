@@ -22,11 +22,11 @@ const Graph = ({ safeAddress }) => {
               // loading state
               <></>
             ) : error ? (
-              <div className="animate-fade-in-up text-3xl font-bold text-red-500">
+              <div className="animate-fade-in-up text-3xl font-bold text-red-500 motion-reduce:animate-none">
                 N/A
               </div>
             ) : balanceData && !loading && !error ? (
-              <div className="animate-fade-in-up text-3xl font-bold">
+              <div className="animate-fade-in-up text-3xl font-bold motion-reduce:animate-none">
                 {balanceData?.formatted.substring(0, 5)}
               </div>
             ) : null}
