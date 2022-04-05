@@ -15,9 +15,7 @@ const UserImage = ({ address }) => {
     )
   }, [mounted, address])
 
-  return (
-    <div className="flex w-full justify-center md:justify-start">{davatar}</div>
-  )
+  return <div className="mb-3 flex place-content-center">{davatar}</div>
 }
 
 export default UserImage

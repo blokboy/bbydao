@@ -117,7 +117,7 @@ const UserDetails = ({ address, ens }) => {
   ])
 
   return (
-    <div className="mt-4 flex flex-col items-center text-center md:items-start md:text-left">
+    <div className="mt-4 flex flex-col items-center text-center">
       {ens ? (
         <span className="h-10 w-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-3xl text-transparent">
           @{ens}

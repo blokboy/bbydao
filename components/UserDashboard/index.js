@@ -10,6 +10,7 @@ import * as api from "../../query"
 import { useMutation } from "react-query"
 import { useEnsLookup, useAccount } from "wagmi"
 import CreateDaoButton from "./CreateDaoButton"
+import UserDelegateList from "./UserDelegateList"
 import UserStats from "./UserStats"
 import UserFeed from "./UserFeed"
 
@@ -53,16 +54,19 @@ const UserDashboard = ({ data }) => {
       </Head>
 
       <div className="flex w-full flex-col pt-4 md:flex-row">
-        <div className="flex-start flex flex-col px-4 md:w-3/12">
+        <div className="flex-start flex flex-1 flex-col px-4 md:w-3/12">
           <UserImage address={address} />
           <UserDetails address={address} ens={ens} />
           {address === accountData?.address ? (
-            <div className="flex w-full justify-center md:justify-start">
-              <CreateDaoButton />
-            </div>
-          ) : (
-            <></>
-          )}
+            <>
+              <div className="flex w-full justify-center">
+                <CreateDaoButton />
+              </div>
+            </>
+          ) : null}
+          <div className="flex w-full justify-center">
+            <UserDelegateList safes={safes} />
+          </div>
         </div>
         <div className="flex flex-col md:w-9/12 md:flex-row">
           <div className="flex w-full flex-col md:w-1/2">
@@ -71,11 +75,9 @@ const UserDashboard = ({ data }) => {
           <div className="flex w-full flex-col md:w-1/2">
             {safes.length ? (
               <UserDaos address={address} safes={safes} />
-            ) : address === accountData?.address ? (
+            ) : address === accountData?.address && !safes.length ? (
               <CreateDaoPrompt />
-            ) : (
-              <></>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
