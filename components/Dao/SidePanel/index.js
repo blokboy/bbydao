@@ -3,6 +3,7 @@ import { useQuery, useMutation } from "react-query"
 import { useAccount, useConnect } from "wagmi"
 
 import * as api from "../../../query"
+import { HiOutlineUsers } from "react-icons/hi"
 import MemberCard from "./MemberCard"
 import { useUiStore } from "stores/useUiStore"
 import useFriendData from "hooks/useFriendData"
@@ -125,11 +126,22 @@ const SidePanel = ({ safeInfo, nftImage }) => {
 
       {/* make component to represent these (with pics) */}
       {/* modal pops to center of screen to scroll through all members */}
-      <h1>members</h1>
-      <div className="overflow-auto p-1">
-        {safeInfo.owners.map((member, index) => (
-          <MemberCard key={index} member={member} />
-        ))}
+      <div className="space-y-2 p-3">
+        <div className="flex flex-row space-x-2 px-2">
+          <div className="rounded-xl border bg-slate-100 px-2 py-1 dark:bg-slate-800">
+            members
+          </div>
+          <button className="icon-util-btn">
+            <HiOutlineUsers size={18} />
+          </button>
+        </div>
+        <div className="rounded-xl border p-2">
+          <div className="flex flex-col space-y-2">
+            {safeInfo.owners.map((member, index) => (
+              <MemberCard key={index} member={member} />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )
