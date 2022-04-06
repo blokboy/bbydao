@@ -9,6 +9,10 @@ import TxHistory from "./TxHistory"
 import ProposalHistory from "./ProposalHistory"
 import SellModal from "./TokensNfts/SellModal"
 import FollowModal from "./SidePanel/FollowModal"
+import EditDaoMemberModal from "./EditDaoMemberModal"
+
+// start to move all dao page modal states from other stores into useDaoStore
+import { useDaoStore } from "stores/useDaoStore"
 import { useOsStore } from "stores/useOsStore"
 import { useUiStore } from "stores/useUiStore"
 
@@ -16,6 +20,9 @@ const Dao = ({ data }) => {
   const osSellModalOpen = useOsStore(state => state.osSellModalOpen)
   const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
   const txModalOpen = useUiStore(state => state.txModalOpen)
+  const editDaoMemberModalOpen = useDaoStore(
+    state => state.editDaoMemberModalOpen
+  )
 
   return (
     <>
@@ -47,7 +54,7 @@ const Dao = ({ data }) => {
             <ProposalHistory />
           </div>
 
-          {/* modals  */}
+          {/* dao page modals  */}
           {osSellModalOpen && (
             <SellModal safeAddress={data?.safeInfo.address} />
           )}
@@ -56,6 +63,9 @@ const Dao = ({ data }) => {
           )}
           {txModalOpen && (
             <TransactionModal safeAddress={data?.safeInfo.address} />
+          )}
+          {editDaoMemberModalOpen && (
+            <EditDaoMemberModal safeAddress={data?.safeInfo.address} />
           )}
         </div>
       </div>

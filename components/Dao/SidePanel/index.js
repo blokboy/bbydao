@@ -6,6 +6,7 @@ import * as api from "../../../query"
 import { HiOutlineUsers } from "react-icons/hi"
 import MemberCard from "./MemberCard"
 import { useUiStore } from "stores/useUiStore"
+import { useDaoStore } from "stores/useDaoStore"
 import useFriendData from "hooks/useFriendData"
 
 const SidePanel = ({ safeInfo, nftImage }) => {
@@ -15,6 +16,10 @@ const SidePanel = ({ safeInfo, nftImage }) => {
   const setFollowDaoModalOpen = useUiStore(state => state.setFollowDaoModalOpen)
   const [friendData, { friendStatus, setFriendStatus }, friendActionText] =
     useFriendData(safeInfo.address)
+
+  const setEditDaoMemberModalOpen = useDaoStore(
+    state => state.setEditDaoMemberModalOpen
+  )
 
   const parsedList = {
     followers: [],
@@ -55,7 +60,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
   }, [data, safeInfo, friendStatus])
 
   return (
-    <div className="flex-start mx-1 mb-3 flex h-full flex-col px-4 md:flex-col">
+    <div className="flex-start flex h-full flex-col md:flex-col">
       <div className="mb-3 flex place-content-center">
         {nftImage ? <img src={nftImage} alt="alt" width={200} /> : <></>}
       </div>
@@ -131,7 +136,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
           <div className="rounded-xl border bg-slate-100 px-2 py-1 dark:bg-slate-800">
             members
           </div>
-          <button className="icon-util-btn">
+          <button className="icon-util-btn" onClick={setEditDaoMemberModalOpen}>
             <HiOutlineUsers size={18} />
           </button>
         </div>
