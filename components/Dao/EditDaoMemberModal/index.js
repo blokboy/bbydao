@@ -1,4 +1,5 @@
 import React from "react"
+import EditDaoMembers from "./EditDaoMembers"
 import { useDaoStore } from "stores/useDaoStore"
 import { HiX } from "react-icons/hi"
 
@@ -17,12 +18,9 @@ const EditDaoMemberModal = () => {
   }
 
   return (
-    <div
-      className="fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50"
-      onClick={e => closeEditDaoMemberModal(e)}
-    >
+    <div className="modal-backdrop" onClick={e => closeEditDaoMemberModal(e)}>
       <div
-        className="z-50 mx-auto mt-0 flex h-full w-full flex-col items-center bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-auto md:w-6/12 md:rounded-xl"
+        className="modal-container"
         onClick={e => closeEditDaoMemberModal(e)}
       >
         <div className="flex w-full justify-end">
@@ -33,9 +31,10 @@ const EditDaoMemberModal = () => {
             <HiX />
           </button>
         </div>
-        <div className="mb-6 w-full text-center text-xl font-bold">
+        <div className="w-full text-center text-xl font-bold">
           Edit bbyDAO Members
         </div>
+        <EditDaoMembers />
       </div>
     </div>
   )

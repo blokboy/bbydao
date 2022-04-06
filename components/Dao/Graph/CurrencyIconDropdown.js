@@ -8,9 +8,8 @@ const CurrencyIconDropdown = () => {
 
   // function that sets currency bbydao net worth is displayed in, as well as the icon in the button
   const currency = () => {
+    // will be adjusted when other currencies are available and given ids
     const match = Currencies.find(currency => currency.id === 1)
-
-    console.log(match)
 
     return match
   }

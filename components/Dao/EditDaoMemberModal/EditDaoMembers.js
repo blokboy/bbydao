@@ -1,0 +1,107 @@
+import React from "react"
+import axios from "axios"
+import { GoSearch } from "react-icons/go"
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "fetch_start":
+      return {
+        ...state,
+        isLoading: true,
+        hasError: false,
+      }
+    case "fetch_success":
+      return {
+        ...state,
+        isLoading: false,
+        hasError: false,
+        hits: action.payload,
+      }
+    case "fetch_failure":
+      return {
+        ...state,
+        isLoading: false,
+        hasError: true,
+      }
+    default:
+      throw new Error()
+  }
+}
+
+const fetchHits = async (query, dispatch) => {
+  dispatch({ type: "fetch_start" })
+  try {
+    // call to our backend to return search results for friends / members available to add to the dao
+    // const result = await axios.post(`${process.env.NEXT_PUBLIC_API}/search`, {
+    //   query: query,
+    // })
+    dispatch({ type: "fetch_success", payload: result.data })
+  } catch (err) {
+    dispatch({ type: "fetch_failure" })
+    axios.isCancel(err) || dispatch({ type: "fetch_failure" })
+  }
+}
+
+const EditDaoMembers = () => {
+  const [{ hits, hasError, isLoading }, dispatch] = React.useReducer(reducer, {
+    hits: [],
+    isLoading: true,
+    hasError: false,
+  })
+  const [query, setQuery] = React.useState("")
+
+  React.useEffect(() => {
+    const { cancel, token } = axios.CancelToken.source()
+    const timeOutId = setTimeout(() => fetchHits(query, dispatch, token), 500)
+    return () => cancel("No longer latest query") || clearTimeout(timeOutId)
+  }, [query])
+
+  React.useEffect(() => {
+    console.log("EditDaoMembers.js - component mounted")
+
+    return () => {
+      setQuery("")
+      console.log("EditDaoMembers.js - component unmounted")
+    }
+  }, []) /* eslint-disable-line react-hooks/exhaustive-deps */
+
+  return (
+    <div className="w-full">
+      <div className="relative w-full border-b-2 border-slate-300 py-3 text-slate-600 focus-within:text-slate-400 dark:focus-within:text-slate-100">
+        <span className="absolute left-0 top-4 flex items-center pl-2">
+          <GoSearch size={24} />
+        </span>
+        <input
+          autoFocus
+          className="w-full bg-slate-200 py-2 pl-12 text-sm text-white focus:text-slate-900 focus:outline-none dark:bg-slate-900 dark:focus:text-slate-100"
+          placeholder="Search..."
+          autoComplete="off"
+          // onChange={event => setQuery(event.target.value)}
+          // value={query}
+        />
+      </div>
+      {!query.length ? (
+        <div className="flex flex-col space-y-2 py-3">
+          <div className="flex h-24 w-full items-center justify-center rounded-xl bg-slate-200 dark:bg-slate-800">
+            search and dao members container
+          </div>
+          <div className="flex w-full flex-row space-x-2">
+            <div className="flex h-24 w-1/2 items-center justify-center rounded-xl bg-slate-200 dark:bg-slate-800">
+              add pot
+            </div>
+            <div className="flex h-24 w-1/2 items-center justify-center rounded-xl bg-slate-200 dark:bg-slate-800">
+              remove pot
+            </div>
+          </div>
+        </div>
+      ) : null}
+      <div className="flex w-full flex-row items-center justify-between">
+        <button className="focus:shadow-outline w-full rounded-xl border-2 bg-slate-300 py-3 px-4 font-bold shadow-xl hover:border-2 hover:border-[#0db2ac93] hover:bg-slate-100 hover:shadow-sm focus:outline-none dark:bg-slate-800">
+          submit
+        </button>
+      </div>
+    </div>
+  )
+}
+
+export default EditDaoMembers
