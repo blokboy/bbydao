@@ -1,4 +1,5 @@
 import React from "react"
+import Head from "next/head"
 
 import CollectionBanner from "./CollectionBanner"
 import CollectionInfo from "./CollectionInfo"
@@ -16,7 +17,6 @@ const OpenSeaCollection = ({ data, slug }) => {
 
     return data.collection
   }, [data])
-  console.log(collection)
 
   const contract = useERC721Contract(collection?.address)
 
@@ -39,35 +39,47 @@ const OpenSeaCollection = ({ data, slug }) => {
     }
   }, [handleTicker])
 
+  const head = React.useMemo(() => {
+    return collection ? (
+      <Head>
+        <title>bbyDAO | {collection.name} NFT Collection</title>
+        <meta name="description" content={collection.description} />
+      </Head>
+    ) : null
+  }, [collection])
+
   if (!data) return <div className="h-screen">collection fetch failed</div>
 
   return (
-    <div className="flex w-full flex-col pt-4">
-      {/* needs banner image */}
-      <CollectionBanner banner={data.collection.banner_image_url} />
-      <div className="flex flex-col p-4 md:flex-row">
-        <div className="flex w-full flex-col items-center md:w-1/3">
-          <CollectionInfo
-            name={data.collection.name}
-            description={data.collection.description}
-            numOwners={data.collection.num_owners}
-            totalSupply={data.collection.total_supply}
-            verified={data.collection.safelist_request_status}
-            floor={data.collection.floor_price}
-            avg={data.collection.average_price}
-            volume={data.collection.total_volume}
-            ticker={ticker}
-          />
-        </div>
-        <div className="w-full md:w-2/3">
-          <AssetList
-            assets={data.assets}
-            address={data?.collection?.address}
-            slug={slug}
-          />
+    <>
+      {head}
+      <div className="flex w-full flex-col pt-4">
+        <CollectionBanner banner={collection.banner_image_url} />
+        <div className="flex flex-col p-4 md:flex-row">
+          <div className="flex w-full flex-col items-center md:w-1/3">
+            <CollectionInfo
+              address={collection.address}
+              name={collection.name}
+              description={collection.description}
+              numOwners={collection.num_owners}
+              totalSupply={collection.total_supply}
+              verified={collection.safelist_request_status}
+              floor={collection.floor_price}
+              avg={collection.average_price}
+              volume={collection.total_volume}
+              ticker={ticker}
+            />
+          </div>
+          <div className="w-full md:w-2/3">
+            <AssetList
+              assets={data.assets}
+              address={data?.collection?.address}
+              slug={slug}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
