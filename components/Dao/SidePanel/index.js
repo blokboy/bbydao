@@ -1,12 +1,11 @@
-import React from "react"
-import { useQuery, useMutation } from "react-query"
-import { useAccount, useConnect } from "wagmi"
-
-import * as api          from "../../../query"
-import { walletSnippet } from "../../../utils/helpers"
-import MemberCard        from "./MemberCard"
-import { useUiStore }    from "stores/useUiStore"
 import useFriendData     from "hooks/useFriendData"
+import * as api          from "query"
+import React             from "react"
+import { useMutation }   from "react-query"
+import { useUiStore }    from "stores/useUiStore"
+import { walletSnippet } from "utils/helpers"
+import { useAccount }    from "wagmi"
+import MemberCard        from "./MemberCard"
 
 const SidePanel = ({ safeInfo, nftImage }) => {
   const [{ data }] = useAccount()
@@ -18,7 +17,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
 
   const parsedList = {
     followers: [],
-    friends: [],
+    friends: []
   }
   if (friendData?.length) {
     for (const friend of friendData) {
@@ -47,7 +46,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     const req = {
       initiator: data.address,
       target: safeInfo.address,
-      status: 4,
+      status: 4
     }
 
     mutateAsync(req)
@@ -69,7 +68,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
             )
           }}
         >
-          {walletSnippet(safeInfo)}
+          {walletSnippet(safeInfo?.address)}
         </span>
       </div>
 
@@ -92,7 +91,8 @@ const SidePanel = ({ safeInfo, nftImage }) => {
         onClick={() => setDropdown(!dropdown)}
         className="my-4 mr-3 flex w-max transform flex-row rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow transition duration-500 ease-in-out hover:-translate-x-0.5 hover:bg-white hover:bg-gradient-to-l dark:hover:bg-slate-700"
       >
-        <span className="block rounded-full bg-slate-200 px-6 py-[0.45rem] font-bold text-[#FC8D4D] hover:bg-opacity-50 hover:text-white dark:bg-slate-900 dark:hover:bg-opacity-75">
+        <span
+          className="block rounded-full bg-slate-200 px-6 py-[0.45rem] font-bold text-[#FC8D4D] hover:bg-opacity-50 hover:text-white dark:bg-slate-900 dark:hover:bg-opacity-75">
           be frens
         </span>
       </button>
