@@ -23,7 +23,6 @@ const MobileEmojiPickerButton = ({ theme, handleEmojiReaction, setIsPickerActive
             onSelect={(emoji) => {
               handleEmojiReaction(emoji)
               setIsPickerActive(false)
-              console.log('hiii', isPickerActive)
             }}
           />
         </div>
