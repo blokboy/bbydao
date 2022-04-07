@@ -67,15 +67,22 @@ const EditDaoMembers = () => {
     }
   }, []) /* eslint-disable-line react-hooks/exhaustive-deps */
 
-  // drag and drop stuff below
+  ////////////////////////////////////////////////////////////////////////////////
+  // drag and drop / add remove members from bbyDAO functionaility
   const results = [
     { id: "1", name: "Draggable 1" },
     { id: "2", name: "Draggable 2" },
     { id: "3", name: "Draggable 3" },
+    { id: "4", name: "Draggable 4" },
+    { id: "5", name: "Draggable 5" },
   ]
 
+  // users that can be added to, or removed from the dao
+  // (filtered from query results, displayed in the results section of the modal, styled to indicate whether they can be added or removed)
   const [members, setMembers] = React.useState([...results])
+  // users to add to the dao
   const [addMembersState, setAddMembersState] = React.useState([])
+  // users to remove from the dao
   const [removeMembersState, setRemoveMembersState] = React.useState([])
 
   const onDragEnd = result => {
@@ -155,14 +162,37 @@ const EditDaoMembers = () => {
         setMembers([...members, memberToRemove])
       }
     }
-    console.log(result)
   }
 
   const handleSubmit = async e => {
     e.preventDefault()
-    // label and log add members state and remove members state
-    console.log("addMembersState", addMembersState)
-    console.log("removeMembersState", removeMembersState)
+    // assigns appropriate method to the member - add or remove
+    const addMembers = addMembersState.map(member => ({
+      ...member,
+      method: "add",
+    }))
+    const removeMembers = removeMembersState.map(member => ({
+      ...member,
+      method: "remove",
+    }))
+
+    // pairs swaps into array as well as leftover members in another array
+    const swap = []
+    const leftover = []
+    const maxLength = Math.max(addMembers.length, removeMembers.length)
+    for (let i = 0; i < maxLength; i++) {
+      const addMember = addMembers[i]
+      const removeMember = removeMembers[i]
+      if (addMember && removeMember) {
+        swap.push({ addMember, removeMember })
+      } else {
+        leftover.push(addMember || removeMember)
+      }
+    }
+
+    // log and label the arrays
+    console.log("swap", swap)
+    console.log("leftover", leftover)
   }
 
   return (
