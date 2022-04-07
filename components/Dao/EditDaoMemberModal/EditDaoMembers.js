@@ -217,7 +217,7 @@ const EditDaoMembers = () => {
             <Droppable droppableId="droppable-results">
               {(provided, snapshot) => (
                 <div
-                  className="flex h-24 w-full flex-row items-center justify-center rounded-xl bg-slate-200 dark:bg-slate-800"
+                  className="flex h-24 w-full flex-row space-x-2 rounded-xl bg-slate-200 p-2 dark:bg-slate-800"
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
@@ -234,21 +234,26 @@ const EditDaoMembers = () => {
             </Droppable>
 
             {/* add members container  */}
-            <div className="flex w-full flex-row space-x-2">
+            <div className="flex w-full grow flex-row space-x-2">
               <Droppable droppableId="droppable-add">
                 {(provided, snapshot) => (
                   <div
-                    className="flex h-24 w-1/2 rounded-xl bg-slate-200 p-2 dark:bg-slate-800"
+                    className="flex h-auto w-1/2 grow flex-col space-y-2 rounded-xl bg-slate-200 p-2 dark:bg-slate-800"
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    {addMembersState.map((item, index) => (
-                      <EditDaoMemberCard
-                        id={item.id}
-                        name={item.name}
-                        index={index}
-                      />
-                    ))}
+                    {addMembersState.length ? (
+                      addMembersState.map((item, index) => (
+                        <EditDaoMemberCard
+                          id={item.id}
+                          name={item.name}
+                          index={index}
+                        />
+                      ))
+                    ) : (
+                      // if member can be added, show outline green?
+                      <div className="flex h-12 items-center justify-center"></div>
+                    )}
                     {provided.placeholder}
                   </div>
                 )}
@@ -258,17 +263,21 @@ const EditDaoMembers = () => {
               <Droppable droppableId="droppable-remove">
                 {(provided, snapshot) => (
                   <div
-                    className="flex h-24 w-1/2 rounded-xl bg-slate-200 p-2 dark:bg-slate-800"
+                    className="flex h-auto w-1/2 grow flex-col space-y-2 rounded-xl bg-slate-200 p-2 dark:bg-slate-800"
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    {removeMembersState.map((item, index) => (
-                      <EditDaoMemberCard
-                        id={item.id}
-                        name={item.name}
-                        index={index}
-                      />
-                    ))}
+                    {removeMembersState.length ? (
+                      removeMembersState.map((item, index) => (
+                        <EditDaoMemberCard
+                          id={item.id}
+                          name={item.name}
+                          index={index}
+                        />
+                      ))
+                    ) : (
+                      <div className="flex h-12 items-center justify-center"></div>
+                    )}
                     {provided.placeholder}
                   </div>
                 )}

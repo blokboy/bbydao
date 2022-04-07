@@ -9,7 +9,7 @@ const EditDaoMemberCard = ({ id, name, index }) => {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="h-min rounded-xl bg-slate-300 p-2 dark:bg-slate-900"
+          className="h-min rounded-xl bg-slate-300 p-2 text-sm dark:bg-slate-900"
         >
           {name}
         </div>
