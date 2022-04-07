@@ -71,34 +71,98 @@ const EditDaoMembers = () => {
   const results = [
     { id: "1", name: "Draggable 1" },
     { id: "2", name: "Draggable 2" },
+    { id: "3", name: "Draggable 3" },
   ]
 
-  const [members, setMembers] = React.useState([])
+  const [members, setMembers] = React.useState([...results])
   const [addMembersState, setAddMembersState] = React.useState([])
   const [removeMembersState, setRemoveMembersState] = React.useState([])
-
-  React.useEffect(() => {
-    setMembers(results)
-  }, [])
 
   const onDragEnd = result => {
     const { destination, source, draggableId } = result
     if (!destination) {
       return
     }
+
+    // dropping into add list
     if (destination.droppableId === "droppable-add") {
+      if (source.droppableId === "droppable-results") {
+        const newResults = results.filter(result => result.id !== draggableId)
+        setMembers(newResults)
+      }
+      if (source.droppableId === "droppable-add") {
+        const newAddMembersState = addMembersState.filter(
+          member => member.id !== draggableId
+        )
+        setAddMembersState(newAddMembersState)
+      }
+      if (source.droppableId === "droppable-remove") {
+        const newRemoveMembersState = removeMembersState.filter(
+          member => member.id !== draggableId
+        )
+        setRemoveMembersState(newRemoveMembersState)
+      }
       const memberToAdd = results.find(member => member.id === draggableId)
       const newMembers = members.filter(member => member.id !== draggableId)
       setMembers(newMembers)
       setAddMembersState([...addMembersState, memberToAdd])
     }
+    // dropping into remove list
     if (destination.droppableId === "droppable-remove") {
+      if (source.droppableId === "droppable-results") {
+        const memberToRemove = results.find(member => member.id === draggableId)
+        const newMembers = members.filter(member => member.id !== draggableId)
+        setMembers(newMembers)
+        setRemoveMembersState([...removeMembersState, memberToRemove])
+      }
+      if (source.droppableId === "droppable-add") {
+        const newAddMembersState = addMembersState.filter(
+          member => member.id !== draggableId
+        )
+        setAddMembersState(newAddMembersState)
+      }
+      if (source.droppableId === "droppable-remove") {
+        const newRemoveMembersState = removeMembersState.filter(
+          member => member.id !== draggableId
+        )
+        setRemoveMembersState(newRemoveMembersState)
+      }
       const memberToRemove = results.find(member => member.id === draggableId)
       const newMembers = members.filter(member => member.id !== draggableId)
       setMembers(newMembers)
       setRemoveMembersState([...removeMembersState, memberToRemove])
     }
+    // dropping into results list
+    if (destination.droppableId === "droppable-results") {
+      if (source.droppableId === "droppable-add") {
+        const memberToAdd = addMembersState.find(
+          member => member.id === draggableId
+        )
+        const newAddMembersState = addMembersState.filter(
+          member => member.id !== draggableId
+        )
+        setAddMembersState(newAddMembersState)
+        setMembers([...members, memberToAdd])
+      }
+      if (source.droppableId === "droppable-remove") {
+        const memberToRemove = removeMembersState.find(
+          member => member.id === draggableId
+        )
+        const newRemoveMembersState = removeMembersState.filter(
+          member => member.id !== draggableId
+        )
+        setRemoveMembersState(newRemoveMembersState)
+        setMembers([...members, memberToRemove])
+      }
+    }
     console.log(result)
+  }
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+    // label and log add members state and remove members state
+    console.log("addMembersState", addMembersState)
+    console.log("removeMembersState", removeMembersState)
   }
 
   return (
@@ -184,7 +248,10 @@ const EditDaoMembers = () => {
         </div>
       ) : null}
       <div className="mb-2 flex w-full flex-row items-center justify-between">
-        <button className="focus:shadow-outline w-full rounded-xl border-2 bg-slate-300 py-3 px-4 font-bold shadow-xl hover:border-2 hover:border-[#0db2ac93] hover:bg-slate-100 hover:shadow-sm focus:outline-none dark:bg-slate-800">
+        <button
+          className="focus:shadow-outline w-full rounded-xl border-2 bg-slate-300 py-3 px-4 font-bold shadow-xl hover:border-2 hover:border-[#0db2ac93] hover:bg-slate-100 hover:shadow-sm focus:outline-none dark:bg-slate-800"
+          onClick={handleSubmit}
+        >
           submit
         </button>
       </div>
