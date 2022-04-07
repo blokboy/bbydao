@@ -14,35 +14,6 @@ const MessageCard = ({ message }) => {
   const [isActive, setIsActive] = useState(false)
   const [isPickerActive, setIsPickerActive] = useState(false)
   const [reactions, setReactions] = useState(message.reactions)
-  const reactionBarVariants = {
-    initial: {
-      y: 3,
-      opacity: 0
-    },
-    animate: {
-      y: 0,
-      opacity: 1
-    },
-    exit: {
-      y: 3,
-      opacity: 0
-    }
-  }
-  const pickerVariants = {
-    initial: {
-      height: 0,
-      opacity: 0
-    },
-    animate: {
-      height: "auto",
-      pointerEvents: "auto",
-      opacity: 1
-    },
-    exit: {
-      display: "none",
-      pointerEvents: "none"
-    }
-  }
   const { theme } = useTheme()
   const [{ data: accountData }] = useAccount()
 
@@ -197,7 +168,6 @@ const MessageCard = ({ message }) => {
           {(isMobile && (
             <MobileEmojiPickerButton
               theme={theme}
-              pickerVariants={pickerVariants}
               handleEmojiReaction={handleEmojiReaction}
               setIsPickerActive={setIsPickerActive}
               isPickerActive={isPickerActive}
@@ -207,8 +177,6 @@ const MessageCard = ({ message }) => {
               isActive={isActive}
               handleEmojiReaction={handleEmojiReaction}
               theme={theme}
-              pickerVariants={pickerVariants}
-              variants={reactionBarVariants}
               setIsPickerActive={setIsPickerActive}
               isPickerActive={isPickerActive}
             />

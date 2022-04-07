@@ -1,9 +1,8 @@
 import { Picker }        from "emoji-mart"
-import { motion }        from "framer-motion"
 import React             from "react"
 import { MdAddReaction } from "react-icons/md"
 
-const MobileEmojiPickerButton = ({ theme, pickerVariants, handleEmojiReaction, setIsPickerActive, isPickerActive }) => {
+const MobileEmojiPickerButton = ({ theme, handleEmojiReaction, setIsPickerActive, isPickerActive }) => {
 
   return (
     <span
@@ -14,22 +13,18 @@ const MobileEmojiPickerButton = ({ theme, pickerVariants, handleEmojiReaction, s
     >
       <MdAddReaction size={16} />
       <div>
-        <motion.div
-          variants={pickerVariants}
-          initial="initial"
-          animate={isPickerActive ? "animate" : "exit"}
-          exit="exit"
-          className="absolute top-24 right-0 z-10 pointer-events-none"
+        <div
+          className={`${isPickerActive ? `block` : `hidden`} absolute top-24 right-0 z-10`}
         >
           <Picker
             showSkinTones={true}
-            title={''}
+            title={""}
             theme={theme}
             onSelect={(emoji) => {
               handleEmojiReaction(emoji)
             }}
           />
-        </motion.div>
+        </div>
      </div>
     </span>
   )
