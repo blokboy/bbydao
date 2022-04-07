@@ -6,8 +6,8 @@ const MobileEmojiPickerButton = ({ theme, handleEmojiReaction, setIsPickerActive
 
   return (
     <span
-      onClick={() => {
-        setIsPickerActive(true)
+      onClick={(e) => {
+        !isPickerActive ? setIsPickerActive(true) : e.stopPropagation()
       }}
       className="flex items-center bg-slate-300 dark:bg-slate-700 sm:bg-slate-200 px-3 py-1 rounded-full mr-1"
     >
@@ -22,6 +22,8 @@ const MobileEmojiPickerButton = ({ theme, handleEmojiReaction, setIsPickerActive
             theme={theme}
             onSelect={(emoji) => {
               handleEmojiReaction(emoji)
+              setIsPickerActive(false)
+              console.log('hiii', isPickerActive)
             }}
           />
         </div>
