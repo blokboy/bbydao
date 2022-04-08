@@ -78,16 +78,25 @@ const EditDaoMembers = () => {
   ]
 
   // users that can be added to, or removed from the dao
-  // (filtered from query results, displayed in the results section of the modal, styled to indicate whether they can be added or removed)
+  // (filtered from query results [hits], displayed in the results section of the modal, styled to indicate whether they can be added or removed)
   const [members, setMembers] = React.useState([...results])
   // users to add to the dao
   const [addMembersState, setAddMembersState] = React.useState([])
   // users to remove from the dao
   const [removeMembersState, setRemoveMembersState] = React.useState([])
 
+  // TO DO:
+  // load dao members into results on load, say they drag one member into the remove section
+  // next, they perform a search, populate the results section with eligible members
+  // we should make sure that the user that they already have in the remove section has no way of showing up in the search results
+  // same behavior for add section as well.
+
+  // disabling + ui indication when a user that is already a member of the dao is being dragged into the add section
+  // same for if a user is not a part of a dao and is being dragged into the remove section
+
   const onDragEnd = result => {
     const { destination, source, draggableId } = result
-    if (!destination) {
+    if (!destination || destination.droppableId === source.droppableId) {
       return
     }
 
@@ -96,12 +105,6 @@ const EditDaoMembers = () => {
       if (source.droppableId === "droppable-results") {
         const newResults = results.filter(result => result.id !== draggableId)
         setMembers(newResults)
-      }
-      if (source.droppableId === "droppable-add") {
-        const newAddMembersState = addMembersState.filter(
-          member => member.id !== draggableId
-        )
-        setAddMembersState(newAddMembersState)
       }
       if (source.droppableId === "droppable-remove") {
         const newRemoveMembersState = removeMembersState.filter(
@@ -127,12 +130,6 @@ const EditDaoMembers = () => {
           member => member.id !== draggableId
         )
         setAddMembersState(newAddMembersState)
-      }
-      if (source.droppableId === "droppable-remove") {
-        const newRemoveMembersState = removeMembersState.filter(
-          member => member.id !== draggableId
-        )
-        setRemoveMembersState(newRemoveMembersState)
       }
       const memberToRemove = results.find(member => member.id === draggableId)
       const newMembers = members.filter(member => member.id !== draggableId)
@@ -217,7 +214,7 @@ const EditDaoMembers = () => {
             <Droppable droppableId="droppable-results">
               {(provided, snapshot) => (
                 <div
-                  className="flex h-24 w-full flex-row space-x-2 rounded-xl bg-slate-200 p-2 dark:bg-slate-800"
+                  className="flex h-32 w-full flex-row space-x-2 rounded-xl bg-slate-100 p-2 dark:bg-slate-800"
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
@@ -233,12 +230,17 @@ const EditDaoMembers = () => {
               )}
             </Droppable>
 
-            {/* add members container  */}
-            <div className="flex w-full grow flex-row space-x-2">
+            <div className="flex h-24 w-full grow flex-row space-x-2">
+              {/* add members container  */}
               <Droppable droppableId="droppable-add">
                 {(provided, snapshot) => (
                   <div
-                    className="flex h-auto w-1/2 grow flex-col space-y-2 rounded-xl bg-slate-200 p-2 dark:bg-slate-800"
+                    className={
+                      "grid h-auto w-1/2 grid-cols-1 gap-2 rounded-xl bg-slate-100 p-2 dark:bg-slate-800 md:grid-cols-2" +
+                      (snapshot.isDraggingOver
+                        ? " border border-teal-300 bg-slate-300 dark:bg-slate-700"
+                        : "")
+                    }
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
@@ -251,8 +253,7 @@ const EditDaoMembers = () => {
                         />
                       ))
                     ) : (
-                      // if member can be added, show outline green?
-                      <div className="flex h-12 items-center justify-center"></div>
+                      <div className="flex h-24"></div>
                     )}
                     {provided.placeholder}
                   </div>
@@ -263,7 +264,12 @@ const EditDaoMembers = () => {
               <Droppable droppableId="droppable-remove">
                 {(provided, snapshot) => (
                   <div
-                    className="flex h-auto w-1/2 grow flex-col space-y-2 rounded-xl bg-slate-200 p-2 dark:bg-slate-800"
+                    className={
+                      "grid h-auto w-1/2 grid-cols-1 gap-2 rounded-xl bg-slate-100 p-2 dark:bg-slate-800 md:grid-cols-2" +
+                      (snapshot.isDraggingOver
+                        ? " border border-red-300 bg-slate-300 dark:bg-slate-700"
+                        : "")
+                    }
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
@@ -276,7 +282,7 @@ const EditDaoMembers = () => {
                         />
                       ))
                     ) : (
-                      <div className="flex h-12 items-center justify-center"></div>
+                      <div className="flex h-24"></div>
                     )}
                     {provided.placeholder}
                   </div>
