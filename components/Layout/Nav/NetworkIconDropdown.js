@@ -44,7 +44,7 @@ export default function NetworkIconDropdown() {
           className="nav-btn mr-3"
           onClick={handleOpen}
         >
-          {network.icon}
+          {network?.icon}
         </button>
         <NetworkDropdown isOpen={isDropdownOpen} onClick={handleClick} className="-translate-x-12" />
       </div>
