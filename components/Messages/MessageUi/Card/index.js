@@ -155,7 +155,7 @@ const MessageCard = ({ message }) => {
           children={message?.body}
         />
         <div className="inline-flex">
-          {reducedReactions.length && reducedReactions?.map((emoji) => {
+          {reducedReactions.length ? reducedReactions?.map((emoji) => {
             return (
               <EmojiButton
                 emoji={emoji}
@@ -164,7 +164,7 @@ const MessageCard = ({ message }) => {
                 key={emoji.id}
               />
             )
-          })}
+          }) : null}
           {(isMobile && (
             <MobileEmojiPickerButton
               theme={theme}
