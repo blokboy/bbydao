@@ -1,11 +1,12 @@
-import React from "react"
+import React             from "react"
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
-import useForm from "hooks/useForm"
-import { useUiStore } from "stores/useUiStore"
-import { useAccount } from "wagmi"
-import { HiX } from "react-icons/hi"
-import * as api from '../../../query'
-import { useMutation } from "react-query"
+import useForm           from "hooks/useForm"
+import { useUiStore }    from "stores/useUiStore"
+import { useAccount }    from "wagmi"
+import { HiX }           from "react-icons/hi"
+import * as api          from '../../../query'
+import { useMutation }   from "react-query"
+import { walletSnippet } from "../../../utils/helpers"
 
 const FollowModal = ({ safeAddress }) => {
   const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
@@ -45,18 +46,18 @@ const FollowModal = ({ safeAddress }) => {
       return
     }
 
-    if(safeAddress === state.safe) { 
+    if(safeAddress === state.safe) {
       // user tried to send a friend request between same bbyDAO
       console.log('invalid')
       return { message: `Cannot friend request the same bbyDAO` }
     }
     /*
-      Transaction Obj for submission 
+      Transaction Obj for submission
       {
         safeContract: state.safe,
         creator: data.address,
         receiver: safeAddress,
-        approvals: [ data.address ] 
+        approvals: [ data.address ]
         type: 6 (TransactionType.DAO_REQUEST)
       }
     */
@@ -101,9 +102,7 @@ const FollowModal = ({ safeAddress }) => {
                     value={safe}
                   />
                   <label className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text pl-4 font-semibold text-transparent">
-                    {safe.substring(0, 6) +
-                      "..." +
-                      safe.substring(safe.length - 5, safe.length - 1)}
+                    {walletSnippet(safe)}
                   </label>
                 </div>
               ))

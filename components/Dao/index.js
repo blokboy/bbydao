@@ -1,16 +1,18 @@
-import React from "react"
-import Head from "next/head"
-import TransactionModal from "./TransactionModal"
-import SidePanel from "./SidePanel"
-import Graph from "./Graph"
-import TokensNfts from "./TokensNfts"
-import Nurseries from "./Nurseries"
-import TxHistory from "./TxHistory"
-import ProposalHistory from "./ProposalHistory"
-import SellModal from "./TokensNfts/SellModal"
-import FollowModal from "./SidePanel/FollowModal"
-import { useOsStore } from "stores/useOsStore"
-import { useUiStore } from "stores/useUiStore"
+import Head              from "next/head"
+import React             from "react"
+import { useOsStore }    from "stores/useOsStore"
+import { useUiStore }    from "stores/useUiStore"
+import { walletSnippet } from "utils/helpers"
+import Graph             from "./Graph"
+import Nurseries         from "./Nurseries"
+import ProposalHistory   from "./ProposalHistory"
+import SidePanel         from "./SidePanel"
+import FollowModal       from "./SidePanel/FollowModal"
+import TokensNfts        from "./TokensNfts"
+import SellModal         from "./TokensNfts/SellModal"
+import TransactionModal  from "./TransactionModal"
+import TxHistory         from "./TxHistory"
+
 
 const Dao = ({ data }) => {
   const osSellModalOpen = useOsStore(state => state.osSellModalOpen)
@@ -20,7 +22,7 @@ const Dao = ({ data }) => {
   return (
     <>
       <Head>
-        <title>{`bbyDAO | ${data.safeInfo.address.substring(0, 6)}...`}</title>
+        <title>{`bbyDAO | ${walletSnippet(data.safeInfo.address)}`}</title>
         <meta name="description" content="" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

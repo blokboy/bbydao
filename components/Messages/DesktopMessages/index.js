@@ -5,7 +5,7 @@ import DesktopMessageView from "./DesktopMessageView"
 
 const DesktopMessages = () => {
   return (
-    <div className="-mt-16 flex h-screen flex-row pt-16">
+    <div className="h-auto sm:h-screen -mt-16 flex h-screen flex-row pt-16">
       <div className="flex flex-col md:w-1/3">
         <DesktopInboxNavigation />
         <DesktopThreadList />

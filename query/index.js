@@ -150,6 +150,12 @@ export const createMessage = async req => {
   return res.data
 }
 
+//{id: string (req), dao: string (opt), body: string (opt), seen: bool (opt) reactions: obj (opt)}
+export const mutateMessage = async req => {
+  const res = await api.put("/message", req)
+  return res.data
+}
+
 // query for infinite scroll on os collections
 // { slug: string, address: string, offset: num }
 export const getOsAssets = async req => {

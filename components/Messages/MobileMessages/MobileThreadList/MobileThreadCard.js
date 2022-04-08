@@ -18,7 +18,7 @@ const MobileThreadCard = ({ title, thread }) => {
     <li
       className={
         "mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-800" +
-        (threadChannel === thread.channel ? " text-blue-500" : "")
+        (threadChannel === thread.channel ? " text-[#FC8D4D]" : "")
       }
       onClick={handleClickCard}
     >
