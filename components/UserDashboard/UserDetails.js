@@ -2,10 +2,11 @@ import React from "react"
 import Link from "next/link"
 import { useMutation } from "react-query"
 
-import * as api from "../../query"
-import { useUiStore } from "stores/useUiStore"
+import * as api                   from "../../query"
+import { useUiStore }             from "stores/useUiStore"
 import { useAccount, useConnect } from "wagmi"
-import useFriendData from "hooks/useFriendData"
+import useFriendData              from "hooks/useFriendData"
+import { walletSnippet }          from "../../utils/helpers"
 
 const UserDetails = ({ address, ens }) => {
   const [{ data: connectData, error: connectError }, connect] = useConnect()
@@ -124,7 +125,7 @@ const UserDetails = ({ address, ens }) => {
         </span>
       ) : (
         <span className="h-10 w-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-3xl text-transparent">
-          @{`${address.substring(0, 6) + "..."}`}
+          @{`${walletSnippet(address)}`}
         </span>
       )}
 

@@ -1,8 +1,7 @@
 import React from "react"
 import { ethers } from "ethers"
-import { useEnsLookup } from "wagmi"
-
 import { useOsStore } from "stores/useOsStore"
+import { walletSnippet } from "../../../utils/helpers"
 
 export default function AssetCard({ asset }) {
   const [, lookupAddress] = useEnsLookup({ skip: true })
@@ -70,35 +69,26 @@ export default function AssetCard({ asset }) {
   }, [asset.image_url])
 
   return (
-    <div className="w-full py-2 first:mt-2 lg:w-1/2 lg:px-2 lg:first:mt-0">
-      <div className="rounded-xl bg-slate-100 p-4 dark:bg-slate-800">
-        <div className="flex flex-row justify-between">
-          {/* asset name & number of sales */}
-          <span className="text-xs font-bold">{asset?.name}</span>
-          <span className="text-xs font-semibold">
-            {asset?.last_sale
-              ? `Last Sale: ${ethers.utils.formatEther(asset?.last_sale)} ETH`
-              : "diamond"}
-          </span>
-        </div>
-        {/* asset img */}
-        {assetImage}
-        <span className="text-sm font-bold">{asset?.name}</span>
-        <div className="mt-2 flex flex-row justify-between">
-          <div className="flex flex-row">
-            {/* owner address */}
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold">owner:</span>
-              {owner}
-            </div>
-          </div>
-          {/* asset price */}
-          <div className="mx-2 flex flex-col">
-            <span className="text-xs font-semibold">price</span>
-            <span className="text-sm font-semibold">
-              {asset?.sell_orders
-                ? asset?.sell_orders[0].current_price / 10 ** 18
-                : "Not For Sale"}
+    <div className="flex w-full flex-col rounded-xl bg-slate-100 p-4 dark:bg-slate-800">
+      <div className="flex flex-row justify-between">
+        {/* asset name & number of sales */}
+        <span className="text-xs font-bold">{asset?.name}</span>
+        <span className="text-xs font-semibold">
+          {asset?.last_sale
+            ? `Last Sale: ${ethers.utils.formatEther(asset?.last_sale)} ETH`
+            : "diamond"}
+        </span>
+      </div>
+      {/* asset img */}
+      <img src={asset?.image_url} alt="" />
+      <span className="text-sm font-bold">{asset?.name}</span>
+      <div className="mt-2 flex flex-row justify-between">
+        <div className="flex flex-row">
+          {/* owner address */}
+          <div className="flex flex-col">
+            <span className="text-xs font-semibold">owner:</span>
+            <span className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text font-semibold text-transparent">
+              {walletSnippet(asset?.owner)}
             </span>
           </div>
         </div>
