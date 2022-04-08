@@ -155,7 +155,7 @@ const MessageCard = ({ message }) => {
           children={message?.body}
         />
         <div className="inline-flex">
-          {reducedReactions && reducedReactions?.map((emoji) => {
+          {reducedReactions.length && reducedReactions?.map((emoji) => {
             return (
               <EmojiButton
                 emoji={emoji}
