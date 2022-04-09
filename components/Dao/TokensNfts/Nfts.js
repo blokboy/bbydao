@@ -14,7 +14,7 @@ const Nfts = ({ collectibles }) => {
 
   return (
     <div className="mt-4">
-      <h1>Collectibles: {collectibles.length}</h1>
+      <h1>Collectibles:</h1>
       {nfts}
     </div>
   )
