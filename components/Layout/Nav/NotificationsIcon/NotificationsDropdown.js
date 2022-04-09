@@ -17,7 +17,10 @@ const NotificationsDropdown = ({ ...props }) => {
       <ul>
       <li>
         { (!data || data?.notificationCount == 0)? (
+          <>
             <p class="text-center">¯\_(ツ)_/¯</p>
+            <p class="text-center">No notifications</p>
+          </>
         ) : (<></>)}
         </li>
         <li>
