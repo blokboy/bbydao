@@ -56,7 +56,7 @@ const AssetList = ({ assets, address, slug }) => {
 
   return (
     <div className="flex w-full flex-col items-center">
-      <div className=" grid w-full grid-cols-1 justify-items-center gap-3 px-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="flex flex-col w-full md:px-4 md:flex-row md:flex-wrap">
         {osAssets.map((asset, index) => (
           <AssetCard key={index} asset={asset} />
         ))}
