@@ -36,13 +36,13 @@ const MobileMessageInput = () => {
       channel: threadChannel,
       body: state.message,
     }
-    createMessage(req)
+      createMessage(req)
     setState({})
   }
 
   return (
     <form
-      className="fixed inset-x-0 bottom-0 flex h-20 flex-row p-3 dark:bg-slate-800"
+      className="fixed inset-x-0 bottom-0 flex h-20 flex-row p-3 bg-slate-100 dark:bg-slate-800"
       onSubmit={handleSubmit}
     >
       <textarea

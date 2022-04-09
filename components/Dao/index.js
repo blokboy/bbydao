@@ -10,6 +10,7 @@ import ProposalHistory from "./ProposalHistory"
 import SellModal from "./TokensNfts/SellModal"
 import FollowModal from "./SidePanel/FollowModal"
 import EditDaoMemberModal from "./EditDaoMemberModal"
+import { walletSnippet } from "utils/helpers"
 
 // start to move all dao page modal states from other stores into useDaoStore
 import { useDaoStore } from "stores/useDaoStore"
@@ -27,7 +28,7 @@ const Dao = ({ data }) => {
   return (
     <>
       <Head>
-        <title>{`bbyDAO | ${data.safeInfo.address.substring(0, 6)}...`}</title>
+        <title>{`bbyDAO | ${walletSnippet(data.safeInfo.address)}`}</title>
         <meta name="description" content="" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

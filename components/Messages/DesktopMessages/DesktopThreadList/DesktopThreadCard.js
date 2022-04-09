@@ -1,6 +1,7 @@
-import React from "react"
-import { useMessageStore } from "stores/useMessageStore"
+import React                         from "react"
+import { useMessageStore }           from "stores/useMessageStore"
 import { HiOutlineArrowCircleRight } from "react-icons/hi"
+import { walletSnippet }             from "utils/helpers"
 
 const DesktopThreadCard = ({ title, thread }) => {
   const { setThreadChannel } = useMessageStore()
@@ -13,33 +14,33 @@ const DesktopThreadCard = ({ title, thread }) => {
     setThreadChannel(thread.channel)
     setMobileThreadView()
   }
-  
+
+  const isActive = threadChannel === thread.channel
+
   const parseTitle = (_addresses) => {
     const parsedTitles = []
 
-    const addresses = _addresses.split(',')
+    const addresses = _addresses.replace(/\s/g, '').split(',')
     for(const addr of addresses) {
-      const str = addr.substring(0, 6).concat('...').concat(addr.substring(38, 42))
+      const str = walletSnippet(addr)
       parsedTitles.push(str)
     }
 
     return parsedTitles
   }
 
-  console.log('parsed titles ', parseTitle(title))
-
   return (
     <li
       className={
-        "mb-2 flex w-full flex-row rounded-lg bg-slate-200 p-3 dark:bg-slate-800" +
-        (threadChannel === thread.channel ? " text-blue-500" : "")
+        "mb-2 flex w-full flex-row rounded-lg bg-slate-200 hover:bg-slate-100 p-3 dark:bg-slate-800 hover:cursor-pointer dark:hover:bg-slate-700" +
+        (isActive ? "  text-[#FC8D4D]" : "")
       }
       onClick={handleClickCard}
     >
       <div className="ml-3 flex w-11/12 flex-col pl-3">
         <span className="text-sm font-bold">
           {" "}
-          {title?.length > 42 ? title.substring(0, 6).concat("...").concat(title.substring(38,42)) : title }
+          {parseTitle(title)[0]}
         </span>
       </div>
       <div className="self-center">

@@ -1,11 +1,26 @@
 import React from "react"
 import { ethers } from "ethers"
 import { useOsStore } from "stores/useOsStore"
+import { walletSnippet } from "../../../utils/helpers"
 
-const AssetCard = ({ asset }) => {
+export default function AssetCard({ asset }) {
+  const [, lookupAddress] = useEnsLookup({ skip: true })
+
+  const [ownerENS, setOwnerENS] = React.useState(null)
+
   const setOsOfferModalOpen = useOsStore(state => state.setOsOfferModalOpen)
   const setOsAssetInfo = useOsStore(state => state.setOsAssetInfo)
   const setOsBuyModalOpen = useOsStore(state => state.setOsBuyModalOpen)
+
+  const handleENS = React.useCallback(async () => {
+    try {
+      const { data } = await lookupAddress({ address: asset.owner })
+      setOwnerENS(data || "")
+    } catch (err) {
+      setOwnerENS("")
+      console.log({ err, callingFunc: "handleENS in AssetCard.js" })
+    }
+  }, [asset.owner])
 
   const offerModal = () => {
     setOsOfferModalOpen()
@@ -27,6 +42,32 @@ const AssetCard = ({ asset }) => {
     })
   }
 
+  React.useEffect(() => {
+    if (ownerENS === null) {
+      handleENS()
+    }
+  }, [handleENS])
+
+  const owner = React.useMemo(() => {
+    return asset.owner ? (
+      <span className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text font-semibold text-transparent">
+        {ownerENS ||
+          asset.owner.substring(0, 6) +
+            "..." +
+            asset.owner.substring(
+              asset?.owner.length - 5,
+              asset?.owner.length - 1
+            )}
+      </span>
+    ) : null
+  }, [asset.owner, ownerENS])
+
+  const assetImage = React.useMemo(() => {
+    return asset.image_url ? (
+      <img src={asset?.image_url} alt="" className="h-auto w-full rounded" />
+    ) : null
+  }, [asset.image_url])
+
   return (
     <div className="flex w-full flex-col rounded-xl bg-slate-100 p-4 dark:bg-slate-800">
       <div className="flex flex-row justify-between">
@@ -47,28 +88,13 @@ const AssetCard = ({ asset }) => {
           <div className="flex flex-col">
             <span className="text-xs font-semibold">owner:</span>
             <span className="bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text font-semibold text-transparent">
-              {asset?.owner.substring(0, 6) +
-                "..." +
-                asset?.owner.substring(
-                  asset?.owner.length - 5,
-                  asset?.owner.length - 1
-                )}
+              {walletSnippet(asset?.owner)}
             </span>
           </div>
         </div>
-        {/* asset price */}
-        <div className="mx-2 flex flex-col">
-          <span className="text-xs font-semibold">price</span>
-          <span className="text-sm font-semibold">
-            {asset?.sell_orders
-              ? asset?.sell_orders[0].current_price / 10 ** 18
-              : "Not For Sale"}
-          </span>
-        </div>
-      </div>
-      <div className="mt-2 flex flex-row justify-between">
-        {/* asset traits */}
-        {/* <div className="grid grid-cols-3 gap-1">
+        <div className="mt-2 flex flex-row justify-between">
+          {/* asset traits */}
+          {/* <div className="grid grid-cols-3 gap-1">
           {asset.traits.map((trait, index) => (
             <div
               key={index}
@@ -76,30 +102,29 @@ const AssetCard = ({ asset }) => {
             ></div>
           ))}
         </div> */}
-        {/* traits rarity score */}
-        {/* <span className="text-sm font-semibold">rarity score</span> */}
-      </div>
-      {/* buy offer buttons */}
-      <div className="mt-2 flex flex-row justify-center">
-        {asset?.sell_orders ? (
+          {/* traits rarity score */}
+          {/* <span className="text-sm font-semibold">rarity score</span> */}
+        </div>
+        {/* buy offer buttons */}
+        <div className="mt-2 flex flex-row justify-center">
+          {asset?.sell_orders ? (
+            <button
+              onClick={buyModal}
+              className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900"
+            >
+              buy
+            </button>
+          ) : (
+            <></>
+          )}
           <button
-            onClick={buyModal}
+            onClick={offerModal}
             className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900"
           >
-            buy
+            make offer
           </button>
-        ) : (
-          <></>
-        )}
-        <button
-          onClick={offerModal}
-          className="mx-1 rounded bg-slate-200 p-2 font-semibold shadow dark:bg-slate-900"
-        >
-          make offer
-        </button>
+        </div>
       </div>
     </div>
   )
 }
-
-export default AssetCard

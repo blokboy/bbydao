@@ -1,5 +1,5 @@
-import React from "react"
-import MessageCard from "../../MessageUi/MessageCard"
+import React               from "react"
+import MessageCard         from "../../MessageUi/Card"
 import { useMessageStore } from "stores/useMessageStore"
 import * as api from "query"
 import { useQuery } from "react-query"
@@ -14,7 +14,7 @@ const DesktopMessageContent = () => {
       enabled: !!threadChannel,
       // retry: false,
       // retryOnMount: false,
-      // refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
       // staleTime: Infinity,
     }
   )
@@ -28,14 +28,15 @@ const DesktopMessageContent = () => {
 
   if (!messages?.length) {
     return (
-      <div className="flex-1 bg-slate-50 px-3 pb-44 dark:bg-slate-800">
+      <div className="flex-1 bg-slate-50 p-3 pb-44 dark:bg-slate-800">
         No Messages
       </div>
     )
   }
 
   return (
-    <div className="mb-3 flex-1 overflow-auto rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
+    <div className="mb-3 flex-1 overflow-auto overflow-x-hidden rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
+
       {messages?.map(message => (
         <MessageCard key={message.id} message={message} />
       ))}

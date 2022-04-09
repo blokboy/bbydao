@@ -1,10 +1,16 @@
 import React from "react"
+import TokenCard from "./TokenCard"
 
 const Tokens = ({ tokens }) => {
-  // console.log("Tokens", tokens)
+  console.log("Tokens", tokens)
   return (
     <div>
-      <h1>Tokens: {tokens.length}</h1>
+      Tokens:
+      {
+        tokens && tokens.map(token => {
+          return <TokenCard token={token} />
+        })  
+      }
     </div>
   )
 }

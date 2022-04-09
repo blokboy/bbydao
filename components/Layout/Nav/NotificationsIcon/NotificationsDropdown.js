@@ -7,7 +7,7 @@ const NotificationsDropdown = ({ ...props }) => {
   return (
     <div
       className={
-        (notificationsOpen && notificationCount ? "absolute " : "hidden ") +
+        (notificationsOpen ? "absolute " : "hidden ") +
         "top-0 right-0 z-50 h-2/3 w-4/12 -translate-x-20 translate-y-20 overflow-auto rounded border bg-slate-200 px-4 py-2 text-slate-800 shadow dark:bg-slate-900 dark:text-white"
       }
     >
@@ -15,6 +15,14 @@ const NotificationsDropdown = ({ ...props }) => {
         <h1>Notifications</h1>
       </div>
       <ul>
+      <li>
+        { (!data || data?.notificationCount == 0)? (
+          <>
+            <p class="text-center">¯\_(ツ)_/¯</p>
+            <p class="text-center">No notifications</p>
+          </>
+        ) : (<></>)}
+        </li>
         <li>
         {data?.parsedNotifs.FRIEND_REQUESTS?.map(notif => (
           <NotificationCard

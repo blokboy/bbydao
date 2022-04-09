@@ -1,8 +1,9 @@
-import React from "react"
-import ClickAwayListener from "react-click-away-listener"
+import React                        from "react"
+import ClickAwayListener            from "react-click-away-listener"
 import { useAccount, useEnsLookup } from "wagmi"
-import { IoCopySharp } from "react-icons/io5"
-import { HiOutlineLogout } from "react-icons/hi"
+import { IoCopySharp }              from "react-icons/io5"
+import { HiOutlineLogout }          from "react-icons/hi"
+import { walletSnippet }            from "../../../utils/helpers"
 
 const AccountDisplay = () => {
   const [{ data, error, loading }, disconnect] = useAccount()
@@ -80,12 +81,7 @@ const AccountDisplay = () => {
           {ensData
             ? ensData
             : !ensData && data?.address
-            ? data.address.substring(0, 6) +
-              "..." +
-              data.address.substring(
-                data.address.length - 5,
-                data.address.length
-              )
+            ? walletSnippet(data?.address)
             : null}
         </button>
         {dropdown}
