@@ -46,7 +46,7 @@ export default function NftCard({ nft }) {
   const nftCardName = React.useMemo(() => {
     return nftName !== null ? (
       <div className="mt-2 pl-2 text-sm font-bold">
-        {name.length < 16 ? name : `${name.slice(0, 16)}...`}
+        {nft.name?.length < 16 ? nft.name : `${nft.name?.slice(0, 16)}...`}
       </div>
     ) : null
   }, [nftName])
