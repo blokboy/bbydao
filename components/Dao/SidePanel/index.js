@@ -1,11 +1,15 @@
-import useFriendData     from "hooks/useFriendData"
-import * as api          from "query"
-import React             from "react"
-import { useMutation }   from "react-query"
-import { useUiStore }    from "stores/useUiStore"
+import React from "react"
+import { useQuery, useMutation } from "react-query"
+import { useAccount, useConnect } from "wagmi"
+
+import * as api from "../../../query"
+import { HiOutlineUsers } from "react-icons/hi"
+import MemberCard from "./MemberCard"
+import { useUiStore } from "stores/useUiStore"
+import { useDaoStore } from "stores/useDaoStore"
+import useFriendData from "hooks/useFriendData"
 import { walletSnippet } from "utils/helpers"
-import { useAccount }    from "wagmi"
-import MemberCard        from "./MemberCard"
+
 
 const SidePanel = ({ safeInfo, nftImage }) => {
   const [{ data }] = useAccount()
@@ -14,6 +18,10 @@ const SidePanel = ({ safeInfo, nftImage }) => {
   const setFollowDaoModalOpen = useUiStore(state => state.setFollowDaoModalOpen)
   const [friendData, { friendStatus, setFriendStatus }, friendActionText] =
     useFriendData(safeInfo.address)
+
+  const setEditDaoMemberModalOpen = useDaoStore(
+    state => state.setEditDaoMemberModalOpen
+  )
 
   const parsedList = {
     followers: [],
@@ -54,7 +62,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
   }, [data, safeInfo, friendStatus])
 
   return (
-    <div className="flex-start mx-1 mb-3 flex h-full flex-col px-4 md:flex-col">
+    <div className="flex-start flex h-full flex-col md:flex-col">
       <div className="mb-3 flex place-content-center">
         {nftImage ? <img src={nftImage} alt="alt" width={200} /> : <></>}
       </div>
@@ -121,11 +129,22 @@ const SidePanel = ({ safeInfo, nftImage }) => {
 
       {/* make component to represent these (with pics) */}
       {/* modal pops to center of screen to scroll through all members */}
-      <h1>members</h1>
-      <div className="overflow-auto p-1">
-        {safeInfo.owners.map((member, index) => (
-          <MemberCard key={index} member={member} />
-        ))}
+      <div className="space-y-2 p-3">
+        <div className="flex flex-row space-x-2 px-2">
+          <div className="rounded-xl border bg-slate-100 px-2 py-1 dark:bg-slate-800">
+            members
+          </div>
+          <button className="icon-util-btn" onClick={setEditDaoMemberModalOpen}>
+            <HiOutlineUsers size={18} />
+          </button>
+        </div>
+        <div className="rounded-xl border p-2">
+          <div className="flex flex-col space-y-2">
+            {safeInfo.owners.map((member, index) => (
+              <MemberCard key={index} member={member} />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )

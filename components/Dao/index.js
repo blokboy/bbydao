@@ -1,23 +1,29 @@
-import Head              from "next/head"
-import React             from "react"
-import { useOsStore }    from "stores/useOsStore"
-import { useUiStore }    from "stores/useUiStore"
+import React from "react"
+import Head from "next/head"
+import TransactionModal from "./TransactionModal"
+import SidePanel from "./SidePanel"
+import Graph from "./Graph"
+import TokensNfts from "./TokensNfts"
+import Nurseries from "./Nurseries"
+import TxHistory from "./TxHistory"
+import ProposalHistory from "./ProposalHistory"
+import SellModal from "./TokensNfts/SellModal"
+import FollowModal from "./SidePanel/FollowModal"
+import EditDaoMemberModal from "./EditDaoMemberModal"
 import { walletSnippet } from "utils/helpers"
-import Graph             from "./Graph"
-import Nurseries         from "./Nurseries"
-import ProposalHistory   from "./ProposalHistory"
-import SidePanel         from "./SidePanel"
-import FollowModal       from "./SidePanel/FollowModal"
-import TokensNfts        from "./TokensNfts"
-import SellModal         from "./TokensNfts/SellModal"
-import TransactionModal  from "./TransactionModal"
-import TxHistory         from "./TxHistory"
 
+// start to move all dao page modal states from other stores into useDaoStore
+import { useDaoStore } from "stores/useDaoStore"
+import { useOsStore } from "stores/useOsStore"
+import { useUiStore } from "stores/useUiStore"
 
 const Dao = ({ data }) => {
   const osSellModalOpen = useOsStore(state => state.osSellModalOpen)
   const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
   const txModalOpen = useUiStore(state => state.txModalOpen)
+  const editDaoMemberModalOpen = useDaoStore(
+    state => state.editDaoMemberModalOpen
+  )
 
   return (
     <>
@@ -49,7 +55,7 @@ const Dao = ({ data }) => {
             <ProposalHistory />
           </div>
 
-          {/* modals  */}
+          {/* dao page modals  */}
           {osSellModalOpen && (
             <SellModal safeAddress={data?.safeInfo.address} />
           )}
@@ -58,6 +64,9 @@ const Dao = ({ data }) => {
           )}
           {txModalOpen && (
             <TransactionModal safeAddress={data?.safeInfo.address} />
+          )}
+          {editDaoMemberModalOpen && (
+            <EditDaoMemberModal safeAddress={data?.safeInfo.address} />
           )}
         </div>
       </div>

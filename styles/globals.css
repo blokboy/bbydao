@@ -46,18 +46,36 @@
 
 /* extracted classes for re-use */
 @layer components {
+  /* navbar buttons (wrap icons) */
   .nav-btn {
     @apply flex h-10 w-10 items-center justify-center rounded-full border border-slate-400 bg-slate-200 p-1 text-slate-800 shadow hover:bg-slate-100 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-700;
+  }
+
+  /* currency dropdown, balance card options, nursery members, nursery (wrap icons)*/
+  .icon-util-btn {
+    @apply rounded-xl border py-1 px-2 hover:border-teal-300 hover:bg-slate-200 dark:hover:bg-slate-700;
   }
 
   .friend-result-btn {
     @apply mx-1 flex h-10 w-10 items-center justify-center rounded-full border border-slate-400 bg-slate-200 p-1 text-slate-800 shadow hover:bg-slate-100 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-700;
   }
 
+  /* close btn in all modals */
   .modal-close-btn {
     @apply flex h-8 w-8 items-center justify-center rounded-full border border-slate-400 bg-slate-200 p-1 text-slate-800 shadow hover:bg-slate-100 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-700;
   }
 
+  /* set behind modal , area where if the user clicks, the modal closes */
+  .modal-backdrop {
+    @apply fixed inset-0 z-40 h-full w-full overflow-y-auto bg-slate-600 bg-opacity-50;
+  }
+
+  /* contains the content of the modal, sets over the backdrop partially on desktop, covers entire screen on mobile */
+  .modal-container {
+    @apply z-50 mx-auto mt-0 flex h-full w-full flex-col items-center bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-auto md:w-6/12 md:rounded-xl;
+  }
+
+  /* links in menu dropdown */
   .menu-link {
     @apply flex flex-row justify-between rounded px-1 py-2 text-sm text-slate-800 hover:bg-slate-100 hover:shadow-sm dark:text-white dark:hover:bg-slate-800;
   }

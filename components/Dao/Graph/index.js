@@ -1,8 +1,8 @@
 import React from "react"
 import { useBalance } from "wagmi"
 import { useUiStore } from "stores/useUiStore"
-import { HiAdjustments } from "react-icons/hi"
-import { FaEthereum } from "react-icons/fa"
+import BalanceOptionsIcon from "./BalanceOptionsIcon"
+import CurrencyIconDropdown from "./CurrencyIconDropdown"
 
 const Graph = ({ safeAddress }) => {
   const setTxModalOpen = useUiStore(state => state.setTxModalOpen)
@@ -18,18 +18,23 @@ const Graph = ({ safeAddress }) => {
           <div className="flex flex-row justify-start">Net Worth</div>
           <div className="flex flex-row justify-start space-x-2">
             <div className="text-3xl font-bold">Ξ</div>
-            <div className="text-3xl font-bold">
-              {balanceData?.formatted.substring(0, 5)}
-            </div>
+            {loading ? (
+              // loading state
+              <></>
+            ) : error ? (
+              <div className="animate-fade-in-up text-3xl font-bold text-red-500 motion-reduce:animate-none">
+                N/A
+              </div>
+            ) : balanceData && !loading && !error ? (
+              <div className="animate-fade-in-up text-3xl font-bold motion-reduce:animate-none">
+                {balanceData?.formatted.substring(0, 5)}
+              </div>
+            ) : null}
           </div>
         </div>
         <div className="flex flex-col justify-between space-y-2">
-          <button className="rounded-xl border p-1 hover:bg-slate-200 dark:hover:bg-slate-700">
-            <HiAdjustments size={18} />
-          </button>
-          <button className="rounded-xl border p-1 hover:bg-slate-200 dark:hover:bg-slate-700">
-            <FaEthereum size={18} />
-          </button>
+          <BalanceOptionsIcon />
+          <CurrencyIconDropdown />
         </div>
       </div>
 
