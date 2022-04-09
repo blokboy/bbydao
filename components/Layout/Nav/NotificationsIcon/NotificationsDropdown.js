@@ -15,6 +15,11 @@ const NotificationsDropdown = ({ ...props }) => {
         <h1>Notifications</h1>
       </div>
       <ul>
+      <li>
+        { (!data || data?.notificationCount == 0)? (
+            <p class="text-center">¯\_(ツ)_/¯</p>
+        ) : (<></>)}
+        </li>
         <li>
         {data?.parsedNotifs.FRIEND_REQUESTS?.map(notif => (
           <NotificationCard
