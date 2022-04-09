@@ -16,12 +16,9 @@ const TokenCard = ({ token, img }) => {
               { token.token?.logoUri ? <img src={token.token.logoUri}/> : <FaEthereum />}
           </div>
             
-            <span className="ml-4 flex w-24 flex-row justify-center items-center rounded bg-slate-100 p-1 text-[12px] dark:bg-slate-800">
-              <span className="text-blue-500">{ (balance / (10 ** 18)).toFixed(3) } { token.token?.symbol ? token.token.symbol : "ETH" }</span>
-            </span>
-
-            <span className="ml-4 flex w-24 flex-row justify-center items-center rounded bg-slate-100 p-1 text-[12px] dark:bg-slate-800">
-              <span className="text-blue-500"> ${ Number(fiatBalance).toFixed(2) }</span>
+            <span className="ml-4 flex w-28 flex-row justify-center items-center rounded bg-slate-100 p-1 text-[12px] dark:bg-slate-800">
+              <span className="text-blue-500">{ (balance / (10 ** 18)).toFixed(3) } { token.token?.symbol ? token.token.symbol : "ETH" } <span className="text-green-500">${ Number(fiatBalance).toFixed(2) }</span></span>
+              
             </span>
 
           </div>
@@ -35,12 +32,12 @@ const TokenCard = ({ token, img }) => {
            
           </div>
 
-          <div className="flex w-28 flex-row justify-end px-1">
+          <div className="flex flex-row justify-end px-1">
           <button
-            className="mr-1 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
+            className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
             onClick={console.log('open list')}
           >
-            swap or LP 
+            . . . 
           </button>
           </div>
         </div>

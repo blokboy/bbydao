@@ -5,6 +5,7 @@ const Tokens = ({ tokens }) => {
   console.log("Tokens", tokens)
   return (
     <div>
+      Tokens:
       {
         tokens && tokens.map(token => {
           return <TokenCard token={token} />
