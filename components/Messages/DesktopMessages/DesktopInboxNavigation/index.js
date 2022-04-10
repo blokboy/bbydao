@@ -47,7 +47,7 @@ export default function DesktopInboxNavigation() {
 
   const dropdown = React.useMemo(() => {
     return isDropdownOpen ? (
-      <div className="absolute top-[100%] right-0 left-0 z-50 h-auto w-full rounded-xl rounded-tl-none rounded-tr-none border border-t-0 border-slate-600 bg-slate-100 px-2 text-sm text-slate-800 shadow dark:border-slate-800 dark:bg-slate-800 dark:text-white">
+      <div className="absolute top-[100%] right-0 left-0 z-50 h-auto w-full rounded-xl rounded-tl-none rounded-tr-none border border-t-0 border-slate-700 bg-slate-100 px-2 text-sm text-slate-800 shadow dark:border-slate-100 dark:bg-slate-800 dark:text-white">
         <ul className="">
           <DesktopMainInboxCard clickAway={handleClickAway} />
           {safes?.map((safe, index) => (
@@ -65,7 +65,7 @@ export default function DesktopInboxNavigation() {
   const inboxButtonClasses = React.useMemo(() => {
     return `bg-slate-100 flex w-full border border-transparent items-center justify-between rounded-xl p-2 px-4 font-bold dark:bg-slate-800 ${
       isDropdownOpen
-        ? "border-slate-600 dark:border-slate-100 rounded-br-none rounded-bl-none"
+        ? "border-slate-700 dark:border-slate-100 rounded-br-none rounded-bl-none"
         : ""
     }`
   }, [isDropdownOpen])
