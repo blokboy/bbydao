@@ -3,9 +3,12 @@ import { useQuery } from "react-query"
 import * as api from "query"
 import { useMessageStore } from "stores/useMessageStore"
 import { useAccount } from "wagmi"
-import DesktopThreadCard from "./DesktopThreadCard"
+import { isMobile } from "react-device-detect"
 
-const DesktopThreadList = () => {
+import DesktopThreadCard from "./DesktopMessages/DesktopThreadList/DesktopThreadCard"
+import MobileThreadCard from "./MobileMessages/MobileThreadList/MobileThreadCard"
+
+export default function ThreadList() {
   const setChannelAddress = useMessageStore(set => set.setChannelAddress)
   const { channelAddress } = useMessageStore()
   const [{ data, error, loading }, disconnect] = useAccount()
@@ -37,19 +40,19 @@ const DesktopThreadList = () => {
       : []
   }, [channelThreads])
 
-  return (
-    <div className="p-3">
-      {messages.map((thread, i) => {
-        return (
-          <DesktopThreadCard
-            key={i}
-            title={thread.title}
-            thread={thread.data}
-          />
-        )
-      })}
-    </div>
-  )
-}
+  const cards = React.useMemo(() => {
+    if (!messages.length) {
+      return null
+    }
 
-export default DesktopThreadList
+    return messages.map((thread, i) => {
+      return isMobile ? (
+        <MobileThreadCard key={i} title={thread.title} thread={thread.data} />
+      ) : (
+        <DesktopThreadCard key={i} title={thread.title} thread={thread.data} />
+      )
+    })
+  }, [messages, isMobile])
+
+  return <div className="p-3">{cards}</div>
+}

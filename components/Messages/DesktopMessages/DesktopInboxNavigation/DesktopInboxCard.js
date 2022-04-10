@@ -1,8 +1,8 @@
-import React               from "react"
-import { useQuery }        from "react-query"
+import React from "react"
+import { useQuery } from "react-query"
 import { useMessageStore } from "stores/useMessageStore"
-import { walletSnippet }   from "utils/helpers"
-import * as api            from "query"
+import { walletSnippet } from "utils/helpers"
+import * as api from "query"
 
 const DesktopInboxCard = ({ safe, clickAway }) => {
   const channelAddress = useMessageStore(state => state.channelAddress)
@@ -13,24 +13,32 @@ const DesktopInboxCard = ({ safe, clickAway }) => {
     state => state.setMobileThreadView
   )
 
-  const { data } = useQuery(
+  const { data, isFetched } = useQuery(
     [`${safe}`],
     () => api.getDao({ address: safe }),
-    { staleTime: 180000 }
+    {
+      staleTime: 180000,
+    }
   )
 
-  const handleClick = () => {
+  const handleClick = React.useCallback(() => {
     setChannelAddress(safe)
     clickAway()
     setThreadChannel(null)
     if (!mobileThreadView) setMobileThreadView()
-  }
+  }, [safe, mobileThreadView])
+
+  const dao = React.useMemo(() => {
+    return data && isFetched ? data : null
+  }, [data, isFetched])
+
+  const buttonText = React.useMemo(() => {
+    return dao ? dao.name : walletSnippet(safe)
+  }, [dao, walletSnippet, safe])
 
   return (
     <li className="py-2" onClick={handleClick}>
-      <button className="font-bold">
-        {data?.name.length > 0 ? data.name : walletSnippet(safe)}
-      </button>
+      <button className="w-full text-left font-bold">{buttonText}</button>
     </li>
   )
 }

@@ -1,15 +1,15 @@
-import SafeServiceClient                      from "@gnosis.pm/safe-service-client"
-import React                                  from "react"
-import ClickAwayListener                      from "react-click-away-listener"
+import React from "react"
+import SafeServiceClient from "@gnosis.pm/safe-service-client"
+import ClickAwayListener from "react-click-away-listener"
 import { HiChevronDown, HiOutlinePlusCircle } from "react-icons/hi"
-import { useMessageStore }                    from "stores/useMessageStore"
-import { useUiStore }                         from "stores/useUiStore"
-import { walletSnippet }                      from "utils/helpers"
-import { useAccount }                         from "wagmi"
-import DesktopInboxCard                       from "./DesktopInboxCard"
-import DesktopMainInboxCard                   from "./DesktopMainInboxCard"
+import { useAccount } from "wagmi"
+import { useMessageStore } from "stores/useMessageStore"
+import { useUiStore } from "stores/useUiStore"
+import { walletSnippet } from "utils/helpers"
+import DesktopInboxCard from "./DesktopInboxCard"
+import DesktopMainInboxCard from "./DesktopMainInboxCard"
 
-const DesktopInboxNavigation = () => {
+export default function DesktopInboxNavigation() {
   const [{ data, error, loading }, disconnect] = useAccount()
   const setCreateThreadModalOpen = useUiStore(
     state => state.setCreateThreadModalOpen
@@ -26,7 +26,6 @@ const DesktopInboxNavigation = () => {
     setSafes(safes.safes)
   }
   React.useEffect(() => {
-    console.log("getting user safes...", "address:", data?.address)
     getUserSafes()
   }, [loading])
 
@@ -48,8 +47,7 @@ const DesktopInboxNavigation = () => {
 
   const dropdown = React.useMemo(() => {
     return isDropdownOpen ? (
-      <div
-        className="absolute top-0 right-0 z-50 -mt-2 h-auto w-fit origin-top-right translate-y-20 translate-x-0 rounded-xl border bg-slate-200 px-4 py-2 text-slate-800 shadow dark:bg-slate-900 dark:text-white md:-mr-2 md:-mt-4 md:w-48">
+      <div className="absolute top-[100%] right-0 left-0 z-50 h-auto w-full rounded-xl rounded-tl-none rounded-tr-none border border-t-0 border-slate-600 bg-slate-100 px-2 text-sm text-slate-800 shadow dark:border-slate-800 dark:bg-slate-800 dark:text-white">
         <ul className="">
           <DesktopMainInboxCard clickAway={handleClickAway} />
           {safes?.map((safe, index) => (
@@ -64,18 +62,22 @@ const DesktopInboxNavigation = () => {
     ) : null
   }, [isDropdownOpen])
 
+  const inboxButtonClasses = React.useMemo(() => {
+    return `bg-slate-100 flex w-full border border-transparent items-center justify-between rounded-xl p-2 px-4 font-bold dark:bg-slate-800 ${
+      isDropdownOpen
+        ? "border-slate-600 dark:border-slate-100 rounded-br-none rounded-bl-none"
+        : ""
+    }`
+  }, [isDropdownOpen])
+
   return (
-    <div className="grid w-full grid-cols-3 items-center justify-center p-3">
-      <div></div>
+    <div className="flex w-full items-center justify-end p-3">
       <ClickAwayListener onClickAway={handleClickAway}>
-        <div className="relative">
-          <button
-            className="flex items-center w-full justify-between rounded-xl p-2 px-4 font-bold bg-slate:700 dark:bg-slate-800"
-            onClick={handleInboxDropdown}
-          >
+        <div className="relative mr-4 w-full">
+          <button className={inboxButtonClasses} onClick={handleInboxDropdown}>
             {data?.address === channelAddress
               ? "personal"
-              : walletSnippet(channelAddress)}
+              : walletSnippet(channelAddress) || "no channel"}
             <HiChevronDown size={20} />
           </button>
           {dropdown}
@@ -87,5 +89,3 @@ const DesktopInboxNavigation = () => {
     </div>
   )
 }
-
-export default DesktopInboxNavigation

@@ -5,18 +5,9 @@ import DesktopMessages from "./DesktopMessages"
 import { isMobile } from "react-device-detect"
 
 const Messages = () => {
-  if (isMobile) {
-    return (
-      <>
-        <Head>
-          <title>{"bbyDAO | messages"}</title>
-          <meta name="description" content="" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        <MobileMessages />
-      </>
-    )
-  }
+  const messagesComponent = React.useMemo(() => {
+    return isMobile ? <MobileMessages /> : <DesktopMessages />
+  }, [isMobile])
 
   return (
     <>
@@ -25,7 +16,7 @@ const Messages = () => {
         <meta name="description" content="" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <DesktopMessages />
+      {messagesComponent}
     </>
   )
 }

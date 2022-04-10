@@ -1,6 +1,6 @@
 import React from "react"
 import MobileInboxNavigation from "./MobileInboxNavigation"
-import MobileThreadList from "./MobileThreadList"
+import ThreadList from "../ThreadList"
 import MobileMessageView from "./MobileMessageView"
 import { useMessageStore } from "stores/useMessageStore"
 
@@ -12,7 +12,7 @@ const MobileMessages = () => {
       {mobileThreadView ? (
         <>
           <MobileInboxNavigation />
-          <MobileThreadList />
+          <ThreadList />
         </>
       ) : (
         <MobileMessageView />
