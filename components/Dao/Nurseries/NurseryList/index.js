@@ -35,7 +35,7 @@ const NurseryList = ({ safeAddress }) => {
           ) : (
             <div>
               {
-                nurseries.length && nurseries.map(nursery => {
+                nurseries?.length && nurseries?.map(nursery => {
                   return <NurseryCard nursery={nursery} />
                 })
               }
