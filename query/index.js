@@ -162,3 +162,10 @@ export const getOsAssets = async req => {
   const res = await api.post("/collection/fetch", req)
   return res.data
 }
+
+//query for the nursery list of a given bbyDAO 
+// { address: string }
+export const getTenancy = async req => {
+  const res = await api.post('/tenant/dao', req)
+  return res.data
+}

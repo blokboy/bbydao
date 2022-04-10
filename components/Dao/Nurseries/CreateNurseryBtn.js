@@ -2,14 +2,14 @@ import React from "react"
 
 const CreateNurseryBtn = () => {
   return (
-    <div className="mx-2 mb-3 flex flex-col items-center rounded-xl bg-slate-200 p-3 shadow-xl dark:bg-slate-900">
-      <span className="text-md my-2">
-        this bbyDAO is not a part of any nurseries.
-      </span>
-      <button className="w-1/2 rounded-lg bg-slate-300 p-3 font-bold shadow-xl hover:bg-slate-200 active:shadow-lg dark:bg-slate-800 dark:hover:hover:bg-slate-700">
-        create nursery
-      </button>
-    </div>
+    <button
+    className="my-4 flex w-max transform flex-row rounded-xl bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow transition duration-500 ease-in-out hover:-translate-x-0.5 hover:bg-white hover:bg-gradient-to-l dark:hover:bg-slate-700"
+    onClick={console.log('clicked nursery btn')}
+  >
+    <span className="flex rounded-xl bg-slate-200 px-6 py-[0.45rem] font-bold text-[#FC8D4D] hover:bg-opacity-50 hover:text-white dark:bg-slate-900 dark:hover:bg-opacity-75">
+      create nursery
+    </span>
+  </button>
   )
 }
 
