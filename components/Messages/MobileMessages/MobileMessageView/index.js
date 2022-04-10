@@ -12,12 +12,10 @@ const MobileMessageView = () => {
 
   return (
     <div>
-      <div className="sticky top-0 grid w-full grid-cols-3 items-center justify-center p-3 bg-slate-100 dark:bg-slate-900 z-10">
+      <div className="sticky top-0 w-full items-center justify-center p-3 bg-slate-100 dark:bg-slate-900 z-10">
         <button className="flex items-center" onClick={setMobileThreadView}>
           <HiArrowCircleLeft size={28} />
         </button>
-        <div className="col-span-2" />
-        <div className="col-span-3" />
       </div>
       <MobileMessageContent />
       <MobileMessageInput />

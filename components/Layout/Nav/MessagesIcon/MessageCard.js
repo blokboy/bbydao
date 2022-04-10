@@ -6,10 +6,10 @@ import { useMessageStore } from "stores/useMessageStore"
 const MessageCard = ({ title, thread, clickAway }) => {
   const { setThreadChannel } = useMessageStore()
 
-  const handleClickCard = () => {
+  const handleClickCard = React.useCallback(() => {
     setThreadChannel(thread.channel)
     clickAway()
-  }
+  }, [setThreadChannel, thread.channel, clickAway])
 
   return (
     <Link href={"/messages"} as={"/messages"}>

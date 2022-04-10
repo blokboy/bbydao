@@ -23,7 +23,6 @@ const MobileInboxNavigation = () => {
     setSafes(safes.safes)
   }
   React.useEffect(() => {
-    console.log("getting user safes...", "address:", data?.address)
     getUserSafes()
   }, [loading])
 
@@ -45,7 +44,7 @@ const MobileInboxNavigation = () => {
 
   const dropdown = React.useMemo(() => {
     return isDropdownOpen ? (
-      <div className="absolute top-0 right-0 z-50 -mt-2 h-auto w-fit origin-top-right translate-y-20 translate-x-0 rounded-xl border bg-slate-200 px-4 py-2 text-slate-800 shadow dark:bg-slate-900 dark:text-white md:-mr-2 md:-mt-4 md:w-48">
+      <div className="absolute top-[100%] right-0 left-0 z-50 h-auto w-full rounded-xl rounded-tr-none rounded-tl-none border border-t-0 border-slate-600 bg-slate-100 px-2 text-sm text-slate-800 shadow dark:border-slate-200 dark:bg-slate-800 dark:text-white">
         <ul className="">
           <MainInboxCard clickAway={handleClickAway} />
           {safes?.map((safe, index) => (
@@ -56,15 +55,19 @@ const MobileInboxNavigation = () => {
     ) : null
   }, [isDropdownOpen])
 
+  const inboxButtonClasses = React.useMemo(() => {
+    return `flex w-full justify-between bg-slate-200 border border-transparent rounded-xl p-2 font-bold dark:bg-slate-800 ${
+      isDropdownOpen
+        ? "border-slate-600 dark:border-slate-100 rounded-br-none rounded-bl-none"
+        : ""
+    }`
+  }, [isDropdownOpen])
+
   return (
-    <div className="grid w-full grid-cols-3 items-center justify-center p-3">
-      <div></div>
+    <div className="flex w-full items-center justify-center p-3">
       <ClickAwayListener onClickAway={handleClickAway}>
-        <div className="relative">
-          <button
-            className="flex w-full justify-between rounded-xl p-2 font-bold dark:bg-slate-800"
-            onClick={handleInboxDropdown}
-          >
+        <div className="relative w-full mr-4">
+          <button className={inboxButtonClasses} onClick={handleInboxDropdown}>
             inbox
             <HiChevronDown size={20} />
           </button>

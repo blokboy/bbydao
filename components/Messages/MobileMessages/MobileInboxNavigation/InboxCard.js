@@ -1,6 +1,6 @@
-import React               from "react"
+import React from "react"
 import { useMessageStore } from "stores/useMessageStore"
-import { walletSnippet }   from "../../../../utils/helpers"
+import { walletSnippet } from "../../../../utils/helpers"
 
 const InboxCard = ({ safe, clickAway }) => {
   const channelAddress = useMessageStore(state => state.channelAddress)
@@ -11,12 +11,12 @@ const InboxCard = ({ safe, clickAway }) => {
     state => state.setMobileThreadView
   )
 
-  const handleClick = () => {
+  const handleClick = React.useCallback(() => {
     setChannelAddress(safe)
     clickAway()
     setThreadChannel(null)
     if (!mobileThreadView) setMobileThreadView()
-  }
+  }, [setChannelAddress, safe, clickAway, setThreadChannel])
 
   return (
     <li className="py-2" onClick={handleClick}>
