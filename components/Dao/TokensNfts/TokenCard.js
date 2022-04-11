@@ -33,7 +33,6 @@ const TokenCard = ({ token, img }) => {
     } else {
       setLpToken0({})
     }
-
   }
 
 
