@@ -1,6 +1,7 @@
 import React from "react"
 import { useDaoStore } from "stores/useDaoStore"
 import { HiX } from "react-icons/hi"
+import { ChainId, Token, Fetcher } from "@uniswap/sdk"
 
 const UniswapLpModal = ({ safeAddress }) => {
   const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
@@ -9,12 +10,20 @@ const UniswapLpModal = ({ safeAddress }) => {
     state => state.setUniswapLpModalOpen
   )
 
-  console.log(
-    "UniswapLpModal.js: tokenData:",
-    tokenData,
-    "safeAddress:",
-    safeAddress
-  )
+  // testing uniswap sdk
+  React.useEffect(() => {
+    if (tokenData) {
+      console.log("tokenData", tokenData)
+      const fetch = async () => {
+        const token = await Fetcher.fetchTokenData(
+          ChainId.MAINNET,
+          tokenData?.tokenAddress
+        )
+        console.log("uniswap token:", token)
+      }
+      fetch()
+    }
+  }, [tokenData])
 
   // close uniswap lp modal
   const closeUniswapLpModal = e => {

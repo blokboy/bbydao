@@ -12,7 +12,6 @@ const TokenCard = ({ token, img }) => {
   )
 
   const openUniswapLp = () => {
-    console.log("openUniswapLp token:", token)
     setUniswapLpModalOpen(token)
   }
 
