@@ -37,7 +37,21 @@ const TokenCard = ({ token, img }) => {
             className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
             onClick={console.log('open list')}
           >
-            . . . 
+            send 
+          </button>
+
+          <button
+            className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
+            onClick={console.log('open list')}
+          >
+            swap
+          </button>
+
+          <button
+            className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
+            onClick={console.log('open list')}
+          >
+            LP 
           </button>
           </div>
         </div>
