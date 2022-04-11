@@ -26,12 +26,17 @@ const UniswapLpModal = ({ safeAddress }) => {
     if (uniswapLpModalOpen && e.target) {
       setLpToken0({})
       setLpToken1({})
-      setUniswapLpModalOpen({})
+      setUniswapLpModalOpen()
     }
   }
 
   const handleSubmit = async e => {
     e.preventDefault()
+  }
+
+  if ((!lpToken0 || !lpToken1) && uniswapLpModalOpen) {
+    setUniswapLpModalOpen()
+    return null
   }
 
   return (
@@ -47,43 +52,56 @@ const UniswapLpModal = ({ safeAddress }) => {
         </div>
         <div className="w-full text-center text-xl font-bold">Uniswap LP</div>
 
-        {/* Token List  */}
-
-        <form className="flex w-full flex-col" onSubmit={handleSubmit}>
-          <div className="mb-8 flex w-full flex-row rounded-xl bg-slate-100 dark:bg-slate-800">
-            <input
-              value={state?.token0}
-              onChange={handleChange}
-              className="focus:shadow-outline h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
-              id="name"
-              name="token0"
-              type="number"
-              step={0.000001}
-              placeholder="0.0"
-              required
-            />
-            {/* Button to select token  */}
-            <button className="m-2 rounded-xl bg-slate-200 p-2 dark:bg-slate-700">
-              select token
-            </button>
+        <form
+          className="flex w-full flex-col space-y-8 py-4"
+          onSubmit={handleSubmit}
+        >
+          <div className="flex w-full flex-col rounded-xl bg-slate-100 dark:bg-slate-800">
+            <div className="flex flex-row">
+              <input
+                value={state?.token0}
+                onChange={handleChange}
+                className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-xl leading-tight focus:outline-none dark:bg-slate-800"
+                id="name"
+                name="token0"
+                type="number"
+                step={0.000001}
+                placeholder="0.0"
+                required
+              />
+              {/* Button to select token  */}
+              <div className="m-2 w-2/12 rounded-xl bg-slate-200 p-2 text-center text-xl dark:bg-slate-700">
+                {lpToken0?.token.symbol ? lpToken0?.token.symbol : ""}
+              </div>
+            </div>
+            <div className="flex w-full flex-row justify-end space-x-2 px-2">
+              <div>balance:</div>
+              <div>{(lpToken0?.balance / 10 ** 18).toFixed(3)}</div>
+            </div>
           </div>
 
-          <div className="mb-8 flex w-full flex-row rounded-xl bg-slate-100 dark:bg-slate-800">
-            <input
-              value={state?.token1}
-              onChange={handleChange}
-              className="focus:shadow-outline h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
-              id="name"
-              name="token1"
-              type="number"
-              step={0.000001}
-              placeholder="0.0"
-              required
-            />
-            {/* Button to select token  */}
-            <button className="m-2 rounded-xl bg-slate-200 p-2 dark:bg-slate-700">
-              select token
-            </button>
+          <div className="flex w-full flex-col rounded-xl bg-slate-100 dark:bg-slate-800">
+            <div className="flex flex-row">
+              <input
+                value={state?.token1}
+                onChange={handleChange}
+                className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-xl leading-tight focus:outline-none dark:bg-slate-800"
+                id="name"
+                name="token1"
+                type="number"
+                step={0.000001}
+                placeholder="0.0"
+                required
+              />
+              {/* Button to select token  */}
+              <div className="m-2 w-2/12 rounded-xl bg-slate-200 p-2 text-center text-xl dark:bg-slate-700">
+                {lpToken1?.token.symbol ? lpToken1?.token.symbol : ""}
+              </div>
+            </div>
+            <div className="flex w-full flex-row justify-end space-x-2 px-2">
+              <div>balance:</div>
+              <div>{(lpToken1?.balance / 10 ** 18).toFixed(3)}</div>
+            </div>
           </div>
 
           {/* Price and pool share */}
