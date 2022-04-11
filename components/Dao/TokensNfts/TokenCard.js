@@ -1,7 +1,8 @@
-import React from "react"
-import { useAccount } from "wagmi"
-import { FaEthereum } from "react-icons/fa"
+import React, { useEffect, useState } from "react"
+import { useAccount }                 from "wagmi"
+import { FaEthereum }  from "react-icons/fa"
 import { useDaoStore } from "stores/useDaoStore"
+import { isEmpty }     from "../../../utils/helpers"
 
 const TokenCard = ({ token, img }) => {
   const [{ data, error, loading }, disconnect] = useAccount()
@@ -16,23 +17,41 @@ const TokenCard = ({ token, img }) => {
   const setLpToken1 = useDaoStore(state => state.setLpToken1)
 
   const setLpToken = () => {
-    if (Object.keys(lpToken0).length === 0) {
-      setLpToken0(token)
+
+    if(!isSelectedForLP) {
+      if (Object.keys(lpToken0).length === 0) {
+        setLpToken0(token)
+      }
+      if (
+        Object.keys(lpToken1).length === 0 &&
+        Object.keys(lpToken0).length !== 0 &&
+        token.tokenAddress !== lpToken0.tokenAddress
+      ) {
+        setLpToken1(token)
+        setUniswapLpModalOpen(true)
+      }
+
+      setIsSelectedForLp(true)
+    } else {
+      setIsSelectedForLp(false)
+      setLpToken0({})
     }
-    if (
-      Object.keys(lpToken1).length === 0 &&
-      Object.keys(lpToken0).length !== 0 &&
-      token.tokenAddress !== lpToken0.tokenAddress
-    ) {
-      setLpToken1(token)
-      setUniswapLpModalOpen(true)
-    }
+
   }
 
+
+  const [isSelectedForLP, setIsSelectedForLp] = useState(false)
+  useEffect(() => {
+    if(isEmpty(lpToken0) && isEmpty(lpToken1)) {
+      setIsSelectedForLp(false)
+    }
+
+  }, [lpToken1, lpToken0])
+
   return (
-    <div className="w-full">
+    <div className={`w-full`}>
       <div className="flex flex-col rounded-lg bg-slate-100 p-1 shadow-inner dark:bg-slate-800">
-        <div className="flex flex-row items-center justify-between rounded-lg bg-slate-300 p-2 shadow dark:bg-slate-900">
+        <div className={`flex flex-row items-center justify-between rounded-lg bg-slate-300 p-2 shadow dark:bg-slate-900 ${isSelectedForLP ? 'border border-teal-300' : ''}`}>
           <div className="flex flex-row">
             <div className="mx-2 flex h-10 w-10 items-center justify-center rounded-full border border-white bg-slate-200 dark:bg-slate-900">
               {token.token?.logoUri ? (
@@ -58,26 +77,31 @@ const TokenCard = ({ token, img }) => {
             <span></span>
           </div>
 
-          <div className="flex flex-row justify-end px-1">
-            <button
-              className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
-              // onClick={console.log("open list")}
-            >
-              send
-            </button>
 
-            <button
-              className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
-              // onClick={console.log("open list")}
-            >
-              swap
-            </button>
+          <div className="flex flex-row justify-end px-1">
+            {isEmpty(lpToken0) && (
+              <>
+                <button
+                  className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
+                  // onClick={console.log("open list")}
+                >
+                  send
+                </button>
+
+                <button
+                  className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
+                  // onClick={console.log("open list")}
+                >
+                  swap
+                </button>
+              </>
+            )}
 
             <button
               className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
               onClick={setLpToken}
             >
-              LP
+              {isEmpty(lpToken0) && isEmpty(lpToken1) ? 'LP' : isSelectedForLP ? 'Selected' : 'Pair'}
             </button>
           </div>
         </div>
