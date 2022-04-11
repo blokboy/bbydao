@@ -10,9 +10,23 @@ const TokenCard = ({ token, img }) => {
   const setUniswapLpModalOpen = useDaoStore(
     state => state.setUniswapLpModalOpen
   )
+  const lpToken0 = useDaoStore(state => state.lpToken0)
+  const setLpToken0 = useDaoStore(state => state.setLpToken0)
+  const lpToken1 = useDaoStore(state => state.lpToken1)
+  const setLpToken1 = useDaoStore(state => state.setLpToken1)
 
-  const openUniswapLp = () => {
-    setUniswapLpModalOpen(token)
+  const setLpToken = () => {
+    if (Object.keys(lpToken0).length === 0) {
+      setLpToken0(token)
+    }
+    if (
+      Object.keys(lpToken1).length === 0 &&
+      Object.keys(lpToken0).length !== 0 &&
+      token.tokenAddress !== lpToken0.tokenAddress
+    ) {
+      setLpToken1(token)
+      setUniswapLpModalOpen(true)
+    }
   }
 
   return (
@@ -61,7 +75,7 @@ const TokenCard = ({ token, img }) => {
 
             <button
               className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
-              onClick={openUniswapLp}
+              onClick={setLpToken}
             >
               LP
             </button>
