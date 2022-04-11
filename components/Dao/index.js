@@ -10,6 +10,7 @@ import ProposalHistory from "./ProposalHistory"
 import SellModal from "./TokensNfts/SellModal"
 import FollowModal from "./SidePanel/FollowModal"
 import EditDaoMemberModal from "./EditDaoMemberModal"
+import UniswapLpModal from "./UniswapLpModal"
 import { walletSnippet } from "utils/helpers"
 
 // start to move all dao page modal states from other stores into useDaoStore
@@ -24,6 +25,7 @@ const Dao = ({ data }) => {
   const editDaoMemberModalOpen = useDaoStore(
     state => state.editDaoMemberModalOpen
   )
+  const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
 
   return (
     <>
@@ -42,7 +44,11 @@ const Dao = ({ data }) => {
         </div>
         <div className="flex-start item m-3 flex flex-col md:m-0 md:mr-1 md:w-full md:flex-row">
           <div className="flex w-full flex-col md:w-1/2">
-            <TokensNfts tokens={data.usd} collectibles={data.collectibles} safeAddress={data.safeInfo.address}/>
+            <TokensNfts
+              tokens={data.usd}
+              collectibles={data.collectibles}
+              safeAddress={data.safeInfo.address}
+            />
           </div>
           <div className="flex w-full flex-col md:w-1/2">
             <Nurseries nurseries={null} owners={data.safeInfo.owners} />
@@ -66,6 +72,9 @@ const Dao = ({ data }) => {
           )}
           {editDaoMemberModalOpen && (
             <EditDaoMemberModal safeAddress={data?.safeInfo.address} />
+          )}
+          {uniswapLpModalOpen && (
+            <UniswapLpModal safeAddress={data?.safeInfo.address} />
           )}
         </div>
       </div>
