@@ -71,12 +71,15 @@ const UniswapLpModal = ({ safeAddress }) => {
               />
               {/* Button to select token  */}
               <div className="m-2 w-2/12 rounded-xl bg-slate-200 p-2 text-center text-xl dark:bg-slate-700">
-                {lpToken0?.token.symbol ? lpToken0?.token.symbol : ""}
+                {lpToken0?.token?.symbol ? lpToken0?.token?.symbol : ""}
               </div>
             </div>
             <div className="flex w-full flex-row justify-end space-x-2 px-2">
               <div>balance:</div>
               <div>{(lpToken0?.balance / 10 ** 18).toFixed(3)}</div>
+            </div>
+            <div className="flex justify-end mr-3 text-[#FC8D4D] cursor-pointer">
+              max
             </div>
           </div>
 
@@ -95,12 +98,15 @@ const UniswapLpModal = ({ safeAddress }) => {
               />
               {/* Button to select token  */}
               <div className="m-2 w-2/12 rounded-xl bg-slate-200 p-2 text-center text-xl dark:bg-slate-700">
-                {lpToken1?.token.symbol ? lpToken1?.token.symbol : ""}
+                {lpToken1?.token?.symbol ? lpToken1?.token?.symbol : ""}
               </div>
             </div>
             <div className="flex w-full flex-row justify-end space-x-2 px-2">
               <div>balance:</div>
               <div>{(lpToken1?.balance / 10 ** 18).toFixed(3)}</div>
+            </div>
+            <div className="flex justify-end mr-3 text-[#FC8D4D] cursor-pointer">
+              max
             </div>
           </div>
 
