@@ -9,7 +9,7 @@ const Tokens = ({ tokens }) => {
       Tokens:
       {tokens &&
         tokens.map(token => {
-          return <TokenCard token={token} />
+          return <TokenCard token={token} key={token.tokenAddress}/>
         })}
     </div>
   )
