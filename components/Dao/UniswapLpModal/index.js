@@ -1,9 +1,10 @@
-import useForm                     from "hooks/useForm"
-import React                       from "react"
-import { HiX }                     from "react-icons/hi"
+import useForm from "hooks/useForm"
+import React from "react"
+import { HiX } from "react-icons/hi"
 import { Portal, PortalWithState } from "react-portal"
-import { useDaoStore }             from "stores/useDaoStore"
-import Modal                       from "components/Layout/Modal"
+import { useDaoStore } from "stores/useDaoStore"
+import Modal from "components/Layout/Modal"
+import { ChainId, Fetcher, WETH, Route } from "@uniswap/sdk"
 
 const UniswapLpModal = ({ safeAddress }) => {
   const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
@@ -23,13 +24,25 @@ const UniswapLpModal = ({ safeAddress }) => {
 
   // close uniswap lp modal
   const closeUniswapLpModal = e => {
-      setLpToken0({})
-      setLpToken1({})
-      setUniswapLpModalOpen()
+    setLpToken0({})
+    setLpToken1({})
+    setUniswapLpModalOpen()
   }
 
   const handleSubmit = async e => {
     e.preventDefault()
+    const daiToken = lpToken0?.token.symbol === "WETH" ? lpToken1 : lpToken0
+    const chainId = ChainId.MAINNET
+    const dai = await Fetcher.fetchTokenData(chainId, daiToken.tokenAddress)
+    const weth = WETH[chainId]
+    const pair = await Fetcher.fetchPairData(dai, weth)
+    const route = new Route([pair], weth)
+    console.log("route midprice", route?.midPrice.toSignificant(6))
+    console.log(
+      "route midprice invert",
+      route?.midPrice.invert().toSignificant(6)
+    )
+    console.log("route", route)
   }
 
   if ((!lpToken0 || !lpToken1) && uniswapLpModalOpen) {
@@ -38,10 +51,7 @@ const UniswapLpModal = ({ safeAddress }) => {
   }
 
   return (
-    <Modal
-      close={closeUniswapLpModal}
-      heading={'Uniswap LP'}
-    >
+    <Modal close={closeUniswapLpModal} heading={"Uniswap LP"}>
       <form
         className="flex w-full flex-col space-y-8 py-4"
         onSubmit={handleSubmit}
@@ -68,7 +78,7 @@ const UniswapLpModal = ({ safeAddress }) => {
             <div>balance:</div>
             <div>{(lpToken0?.balance / 10 ** 18).toFixed(3)}</div>
           </div>
-          <div className="flex justify-end mr-3 text-[#FC8D4D] cursor-pointer">
+          <div className="mr-3 flex cursor-pointer justify-end text-[#FC8D4D]">
             max
           </div>
         </div>
@@ -95,7 +105,7 @@ const UniswapLpModal = ({ safeAddress }) => {
             <div>balance:</div>
             <div>{(lpToken1?.balance / 10 ** 18).toFixed(3)}</div>
           </div>
-          <div className="flex justify-end mr-3 text-[#FC8D4D] cursor-pointer">
+          <div className="mr-3 flex cursor-pointer justify-end text-[#FC8D4D]">
             max
           </div>
         </div>
