@@ -6,6 +6,10 @@ export const useDaoStore = create(set => ({
   setEditDaoMemberModalOpen: () =>
     set(state => ({ editDaoMemberModalOpen: !state.editDaoMemberModalOpen })),
 
+  // transaction modal display
+  txModalOpen: false,
+  setTxModalOpen: () => set(state => ({ txModalOpen: !state.txModalOpen })),
+
   // uniswap lp modal display
   uniswapLpModalOpen: false,
   setUniswapLpModalOpen: token =>
