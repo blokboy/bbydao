@@ -73,47 +73,47 @@ const UniswapLpModal = ({ safeAddress }) => {
   const token0InputRef = useRef()
   const token1InputRef = useRef()
 
-  const handleSetValue = (e, token) => {
+  const readableBalance = (token) => {
+    return Number((token?.balance / 10 ** token?.token?.decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
+  }
+
+  const handleSetValue = (e, token, ref) => {
     const bal = token?.balance
     const dec = token?.token?.decimals
     const max = bal / 10 ** dec
     const input = e?.target?.valueAsNumber
     const name = e?.target?.name
+    const pairToken = name === "token0" ? lpToken1 : lpToken0
+    const pairTokenRef = name === "token0" ? token1InputRef : token0InputRef
+    const pairValue = (input * token?.fiatConversion) / pairToken?.fiatConversion
 
     if (input > max) {
-      setState(state => ({ ...state, [name]: max }))
+      setMax(token, ref)
     } else {
+      setMaxError('')
+      setState(state => ({ ...state, [pairTokenRef?.current?.name]: pairValue }))
       handleChange(e)
     }
   }
 
-  const readableBalance = (token) => {
-    return Number((token?.balance / 10 ** token?.token?.decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
-  }
 
   const [maxError, setMaxError] = useState('')
-  const setMax = (clickedToken, ref) => {
-    const name = ref?.current?.name
-    const max = ref?.current?.max
-    const clickedTokenBal = Number((clickedToken?.balance / 10 ** clickedToken?.token?.decimals))
-
-    const pairToken = name === "token0" ? lpToken1 : lpToken0
-    const pairTokenRef = name === "token0" ? token1InputRef : token0InputRef
+  const setMax = (clickedToken, clickedTokenRef) => {
+    const clickedTokenName = clickedTokenRef?.current?.name
+    const clickedTokenMax = clickedTokenRef?.current?.max
+    const pairToken = clickedTokenName === "token0" ? lpToken1 : lpToken0
+    const pairTokenRef = clickedTokenName === "token0" ? token1InputRef : token0InputRef
     const pairTokenName = pairTokenRef?.current?.name
-    const pairMax = pairTokenRef?.current?.max
     const pairTokenBalance = Number((pairToken?.balance / 10 ** pairToken?.token?.decimals))
-
-
-    // setState(state => ({ ...state, [name]: max }))
-
 
     if (clickedToken?.fiatBalance > pairToken?.fiatBalance) {
       setMaxError(`insufficient ${pairToken?.token?.symbol} balance`)
-
+      setState(state => ({ ...state, [clickedTokenName]: 0 }))
+      setState(state => ({ ...state, [pairTokenName]: 0 }))
     } else {
       const percentageOfPair = clickedToken?.fiatBalance / pairToken?.fiatBalance
       const maxPair = pairTokenBalance * percentageOfPair
-      setState(state => ({ ...state, [name]: max }))
+      setState(state => ({ ...state, [clickedTokenName]: clickedTokenMax }))
       setState(state => ({ ...state, [pairTokenName]: maxPair }))
       setMaxError('')
     }
@@ -129,7 +129,7 @@ const UniswapLpModal = ({ safeAddress }) => {
           <div className="flex flex-row">
             <input
               value={state?.token0}
-              onChange={(e) => handleSetValue(e, lpToken0)}
+              onChange={(e) => handleSetValue(e, lpToken0, token0InputRef)}
               className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-xl leading-tight focus:outline-none dark:bg-slate-800"
               id="name"
               name="token0"
@@ -161,7 +161,7 @@ const UniswapLpModal = ({ safeAddress }) => {
           <div className="flex flex-row">
             <input
               value={state?.token1}
-              onChange={(e) => handleSetValue(e, lpToken1)}
+              onChange={(e) => handleSetValue(e, lpToken1, token1InputRef)}
               className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-xl leading-tight focus:outline-none dark:bg-slate-800"
               id="name"
               name="token1"
