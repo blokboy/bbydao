@@ -1,8 +1,13 @@
+import { ethers } from 'ethers'
 import {ChainId, Fetcher, Route, Token, WETH} from "@uniswap/sdk"
 import Modal                                  from "components/Layout/Modal"
-import useForm                                from "hooks/useForm"
-import React, {useMemo, useRef, useState}     from "react"
-import {useDaoStore}                          from "stores/useDaoStore"
+import useForm                                       from "hooks/useForm"
+import React, {useEffect, useMemo, useRef, useState} from "react"
+import {useDaoStore}                                 from "stores/useDaoStore"
+import {useSigner, useToken} from 'wagmi'
+import IUniswapV2ERC20       from "@uniswap/v2-core/build/IUniswapV2ERC20.json";
+
+
 
 const UniswapLpModal = ({safeAddress}) => {
     const chainId = ChainId.MAINNET
@@ -45,6 +50,22 @@ const UniswapLpModal = ({safeAddress}) => {
         setUniswapLpModalOpen()
         return null
     }
+
+
+    useEffect(() => {
+        totalSupply()
+    }, [])
+    async function totalSupply() {
+        /* create a generic provider and query for unsold market items */
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const contract = new ethers.Contract('0xA478c2975Ab1Ea89e8196811F51A7B7Ade33eB11', IUniswapV2ERC20.abi, provider)
+        const supply = await contract.totalSupply()
+
+        console.log('supply', supply._hex)
+
+
+    }
+
 
 
     /*  Create reference to input of token */
@@ -120,8 +141,16 @@ const UniswapLpModal = ({safeAddress}) => {
         *
         * Since we need to wait for the approval of x amount of babydao members, what are we doing
         * with this information?
+        *
+        *
         * */
         console.log('liquidity token', uniPair.liquidityToken)
+        // const [{ data, error, loading }, getToken] = useToken({
+        //     address: uniPair.liquidityToken,
+        // })
+        // console.log('DATA', data)
+
+
 
         console.log('reserve of clicked', uniPair.reserveOf(selectedTokens[clickedTokenName]))
         console.log('reserve of pair', uniPair.reserveOf(selectedTokens[pairTokenName]))
