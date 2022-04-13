@@ -1,10 +1,8 @@
-import useForm                    from "hooks/useForm"
-import React, { useMemo, useRef } from "react"
-import { HiX }                    from "react-icons/hi"
-import { Portal, PortalWithState } from "react-portal"
-import { useDaoStore } from "stores/useDaoStore"
-import Modal from "components/Layout/Modal"
-import { ChainId, Fetcher, WETH, Route, Pair, Token } from "@uniswap/sdk"
+import { ChainId, Fetcher, Route, Token, WETH } from "@uniswap/sdk"
+import Modal                                    from "components/Layout/Modal"
+import useForm                              from "hooks/useForm"
+import React, { useMemo, useRef, useState } from "react"
+import { useDaoStore }                      from "stores/useDaoStore"
 
 const UniswapLpModal = ({ safeAddress }) => {
   const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
@@ -27,6 +25,7 @@ const UniswapLpModal = ({ safeAddress }) => {
     setLpToken0({})
     setLpToken1({})
     setUniswapLpModalOpen()
+    setMaxError('')
   }
 
   const handleSubmit = async e => {
@@ -57,7 +56,7 @@ const UniswapLpModal = ({ safeAddress }) => {
       lpToken0?.token?.decimals,
       lpToken0?.token?.symbol,
       lpToken0?.token?.name
-    );
+    )
 
     const token1 = new Token(
       ChainId.MAINNET,
@@ -65,7 +64,7 @@ const UniswapLpModal = ({ safeAddress }) => {
       lpToken1?.token?.decimals,
       lpToken1?.token?.symbol,
       lpToken1?.token?.name
-    );
+    )
 
     return [token0, token1]
 
@@ -77,11 +76,11 @@ const UniswapLpModal = ({ safeAddress }) => {
   const handleSetValue = (e, token) => {
     const bal = token?.balance
     const dec = token?.token?.decimals
-    const max =  bal / 10 ** dec
+    const max = bal / 10 ** dec
     const input = e?.target?.valueAsNumber
     const name = e?.target?.name
 
-    if(input > max) {
+    if (input > max) {
       setState(state => ({ ...state, [name]: max }))
     } else {
       handleChange(e)
@@ -92,12 +91,33 @@ const UniswapLpModal = ({ safeAddress }) => {
     return Number((token?.balance / 10 ** token?.token?.decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
   }
 
-  const setMax = (token, ref) => {
+  const [maxError, setMaxError] = useState('')
+  const setMax = (clickedToken, ref) => {
     const name = ref?.current?.name
     const max = ref?.current?.max
-    setState(state => ({ ...state, [name]: max }))
-  }
+    const clickedTokenBal = Number((clickedToken?.balance / 10 ** clickedToken?.token?.decimals))
 
+    const pairToken = name === "token0" ? lpToken1 : lpToken0
+    const pairTokenRef = name === "token0" ? token1InputRef : token0InputRef
+    const pairTokenName = pairTokenRef?.current?.name
+    const pairMax = pairTokenRef?.current?.max
+    const pairTokenBalance = Number((pairToken?.balance / 10 ** pairToken?.token?.decimals))
+
+
+    // setState(state => ({ ...state, [name]: max }))
+
+
+    if (clickedToken?.fiatBalance > pairToken?.fiatBalance) {
+      setMaxError(`insufficient ${pairToken?.token?.symbol} balance`)
+
+    } else {
+      const percentageOfPair = clickedToken?.fiatBalance / pairToken?.fiatBalance
+      const maxPair = pairTokenBalance * percentageOfPair
+      setState(state => ({ ...state, [name]: max }))
+      setState(state => ({ ...state, [pairTokenName]: maxPair }))
+      setMaxError('')
+    }
+  }
 
   return (
     <Modal close={closeUniswapLpModal} heading={"Uniswap LP"}>
@@ -129,7 +149,10 @@ const UniswapLpModal = ({ safeAddress }) => {
             <div>balance:</div>
             <div>{readableBalance(lpToken0)}</div>
           </div>
-          <div className="mr-3 flex cursor-pointer justify-end text-[#FC8D4D]">
+          <div
+            className="mr-3 flex cursor-pointer justify-end text-[#FC8D4D]"
+            onClick={() => setMax(lpToken0, token0InputRef)}
+          >
             max
           </div>
         </div>
@@ -167,15 +190,20 @@ const UniswapLpModal = ({ safeAddress }) => {
         </div>
 
         {/* Price and pool share */}
-
-        <div className="mb-8 w-full">
-          <button
-            className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
-            type="submit"
-          >
-            submit
-          </button>
-        </div>
+        {(maxError.length > 0 && (
+          <div>
+            {maxError}
+          </div>
+        ) || (
+          <div className="mb-8 w-full">
+            <button
+              className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
+              type="submit"
+            >
+              submit
+            </button>
+          </div>
+        ))}
       </form>
     </Modal>
   )
