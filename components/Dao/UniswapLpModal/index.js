@@ -1,8 +1,12 @@
-import {ChainId, Fetcher, Route, Token, WETH} from "@uniswap/sdk"
+import {ChainId, Fetcher, Route, Token, TokenAmount, WETH} from "@uniswap/sdk"
+import IUniswapV2ERC20                        from "@uniswap/v2-core/build/IUniswapV2ERC20.json";
 import Modal                                  from "components/Layout/Modal"
+import {BigNumber, ethers}                    from 'ethers'
+import {formatUnits}                          from 'ethers/lib/utils'
 import useForm                                from "hooks/useForm"
 import React, {useMemo, useRef, useState}     from "react"
 import {useDaoStore}                          from "stores/useDaoStore"
+
 
 const UniswapLpModal = ({safeAddress}) => {
     const chainId = ChainId.MAINNET
@@ -46,6 +50,18 @@ const UniswapLpModal = ({safeAddress}) => {
         return null
     }
 
+    const resolvedPromise = (fn) => new Promise((resolve, reject) => resolve(fn))
+
+    const totalSupply = async (pair) => {
+        /* create a generic provider and query for unsold market items */
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const contract = new ethers.Contract(pair.liquidityToken.address, IUniswapV2ERC20.abi, provider)
+        const supply = await contract.totalSupply()
+        const formattedSupply = formatUnits(BigNumber.from(supply._hex))
+
+        return supply
+    }
+
 
     /*  Create reference to input of token */
     const token0InputRef = useRef()
@@ -78,7 +94,7 @@ const UniswapLpModal = ({safeAddress}) => {
         return Number((token?.balance / 10 ** token?.token?.decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
     }
 
-    const handleSetValue = (e, token, ref) => {
+    const handleSetValue = async (e, token, ref) => {
         const bal = token?.balance
         const dec = token?.token?.decimals
         const max = bal / 10 ** dec
@@ -87,6 +103,20 @@ const UniswapLpModal = ({safeAddress}) => {
         const pairToken = name === "token0" ? lpToken1 : lpToken0
         const pairTokenRef = name === "token0" ? token1InputRef : token0InputRef
         const pairValue = (input * token?.fiatConversion) / pairToken?.fiatConversion
+
+
+
+      //  const uniPair = await Fetcher.fetchPairData(selectedTokens[name], selectedTokens[pairTokenRef?.current?.name])
+       // const total = await totalSupply(uniPair)
+        // const totalTokenAmount = await new TokenAmount(uniPair.liquidityToken, total)
+        // const token0Amount = await new TokenAmount(uniPair?.[ref?.current?.name], BigInt(state?.[ref?.current?.name] * (10 ** token?.token?.decimals)))
+        // const token1Amount = await new TokenAmount(uniPair?.[pairTokenRef?.current?.name], BigInt(state?.[pairTokenRef?.current?.name] * (10 ** pairToken?.token?.decimals)))
+        // const liquidityMinted = uniPair.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount)
+
+      //  console.log('uni', uniPair)
+      //  console.log('total', total)
+        // console.log('token', token0Amount)
+        // console.log('lm', liquidityMinted)
 
 
         /*  Prevent inputs larger than token balance, default set to max balance*/
@@ -113,18 +143,24 @@ const UniswapLpModal = ({safeAddress}) => {
         const route = new Route([uniPair], selectedTokens[clickedTokenName])
         const midPrice = route.midPrice.toSignificant(6)
 
+        const total = await totalSupply(uniPair)
+        const totalTokenAmount = await new TokenAmount(uniPair.liquidityToken, total)
+        const token0Amount = await new TokenAmount(uniPair?.[clickedTokenRef?.current?.name], BigInt(state?.[clickedTokenRef?.current?.name] * (10 ** clickedToken?.token?.decimals)))
+        const token1Amount = await new TokenAmount(uniPair?.[pairTokenRef?.current?.name], BigInt(state?.[pairTokenRef?.current?.name] * (10 ** pairToken?.token?.decimals)))
+        const uniswapTokensMinted = uniPair.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount).toFixed(uniPair.liquidityToken.decimals)
+        const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(uniPair.liquidityToken.decimals)
 
-        /* We have access to some information about the pair as documented in the sdk
-        *  but unclear how we construct the info we are looking for from this. May be
-        *  necessary to interact with the uniswap .abi's.
-        *
-        * Since we need to wait for the approval of x amount of babydao members, what are we doing
-        * with this information?
-        * */
-        console.log('liquidity token', uniPair.liquidityToken)
 
-        console.log('reserve of clicked', uniPair.reserveOf(selectedTokens[clickedTokenName]))
-        console.log('reserve of pair', uniPair.reserveOf(selectedTokens[pairTokenName]))
+        /*
+
+            Need to implement this in the handleSetValue fn above -- currently if you go from null to "max"
+            you'll get an error (because "state" is unset) -- however if you type some values in the input first (setting "state)
+            and then hit max this fn will run properly -- will resolve in the morning but implementing this logic in handleSetValue
+            will make sure "state" is set for whenever this fn runs. will use input value instead of state in fn above.
+
+         */
+        console.log('percentage of pool', percentageOfPool)
+        console.log('tokens minted', uniswapTokensMinted)
 
 
         if (clickedToken?.fiatBalance > pairToken?.fiatBalance) {
@@ -220,6 +256,9 @@ const UniswapLpModal = ({safeAddress}) => {
                     </div>
                 ) || (
                     <div className="mb-8 w-full">
+                        <div>
+                            total supply
+                        </div>
                         <button
                             className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
                             type="submit"
