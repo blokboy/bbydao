@@ -168,8 +168,8 @@ const UniswapLpModal = ({safeAddress}) => {
 
         if (clickedToken?.fiatBalance > pairToken?.fiatBalance) {
             setMaxError(`insufficient ${pairToken?.token?.symbol} balance`)
-            setState(state => ({...state, [clickedTokenName]: NaN}))
-            setState(state => ({...state, [pairTokenName]: NaN}))
+            setState(state => ({...state, [clickedTokenName]: 0}))
+            setState(state => ({...state, [pairTokenName]: 0}))
             setLiquidityInfo({})
         } else {
             const pairTokenInput = clickedTokenBalance * midPrice
@@ -200,7 +200,7 @@ const UniswapLpModal = ({safeAddress}) => {
                 <div className="flex w-full flex-col rounded-xl bg-slate-100 dark:bg-slate-800">
                     <div className="flex flex-row">
                         <input
-                            value={state?.token0}
+                            value={state?.token0 || (readableBalance(lpToken0) < .1 ? 0 : '')}
                             onChange={(e) => handleSetValue(e, lpToken0, token0InputRef)}
                             className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-xl leading-tight focus:outline-none dark:bg-slate-800"
                             id="name"
@@ -233,7 +233,7 @@ const UniswapLpModal = ({safeAddress}) => {
                 <div className="flex w-full flex-col rounded-xl bg-slate-100 dark:bg-slate-800">
                     <div className="flex flex-row">
                         <input
-                            value={state?.token1}
+                            value={state?.token1 || (readableBalance(lpToken1) < .1 ? 0 : '')}
                             onChange={(e) => handleSetValue(e, lpToken1, token1InputRef)}
                             className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-xl leading-tight focus:outline-none dark:bg-slate-800"
                             id="name"
