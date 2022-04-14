@@ -1,11 +1,12 @@
 import {ChainId, Fetcher, Route, Token, TokenAmount, WETH} from "@uniswap/sdk"
-import IUniswapV2ERC20                        from "@uniswap/v2-core/build/IUniswapV2ERC20.json";
-import Modal                                  from "components/Layout/Modal"
-import {BigNumber, ethers}                    from 'ethers'
-import {formatUnits}                          from 'ethers/lib/utils'
-import useForm                                       from "hooks/useForm"
-import React, {useEffect, useMemo, useRef, useState} from "react"
-import {useDaoStore}                                 from "stores/useDaoStore"
+import IUniswapV2ERC20                                     from "@uniswap/v2-core/build/IUniswapV2ERC20.json";
+import Modal                                               from "components/Layout/Modal"
+import {BigNumber, ethers}                                 from 'ethers'
+import {formatUnits}                                       from 'ethers/lib/utils'
+import useForm                                             from "hooks/useForm"
+import React, {useEffect, useMemo, useRef, useState}       from "react"
+import {useDaoStore}                                       from "stores/useDaoStore"
+import {eToNumber}                                         from 'utils/helpers'
 
 
 const UniswapLpModal = ({safeAddress}) => {
@@ -24,12 +25,19 @@ const UniswapLpModal = ({safeAddress}) => {
     /*  Create reference to input of token */
     const token0InputRef = useRef()
     const token1InputRef = useRef()
+    const [globalPair, setGlobalPair] = useState()
+
+    const init = async () => {
+        setState(state => ({...state, [token0InputRef?.current?.name]: NaN}))
+        setState(state => ({...state, [token1InputRef?.current?.name]: NaN}))
+        const uniPair = await Fetcher.fetchPairData(selectedTokens[token0InputRef?.current?.name], selectedTokens[token1InputRef?.current?.name])
+        setGlobalPair(uniPair)
+    }
 
     useEffect(() => {
-        setState(state => ({...state, [token0InputRef?.current?.name]: 0}))
-        setState(state => ({...state, [token1InputRef?.current?.name]: 0}))
+        init()
 
-        console.log('t', token0InputRef?.current?.name)
+
     }, [])
 
     // close uniswap lp modal
@@ -67,7 +75,6 @@ const UniswapLpModal = ({safeAddress}) => {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         const contract = new ethers.Contract(pair.liquidityToken.address, IUniswapV2ERC20.abi, provider)
         const supply = await contract.totalSupply()
-        const formattedSupply = formatUnits(BigNumber.from(supply._hex))
 
         return supply
     }
@@ -108,31 +115,26 @@ const UniswapLpModal = ({safeAddress}) => {
         const name = e?.target?.name
         const pairToken = name === "token0" ? lpToken1 : lpToken0
         const pairTokenRef = name === "token0" ? token1InputRef : token0InputRef
-        const pairValue = (input * token?.fiatConversion) / pairToken?.fiatConversion
+        const pairValue = Number((input * token?.fiatConversion) / pairToken?.fiatConversion)
 
-
-
-       // const uniPair = await Fetcher.fetchPairData(selectedTokens[name], selectedTokens[pairTokenRef?.current?.name])
-        // console.log('uniPair', uniPair)
-       // const total = await totalSupply(uniPair)
-        // const totalTokenAmount = await new TokenAmount(uniPair.liquidityToken, total)
-        // const token0Amount = await new TokenAmount(uniPair?.[ref?.current?.name], BigInt(state?.[ref?.current?.name] * (10 ** token?.token?.decimals)))
-        // const token1Amount = await new TokenAmount(uniPair?.[pairTokenRef?.current?.name], BigInt(state?.[pairTokenRef?.current?.name] * (10 ** pairToken?.token?.decimals)))
-        // const liquidityMinted = uniPair.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount)
-
-      //  console.log('uni', uniPair)
-      //  console.log('total', total)
-        // console.log('token', token0Amount)
-        // console.log('lm', liquidityMinted)
-
-
-        /*  Prevent inputs larger than token balance, default set to max balance*/
         if (input > max) {
             setMax(token, ref)
         } else {
-            setMaxError("")
+            setState(state => ({...state, [ref?.current?.name]: input}))
             setState(state => ({...state, [pairTokenRef?.current?.name]: pairValue}))
-            handleChange(e)
+
+            if (!isNaN(input) && !isNaN(pairValue)) {
+                const liquidityInfo = await getLiquidityTokenInfo({
+                    uniPair: globalPair,
+                    token0: token,
+                    token0Ref: ref,
+                    token0Input: input.toFixed(10),
+                    token1: pairToken,
+                    token1Ref: pairTokenRef,
+                    token1Input: pairValue.toFixed(10)
+                })
+                setLiquidityInfo(liquidityInfo)
+            }
         }
     }
 
@@ -169,9 +171,9 @@ const UniswapLpModal = ({safeAddress}) => {
             setState(state => ({...state, [pairTokenName]: 0}))
             setLiquidityInfo({})
         } else {
-            const maxPair = clickedTokenBalance * midPrice
+            const pairTokenInput = clickedTokenBalance * midPrice
             setState(state => ({...state, [clickedTokenName]: clickedTokenMax}))
-            setState(state => ({...state, [pairTokenName]: maxPair}))
+            setState(state => ({...state, [pairTokenName]: pairTokenInput}))
             setMaxError("")
 
             const liquidityInfo = await getLiquidityTokenInfo({
@@ -181,11 +183,12 @@ const UniswapLpModal = ({safeAddress}) => {
                 token0Input: clickedTokenMax,
                 token1: pairToken,
                 token1Ref: pairTokenRef,
-                token1Input: maxPair
+                token1Input: pairTokenInput
             })
             setLiquidityInfo(liquidityInfo)
         }
     }
+
 
     return (
         <Modal close={closeUniswapLpModal} heading={"Uniswap LP"}>
@@ -217,8 +220,6 @@ const UniswapLpModal = ({safeAddress}) => {
                         <div>balance:</div>
                         <div>{readableBalance(lpToken0)}</div>
                     </div>
-                    {/* pass in both the token being clicked
-                     and its input ref in order to construct a pair */}
                     <div
                         className="mr-3 flex cursor-pointer justify-end text-[#FC8D4D]"
                         onClick={() => setMax(lpToken0, token0InputRef)}
@@ -251,8 +252,6 @@ const UniswapLpModal = ({safeAddress}) => {
                         <div>balance:</div>
                         <div>{readableBalance(lpToken1)}</div>
                     </div>
-                    {/* pass in both the token being clicked
-                     and its input ref in order to construct a pair */}
                     <div
                         className="mr-3 flex cursor-pointer justify-end text-[#FC8D4D]"
                         onClick={() => setMax(lpToken1, token1InputRef)}
@@ -270,7 +269,10 @@ const UniswapLpModal = ({safeAddress}) => {
                     <div className="mb-8 w-full">
                         <div>
                             <div>Uniswap Tokens to be received: {liquidityInfo?.uniswapTokensMinted}</div>
-                            <div>Percentage of Liquidity Pool: {liquidityInfo?.percentageOfPool}</div>
+                            {!!liquidityInfo?.percentageOfPool && (
+                                <div>Percentage of Liquidity Pool: {eToNumber(liquidityInfo?.percentageOfPool)}</div>
+                            )}
+
                             <div>Total Liquidity Tokens in pool: {liquidityInfo?.total}</div>
 
                         </div>
