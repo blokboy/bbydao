@@ -1,8 +1,8 @@
-import React           from "react"
-import { FaEthereum }  from "react-icons/fa"
+import React from "react"
+import { FaEthereum } from "react-icons/fa"
 import { useDaoStore } from "stores/useDaoStore"
-import { useAccount }  from "wagmi"
-import { isEmpty }     from "../../../utils/helpers"
+import { useAccount } from "wagmi"
+import { isEmpty } from "../../../utils/helpers"
 
 const TokenCard = ({ token, img }) => {
   const [{ data, error, loading }, disconnect] = useAccount()
@@ -29,7 +29,6 @@ const TokenCard = ({ token, img }) => {
         setLpToken1(token)
         setUniswapLpModalOpen(true)
       }
-
     } else {
       setLpToken0({})
     }
@@ -40,66 +39,45 @@ const TokenCard = ({ token, img }) => {
     setUniswapSwapModalOpen(true)
   }
 
-
   return (
-    <div className={`w-full`}>
-      <div className="flex flex-col rounded-lg bg-slate-100 p-1 shadow-inner dark:bg-slate-800">
-        <div
-          className={`flex flex-row items-center justify-between rounded-lg bg-slate-300 p-2 shadow dark:bg-slate-900 ${isActive ? "border border-teal-300" : ""}`}>
-          <div className="flex flex-row">
-            <div
-              className="mx-2 flex h-10 w-10 items-center justify-center rounded-full border border-white bg-slate-200 dark:bg-slate-900">
-              {token.token?.logoUri ? (
-                <img src={token.token.logoUri} />
-              ) : (
-                <FaEthereum />
-              )}
-            </div>
+    <div className="flex w-full flex-col rounded-lg bg-slate-100 p-1 shadow-inner dark:bg-slate-800">
+      <div
+        className={`flex flex-col items-center justify-between space-y-2 rounded-lg bg-slate-300 p-2 shadow dark:bg-slate-900 md:flex-row md:space-y-0 ${
+          isActive ? "border border-teal-300" : ""
+        }`}
+      >
+        <div className="flex flex-row">
+          <div className="mx-2 flex h-12 w-12 flex-col items-center justify-center overflow-hidden rounded-full border border-white bg-slate-200 dark:bg-slate-900 md:flex-row">
+            {token.token?.logoUri ? <img src={token.token.logoUri} /> : <FaEthereum />}
+          </div>
 
-            <span
-              className="ml-4 flex w-28 flex-row items-center justify-center rounded bg-slate-100 p-1 text-[12px] dark:bg-slate-800">
-              <span className="text-blue-500">
-                {(balance / 10 ** 18).toFixed(3)}{" "}
-                {token.token?.symbol ? token.token.symbol : "ETH"}{" "}
-                <span className="text-green-500">
-                  ${Number(fiatBalance).toFixed(2)}
-                </span>
-              </span>
+          <span className="ml-4 flex w-28 flex-row  items-center justify-center rounded bg-slate-100 p-1 text-[12px] dark:bg-slate-800">
+            <span className="text-blue-500">
+              {(balance / 10 ** 18).toFixed(3)} {token.token?.symbol ? token.token.symbol : "ETH"}{" "}
+              <span className="text-green-500">${Number(fiatBalance).toFixed(2)}</span>
             </span>
-          </div>
+          </span>
+        </div>
 
-          {/* tx confirmations */}
-          <div className="flex flex-row">
-            <span></span>
-          </div>
+        <div className="flex flex-row justify-end space-x-2 px-1">
+          {isEmpty(lpToken0) && (
+            <>
+              <button
+                className="w-16 rounded-xl bg-blue-400 p-1 text-sm hover:bg-blue-500"
+                onClick={() => console.log("hii")}
+              >
+                send
+              </button>
 
+              <button className="w-16 rounded-xl bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setSwapToken}>
+                swap
+              </button>
+            </>
+          )}
 
-          <div className="flex flex-row justify-end px-1">
-            {isEmpty(lpToken0) && (
-              <>
-                <button
-                  className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
-                  onClick={() => console.log("hii")}
-                >
-                  send
-                </button>
-
-                <button
-                  className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
-                  onClick={setSwapToken}
-                >
-                  swap
-                </button>
-              </>
-            )}
-
-            <button
-              className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
-              onClick={setLpToken}
-            >
-              {isEmpty(lpToken0) && isEmpty(lpToken1) ? "LP" : isActive ? "Selected" : "Pair"}
-            </button>
-          </div>
+          <button className="w-16 rounded-xl bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setLpToken}>
+            {isEmpty(lpToken0) && isEmpty(lpToken1) ? "LP" : isActive ? "Selected" : "Pair"}
+          </button>
         </div>
       </div>
     </div>
