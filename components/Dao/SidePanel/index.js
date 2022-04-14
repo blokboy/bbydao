@@ -16,7 +16,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
   const [dropdown, setDropdown] = React.useState(false)
   const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
   const setFollowDaoModalOpen = useUiStore(state => state.setFollowDaoModalOpen)
-  const [friendData, { friendStatus, setFriendStatus }, friendActionText] =
+  const [friendData, { friendStatus, refetch }, friendActionText] =
     useFriendData(safeInfo.address)
 
   const setEditDaoMemberModalOpen = useDaoStore(
@@ -58,7 +58,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     }
 
     mutateAsync(req)
-    setFriendStatus({ ...friendStatus, isFollowing: true })
+    refetch()
   }, [data, safeInfo, friendStatus])
 
   return (
