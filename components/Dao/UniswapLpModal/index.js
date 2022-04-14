@@ -3,9 +3,9 @@ import IUniswapV2ERC20                        from "@uniswap/v2-core/build/IUnis
 import Modal                                  from "components/Layout/Modal"
 import {BigNumber, ethers}                    from 'ethers'
 import {formatUnits}                          from 'ethers/lib/utils'
-import useForm                                from "hooks/useForm"
-import React, {useMemo, useRef, useState}     from "react"
-import {useDaoStore}                          from "stores/useDaoStore"
+import useForm                                       from "hooks/useForm"
+import React, {useEffect, useMemo, useRef, useState} from "react"
+import {useDaoStore}                                 from "stores/useDaoStore"
 
 
 const UniswapLpModal = ({safeAddress}) => {
@@ -20,6 +20,17 @@ const UniswapLpModal = ({safeAddress}) => {
     const setLpToken1 = useDaoStore(state => state.setLpToken1)
 
     const {state, setState, handleChange} = useForm()
+
+    /*  Create reference to input of token */
+    const token0InputRef = useRef()
+    const token1InputRef = useRef()
+
+    useEffect(() => {
+        setState(state => ({...state, [token0InputRef?.current?.name]: 0}))
+        setState(state => ({...state, [token1InputRef?.current?.name]: 0}))
+
+
+    }, [])
 
     // close uniswap lp modal
     const closeUniswapLpModal = e => {
@@ -63,9 +74,7 @@ const UniswapLpModal = ({safeAddress}) => {
     }
 
 
-    /*  Create reference to input of token */
-    const token0InputRef = useRef()
-    const token1InputRef = useRef()
+
 
     /*  Construct object of selected tokens represented as Uniswap Token Objects */
     const selectedTokens = useMemo(() => {
@@ -129,6 +138,17 @@ const UniswapLpModal = ({safeAddress}) => {
         }
     }
 
+    const getLiquidityTokenInfo = async ({uniPair, clickedToken, clickedTokenRef, pairToken, pairTokenRef}) => {
+        const total = await totalSupply(uniPair)
+        const totalTokenAmount = await new TokenAmount(uniPair.liquidityToken, total)
+        const token0Amount = await new TokenAmount(uniPair?.[clickedTokenRef?.current?.name], BigInt(state?.[clickedTokenRef?.current?.name] * (10 ** clickedToken?.token?.decimals)))
+        const token1Amount = await new TokenAmount(uniPair?.[pairTokenRef?.current?.name], BigInt(state?.[pairTokenRef?.current?.name] * (10 ** pairToken?.token?.decimals)))
+        const uniswapTokensMinted = uniPair.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount).toFixed(uniPair.liquidityToken.decimals)
+        const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(uniPair.liquidityToken.decimals)
+
+        return {uniswapTokensMinted, percentageOfPool}
+    }
+
 
     const [maxError, setMaxError] = useState("")
     const setMax = async (clickedToken, clickedTokenRef) => {
@@ -143,14 +163,9 @@ const UniswapLpModal = ({safeAddress}) => {
         const route = new Route([uniPair], selectedTokens[clickedTokenName])
         const midPrice = route.midPrice.toSignificant(6)
 
-        const total = await totalSupply(uniPair)
-        const totalTokenAmount = await new TokenAmount(uniPair.liquidityToken, total)
-        const token0Amount = await new TokenAmount(uniPair?.[clickedTokenRef?.current?.name], BigInt(state?.[clickedTokenRef?.current?.name] * (10 ** clickedToken?.token?.decimals)))
-        const token1Amount = await new TokenAmount(uniPair?.[pairTokenRef?.current?.name], BigInt(state?.[pairTokenRef?.current?.name] * (10 ** pairToken?.token?.decimals)))
-        const uniswapTokensMinted = uniPair.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount).toFixed(uniPair.liquidityToken.decimals)
-        const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(uniPair.liquidityToken.decimals)
 
-
+        const liquidityInfo = await getLiquidityTokenInfo({uniPair, clickedToken, clickedTokenRef, pairToken, pairTokenRef})
+        const { uniswapTokensMinted, percentageOfPool} = liquidityInfo
         /*
 
             Need to implement this in the handleSetValue fn above -- currently if you go from null to "max"
@@ -161,6 +176,7 @@ const UniswapLpModal = ({safeAddress}) => {
          */
         console.log('percentage of pool', percentageOfPool)
         console.log('tokens minted', uniswapTokensMinted)
+        console.log('li', liquidityInfo)
 
 
         if (clickedToken?.fiatBalance > pairToken?.fiatBalance) {
