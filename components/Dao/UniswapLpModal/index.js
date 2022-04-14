@@ -141,8 +141,8 @@ const UniswapLpModal = ({safeAddress}) => {
     const getLiquidityTokenInfo = async ({uniPair, token0, token0Ref, token0Input, token1, token1Input, token1Ref}) => {
         const total = await totalSupply(uniPair)
         const totalTokenAmount = await new TokenAmount(uniPair.liquidityToken, total)
-        const token0Amount = await new TokenAmount(uniPair?.[token0Ref?.current?.name], BigInt(token0Input * (10 ** token0?.token?.decimals)))
-        const token1Amount = await new TokenAmount(uniPair?.[token1Ref?.current?.name], BigInt(token1Input * (10 ** token1?.token?.decimals)))
+        const token0Amount = await new TokenAmount(uniPair?.[token0Ref?.current?.name], BigInt(Math.round(token0Input * (10 ** token0?.token?.decimals))))
+        const token1Amount = await new TokenAmount(uniPair?.[token1Ref?.current?.name], BigInt(Math.round(token1Input * (10 ** token1?.token?.decimals))))
         const uniswapTokensMinted = uniPair?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount).toFixed(uniPair.liquidityToken.decimals)
         const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(uniPair.liquidityToken.decimals)
 
@@ -160,8 +160,8 @@ const UniswapLpModal = ({safeAddress}) => {
         const pairTokenRef = clickedTokenName === "token0" ? token1InputRef : token0InputRef
         const pairTokenName = pairTokenRef?.current?.name
 
-        const uniPair = await Fetcher.fetchPairData(selectedTokens[clickedTokenName], selectedTokens[pairTokenName])
-        const route = new Route([uniPair], selectedTokens[clickedTokenName])
+   //     const uniPair = await Fetcher.fetchPairData(selectedTokens[clickedTokenName], selectedTokens[pairTokenName])
+        const route = new Route([globalPair], selectedTokens[clickedTokenName])
         const midPrice = route.midPrice.toSignificant(6)
 
 
@@ -177,7 +177,7 @@ const UniswapLpModal = ({safeAddress}) => {
             setMaxError("")
 
             const liquidityInfo = await getLiquidityTokenInfo({
-                uniPair,
+                uniPair: globalPair,
                 token0: clickedToken,
                 token0Ref: clickedTokenRef,
                 token0Input: clickedTokenMax,
