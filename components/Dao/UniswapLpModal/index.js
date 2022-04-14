@@ -140,7 +140,7 @@ const UniswapLpModal = ({safeAddress}) => {
     }
 
     const getLiquidityTokenInfo = async ({uniPair, token0, token0Ref, token0Input, token1, token1Input, token1Ref}) => {
-        if(!!uniPair) {
+        if (!!uniPair) {
             const total = await totalSupply(uniPair)
             const totalTokenAmount = await new TokenAmount(uniPair.liquidityToken, total)
             const token0Amount = await new TokenAmount(uniPair?.[token0Ref?.current?.name], BigInt(Math.round(token0Input * (10 ** token0?.token?.decimals))))
@@ -163,7 +163,7 @@ const UniswapLpModal = ({safeAddress}) => {
         const pairTokenRef = clickedTokenName === "token0" ? token1InputRef : token0InputRef
         const pairTokenName = pairTokenRef?.current?.name
 
-   //     const uniPair = await Fetcher.fetchPairData(selectedTokens[clickedTokenName], selectedTokens[pairTokenName])
+        //     const uniPair = await Fetcher.fetchPairData(selectedTokens[clickedTokenName], selectedTokens[pairTokenName])
         const route = new Route([globalPair], selectedTokens[clickedTokenName])
         const midPrice = route.midPrice.toSignificant(6)
 

@@ -28,6 +28,7 @@ const TokenCard = ({ token, img }) => {
       ) {
         setLpToken1(token)
         setUniswapLpModalOpen(true)
+        console.log('hiiiiii')
       }
     } else {
       setLpToken0({})

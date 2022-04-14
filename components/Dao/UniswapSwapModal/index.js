@@ -10,7 +10,7 @@ import { SwapWidget } from "@uniswap/widgets"
 import "@uniswap/widgets/fonts.css"
 
 const UniswapSwapModal = () => {
-  const setUniswapSwapModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
+  const setUniswapSwapModalOpen = useDaoStore(state => state.setUniswapSwapModalOpen)
   const closeUniswapSwapModal = () => {
     setUniswapSwapModalOpen(false)
   }
@@ -25,7 +25,7 @@ const UniswapSwapModal = () => {
   const chains = defaultChains
   const rpcUrl = chains.find(x => x.id === chainId)?.rpcUrls?.[0] ?? chain.mainnet.rpcUrls[0]
   const jsonRpcEndpoint = `${rpcUrl}/${infuraId}`
-  
+
   const { theme } = useTheme()
   const uniswapTheme = {
     dark: {

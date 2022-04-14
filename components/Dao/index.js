@@ -73,6 +73,7 @@ const Dao = ({ data }) => {
           {editDaoMemberModalOpen && (
             <EditDaoMemberModal safeAddress={data?.safeInfo.address} />
           )}
+          {console.log('un', uniswapLpModalOpen)}
           {uniswapLpModalOpen && (
             <UniswapLpModal safeAddress={data?.safeInfo.address} />
           )}
