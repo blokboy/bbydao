@@ -31,7 +31,7 @@ const UniswapLpModal = ({safeAddress}) => {
         setState(state => ({...state, [token0InputRef?.current?.name]: 0}))
         setState(state => ({...state, [token1InputRef?.current?.name]: 0}))
         const uniPair = await Fetcher.fetchPairData(selectedTokens[token0InputRef?.current?.name], selectedTokens[token1InputRef?.current?.name])
-        setGlobalPair(uniPair)
+        await setGlobalPair(uniPair)
     }
 
     useEffect(() => {
@@ -162,8 +162,6 @@ const UniswapLpModal = ({safeAddress}) => {
         const pairToken = clickedTokenName === "token0" ? lpToken1 : lpToken0
         const pairTokenRef = clickedTokenName === "token0" ? token1InputRef : token0InputRef
         const pairTokenName = pairTokenRef?.current?.name
-
-        //     const uniPair = await Fetcher.fetchPairData(selectedTokens[clickedTokenName], selectedTokens[pairTokenName])
         const route = new Route([globalPair], selectedTokens[clickedTokenName])
         const midPrice = route.midPrice.toSignificant(6)
 
@@ -213,6 +211,7 @@ const UniswapLpModal = ({safeAddress}) => {
                             required
                             max={lpToken0?.balance / 10 ** lpToken0?.token?.decimals}
                             ref={token0InputRef}
+                            disabled={!globalPair}
                         />
                         {/* Button to select token  */}
                         <div className="m-2 w-2/12 rounded-xl bg-slate-200 p-2 text-center text-xl dark:bg-slate-700">
@@ -224,7 +223,7 @@ const UniswapLpModal = ({safeAddress}) => {
                         <div>{readableBalance(lpToken0)}</div>
                     </div>
                     <div
-                        className="mr-3 flex cursor-pointer justify-end text-[#FC8D4D]"
+                        className={`mr-3 flex cursor-pointer justify-end text-[#FC8D4D] ${!globalPair ? 'pointer-events-none' : ''}`}
                         onClick={() => setMax(lpToken0, token0InputRef)}
                     >
                         max
@@ -245,6 +244,7 @@ const UniswapLpModal = ({safeAddress}) => {
                             required
                             max={lpToken1?.balance / 10 ** lpToken1?.token?.decimals}
                             ref={token1InputRef}
+                            disabled={!globalPair}
                         />
                         {/* Button to select token  */}
                         <div className="m-2 w-2/12 rounded-xl bg-slate-200 p-2 text-center text-xl dark:bg-slate-700">
@@ -256,7 +256,7 @@ const UniswapLpModal = ({safeAddress}) => {
                         <div>{readableBalance(lpToken1)}</div>
                     </div>
                     <div
-                        className="mr-3 flex cursor-pointer justify-end text-[#FC8D4D]"
+                        className={`mr-3 flex cursor-pointer justify-end text-[#FC8D4D] ${!globalPair ? 'pointer-events-none' : ''}`}
                         onClick={() => setMax(lpToken1, token1InputRef)}
                     >
                         max
