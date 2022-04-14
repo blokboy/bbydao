@@ -28,8 +28,8 @@ const UniswapLpModal = ({safeAddress}) => {
     const [globalPair, setGlobalPair] = useState()
 
     const init = async () => {
-        setState(state => ({...state, [token0InputRef?.current?.name]: NaN}))
-        setState(state => ({...state, [token1InputRef?.current?.name]: NaN}))
+        setState(state => ({...state, [token0InputRef?.current?.name]: 0}))
+        setState(state => ({...state, [token1InputRef?.current?.name]: 0}))
         const uniPair = await Fetcher.fetchPairData(selectedTokens[token0InputRef?.current?.name], selectedTokens[token1InputRef?.current?.name])
         setGlobalPair(uniPair)
     }
@@ -122,8 +122,9 @@ const UniswapLpModal = ({safeAddress}) => {
         } else {
             setState(state => ({...state, [ref?.current?.name]: input}))
             setState(state => ({...state, [pairTokenRef?.current?.name]: pairValue}))
+            setMaxError("")
 
-            if (!isNaN(input) && !isNaN(pairValue)) {
+            if (!isNaN(input) && !isNaN(pairValue) && input > 0 && pairValue > 0) {
                 const liquidityInfo = await getLiquidityTokenInfo({
                     uniPair: globalPair,
                     token0: token,
@@ -139,14 +140,16 @@ const UniswapLpModal = ({safeAddress}) => {
     }
 
     const getLiquidityTokenInfo = async ({uniPair, token0, token0Ref, token0Input, token1, token1Input, token1Ref}) => {
-        const total = await totalSupply(uniPair)
-        const totalTokenAmount = await new TokenAmount(uniPair.liquidityToken, total)
-        const token0Amount = await new TokenAmount(uniPair?.[token0Ref?.current?.name], BigInt(Math.round(token0Input * (10 ** token0?.token?.decimals))))
-        const token1Amount = await new TokenAmount(uniPair?.[token1Ref?.current?.name], BigInt(Math.round(token1Input * (10 ** token1?.token?.decimals))))
-        const uniswapTokensMinted = uniPair?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount).toFixed(uniPair.liquidityToken.decimals)
-        const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(uniPair.liquidityToken.decimals)
+        if(!!uniPair) {
+            const total = await totalSupply(uniPair)
+            const totalTokenAmount = await new TokenAmount(uniPair.liquidityToken, total)
+            const token0Amount = await new TokenAmount(uniPair?.[token0Ref?.current?.name], BigInt(Math.round(token0Input * (10 ** token0?.token?.decimals))))
+            const token1Amount = await new TokenAmount(uniPair?.[token1Ref?.current?.name], BigInt(Math.round(token1Input * (10 ** token1?.token?.decimals))))
+            const uniswapTokensMinted = uniPair?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount).toFixed(uniPair.liquidityToken.decimals)
+            const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(uniPair.liquidityToken.decimals)
 
-        return {uniswapTokensMinted, percentageOfPool, total: formatUnits(BigNumber.from(total._hex))}
+            return {uniswapTokensMinted, percentageOfPool, total: formatUnits(BigNumber.from(total._hex))}
+        }
     }
 
 
@@ -167,8 +170,8 @@ const UniswapLpModal = ({safeAddress}) => {
 
         if (clickedToken?.fiatBalance > pairToken?.fiatBalance) {
             setMaxError(`insufficient ${pairToken?.token?.symbol} balance`)
-            setState(state => ({...state, [clickedTokenName]: 0}))
-            setState(state => ({...state, [pairTokenName]: 0}))
+            setState(state => ({...state, [clickedTokenName]: NaN}))
+            setState(state => ({...state, [pairTokenName]: NaN}))
             setLiquidityInfo({})
         } else {
             const pairTokenInput = clickedTokenBalance * midPrice
