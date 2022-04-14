@@ -138,12 +138,12 @@ const UniswapLpModal = ({safeAddress}) => {
         }
     }
 
-    const getLiquidityTokenInfo = async ({uniPair, clickedToken, clickedTokenRef, pairToken, pairTokenRef}) => {
+    const getLiquidityTokenInfo = async ({uniPair, token0, token0Ref, token0Input, token1, token1Input, token1Ref}) => {
         const total = await totalSupply(uniPair)
         const totalTokenAmount = await new TokenAmount(uniPair.liquidityToken, total)
-        const token0Amount = await new TokenAmount(uniPair?.[clickedTokenRef?.current?.name], BigInt(state?.[clickedTokenRef?.current?.name] * (10 ** clickedToken?.token?.decimals)))
-        const token1Amount = await new TokenAmount(uniPair?.[pairTokenRef?.current?.name], BigInt(state?.[pairTokenRef?.current?.name] * (10 ** pairToken?.token?.decimals)))
-        const uniswapTokensMinted = uniPair.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount).toFixed(uniPair.liquidityToken.decimals)
+        const token0Amount = await new TokenAmount(uniPair?.[token0Ref?.current?.name], BigInt(token0Input * (10 ** token0?.token?.decimals)))
+        const token1Amount = await new TokenAmount(uniPair?.[token1Ref?.current?.name], BigInt(token1Input * (10 ** token1?.token?.decimals)))
+        const uniswapTokensMinted = uniPair?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount).toFixed(uniPair.liquidityToken.decimals)
         const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(uniPair.liquidityToken.decimals)
 
         return {uniswapTokensMinted, percentageOfPool}
@@ -164,8 +164,7 @@ const UniswapLpModal = ({safeAddress}) => {
         const midPrice = route.midPrice.toSignificant(6)
 
 
-        const liquidityInfo = await getLiquidityTokenInfo({uniPair, clickedToken, clickedTokenRef, pairToken, pairTokenRef})
-        const { uniswapTokensMinted, percentageOfPool} = liquidityInfo
+
         /*
 
             Need to implement this in the handleSetValue fn above -- currently if you go from null to "max"
@@ -174,9 +173,6 @@ const UniswapLpModal = ({safeAddress}) => {
             will make sure "state" is set for whenever this fn runs. will use input value instead of state in fn above.
 
          */
-        console.log('percentage of pool', percentageOfPool)
-        console.log('tokens minted', uniswapTokensMinted)
-        console.log('li', liquidityInfo)
 
 
         if (clickedToken?.fiatBalance > pairToken?.fiatBalance) {
@@ -188,6 +184,19 @@ const UniswapLpModal = ({safeAddress}) => {
             setState(state => ({...state, [clickedTokenName]: clickedTokenMax}))
             setState(state => ({...state, [pairTokenName]: maxPair}))
             setMaxError("")
+
+            const liquidityInfo = await getLiquidityTokenInfo({
+                uniPair,
+                token0: clickedToken,
+                token0Ref: clickedTokenRef,
+                token0Input: clickedTokenMax,
+                token1: pairToken,
+                token1Ref: pairTokenRef,
+                token1Input: maxPair
+            })
+            const { uniswapTokensMinted, percentageOfPool} = liquidityInfo
+            console.log('percentage of pool', percentageOfPool)
+            console.log('tokens minted', uniswapTokensMinted)
         }
     }
 
