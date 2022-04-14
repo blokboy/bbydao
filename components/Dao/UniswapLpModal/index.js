@@ -29,7 +29,7 @@ const UniswapLpModal = ({safeAddress}) => {
         setState(state => ({...state, [token0InputRef?.current?.name]: 0}))
         setState(state => ({...state, [token1InputRef?.current?.name]: 0}))
 
-
+        console.log('t', token0InputRef?.current?.name)
     }, [])
 
     // close uniswap lp modal
@@ -61,7 +61,6 @@ const UniswapLpModal = ({safeAddress}) => {
         return null
     }
 
-    const resolvedPromise = (fn) => new Promise((resolve, reject) => resolve(fn))
 
     const totalSupply = async (pair) => {
         /* create a generic provider and query for unsold market items */
@@ -72,8 +71,6 @@ const UniswapLpModal = ({safeAddress}) => {
 
         return supply
     }
-
-
 
 
     /*  Construct object of selected tokens represented as Uniswap Token Objects */
@@ -115,7 +112,8 @@ const UniswapLpModal = ({safeAddress}) => {
 
 
 
-      //  const uniPair = await Fetcher.fetchPairData(selectedTokens[name], selectedTokens[pairTokenRef?.current?.name])
+       // const uniPair = await Fetcher.fetchPairData(selectedTokens[name], selectedTokens[pairTokenRef?.current?.name])
+        // console.log('uniPair', uniPair)
        // const total = await totalSupply(uniPair)
         // const totalTokenAmount = await new TokenAmount(uniPair.liquidityToken, total)
         // const token0Amount = await new TokenAmount(uniPair?.[ref?.current?.name], BigInt(state?.[ref?.current?.name] * (10 ** token?.token?.decimals)))
@@ -169,6 +167,7 @@ const UniswapLpModal = ({safeAddress}) => {
             setMaxError(`insufficient ${pairToken?.token?.symbol} balance`)
             setState(state => ({...state, [clickedTokenName]: 0}))
             setState(state => ({...state, [pairTokenName]: 0}))
+            setLiquidityInfo({})
         } else {
             const maxPair = clickedTokenBalance * midPrice
             setState(state => ({...state, [clickedTokenName]: clickedTokenMax}))
@@ -184,11 +183,7 @@ const UniswapLpModal = ({safeAddress}) => {
                 token1Ref: pairTokenRef,
                 token1Input: maxPair
             })
-            const { uniswapTokensMinted, percentageOfPool, total} = liquidityInfo
             setLiquidityInfo(liquidityInfo)
-            console.log('percentage of pool', percentageOfPool)
-            console.log('tokens minted', uniswapTokensMinted)
-            console.log('total', total)
         }
     }
 
