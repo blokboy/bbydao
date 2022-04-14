@@ -146,10 +146,11 @@ const UniswapLpModal = ({safeAddress}) => {
         const uniswapTokensMinted = uniPair?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount).toFixed(uniPair.liquidityToken.decimals)
         const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(uniPair.liquidityToken.decimals)
 
-        return {uniswapTokensMinted, percentageOfPool}
+        return {uniswapTokensMinted, percentageOfPool, total: formatUnits(BigNumber.from(total._hex))}
     }
 
 
+    const [liquidityInfo, setLiquidityInfo] = useState({})
     const [maxError, setMaxError] = useState("")
     const setMax = async (clickedToken, clickedTokenRef) => {
         const clickedTokenName = clickedTokenRef?.current?.name
@@ -162,17 +163,6 @@ const UniswapLpModal = ({safeAddress}) => {
         const uniPair = await Fetcher.fetchPairData(selectedTokens[clickedTokenName], selectedTokens[pairTokenName])
         const route = new Route([uniPair], selectedTokens[clickedTokenName])
         const midPrice = route.midPrice.toSignificant(6)
-
-
-
-        /*
-
-            Need to implement this in the handleSetValue fn above -- currently if you go from null to "max"
-            you'll get an error (because "state" is unset) -- however if you type some values in the input first (setting "state)
-            and then hit max this fn will run properly -- will resolve in the morning but implementing this logic in handleSetValue
-            will make sure "state" is set for whenever this fn runs. will use input value instead of state in fn above.
-
-         */
 
 
         if (clickedToken?.fiatBalance > pairToken?.fiatBalance) {
@@ -194,9 +184,11 @@ const UniswapLpModal = ({safeAddress}) => {
                 token1Ref: pairTokenRef,
                 token1Input: maxPair
             })
-            const { uniswapTokensMinted, percentageOfPool} = liquidityInfo
+            const { uniswapTokensMinted, percentageOfPool, total} = liquidityInfo
+            setLiquidityInfo(liquidityInfo)
             console.log('percentage of pool', percentageOfPool)
             console.log('tokens minted', uniswapTokensMinted)
+            console.log('total', total)
         }
     }
 
@@ -282,7 +274,10 @@ const UniswapLpModal = ({safeAddress}) => {
                 ) || (
                     <div className="mb-8 w-full">
                         <div>
-                            total supply
+                            <div>Uniswap Tokens to be received: {liquidityInfo?.uniswapTokensMinted}</div>
+                            <div>Percentage of Liquidity Pool: {liquidityInfo?.percentageOfPool}</div>
+                            <div>Total Liquidity Tokens in pool: {liquidityInfo?.total}</div>
+
                         </div>
                         <button
                             className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
