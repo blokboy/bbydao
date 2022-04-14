@@ -10,10 +10,6 @@ export const useUiStore = create(set => ({
   setCreateDaoModalOpen: () =>
     set(state => ({ createDaoModalOpen: !state.createDaoModalOpen })),
 
-  // transaction modal display
-  txModalOpen: false,
-  setTxModalOpen: () => set(state => ({ txModalOpen: !state.txModalOpen })),
-
   // follow dao modal display
   followDaoModalOpen: false,
   setFollowDaoModalOpen: () =>
