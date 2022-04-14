@@ -8,10 +8,9 @@ const TokenCard = ({ token, img }) => {
   const [{ data, error, loading }, disconnect] = useAccount()
   const { balance, fiatBalance } = token
 
-  const setUniswapLpModalOpen = useDaoStore(
-    state => state.setUniswapLpModalOpen
-  )
-  const setTxModalOpen = useDaoStore(state => state.setTxModalOpen)
+  const setUniswapSwapModalOpen = useDaoStore(state => state.setUniswapSwapModalOpen)
+  const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
+  // const setTxModalOpen = useDaoStore(state => state.setTxModalOpen)
   const lpToken0 = useDaoStore(state => state.lpToken0)
   const setLpToken0 = useDaoStore(state => state.setLpToken0)
   const lpToken1 = useDaoStore(state => state.lpToken1)
@@ -34,6 +33,11 @@ const TokenCard = ({ token, img }) => {
     } else {
       setLpToken0({})
     }
+  }
+
+  const setSwapToken = () => {
+    console.log("setSwapToken", token)
+    setUniswapSwapModalOpen(true)
   }
 
 
@@ -82,7 +86,7 @@ const TokenCard = ({ token, img }) => {
 
                 <button
                   className="mr-1 w-16 rounded-lg bg-blue-400 p-1 text-xs shadow-sm hover:bg-blue-500"
-                  // onClick={console.log("open list")}
+                  onClick={setSwapToken}
                 >
                   swap
                 </button>
