@@ -11,11 +11,13 @@ const minimalABI = [
   { stateMutability: "payable", type: "fallback" },
 ]
 
-export default function useGnosisProxyContract(address) {
+export default function useGnosisProxyContract(address, gnosis) {
   const [{ data: signer }] = useSigner()
+  console.log('signer', signer)
+  console.log('gn', address)
 
   const contract = React.useMemo(() => {
-    return address && signer ? new Contract(address, minimalABI, signer) : null
+    return address && signer ? new Contract(address, minimalABI, !gnosis ? signer : address) : null
   }, [address, signer])
 
   return contract
