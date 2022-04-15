@@ -16,22 +16,20 @@ const UniswapSwapModal = ({ safeAddress }) => {
     setUniswapSwapModalOpen(false)
   }
 
-  const [{data, loading}] = useSigner()
+  const [{ data: signer, loading }] = useSigner()
   const [gnosisProvider, setGnosisProvider] = React.useState(null)
+  
   const getContract = () => {
-    const contract = new ethers.Contract(
-      safeAddress,
-      [
-        {
-          inputs: [{ internalType: "address", name: "_singleton", type: "address" }],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        { stateMutability: "payable", type: "fallback" },
-      ]
-    )
-    const connected = contract.connect(data)
-    console.log('connected contract', connected)
+    const contract = new ethers.Contract(safeAddress, [
+      {
+        inputs: [{ internalType: "address", name: "_singleton", type: "address" }],
+        stateMutability: "nonpayable",
+        type: "constructor",
+      },
+      { stateMutability: "payable", type: "fallback" },
+    ])
+    const connected = contract.connect(signer)
+    console.log("connected contract", connected)
     setGnosisProvider(connected.provider)
   }
 
@@ -92,7 +90,7 @@ const UniswapSwapModal = ({ safeAddress }) => {
   }
 
   if (gnosisProvider) {
-    console.log('gnosisProvider', gnosisProvider)
+    console.log("gnosisProvider", gnosisProvider)
 
     return (
       <Modal close={closeUniswapSwapModal} heading={"Uniswap Swap"}>
