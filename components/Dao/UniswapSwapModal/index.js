@@ -6,9 +6,16 @@ import { chain, defaultChains, useSigner } from "wagmi"
 import { ethers } from "ethers"
 import useGnosisProxyContract from "hooks/useGnosisProxyContract"
 
+import Safe, { SafeFactory, SafeAccountConfig, EthersAdapter } from "@gnosis.pm/safe-core-sdk"
+import SafeEthersSigner from "@gnosis.pm/safe-core-sdk"
+import SafeServiceClient from "@gnosis.pm/safe-service-client"
+// import { EthersAdapter }                        from "@gnosis.pm/safe-core-sdk"
+
 import { ChainId } from "@uniswap/sdk"
 import { SwapWidget } from "@uniswap/widgets"
 import "@uniswap/widgets/fonts.css"
+
+let safeSdk
 
 const UniswapSwapModal = ({ safeAddress }) => {
   const setUniswapSwapModalOpen = useDaoStore(state => state.setUniswapSwapModalOpen)
@@ -18,8 +25,8 @@ const UniswapSwapModal = ({ safeAddress }) => {
 
   const [{ data: signer, loading }] = useSigner()
   const [gnosisProvider, setGnosisProvider] = React.useState(null)
-  
-  const getContract = () => {
+
+  const getContract = async () => {
     const contract = new ethers.Contract(safeAddress, [
       {
         inputs: [{ internalType: "address", name: "_singleton", type: "address" }],
@@ -28,11 +35,14 @@ const UniswapSwapModal = ({ safeAddress }) => {
       },
       { stateMutability: "payable", type: "fallback" },
     ])
-    const connected = contract.connect(signer)
-    setGnosisProvider(connected.provider)
-    
-    // const attached = connected.attach(safeAddress)
-    // console.log("attached", attached.provider)
+
+    const connected = contract.connect(safeAddress)
+    const connectSigner = connected.connect(signer)
+    const wallet = new ethers.Wallet(connectSigner.address, connectSigner.provider)
+    setGnosisProvider(connectSigner)
+    console.log("signer", signer)
+    console.log("connectSigner", connectSigner)
+    // console.log("wallet", wallet)
   }
 
   React.useEffect(() => {
