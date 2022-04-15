@@ -29,22 +29,20 @@ const UniswapSwapModal = ({ safeAddress }) => {
       { stateMutability: "payable", type: "fallback" },
     ])
     const connected = contract.connect(signer)
-    console.log("connected contract", connected)
     setGnosisProvider(connected.provider)
+    
+    // const attached = connected.attach(safeAddress)
+    // console.log("attached", attached.provider)
   }
 
   React.useEffect(() => {
-    if (!loading && data) {
+    if (!loading && signer) {
       getContract()
     }
   }, [loading])
 
-  // review all of this
-  // how do we swap from the bbyDAO wallet
   const chainId = ChainId.MAINNET
-  // API key for Ethereum node
   const infuraId = process.env.INFURA_ID
-  // Chains for connectors to support
   const chains = defaultChains
   const rpcUrl = chains.find(x => x.id === chainId)?.rpcUrls?.[0] ?? chain.mainnet.rpcUrls[0]
   const jsonRpcEndpoint = `${rpcUrl}/${infuraId}`
@@ -59,9 +57,9 @@ const UniswapSwapModal = ({ safeAddress }) => {
       // bbyDAO teal
       interactive: "#0DB2AC",
       // slate-800
-      container: "rgb(30 41 59)",
+      container: "#1E293B",
       // slate-900
-      module: "rgb(15 23 42)",
+      module: "#0F172A",
       // bbyDAO orange
       accent: "#FC8D4D",
       outline: "#F1F9F5",
