@@ -2,7 +2,7 @@ import React from "react"
 import { Contract } from "ethers"
 import { useSigner } from "wagmi"
 
-const minimalAbi = [
+const minimalABI = [
     {
         "constant": true,
         "inputs": [],
