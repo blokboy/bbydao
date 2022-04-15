@@ -11,6 +11,7 @@ import SellModal from "./TokensNfts/SellModal"
 import FollowModal from "./SidePanel/FollowModal"
 import EditDaoMemberModal from "./EditDaoMemberModal"
 import UniswapLpModal from "./UniswapLpModal"
+import UniswapSwapModal from "./UniswapSwapModal"
 import { walletSnippet } from "utils/helpers"
 
 // start to move all dao page modal states from other stores into useDaoStore
@@ -22,10 +23,9 @@ const Dao = ({ data }) => {
   const osSellModalOpen = useOsStore(state => state.osSellModalOpen)
   const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
   const txModalOpen = useUiStore(state => state.txModalOpen)
-  const editDaoMemberModalOpen = useDaoStore(
-    state => state.editDaoMemberModalOpen
-  )
+  const editDaoMemberModalOpen = useDaoStore(state => state.editDaoMemberModalOpen)
   const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
+  const uniswapSwapModalOpen = useDaoStore(state => state.uniswapSwapModalOpen)
 
   return (
     <>
@@ -75,6 +75,9 @@ const Dao = ({ data }) => {
           )}
           {uniswapLpModalOpen && (
             <UniswapLpModal safeAddress={data?.safeInfo.address} />
+          )}
+          {uniswapSwapModalOpen && (
+            <UniswapSwapModal safeAddress={data?.safeInfo.address} />
           )}
         </div>
       </div>

@@ -1,8 +1,13 @@
-import {ChainId, Fetcher, Route, Token, WETH} from "@uniswap/sdk"
-import Modal                                  from "components/Layout/Modal"
-import useForm                                from "hooks/useForm"
-import React, {useMemo, useRef, useState}     from "react"
-import {useDaoStore}                          from "stores/useDaoStore"
+import {ChainId, Fetcher, Route, Token, TokenAmount, WETH} from "@uniswap/sdk"
+import IUniswapV2ERC20                                     from "@uniswap/v2-core/build/IUniswapV2ERC20.json";
+import Modal                                               from "components/Layout/Modal"
+import {BigNumber, ethers}                                 from 'ethers'
+import {formatUnits}                                       from 'ethers/lib/utils'
+import useForm                                             from "hooks/useForm"
+import React, {useEffect, useMemo, useRef, useState}       from "react"
+import {useDaoStore}                                       from "stores/useDaoStore"
+import {eToNumber}                                         from 'utils/helpers'
+
 
 const UniswapLpModal = ({safeAddress}) => {
     const chainId = ChainId.MAINNET
@@ -16,6 +21,24 @@ const UniswapLpModal = ({safeAddress}) => {
     const setLpToken1 = useDaoStore(state => state.setLpToken1)
 
     const {state, setState, handleChange} = useForm()
+
+    /*  Create reference to input of token */
+    const token0InputRef = useRef()
+    const token1InputRef = useRef()
+    const [globalPair, setGlobalPair] = useState()
+
+    const init = async () => {
+        setState(state => ({...state, [token0InputRef?.current?.name]: 0}))
+        setState(state => ({...state, [token1InputRef?.current?.name]: 0}))
+        const uniPair = await Fetcher.fetchPairData(selectedTokens[token0InputRef?.current?.name], selectedTokens[token1InputRef?.current?.name])
+        setGlobalPair(uniPair)
+    }
+
+    useEffect(() => {
+        init()
+
+
+    }, [])
 
     // close uniswap lp modal
     const closeUniswapLpModal = e => {
@@ -47,9 +70,15 @@ const UniswapLpModal = ({safeAddress}) => {
     }
 
 
-    /*  Create reference to input of token */
-    const token0InputRef = useRef()
-    const token1InputRef = useRef()
+    const totalSupply = async (pair) => {
+        /* create a generic provider and query for unsold market items */
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const contract = new ethers.Contract(pair.liquidityToken.address, IUniswapV2ERC20.abi, provider)
+        const supply = await contract.totalSupply()
+
+        return supply
+    }
+
 
     /*  Construct object of selected tokens represented as Uniswap Token Objects */
     const selectedTokens = useMemo(() => {
@@ -78,7 +107,7 @@ const UniswapLpModal = ({safeAddress}) => {
         return Number((token?.balance / 10 ** token?.token?.decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
     }
 
-    const handleSetValue = (e, token, ref) => {
+    const handleSetValue = async (e, token, ref) => {
         const bal = token?.balance
         const dec = token?.token?.decimals
         const max = bal / 10 ** dec
@@ -86,20 +115,45 @@ const UniswapLpModal = ({safeAddress}) => {
         const name = e?.target?.name
         const pairToken = name === "token0" ? lpToken1 : lpToken0
         const pairTokenRef = name === "token0" ? token1InputRef : token0InputRef
-        const pairValue = (input * token?.fiatConversion) / pairToken?.fiatConversion
+        const pairValue = Number((input * token?.fiatConversion) / pairToken?.fiatConversion)
 
-
-        /*  Prevent inputs larger than token balance, default set to max balance*/
         if (input > max) {
             setMax(token, ref)
         } else {
-            setMaxError("")
+            setState(state => ({...state, [ref?.current?.name]: input}))
             setState(state => ({...state, [pairTokenRef?.current?.name]: pairValue}))
-            handleChange(e)
+            setMaxError("")
+
+            if (!isNaN(input) && !isNaN(pairValue) && input > 0 && pairValue > 0) {
+                const liquidityInfo = await getLiquidityTokenInfo({
+                    uniPair: globalPair,
+                    token0: token,
+                    token0Ref: ref,
+                    token0Input: input.toFixed(10),
+                    token1: pairToken,
+                    token1Ref: pairTokenRef,
+                    token1Input: pairValue.toFixed(10)
+                })
+                setLiquidityInfo(liquidityInfo)
+            }
+        }
+    }
+
+    const getLiquidityTokenInfo = async ({uniPair, token0, token0Ref, token0Input, token1, token1Input, token1Ref}) => {
+        if(!!uniPair) {
+            const total = await totalSupply(uniPair)
+            const totalTokenAmount = await new TokenAmount(uniPair.liquidityToken, total)
+            const token0Amount = await new TokenAmount(uniPair?.[token0Ref?.current?.name], BigInt(Math.round(token0Input * (10 ** token0?.token?.decimals))))
+            const token1Amount = await new TokenAmount(uniPair?.[token1Ref?.current?.name], BigInt(Math.round(token1Input * (10 ** token1?.token?.decimals))))
+            const uniswapTokensMinted = uniPair?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount).toFixed(uniPair.liquidityToken.decimals)
+            const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(uniPair.liquidityToken.decimals)
+
+            return {uniswapTokensMinted, percentageOfPool, total: formatUnits(BigNumber.from(total._hex))}
         }
     }
 
 
+    const [liquidityInfo, setLiquidityInfo] = useState({})
     const [maxError, setMaxError] = useState("")
     const setMax = async (clickedToken, clickedTokenRef) => {
         const clickedTokenName = clickedTokenRef?.current?.name
@@ -109,35 +163,35 @@ const UniswapLpModal = ({safeAddress}) => {
         const pairTokenRef = clickedTokenName === "token0" ? token1InputRef : token0InputRef
         const pairTokenName = pairTokenRef?.current?.name
 
-        const uniPair = await Fetcher.fetchPairData(selectedTokens[clickedTokenName], selectedTokens[pairTokenName])
-        const route = new Route([uniPair], selectedTokens[clickedTokenName])
+   //     const uniPair = await Fetcher.fetchPairData(selectedTokens[clickedTokenName], selectedTokens[pairTokenName])
+        const route = new Route([globalPair], selectedTokens[clickedTokenName])
         const midPrice = route.midPrice.toSignificant(6)
-
-
-        /* We have access to some information about the pair as documented in the sdk
-        *  but unclear how we construct the info we are looking for from this. May be
-        *  necessary to interact with the uniswap .abi's.
-        *
-        * Since we need to wait for the approval of x amount of babydao members, what are we doing
-        * with this information?
-        * */
-        console.log('liquidity token', uniPair.liquidityToken)
-
-        console.log('reserve of clicked', uniPair.reserveOf(selectedTokens[clickedTokenName]))
-        console.log('reserve of pair', uniPair.reserveOf(selectedTokens[pairTokenName]))
 
 
         if (clickedToken?.fiatBalance > pairToken?.fiatBalance) {
             setMaxError(`insufficient ${pairToken?.token?.symbol} balance`)
-            setState(state => ({...state, [clickedTokenName]: 0}))
-            setState(state => ({...state, [pairTokenName]: 0}))
+            setState(state => ({...state, [clickedTokenName]: NaN}))
+            setState(state => ({...state, [pairTokenName]: NaN}))
+            setLiquidityInfo({})
         } else {
-            const maxPair = clickedTokenBalance * midPrice
+            const pairTokenInput = clickedTokenBalance * midPrice
             setState(state => ({...state, [clickedTokenName]: clickedTokenMax}))
-            setState(state => ({...state, [pairTokenName]: maxPair}))
+            setState(state => ({...state, [pairTokenName]: pairTokenInput}))
             setMaxError("")
+
+            const liquidityInfo = await getLiquidityTokenInfo({
+                uniPair: globalPair,
+                token0: clickedToken,
+                token0Ref: clickedTokenRef,
+                token0Input: clickedTokenMax,
+                token1: pairToken,
+                token1Ref: pairTokenRef,
+                token1Input: pairTokenInput
+            })
+            setLiquidityInfo(liquidityInfo)
         }
     }
+
 
     return (
         <Modal close={closeUniswapLpModal} heading={"Uniswap LP"}>
@@ -169,8 +223,6 @@ const UniswapLpModal = ({safeAddress}) => {
                         <div>balance:</div>
                         <div>{readableBalance(lpToken0)}</div>
                     </div>
-                    {/* pass in both the token being clicked
-                     and its input ref in order to construct a pair */}
                     <div
                         className="mr-3 flex cursor-pointer justify-end text-[#FC8D4D]"
                         onClick={() => setMax(lpToken0, token0InputRef)}
@@ -203,8 +255,6 @@ const UniswapLpModal = ({safeAddress}) => {
                         <div>balance:</div>
                         <div>{readableBalance(lpToken1)}</div>
                     </div>
-                    {/* pass in both the token being clicked
-                     and its input ref in order to construct a pair */}
                     <div
                         className="mr-3 flex cursor-pointer justify-end text-[#FC8D4D]"
                         onClick={() => setMax(lpToken1, token1InputRef)}
@@ -220,6 +270,15 @@ const UniswapLpModal = ({safeAddress}) => {
                     </div>
                 ) || (
                     <div className="mb-8 w-full">
+                        <div>
+                            <div>Uniswap Tokens to be received: {liquidityInfo?.uniswapTokensMinted}</div>
+                            {!!liquidityInfo?.percentageOfPool && (
+                                <div>Percentage of Liquidity Pool: {eToNumber(liquidityInfo?.percentageOfPool)}</div>
+                            )}
+
+                            <div>Total Liquidity Tokens in pool: {liquidityInfo?.total}</div>
+
+                        </div>
                         <button
                             className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
                             type="submit"
