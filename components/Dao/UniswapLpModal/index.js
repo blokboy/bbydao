@@ -6,18 +6,22 @@ import {formatUnits}                                 from 'ethers/lib/utils'
 import useForm                                       from "hooks/useForm"
 import React, {useEffect, useMemo, useRef, useState} from "react"
 import {useDaoStore}                                 from "stores/useDaoStore"
-import {eToNumber}                                   from 'utils/helpers'
+import LPInfo                                        from './LpInfo'
 import TokenInput                                    from './TokenInput'
 
 
 const UniswapLpModal = ({safeAddress}) => {
-    const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
     const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
     const lpToken0 = useDaoStore(state => state.lpToken0)
     const lpToken1 = useDaoStore(state => state.lpToken1)
     const setLpToken1 = useDaoStore(state => state.setLpToken1)
     const setLpToken0 = useDaoStore(state => state.setLpToken0)
     const {state, setState, handleChange} = useForm()
+    const token0InputRef = useRef()
+    const token1InputRef = useRef()
+    const [pair, setPair] = useState()
+    const [liquidityInfo, setLiquidityInfo] = useState({})
+    const [maxError, setMaxError] = useState("")
 
     // Close function provided to <Modal /> component
     const closeUniswapLpModal = e => {
@@ -27,18 +31,36 @@ const UniswapLpModal = ({safeAddress}) => {
         setMaxError("")
     }
 
-    const handleSubmit = async e => {
+    const handleSubmit = async (e, liquidityInfo) => {
         e.preventDefault()
 
+
+        // if either token was WETH
+        //     function addLiquidityETH(
+        //         address token,
+        //         uint amountTokenDesired,
+        //         uint amountTokenMin,
+        //         uint amountETHMin,
+        //         address to,
+        //         uint deadline
+        // ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
+        /// else
+        //  function addLiquidity(
+        //   address tokenA,
+        //   address tokenB,
+        //   uint amountADesired,
+        //   uint amountBDesired,
+        //   uint amountAMin,
+        //   uint amountBMin,
+        //   address to,
+        //   uint deadline
+        // ) external returns (uint amountA, uint amountB, uint liquidity);
+        ///https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
+
         console.log('e', e)
+        console.log('liquidityInfo', liquidityInfo)
     }
 
-    /*  Create reference to input of tokens and initialize pair */
-    const token0InputRef = useRef()
-    const token1InputRef = useRef()
-    const [pair, setPair] = useState()
-    const [liquidityInfo, setLiquidityInfo] = useState({})
-    const [maxError, setMaxError] = useState("")
 
     /* Get Total Supply of LP pair on-chain  */
     const totalPairSupply = async (pair) => {
@@ -164,7 +186,7 @@ const UniswapLpModal = ({safeAddress}) => {
         <Modal close={closeUniswapLpModal} heading={"Uniswap LP"}>
             <form
                 className="flex w-full flex-col space-y-8 py-4"
-                onSubmit={handleSubmit}
+                onSubmit={(e) => handleSubmit(e, liquidityInfo)}
             >
                 <TokenInput
                     pair={pair}
@@ -191,15 +213,7 @@ const UniswapLpModal = ({safeAddress}) => {
                     </div>
                 ) || (
                     <div className="mb-8 w-full">
-                        <div>
-                            <div>Uniswap Tokens to be received: {liquidityInfo?.uniswapTokensMinted}</div>
-                            {!!liquidityInfo?.percentageOfPool && (
-                                <div>Percentage of Liquidity Pool: {eToNumber(liquidityInfo?.percentageOfPool)}</div>
-                            )}
-
-                            <div>Total Liquidity Tokens in pool: {liquidityInfo?.total}</div>
-
-                        </div>
+                        <LPInfo info={liquidityInfo}/>
                         <button
                             className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
                             type="submit"
