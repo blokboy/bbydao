@@ -1,12 +1,13 @@
-import {ChainId, Fetcher, Route, Token, TokenAmount, WETH} from "@uniswap/sdk"
-import IUniswapV2ERC20                                     from "@uniswap/v2-core/build/IUniswapV2ERC20.json";
-import Modal                                               from "components/Layout/Modal"
-import {BigNumber, ethers}                                 from 'ethers'
-import {formatUnits}                                       from 'ethers/lib/utils'
-import useForm                                             from "hooks/useForm"
-import React, {useEffect, useMemo, useRef, useState}       from "react"
-import {useDaoStore}                                       from "stores/useDaoStore"
-import {eToNumber}                                         from 'utils/helpers'
+import {ChainId, Fetcher, Route, Token, TokenAmount} from "@uniswap/sdk"
+import IUniswapV2ERC20                               from "@uniswap/v2-core/build/IUniswapV2ERC20.json";
+import Modal                                         from "components/Layout/Modal"
+import {BigNumber, ethers}                           from 'ethers'
+import {formatUnits}                                 from 'ethers/lib/utils'
+import useForm                                       from "hooks/useForm"
+import React, {useEffect, useMemo, useRef, useState} from "react"
+import {useDaoStore}                                 from "stores/useDaoStore"
+import {eToNumber}                                   from 'utils/helpers'
+import TokenInput                                    from './TokenInput'
 
 
 const UniswapLpModal = ({safeAddress}) => {
@@ -165,72 +166,24 @@ const UniswapLpModal = ({safeAddress}) => {
                 className="flex w-full flex-col space-y-8 py-4"
                 onSubmit={handleSubmit}
             >
-                <div className="flex w-full flex-col rounded-xl bg-slate-100 dark:bg-slate-800">
-                    <div className="flex flex-row">
-                        <input
-                            value={state?.[lpToken0.token.symbol] || (readableTokenBalance(lpToken0) < .1 ? 0 : '')}
-                            onChange={(e) => handleSetTokenValue(e, lpToken0, token0InputRef)}
-                            className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-xl leading-tight focus:outline-none dark:bg-slate-800"
-                            id="name"
-                            name={lpToken0?.token?.symbol}
-                            type="number"
-                            step={0.000001}
-                            placeholder="0.0"
-                            required
-                            max={lpToken0?.balance / 10 ** lpToken0?.token?.decimals}
-                            ref={token0InputRef}
-                            disabled={!pair}
-                        />
-                        {/* Button to select token  */}
-                        <div className="m-2 w-2/12 rounded-xl bg-slate-200 p-2 text-center text-xl dark:bg-slate-700">
-                            {lpToken0?.token?.symbol ? lpToken0?.token?.symbol : ""}
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-row justify-end space-x-2 px-2">
-                        <div>balance:</div>
-                        <div>{readableTokenBalance(lpToken0)}</div>
-                    </div>
-                    <div
-                        className={`mr-3 flex cursor-pointer justify-end text-[#FC8D4D] ${!pair ? 'pointer-events-none' : ''}`}
-                        onClick={() => handleSetMaxTokenValue(lpToken0, token0InputRef)}
-                    >
-                        max
-                    </div>
-                </div>
-
-                <div className="flex w-full flex-col rounded-xl bg-slate-100 dark:bg-slate-800">
-                    <div className="flex flex-row">
-                        <input
-                            value={state?.[lpToken1.token.symbol] || (readableTokenBalance(lpToken1) < .1 ? 0 : '')}
-                            onChange={(e) => handleSetTokenValue(e, lpToken1, token1InputRef)}
-                            className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-xl leading-tight focus:outline-none dark:bg-slate-800"
-                            id="name"
-                            name={lpToken1?.token?.symbol}
-                            type="number"
-                            step={0.000001}
-                            placeholder="0.0"
-                            required
-                            max={lpToken1?.balance / 10 ** lpToken1?.token?.decimals}
-                            ref={token1InputRef}
-                            disabled={!pair}
-                        />
-                        {/* Button to select token  */}
-                        <div className="m-2 w-2/12 rounded-xl bg-slate-200 p-2 text-center text-xl dark:bg-slate-700">
-                            {lpToken1?.token?.symbol ? lpToken1?.token?.symbol : ""}
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-row justify-end space-x-2 px-2">
-                        <div>balance:</div>
-                        <div>{readableTokenBalance(lpToken1)}</div>
-                    </div>
-                    <div
-                        className={`mr-3 flex cursor-pointer justify-end text-[#FC8D4D] ${!pair ? 'pointer-events-none' : ''}`}
-                        onClick={() => handleSetMaxTokenValue(lpToken1, token1InputRef)}
-                    >
-                        max
-                    </div>
-                </div>
-
+                <TokenInput
+                    pair={pair}
+                    token1InputRef={token0InputRef}
+                    lpToken={lpToken0}
+                    handleSetTokenValue={handleSetTokenValue}
+                    handleSetMaxTokenValue={handleSetMaxTokenValue}
+                    readableTokenBalance={readableTokenBalance}
+                    state={state}
+                />
+                <TokenInput
+                    pair={pair}
+                    token1InputRef={token1InputRef}
+                    lpToken={lpToken1}
+                    handleSetTokenValue={handleSetTokenValue}
+                    handleSetMaxTokenValue={handleSetMaxTokenValue}
+                    readableTokenBalance={readableTokenBalance}
+                    state={state}
+                />
                 {/* Price and pool share */}
                 {(maxError.length > 0 && (
                     <div>
