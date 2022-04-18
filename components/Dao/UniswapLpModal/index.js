@@ -118,9 +118,9 @@ const UniswapLpModal = ({safeAddress}) => {
                 const liquidityInfo = await getLiquidityPairInfo({
                     pair: pair,
                     token0: token0,
-                    token0Input: token0Input.toFixed(10),
+                    token0Input: token0Input,
                     token1: token1,
-                    token1Input: token1Input.toFixed(10)
+                    token1Input: token1Input
                 })
                 setLiquidityInfo(liquidityInfo)
             }
