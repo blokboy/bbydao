@@ -1,6 +1,15 @@
 import { isAddress } from "ethers/lib/utils"
 import React from "react"
 
+/**
+ * Create snippet of wallet address or
+ * return address if it is not a "address"
+ * as defined by Ethers.
+ *
+ * @param addr
+ * @returns {string || null}
+ */
+
 export const walletSnippet = addr => {
   if (!addr) {
     return null
@@ -27,27 +36,21 @@ export const isEmpty = object => {
   return true
 }
 
+/**
+ * Converts BigInt to Number
+ *
+ * @params (balance, decimals)
+ * @returns {number}
+ */
 
-export const debounce = (func, wait) => {
-  let timeout
+export const NumberFromBig = (balance, decimals) =>
+    Number((balance / 10 ** decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
 
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout)
-      func(...args)
-    }
-
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-  }
-}
-
-
-
-Date.prototype.addHours= function(h){
-  this.setHours(this.getHours()+h);
-  return this;
-}
+/**
+ * Max Value of BigInt
+ * @returns {BigInt}
+ */
+export const max256 = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
 
 
 /******************************************************************

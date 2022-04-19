@@ -20,7 +20,7 @@ const TokenInput = ({
                 step={0.000001}
                 placeholder="0.0"
                 required
-                min="0"
+              //  min="0"
                 max={lpToken?.balance / 10 ** lpToken?.token?.decimals}
                 ref={token1InputRef}
                 disabled={!pair}

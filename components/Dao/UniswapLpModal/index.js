@@ -85,17 +85,17 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             // const signer = contract.connect(signer)
             console.log('contract', await contract)
             console.log('WETH', await contract.WETH())
-            const addLiquidity = await contract.addLiquidity(
-                tokenA,
-                tokenB,
-                amountADesired,
-                amountBDesired,
-                amountAMin,
-                amountBMin,
-                addressTo,
-                deadline
-            )
-            console.log('add', addLiquidity)
+            // const addLiquidity = await contract.addLiquidity(
+            //     tokenA,
+            //     tokenB,
+            //     amountADesired,
+            //     amountBDesired,
+            //     amountAMin,
+            //     amountBMin,
+            //     addressTo,
+            //     deadline
+            // )
+            // console.log('add', addLiquidity)
         } else {
             //  function addLiquidity(
             //   address tokenA,
@@ -222,7 +222,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(pair.liquidityToken.decimals)
             const uniswapPairURI = `https://v2.info.uniswap.org/pair/${pair.liquidityToken.address}`
             const etherscanURI = `https://etherscan.io/address/${pair.liquidityToken.address}`
-
             const transactionInfo = [
                 {
                     token: token0,
@@ -234,17 +233,15 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                 }
             ]
 
-
             return {
                 percentageOfPool,
                 total: formatUnits(BigNumber.from(total._hex)),
                 transactionInfo,
                 uniswapTokensMinted,
                 uris: {
-                    uniswapPairURI,
-                    etherscanURI
+                    uniswap: uniswapPairURI,
+                    etherscan: etherscanURI
                 }
-
             }
         }
     }
@@ -294,7 +291,13 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                     logo={token1Logo}
                 />
                 <div className="mb-8 w-full">
-                    <PoolInfo info={liquidityInfo}/>
+                    {liquidityInfo && (
+                        <PoolInfo
+                            spender={pair?.liquidityToken?.address}
+                            info={liquidityInfo}
+                            signer={signer}
+                        />
+                    )}
                     <button
                         className="focus:shadow-outline h-16 w-full appearance-none rounded-full border bg-slate-100 mt-4 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
                         type="submit"
