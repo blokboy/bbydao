@@ -7,6 +7,15 @@
     /* @apply mx-3 md:mx-1; */
   }
 
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
   body {
     @apply h-[100%] w-[100%] text-slate-800 dark:text-slate-100;
     /* @apply bg-gradient-to-bl from-slate-100 via-[#d6e5eb] to-slate-300; */

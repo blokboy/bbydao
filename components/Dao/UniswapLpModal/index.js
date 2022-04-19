@@ -248,7 +248,11 @@ const UniswapLpModal = ({safeAddress}) => {
     }, [])
 
     return (
-        <Modal close={closeUniswapLpModal} heading={"Uniswap LP"}>
+        <Modal close={closeUniswapLpModal} heading={"Add Liquidity"}>
+            <div className="flex items-center justify-center p-4 mt-2 rounded-xl bg-[#eda67e24] text-[#FC8D4D] font-thin">
+                Tip: When you add liquidity, you will receive pool tokens representing your position.
+                These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at any time.
+            </div>
             <form
                 className="flex w-full flex-col space-y-8 py-4"
                 onSubmit={(e) => handleSubmit(e, liquidityInfo)}
