@@ -12,7 +12,7 @@ const TokenInput = ({
             <input
                 value={state?.[lpToken.token.symbol] || (readableTokenBalance(lpToken) < .1 ? 0 : '')}
                 onChange={(e) => handleSetTokenValue(e, lpToken, token1InputRef)}
-                className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-3xl font-bold leading-tight focus:outline-none dark:bg-slate-800"
+                className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-4xl leading-tight focus:outline-none dark:bg-slate-800"
                 id="name"
                 name={lpToken?.token?.symbol}
                 type="number"
@@ -25,7 +25,7 @@ const TokenInput = ({
                 disabled={!pair}
             />
             {/* Button to select token  */}
-            <div className="flex justify-center items-center my-3 w-2/12 rounded-xl bg-slate-200 py-1 px-6 text-l dark:bg-slate-700">
+            <div className="flex justify-center items-center my-3 w-2/12 rounded-xl bg-slate-200 py-1 px-6 text-l shadow-xl dark:bg-slate-700">
                 {lpToken?.token?.symbol ? lpToken?.token?.symbol : ""}
             </div>
         </div>
