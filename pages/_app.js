@@ -7,13 +7,13 @@ import { ReactQueryDevtools } from "react-query/devtools"
 import { ThemeProvider } from "next-themes"
 import Layout from "../components/Layout"
 import Loading from "../components/Layout/Loading"
-
+import Mint from "../components/Mint"
 import { Provider, chain, defaultChains } from "wagmi"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect"
 import { WalletLinkConnector } from "wagmi/connectors/walletLink"
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps, ...appProps }) {
   const [queryClient] = React.useState(() => new QueryClient())
 
   // API key for Ethereum node
@@ -43,6 +43,16 @@ function MyApp({ Component, pageProps }) {
       }),
     ]
   }
+
+  if ([`/mint`].includes(appProps.router.pathname))
+      return ( 
+        <ThemeProvider attribute="class">
+          <Mint>
+            <Component {...pageProps} />
+          </Mint>
+        </ThemeProvider>
+        
+      )
 
   const [loading, setLoading] = React.useState(false)
 
