@@ -29,7 +29,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
     const [hasAllowance, setHasAllowance] = useState()
     const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0.token.symbol)[0].uri
     const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1.token.symbol)[0].uri
-    const supplyDisabled = maxError.length > 0 || hasAllowance?.token0 || hasAllowance?.token1
+    const supplyDisabled = !signer || maxError.length > 0 || hasAllowance?.token0 || hasAllowance?.token1
     // console.log('a', a)
 
     // Close function provided to <Modal /> component
