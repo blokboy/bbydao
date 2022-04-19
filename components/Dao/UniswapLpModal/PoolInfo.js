@@ -13,7 +13,7 @@ const PoolInfo = ({info}) => {
 
     return (
         <div>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center px-12">
                 {!!info.uniswapTokensMinted && (
                     <div className="w-full mb-2 bg-[#e4dfe0] p-3 rounded-xl flex flex-col items-center">
                         <div><a href={info.uniswapPairURI} target="_blank">Pool</a> Tokens Received</div>

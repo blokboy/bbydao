@@ -12,7 +12,7 @@ import PoolInfo                                      from './PoolInfo'
 import TokenInput                                    from './TokenInput'
 
 
-const UniswapLpModal = ({safeAddress}) => {
+const UniswapLpModal = ({safeAddress, tokenLogos}) => {
     const UniswapV2Router02 = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
     const [{data: signer}] = useSigner()
     const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
@@ -26,6 +26,14 @@ const UniswapLpModal = ({safeAddress}) => {
     const [pair, setPair] = useState()
     const [liquidityInfo, setLiquidityInfo] = useState({})
     const [maxError, setMaxError] = useState("")
+
+
+    const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0.token.symbol)[0].uri
+    const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1.token.symbol)[0].uri
+
+    console.log('li', token0Logo, token1Logo)
+
+    // console.log('a', a)
 
     // Close function provided to <Modal /> component
     const closeUniswapLpModal = e => {
@@ -273,6 +281,7 @@ const UniswapLpModal = ({safeAddress}) => {
                     handleSetMaxTokenValue={handleSetMaxTokenValue}
                     readableTokenBalance={readableTokenBalance}
                     state={state}
+                    logo={token0Logo}
                 />
                 <TokenInput
                     pair={pair}
@@ -282,15 +291,16 @@ const UniswapLpModal = ({safeAddress}) => {
                     handleSetMaxTokenValue={handleSetMaxTokenValue}
                     readableTokenBalance={readableTokenBalance}
                     state={state}
+                    logo={token1Logo}
                 />
                 <div className="mb-8 w-full">
                     <PoolInfo info={liquidityInfo}/>
                     <button
-                        className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
+                        className="focus:shadow-outline h-16 w-full appearance-none rounded-full border bg-slate-100 mt-4 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
                         type="submit"
                         disabled={maxError.length > 0}
                     >
-                        {maxError.length > 0 ? maxError : 'Supply'}
+                        <div className="font-bold">{maxError.length > 0 ? maxError : 'Supply'}</div>
                     </button>
                 </div>
             </form>

@@ -5,7 +5,8 @@ const TokenInput = ({
                         handleSetTokenValue,
                         handleSetMaxTokenValue,
                         readableTokenBalance,
-                        state
+                        state,
+                        logo
                     }) =>
     <div className="flex w-full flex-col p-4 rounded-xl bg-slate-100 dark:bg-slate-800 border hover:border-[#FC8D4D]">
         <div className="flex flex-row">
@@ -25,7 +26,9 @@ const TokenInput = ({
                 disabled={!pair}
             />
             {/* Button to select token  */}
-            <div className="flex justify-center items-center my-3 w-2/12 rounded-xl bg-slate-200 py-1 px-6 text-l shadow-xl dark:bg-slate-700">
+            <div
+                className="flex justify-center items-center my-3 rounded-xl bg-slate-200 py-1 px-6 text-l shadow-xl dark:bg-slate-700">
+                <img src={logo} className="min-w-fit mr-2 h-8 w-8 rounded-full" />
                 {lpToken?.token?.symbol ? lpToken?.token?.symbol : ""}
             </div>
         </div>
