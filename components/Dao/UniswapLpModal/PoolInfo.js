@@ -1,6 +1,6 @@
 import {eToNumber} from 'utils/helpers'
 
-const LPInfo = ({info}) => {
+const PoolInfo = ({info}) => {
     const shareOfPool = eToNumber(info?.percentageOfPool)
     const getPercentage = (decimal) => {
         return decimal * 100 < .01 ? '< .01%' : `${(decimal * 100).toFixed(2)}%`
@@ -41,4 +41,4 @@ const LPInfo = ({info}) => {
     )
 }
 
-export default LPInfo
+export default PoolInfo

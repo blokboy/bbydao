@@ -8,7 +8,7 @@ import useForm                                       from "hooks/useForm"
 import React, {useEffect, useMemo, useRef, useState} from "react"
 import {useDaoStore}                                 from "stores/useDaoStore"
 import {useSigner}                                   from 'wagmi'
-import LPInfo                                        from './LpInfo'
+import PoolInfo                                      from './PoolInfo'
 import TokenInput                                    from './TokenInput'
 
 
@@ -80,14 +80,14 @@ const UniswapLpModal = ({safeAddress}) => {
             console.log('contract', await contract)
             console.log('WETH', await contract.WETH())
             const addLiquidity = await contract.addLiquidity(
-                  tokenA,
-                  tokenB,
-                  amountADesired,
-                  amountBDesired,
-                  amountAMin,
-                  amountBMin,
-                  addressTo,
-                  deadline
+                tokenA,
+                tokenB,
+                amountADesired,
+                amountBDesired,
+                amountAMin,
+                amountBMin,
+                addressTo,
+                deadline
             )
             console.log('add', addLiquidity)
         } else {
@@ -256,8 +256,10 @@ const UniswapLpModal = ({safeAddress}) => {
     return (
         <Modal close={closeUniswapLpModal} heading={"Add Liquidity"}>
             <div className="p-4 mt-2 rounded-xl bg-[#eda67e24] text-[#FC8D4D] font-thin">
-                <span className="font-bold">Tip:</span> When you add liquidity, you will receive pool tokens representing your position.
-                These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at any time.
+                <span className="font-bold">Tip:</span> When you add liquidity, you will receive pool tokens
+                representing your position.
+                These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at any
+                time.
             </div>
             <form
                 className="flex w-full flex-col space-y-8 py-4"
@@ -281,22 +283,16 @@ const UniswapLpModal = ({safeAddress}) => {
                     readableTokenBalance={readableTokenBalance}
                     state={state}
                 />
-                {/* Price and pool share */}
-                {(maxError.length > 0 && (
-                    <div>
-                        {maxError}
-                    </div>
-                ) || (
-                    <div className="mb-8 w-full">
-                        <LPInfo info={liquidityInfo}/>
-                        <button
-                            className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
-                            type="submit"
-                        >
-                            submit
-                        </button>
-                    </div>
-                ))}
+                <div className="mb-8 w-full">
+                    <PoolInfo info={liquidityInfo}/>
+                    <button
+                        className="focus:shadow-outline h-16 w-full appearance-none rounded-lg border bg-slate-100 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
+                        type="submit"
+                        disabled={maxError.length > 0}
+                    >
+                        {maxError.length > 0 ? maxError : 'Supply'}
+                    </button>
+                </div>
             </form>
         </Modal>
     )
