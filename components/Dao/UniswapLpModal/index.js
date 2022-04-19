@@ -1,16 +1,20 @@
 import {ChainId, Fetcher, Route, Token, TokenAmount} from "@uniswap/sdk"
 import IUniswapV2ERC20                               from "@uniswap/v2-core/build/IUniswapV2ERC20.json";
+import IUniswapV2Router02                            from "@uniswap/v2-periphery/build/IUniswapV2Router02.json";
 import Modal                                         from "components/Layout/Modal"
 import {BigNumber, ethers}                           from 'ethers'
 import {formatUnits}                                 from 'ethers/lib/utils'
 import useForm                                       from "hooks/useForm"
 import React, {useEffect, useMemo, useRef, useState} from "react"
 import {useDaoStore}                                 from "stores/useDaoStore"
+import {useSigner}                                   from 'wagmi'
 import LPInfo                                        from './LpInfo'
 import TokenInput                                    from './TokenInput'
 
 
 const UniswapLpModal = ({safeAddress}) => {
+    const UniswapV2Router02 = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
+    const [{data: signer}] = useSigner()
     const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
     const lpToken0 = useDaoStore(state => state.lpToken0)
     const lpToken1 = useDaoStore(state => state.lpToken1)
@@ -31,34 +35,74 @@ const UniswapLpModal = ({safeAddress}) => {
         setMaxError("")
     }
 
+    const amount = (amount, decimals) =>
+        BigInt(Math.round(amount * (10 ** decimals)))
+
     const handleSubmit = async (e, liquidityInfo) => {
         e.preventDefault()
 
+        const contract = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02.abi, signer)
+        const pairHasEth = liquidityInfo.transactionInfo.filter(token => token.token.symbol === 'ETH')
+        const slippage = .01 // default 1% slippage
 
-        // if either token was WETH
-        //     function addLiquidityETH(
-        //         address token,
-        //         uint amountTokenDesired,
-        //         uint amountTokenMin,
-        //         uint amountETHMin,
-        //         address to,
-        //         uint deadline
-        // ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
-        /// else
-        //  function addLiquidity(
-        //   address tokenA,
-        //   address tokenB,
-        //   uint amountADesired,
-        //   uint amountBDesired,
-        //   uint amountAMin,
-        //   uint amountBMin,
-        //   address to,
-        //   uint deadline
-        // ) external returns (uint amountA, uint amountB, uint liquidity);
-        ///https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
+        /* token A */
+        const tokenA = liquidityInfo.transactionInfo[0].token.address
+        const tokenADecimals = liquidityInfo.transactionInfo[0].token.decimals
+        const tokenAAmount = liquidityInfo.transactionInfo[0].amount
+        const amountADesired = amount(tokenAAmount, tokenADecimals)
+        const amountAMin = amount(tokenAAmount - tokenAAmount * slippage, tokenADecimals)
 
-        console.log('e', e)
-        console.log('liquidityInfo', liquidityInfo)
+        /* token B */
+        const tokenB = liquidityInfo.transactionInfo[1].token.address
+        const tokenBDecimals = liquidityInfo.transactionInfo[1].token.decimals
+        const tokenBAmount = liquidityInfo.transactionInfo[1].amount
+        const amountBDesired = amount(tokenBAmount, tokenBDecimals)
+        const amountBMin = amount(tokenBAmount - tokenBAmount * slippage, tokenBDecimals)
+
+        const addressTo = safeAddress
+        const deadline = Math.floor(Date.now() / 1000) + 60 * 20
+
+
+        console.log(
+            tokenA,
+            tokenB,
+            amountADesired,
+            amountBDesired,
+            amountAMin,
+            amountBMin,
+            addressTo,
+            deadline
+        )
+
+
+        if (pairHasEth.length === 0) {
+            // const signer = contract.connect(signer)
+            console.log('contract', contract)
+            // const addLiquidity = await contract.addLiquidity(
+            //       tokenA,
+            //       tokenB,
+            //       amountADesired,
+            //       amountBDesired,
+            //       amountAMin,
+            //       amountBMin,
+            //       addressTo,
+            //       deadline
+            // )
+            // console.log('add', addLiquidity)
+        } else {
+            //  function addLiquidity(
+            //   address tokenA,
+            //   address tokenB,
+            //   uint amountADesired,
+            //   uint amountBDesired,
+            //   uint amountAMin,
+            //   uint amountBMin,
+            //   address to,
+            //   uint deadline
+            // ) external returns (uint amountA, uint amountB, uint liquidity);
+        }
+        // https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
+
     }
 
 
@@ -107,6 +151,7 @@ const UniswapLpModal = ({safeAddress}) => {
         const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.token.symbol)[0][1]
         const token1Input = Number((token0Input * midPrice))
 
+        /*  If User attempts to LP more than balance, default to max balance */
         if (token0Input > max) {
             handleSetMaxTokenValue(token, tokenRef)
         } else {
@@ -126,6 +171,7 @@ const UniswapLpModal = ({safeAddress}) => {
             }
         }
     }
+    /* Handle setting max token values and retrieving liquidity pair information  */
     const handleSetMaxTokenValue = async (token, tokenRef) => {
         const token0 = uniswapTokens[token.token.symbol]
         const token0Input = tokenRef?.current?.max
@@ -133,9 +179,10 @@ const UniswapLpModal = ({safeAddress}) => {
 
         const route = new Route([pair], uniswapTokens[token.token.symbol])
         const midPrice = route.midPrice.toSignificant(6)
-
+        const invertMidPrice = route.midPrice.invert().toSignificant(6)
         const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.token.symbol)[0][1]
         const token1Input = token0Input * midPrice
+
 
         if (token?.fiatBalance > pairToken?.fiatBalance) {
             setMaxError(`insufficient ${pairToken?.token?.symbol} balance`)
@@ -157,26 +204,43 @@ const UniswapLpModal = ({safeAddress}) => {
             setLiquidityInfo(liquidityInfo)
         }
     }
+    /* Handle interaction with Uniswap to get LP information  */
     const getLiquidityPairInfo = async ({pair, token0, token0Input, token1, token1Input}) => {
         if (!!pair) {
             const total = await totalPairSupply(pair)
             const totalTokenAmount = await new TokenAmount(pair.liquidityToken, total)
-            const token0Amount = await new TokenAmount(token0, BigInt(Math.round(token0Input * (10 ** token0?.decimals))))
-            const token1Amount = await new TokenAmount(token1, BigInt(Math.round(token1Input * (10 ** token1?.decimals))))
+            const token0Amount = await new TokenAmount(token0, amount(token0Input, token0?.decimals))
+            const token1Amount = await new TokenAmount(token1, amount(token1Input, token1?.decimals))
             const uniswapTokensMinted = pair?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount).toFixed(pair.liquidityToken.decimals)
             const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(pair.liquidityToken.decimals)
 
-            return {uniswapTokensMinted, percentageOfPool, total: formatUnits(BigNumber.from(total._hex))}
+            const transactionInfo = [
+                {
+                    token: token0,
+                    amount: Number(token0Input),
+                },
+                {
+                    token: token1,
+                    amount: Number(token1Input),
+                }
+            ]
+
+            return {
+                uniswapTokensMinted,
+                percentageOfPool,
+                total: formatUnits(BigNumber.from(total._hex)),
+                transactionInfo
+            }
         }
     }
 
+    /* Initialize state of inputs and initialize Uniswap Pair */
     const init = async () => {
         setState(state => ({...state, [lpToken0.token.symbol]: 0}))
         setState(state => ({...state, [lpToken1.token.symbol]: 0}))
         const uniPair = await Fetcher.fetchPairData(uniswapTokens[lpToken0.token.symbol], uniswapTokens[lpToken1.token.symbol])
         await setPair(uniPair)
     }
-
     useEffect(() => {
         init()
 

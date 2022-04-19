@@ -43,6 +43,13 @@ export const debounce = (func, wait) => {
 }
 
 
+
+Date.prototype.addHours= function(h){
+  this.setHours(this.getHours()+h);
+  return this;
+}
+
+
 /******************************************************************
  * Converts e-Notation Numbers to Plain Numbers
  ******************************************************************

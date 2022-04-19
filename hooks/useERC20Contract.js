@@ -1,6 +1,6 @@
-import React from "react"
-import { Contract } from "ethers"
-import { useSigner } from "wagmi"
+import {Contract}  from "ethers"
+import React       from "react"
+import {useSigner} from "wagmi"
 
 const minimalABI = [
     {
@@ -225,13 +225,10 @@ const minimalABI = [
     }
 ]
 
-export default function useERC20Contract(address) {
-    const [{ data: signer }] = useSigner()
-  
-    const contract = React.useMemo(() => {
-      return address && signer ? new Contract(address, minimalABI, signer) : null
+export default function useERC20Contract(address, abi) {
+    const [{data: signer}] = useSigner()
+
+    return React.useMemo(() => {
+        return address && signer ? new Contract(address, abi || minimalABI, signer) : null
     }, [address, signer])
-  
-    return contract
-  }
-  
+}
