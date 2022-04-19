@@ -77,18 +77,19 @@ const UniswapLpModal = ({safeAddress}) => {
 
         if (pairHasEth.length === 0) {
             // const signer = contract.connect(signer)
-            console.log('contract', contract)
-            // const addLiquidity = await contract.addLiquidity(
-            //       tokenA,
-            //       tokenB,
-            //       amountADesired,
-            //       amountBDesired,
-            //       amountAMin,
-            //       amountBMin,
-            //       addressTo,
-            //       deadline
-            // )
-            // console.log('add', addLiquidity)
+            console.log('contract', await contract)
+            console.log('WETH', await contract.WETH())
+            const addLiquidity = await contract.addLiquidity(
+                  tokenA,
+                  tokenB,
+                  amountADesired,
+                  amountBDesired,
+                  amountAMin,
+                  amountBMin,
+                  addressTo,
+                  deadline
+            )
+            console.log('add', addLiquidity)
         } else {
             //  function addLiquidity(
             //   address tokenA,

@@ -7,7 +7,7 @@ const TokenInput = ({
                         readableTokenBalance,
                         state
                     }) =>
-    <div className="flex w-full flex-col rounded-xl bg-slate-100 dark:bg-slate-800">
+    <div className="flex w-full flex-col p-4 rounded-xl bg-slate-100 dark:bg-slate-800">
         <div className="flex flex-row">
             <input
                 value={state?.[lpToken.token.symbol] || (readableTokenBalance(lpToken) < .1 ? 0 : '')}
@@ -24,19 +24,19 @@ const TokenInput = ({
                 disabled={!pair}
             />
             {/* Button to select token  */}
-            <div className="m-2 w-2/12 rounded-xl bg-slate-200 p-2 text-center text-xl dark:bg-slate-700">
+            <div className="flex justify-center items-center my-3 w-2/12 rounded-xl bg-slate-200 py-1 px-6 text-l dark:bg-slate-700">
                 {lpToken?.token?.symbol ? lpToken?.token?.symbol : ""}
             </div>
         </div>
-        <div className="flex w-full flex-row justify-end space-x-2 px-2">
-            <div>balance:</div>
-            <div>{readableTokenBalance(lpToken)}</div>
-        </div>
-        <div
-            className={`mr-3 flex cursor-pointer justify-end text-[#FC8D4D] ${!pair ? 'pointer-events-none' : ''}`}
-            onClick={() => handleSetMaxTokenValue(lpToken, token1InputRef)}
-        >
-            max
+        <div className="flex items-center w-full flex-row justify-end space-x-2 font-light">
+            <div className="text-sm">Balance:</div>
+            <div className="text-sm">{readableTokenBalance(lpToken)}</div>
+            <div
+                className={`flex justify-end py-0.5 px-2 rounded-lg cursor-pointer text-[.8rem] text-[#FC8D4D] bg-[#eda67e57] hover:bg-[#f98c4e57] ${!pair ? 'pointer-events-none' : ''}`}
+                onClick={() => handleSetMaxTokenValue(lpToken, token1InputRef)}
+            >
+                MAX
+            </div>
         </div>
     </div>
 
