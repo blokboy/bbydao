@@ -31,8 +31,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
     const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0.token.symbol)[0].uri
     const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1.token.symbol)[0].uri
 
-    console.log('li', token0Logo, token1Logo)
-
     // console.log('a', a)
 
     // Close function provided to <Modal /> component
@@ -225,8 +223,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             const uniswapPairURI = `https://v2.info.uniswap.org/pair/${pair.liquidityToken.address}`
             const etherscanURI = `https://etherscan.io/address/${pair.liquidityToken.address}`
 
-            console.log('pair', pair)
-
             const transactionInfo = [
                 {
                     token: token0,
@@ -244,7 +240,11 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                 total: formatUnits(BigNumber.from(total._hex)),
                 transactionInfo,
                 uniswapTokensMinted,
-                uniswapPairURI,
+                uris: {
+                    uniswapPairURI,
+                    etherscanURI
+                }
+
             }
         }
     }
