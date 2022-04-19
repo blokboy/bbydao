@@ -26,11 +26,10 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
     const [pair, setPair] = useState()
     const [liquidityInfo, setLiquidityInfo] = useState({})
     const [maxError, setMaxError] = useState("")
-
-
+    const [hasAllowance, setHasAllowance] = useState()
     const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0.token.symbol)[0].uri
     const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1.token.symbol)[0].uri
-
+    const supplyDisabled = maxError.length > 0 || hasAllowance?.token0 || hasAllowance?.token1
     // console.log('a', a)
 
     // Close function provided to <Modal /> component
@@ -84,7 +83,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
         if (pairHasEth.length === 0) {
             // const signer = contract.connect(signer)
             console.log('contract', await contract)
-            console.log('WETH', await contract.WETH())
             // const addLiquidity = await contract.addLiquidity(
             //     tokenA,
             //     tokenB,
@@ -192,7 +190,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
 
 
         if (token?.fiatBalance > pairToken?.fiatBalance) {
-            setMaxError(`insufficient ${pairToken?.token?.symbol} balance`)
+            setMaxError(`Insufficient ${pairToken?.token?.symbol} balance`)
             setState(state => ({...state, [token.token.symbol]: 0}))
             setState(state => ({...state, [token1.symbol]: 0}))
             setLiquidityInfo({})
@@ -296,15 +294,19 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                             spender={pair?.liquidityToken?.address}
                             info={liquidityInfo}
                             signer={signer}
+                            hasAllowance={hasAllowance}
+                            setHasAllowance={setHasAllowance}
                         />
                     )}
-                    <button
-                        className="focus:shadow-outline h-16 w-full appearance-none rounded-full border bg-slate-100 mt-4 py-2 px-3 text-xl leading-tight shadow focus:outline-none dark:bg-slate-800"
-                        type="submit"
-                        disabled={maxError.length > 0}
-                    >
-                        <div className="font-bold">{maxError.length > 0 ? maxError : 'Supply'}</div>
-                    </button>
+                    {(state[lpToken0?.token?.symbol] > 0 && state[lpToken1?.token?.symbol] > 0) && (
+                        <button
+                            className="h-16 w-full appearance-none rounded-full border bg-slate-200 mt-4 py-2 px-3 text-xl leading-tight focus:outline-none focus:shadow-outline border border-slate-300 dark:bg-slate-800"
+                            type="submit"
+                            disabled={supplyDisabled}
+                        >
+                            <div className={`${supplyDisabled ? 'text-[#b9b9b9]' : 'text-black'}`}>{maxError.length > 0 ? maxError : supplyDisabled ? 'Token Approval Needed' : 'Supply'}</div>
+                        </button>
+                    )}
                 </div>
             </form>
         </Modal>

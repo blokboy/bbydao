@@ -3,10 +3,9 @@ import {minimalABI}                        from 'hooks/useERC20Contract'
 import {useMemo, useState}                         from 'react'
 import {eToNumber, isEmpty, max256, NumberFromBig} from 'utils/helpers'
 
-const PoolInfo = ({spender, info, signer}) => {
+const PoolInfo = ({spender, info, signer, hasAllowance, setHasAllowance}) => {
     const token0 = info?.transactionInfo?.[0].token
     const token1 = info?.transactionInfo?.[1].token
-    const [hasAllowance, setHasAllowance] = useState()
     const signerAddress = signer?._address
 
     const prettyPercentage = (decimal) =>
@@ -67,7 +66,7 @@ const PoolInfo = ({spender, info, signer}) => {
             {!isEmpty(info) && (
                 <div className="flex flex-col items-center px-12">
                     <div className="mb-2">
-                        <a href={info?.uris?.uniswap} target="_blank">{pairName} Uniswap V2 Pool</a>
+                        <a href={info?.uris?.uniswap} target="_blank" className="underline">{pairName} Uniswap V2 Pool</a>
                     </div>
                     {!!info.uniswapTokensMinted && (
                         <div className="w-full mb-2 bg-[#e4dfe0] p-3 rounded-xl flex flex-col items-center">
@@ -94,7 +93,7 @@ const PoolInfo = ({spender, info, signer}) => {
                     <div className="grid grid-cols-2 gap-4 justify-between w-full my-4">
                         {(!hasAllowance.token0 && token0) && (
                             <div
-                                className="flex justify-center items-center bg-[#FC8D4D] rounded-3xl p-4 text-white font-normal"
+                                className="flex justify-center items-center bg-[#FC8D4D] hover:bg-[#d57239] cursor-pointer rounded-3xl p-4 text-white font-normal"
                                 onClick={() => handleApproveToken(tokenContracts, 0)}
                             >
                                 Approve {token0?.symbol}
@@ -102,7 +101,7 @@ const PoolInfo = ({spender, info, signer}) => {
                         )}
                         {(!hasAllowance.token1 && token1) && (
                             <div
-                                className="flex justify-center items-center bg-[#FC8D4D] rounded-3xl p-4 text-white font-normal"
+                                className="flex justify-center items-center bg-[#FC8D4D] hover:bg-[#d57239] cursor-pointer rounded-3xl p-4 text-white font-normal"
                                 onClick={() => handleApproveToken(tokenContracts, 1)}
                             >
                                 Approve {token1?.symbol}
