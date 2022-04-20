@@ -9,11 +9,12 @@ import useGnosisProxyContract              from "hooks/useGnosisProxyContract"
 
 import Safe, { SafeFactory, SafeAccountConfig, EthersAdapter } from "@gnosis.pm/safe-core-sdk"
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
-// import { EthersAdapter }                        from "@gnosis.pm/safe-core-sdk"
 
 import { ChainId } from "@uniswap/sdk"
 import { SwapWidget } from "@uniswap/widgets"
-import "@uniswap/widgets/fonts.css"
+
+// tested without uniswap css, works locally lets see if it builds
+// import "@uniswap/widgets/fonts.css"
 
 let safeSdk
 
