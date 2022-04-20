@@ -29,7 +29,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
     const [hasAllowance, setHasAllowance] = useState()
     const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0.token.symbol)[0].uri
     const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1.token.symbol)[0].uri
-    const supplyDisabled = !signer || maxError.length > 0 || hasAllowance?.token0 || hasAllowance?.token1
+    const supplyDisabled = !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1
     // console.log('a', a)
 
     // Close function provided to <Modal /> component
@@ -83,17 +83,17 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
         if (pairHasEth.length === 0) {
             // const signer = contract.connect(signer)
             console.log('contract', await contract)
-            // const addLiquidity = await contract.addLiquidity(
-            //     tokenA,
-            //     tokenB,
-            //     amountADesired,
-            //     amountBDesired,
-            //     amountAMin,
-            //     amountBMin,
-            //     addressTo,
-            //     deadline
-            // )
-            // console.log('add', addLiquidity)
+            const addLiquidity = await contract.addLiquidity(
+                tokenA,
+                tokenB,
+                amountADesired,
+                amountBDesired,
+                amountAMin,
+                amountBMin,
+                addressTo,
+                deadline
+            )
+            console.log('add', addLiquidity)
         } else {
             //  function addLiquidity(
             //   address tokenA,
@@ -300,11 +300,11 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                     )}
                     {(state[lpToken0?.token?.symbol] > 0 && state[lpToken1?.token?.symbol] > 0) && (
                         <button
-                            className="h-16 w-full appearance-none rounded-full border bg-slate-200 mt-4 py-2 px-3 text-xl leading-tight focus:outline-none focus:shadow-outline border border-slate-300 dark:bg-slate-800"
+                            className={`h-16 w-full appearance-none rounded-full border ${supplyDisabled ? 'bg-slate-200' : 'bg-[#FC8D4D]'} mt-4 py-2 px-3 text-xl leading-tight focus:outline-none focus:shadow-outline border ${supplyDisabled ? 'border-slate-300' : 'border-[#e1793d] hover:bg-[#e1793d]'} dark:bg-slate-800`}
                             type="submit"
                             disabled={supplyDisabled}
                         >
-                            <div className={`${supplyDisabled ? 'text-[#b9b9b9]' : 'text-black'}`}>{maxError.length > 0 ? maxError : supplyDisabled ? 'Token Approval Needed' : 'Supply'}</div>
+                            <div className={`${supplyDisabled ? 'text-[#b9b9b9]' : 'text-white'}`}>{maxError.length > 0 ? maxError : supplyDisabled ? 'Token Approval Needed' : 'Supply'}</div>
                         </button>
                     )}
                 </div>
