@@ -1,6 +1,15 @@
 import { isAddress } from "ethers/lib/utils"
 import React from "react"
 
+/**
+ * Create snippet of wallet address or
+ * return address if it is not a "address"
+ * as defined by Ethers.
+ *
+ * @param addr
+ * @returns {string || null}
+ */
+
 export const walletSnippet = addr => {
   if (!addr) {
     return null
@@ -27,20 +36,21 @@ export const isEmpty = object => {
   return true
 }
 
+/**
+ * Converts BigInt to Number
+ *
+ * @params (balance, decimals)
+ * @returns {number}
+ */
 
-export const debounce = (func, wait) => {
-  let timeout
+export const NumberFromBig = (balance, decimals) =>
+    Number((balance / 10 ** decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
 
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout)
-      func(...args)
-    }
-
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-  }
-}
+/**
+ * Max Value of BigInt
+ * @returns {BigInt}
+ */
+export const max256 = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
 
 
 /******************************************************************
@@ -54,21 +64,23 @@ export const debounce = (func, wait) => {
  * @return  {string}  a decimal number string.
  * @author  Mohsen Alyafei
  * @date    17 Jan 2020
- * Note: No check is made for NaN or undefined input numbers.
  *
  *****************************************************************/
 
 export const eToNumber = (num) => {
-  let sign = "";
-  (num += "").charAt(0) == "-" && (num = num.substring(1), sign = "-")
-  let arr = num.split(/[e]/ig)
-  if (arr.length < 2) return sign + num
-  let dot = (.1).toLocaleString().substr(1, 1), n = arr[0], exp = +arr[1],
-      w = (n = n.replace(/^0+/, '')).replace(dot, ''),
-      pos = n.split(dot)[1] ? n.indexOf(dot) + exp : w.length + exp,
-      L   = pos - w.length, s = "" + BigInt(w)
-  w   = exp >= 0 ? (L >= 0 ? s + "0".repeat(L) : r()) : (pos <= 0 ? "0" + dot + "0".repeat(Math.abs(pos)) + s : r())
-  L= w.split(dot); if (L[0]==0 && L[1]==0 || (+w==0 && +s==0) ) w = 0;
-  return sign + w;
-  function r() {return w.replace(new RegExp(`^(.{${pos}})(.)`), `$1${dot}$2`)}
+  if(!!num) {
+    let sign = "";
+    (num += "").charAt(0) == "-" && (num = num.substring(1), sign = "-")
+    let arr = num.split(/[e]/ig)
+    if (arr.length < 2) return sign + num
+    let dot = (.1).toLocaleString().substr(1, 1), n = arr[0], exp = +arr[1],
+        w = (n = n.replace(/^0+/, '')).replace(dot, ''),
+        pos = n.split(dot)[1] ? n.indexOf(dot) + exp : w.length + exp,
+        L   = pos - w.length, s = "" + BigInt(w)
+    w   = exp >= 0 ? (L >= 0 ? s + "0".repeat(L) : r()) : (pos <= 0 ? "0" + dot + "0".repeat(Math.abs(pos)) + s : r())
+    L= w.split(dot); if (L[0]==0 && L[1]==0 || (+w==0 && +s==0) ) w = 0;
+    return sign + w;
+    function r() {return w.replace(new RegExp(`^(.{${pos}})(.)`), `$1${dot}$2`)}
+  }
+
 }
