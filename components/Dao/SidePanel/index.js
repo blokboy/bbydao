@@ -23,6 +23,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     state => state.setEditDaoMemberModalOpen
   )
 
+  console.log('fren data ', friendData)
   const parsedList = {
     followers: [],
     friends: []
@@ -31,6 +32,9 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     for (const friend of friendData) {
       if (friend.status == 4) {
         parsedList.followers.push(friend)
+      }
+      if (friend.status == 1) {
+        parsedList.friends.push(friend)
       }
     }
   }

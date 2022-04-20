@@ -15,13 +15,11 @@ const FriendSearch = ({ address, closeModal }) => {
       staleTime: 180000,
     }
   )
+  console.log('frend data in serch ', friendData)
 
   const excludeColumns = [
     "createdAt",
     "id",
-    "status",
-    "target",
-    "targetEns",
     "updatedAt",
   ]
 
@@ -39,6 +37,22 @@ const FriendSearch = ({ address, closeModal }) => {
       setResults(filteredData)
     }
   }
+  const parsedResults = React.useMemo(() => {
+    const followers = []
+    const frens = []
+
+    for(const result of results) {
+      if(result.status === 4) {
+        followers.push(result)
+      }
+      if(result.status === 1) {
+        frens.push(result)
+      }
+    }
+
+    return { frens, followers }
+  })
+  console.log('results after filter data ', parsedResults)
 
   return (
     <div
@@ -71,7 +85,7 @@ const FriendSearch = ({ address, closeModal }) => {
           </div>
         </>
       ) : results.length ? (
-        <FriendSearchResults friends={results} closeModal={closeModal} />
+        <FriendSearchResults friends={parsedResults.frens} closeModal={closeModal} follows={parsedResults.followers} />
       ) : (
         <></>
       )}
