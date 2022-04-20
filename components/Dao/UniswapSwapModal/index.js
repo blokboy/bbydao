@@ -1,19 +1,20 @@
-import React from "react"
-import { useTheme } from "next-themes"
-import Modal from "components/Layout/Modal"
-import { useDaoStore } from "stores/useDaoStore"
+import {SafeEthersSigner}                  from '@gnosis.pm/safe-ethers-adapters'
+import React                               from "react"
+import { useTheme }                        from "next-themes"
+import Modal                               from "components/Layout/Modal"
+import { useDaoStore }                     from "stores/useDaoStore"
 import { chain, defaultChains, useSigner } from "wagmi"
-import { ethers } from "ethers"
-import useGnosisProxyContract from "hooks/useGnosisProxyContract"
+import { ethers }                          from "ethers"
+import useGnosisProxyContract              from "hooks/useGnosisProxyContract"
 
 import Safe, { SafeFactory, SafeAccountConfig, EthersAdapter } from "@gnosis.pm/safe-core-sdk"
-import SafeEthersSigner from "@gnosis.pm/safe-core-sdk"
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
-// import { EthersAdapter }                        from "@gnosis.pm/safe-core-sdk"
 
 import { ChainId } from "@uniswap/sdk"
 import { SwapWidget } from "@uniswap/widgets"
-import "@uniswap/widgets/fonts.css"
+
+// tested without uniswap css, works locally lets see if it builds
+// import "@uniswap/widgets/fonts.css"
 
 let safeSdk
 
@@ -35,13 +36,22 @@ const UniswapSwapModal = ({ safeAddress }) => {
       },
       { stateMutability: "payable", type: "fallback" },
     ])
+    const safeService = new SafeServiceClient(
+        "https://safe-transaction.gnosis.io/"
+    )
+    const connected = await contract.connect(safeAddress)
+    const connectSigner = await connected.connect(signer)
+   // const safeSigner = SafeEthersSigner.create(safeAddress, signer, safeService)
+    console.log('safe ethersss', new SafeEthersSigner(safeAddress))
 
-    const connected = contract.connect(safeAddress)
-    const connectSigner = connected.connect(signer)
-    const wallet = new ethers.Wallet(connectSigner.address, connectSigner.provider)
-    setGnosisProvider(connectSigner)
-    console.log("signer", signer)
-    console.log("connectSigner", connectSigner)
+    console.log('safe', safeAddress)
+    console.log('signer', signer)
+    console.log('safe service', safeService)
+   // console.log('safesigner', safeSigner)
+
+    setGnosisProvider(connectSigner.provider)
+    // console.log("signer", signer)
+    // console.log("connectSigner", connectSigner)
     // console.log("wallet", wallet)
   }
 
@@ -103,6 +113,7 @@ const UniswapSwapModal = ({ safeAddress }) => {
     return (
       <Modal close={closeUniswapSwapModal} heading={"Uniswap Swap"}>
         <div className="Uniswap my-3">
+          {console.log('gn', gnosisProvider)}
           <SwapWidget
             width={"100%"}
             provider={gnosisProvider}

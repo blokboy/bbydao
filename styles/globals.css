@@ -7,6 +7,23 @@
     /* @apply mx-3 md:mx-1; */
   }
 
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  #modal {
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  #modal::-webkit-scrollbar {
+    display: none;
+  }
+
   body {
     @apply h-[100%] w-[100%] text-slate-800 dark:text-slate-100;
     /* @apply bg-gradient-to-bl from-slate-100 via-[#d6e5eb] to-slate-300; */
@@ -72,7 +89,7 @@
 
   /* contains the content of the modal, sets over the backdrop partially on desktop, covers entire screen on mobile */
   .modal-container {
-    @apply z-50 mx-auto mt-0 flex h-full w-full flex-col items-center bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-auto md:w-6/12 md:rounded-xl;
+    @apply z-50 mx-auto mb-20 flex h-max sm:h-full w-full flex-col items-center max-w-[480px] bg-slate-200 px-4 py-2 shadow dark:bg-slate-900 md:mt-24 md:h-auto md:w-6/12 md:rounded-xl;
   }
 
   /* links in menu dropdown */

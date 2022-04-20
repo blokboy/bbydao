@@ -15,7 +15,7 @@ const Modal = ({close, children, heading}) => {
               <HiX />
             </button>
           </div>
-          <div className="w-full text-center text-xl font-bold">{heading}</div>
+          <div className="w-full text-center text-xl font-medium">{heading}</div>
           {children}
         </div>
       </div>

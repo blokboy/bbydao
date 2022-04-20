@@ -1,11 +1,11 @@
 import React, { useMemo } from "react"
+import { useDaoStore } from "stores/useDaoStore"
 import { useBalance } from "wagmi"
-import { useUiStore } from "stores/useUiStore"
 import BalanceOptionsIcon from "./BalanceOptionsIcon"
 import CurrencyIconDropdown from "./CurrencyIconDropdown"
 
 const Graph = ({ safeAddress, tokens }) => {
-  const setTxModalOpen = useUiStore(state => state.setTxModalOpen)
+  const setTxModalOpen = useDaoStore(state => state.setTxModalOpen)
 
   const [{ data: balanceData, error, loading }, getBalance] = useBalance({
     addressOrName: safeAddress,

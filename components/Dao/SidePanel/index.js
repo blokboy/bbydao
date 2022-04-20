@@ -15,12 +15,9 @@ const SidePanel = ({ safeInfo, nftImage }) => {
   const [dropdown, setDropdown] = React.useState(false)
   const followDaoModalOpen = useUiStore(state => state.followDaoModalOpen)
   const setFollowDaoModalOpen = useUiStore(state => state.setFollowDaoModalOpen)
-  const [friendData, { friendStatus, refetch }, friendActionText] =
-    useFriendData(safeInfo.address)
+  const [friendData, { friendStatus, refetch }, friendActionText] = useFriendData(safeInfo.address)
 
-  const setEditDaoMemberModalOpen = useDaoStore(
-    state => state.setEditDaoMemberModalOpen
-  )
+  const setEditDaoMemberModalOpen = useDaoStore(state => state.setEditDaoMemberModalOpen)
 
   const parsedList = React.useMemo(() => {
     if (!friendData) {
@@ -37,16 +34,11 @@ const SidePanel = ({ safeInfo, nftImage }) => {
     onSuccess: refetch,
   })
 
-  const { mutateAsync: unfriendMutateAsync } = useMutation(
-    api.updateRelationship,
-    {
-      onSuccess: refetch,
-    }
-  )
+  const { mutateAsync: unfriendMutateAsync } = useMutation(api.updateRelationship, {
+    onSuccess: refetch,
+  })
 
-  const setFriendsModalAddress = useUiStore(
-    state => state.setFriendsModalAddress
-  )
+  const setFriendsModalAddress = useUiStore(state => state.setFriendsModalAddress)
   const setFriendsModalOpen = useUiStore(state => state.setFriendsModalOpen)
 
   const handleOpenFriendsModal = () => {
@@ -85,9 +77,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
         <span
           className="mb-3 cursor-pointer bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text text-2xl font-semibold text-transparent"
           onClick={() => {
-            navigator.clipboard.writeText(
-              safeInfo?.address ? safeInfo.address : ""
-            )
+            navigator.clipboard.writeText(safeInfo?.address ? safeInfo.address : "")
           }}
         >
           {walletSnippet(safeInfo?.address)}
@@ -97,14 +87,12 @@ const SidePanel = ({ safeInfo, nftImage }) => {
       <div className="flex flex-col items-start">
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
           <h1>
-            {parsedList.followers?.length || 0}{" "}
-            {parsedList.followers?.length === 1 ? "follower" : "followers"}
+            {parsedList.followers?.length || 0} {parsedList.followers?.length === 1 ? "follower" : "followers"}
           </h1>
         </button>
         <button className="cursor-pointer" onClick={handleOpenFriendsModal}>
           <h1>
-            {parsedList.friends?.length || 0}{" "}
-            {parsedList.friends?.length === 1 ? "friend" : "friends"}
+            {parsedList.friends?.length || 0} {parsedList.friends?.length === 1 ? "friend" : "friends"}
           </h1>
         </button>
       </div>
@@ -125,9 +113,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
             className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 disabled:cursor-not-allowed dark:bg-slate-800 dark:hover:bg-slate-700"
             onClick={friendStatus.isFollowing ? handleUnfollow : handleFollow}
           >
-            <span className="font-bold">
-              {friendStatus.isFollowing ? "following" : "follow"}
-            </span>
+            <span className="font-bold">{friendStatus.isFollowing ? "following" : "follow"}</span>
           </button>
           <button
             className="my-1 w-full cursor-pointer rounded-xl bg-slate-300 p-1 shadow hover:bg-slate-400 disabled:bg-slate-400 disabled:opacity-50 dark:bg-slate-800 dark:hover:bg-slate-700"
@@ -143,9 +129,7 @@ const SidePanel = ({ safeInfo, nftImage }) => {
       {/* modal pops to center of screen to scroll through all members */}
       <div className="space-y-2 p-3">
         <div className="flex flex-row space-x-2 px-2">
-          <div className="rounded-xl border bg-slate-100 px-2 py-1 dark:bg-slate-800">
-            members
-          </div>
+          <div className="rounded-xl border bg-slate-100 px-2 py-1 dark:bg-slate-800">members</div>
           <button className="icon-util-btn" onClick={setEditDaoMemberModalOpen}>
             <HiOutlineUsers size={18} />
           </button>
