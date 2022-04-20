@@ -1,4 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from "next/document"
+import React                                      from "react"
 
 class MyDocument extends Document {
   static async getInitialProps(ctx) {
@@ -24,6 +25,10 @@ class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
+          <div
+            id="modal"
+            className="fixed top-0 h-screen w-screen z-20 bg-[#4b515066] empty:hidden"
+          />
         </body>
       </Html>
     )

@@ -1,20 +1,21 @@
-import React from "react"
-import useForm from "hooks/useForm"
-import { ethers } from "ethers"
-import { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
+import React                                    from "react"
+import useForm                                  from "hooks/useForm"
+import { ethers }                               from "ethers"
+import { EthersAdapter }                        from "@gnosis.pm/safe-core-sdk"
 import Safe, { SafeFactory, SafeAccountConfig } from "@gnosis.pm/safe-core-sdk"
-import SafeServiceClient from "@gnosis.pm/safe-service-client"
-import { useAccount } from "wagmi"
-import { HiX } from "react-icons/hi"
-import { useUiStore } from "stores/useUiStore"
-import { useMutation } from "react-query"
-import * as api from "../../query"
+import SafeServiceClient                        from "@gnosis.pm/safe-service-client"
+import { useAccount }                           from "wagmi"
+import { HiX }                                  from "react-icons/hi"
+import { useUiStore }                           from "stores/useUiStore"
+import { useMutation }                          from "react-query"
+import * as api                                 from "../../query"
+import { useDaoStore }                          from "../../stores/useDaoStore"
 
 let safeSdk
 
 const TransactionModal = ({ safeAddress }) => {
-  const txModalOpen = useUiStore(state => state.txModalOpen)
-  const setTxModalOpen = useUiStore(state => state.setTxModalOpen)
+  const txModalOpen = useDaoStore(state => state.txModalOpen)
+  const setTxModalOpen = useDaoStore(state => state.setTxModalOpen)
   const [txWaiting, setTxWaiting] = React.useState(false)
   const { state, setState, handleChange } = useForm()
   const [{ data, error, loading }, disconnect] = useAccount()
