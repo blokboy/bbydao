@@ -30,7 +30,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
     const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0.token.symbol)[0].uri
     const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1.token.symbol)[0].uri
     const supplyDisabled = !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1
-    // console.log('a', a)
 
     // Close function provided to <Modal /> component
     const closeUniswapLpModal = e => {
@@ -46,7 +45,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
     const handleSubmit = async (e, liquidityInfo) => {
         e.preventDefault()
 
-        const contract = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02.abi, signer)
+        const contract = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02.abi, signer) // signer -- needs to be gnosis safe signer
         const pairHasEth = liquidityInfo.transactionInfo.filter(token => token.token.symbol === 'ETH')
         const slippage = .01 // default 1% slippage
 
@@ -67,22 +66,19 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
         const addressTo = safeAddress
         const deadline = Math.floor(Date.now() / 1000) + 60 * 20
 
-
-        console.log(
-            tokenA,
-            tokenB,
-            amountADesired,
-            amountBDesired,
-            amountAMin,
-            amountBMin,
-            addressTo,
-            deadline
-        )
-
-
         if (pairHasEth.length === 0) {
-            // const signer = contract.connect(signer)
             console.log('contract', await contract)
+            console.log(
+                tokenA,
+                tokenB,
+                amountADesired,
+                amountBDesired,
+                amountAMin,
+                amountBMin,
+                addressTo,
+                deadline
+            )
+
             const addLiquidity = await contract.addLiquidity(
                 tokenA,
                 tokenB,
@@ -95,19 +91,16 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             )
             console.log('add', addLiquidity)
         } else {
-            //  function addLiquidity(
-            //   address tokenA,
-            //   address tokenB,
-            //   uint amountADesired,
-            //   uint amountBDesired,
-            //   uint amountAMin,
-            //   uint amountBMin,
-            //   address to,
-            //   uint deadline
-            // ) external returns (uint amountA, uint amountB, uint liquidity);
+        //     function addLiquidityETH(
+        //         address token,
+        //         uint amountTokenDesired,
+        //         uint amountTokenMin,
+        //         uint amountETHMin,
+        //         address to,
+        //         uint deadline
+        // ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
         }
         // https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
-
     }
 
 
