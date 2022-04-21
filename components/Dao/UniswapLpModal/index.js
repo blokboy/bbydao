@@ -88,7 +88,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             // 21000 - additional gas costs (e.g. base tx costs, transfer costs)
             const MINIMUM_TRANSACTION_GAS = 21000
 
-            const valueInWei = liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei)
+            const valueInWei = (liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei))?._hex
 
             let txHash
             const txArgs = {
@@ -163,7 +163,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                     primaryType,
                     message: {
                         to: txArgs.to,
-                        value: txArgs.valueInWei?._hex,
+                        value: txArgs.valueInWei,
                         data: txArgs.data,
                         operation: txArgs.operation,
                         safeTxGas: txArgs.safeTxGas,
@@ -178,31 +178,31 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                return `0x${TypedDataUtils.eip712Hash(typedData, "V4").toString('hex')}`
             }
 
-            // if(!!txArgs.to) {
-            //    const SafeTxHash = generateSafeTxHash(bbyDaoSafe, txArgs)
-            //    console.log('hash', SafeTxHash)
-            //
-            //
-            //     try {
-            //         console.log('hiii', bbyDaoSafeInstance.execTransaction(
-            //             txArgs.to,
-            //             txArgs.valueInWei?._hex,
-            //             txArgs.data,
-            //             txArgs.operation,
-            //             txArgs.safeTxGas,
-            //             txArgs.baseGas,
-            //             txArgs.gasPrice,
-            //             txArgs.gasToken,
-            //             txArgs.refundReceiver,
-            //             txArgs.nonce,
-            //         ))
-            //     } catch (err) {
-            //         console.error(`Error while creating transaction: ${err}`)
-            //
-            //         throw err
-            //     }
-            //
-            // }
+            if(!!txArgs.to) {
+               const SafeTxHash = generateSafeTxHash(bbyDaoSafe, txArgs)
+               console.log('hash', SafeTxHash)
+
+
+                // try {
+                //     console.log('hiii', bbyDaoSafeInstance.execTransaction(
+                //         txArgs.to,
+                //         txArgs.valueInWei?._hex,
+                //         txArgs.data,
+                //         txArgs.operation,
+                //         txArgs.safeTxGas,
+                //         txArgs.baseGas,
+                //         txArgs.gasPrice,
+                //         txArgs.gasToken,
+                //         txArgs.refundReceiver,
+                //         txArgs.nonce,
+                //     ))
+                // } catch (err) {
+                //     console.error(`Error while creating transaction: ${err}`)
+                //
+                //     throw err
+                // }
+
+            }
 
 
 
