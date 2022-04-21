@@ -129,11 +129,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             //     transactionData?.data.deadline
             // ))
 
-            // const executeDataUsedSignatures = bbyDaoSafeInstance.methods
-            //     .execTransaction(to, valueInWei, txData, operation, 0, 0, 0, ZERO_ADDRESS, ZERO_ADDRESS, sigs)
-            //     .encodeABI()
-
-            console.log('sig')
 
 
             const primaryType = 'SafeTx'
@@ -179,8 +174,37 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             }
 
             if(!!txArgs.to) {
-               const SafeTxHash = generateSafeTxHash(bbyDaoSafe, txArgs)
-               console.log('hash', SafeTxHash)
+               const safeTxHash = generateSafeTxHash(bbyDaoSafe, txArgs)
+
+                const threshold = await bbyDaoSafeInstance?.getThreshold()
+
+                if(threshold.toNumber() > 1) {
+                    // need sigs
+
+                    //also check for pending transactions
+
+                    /* this works in submitting a transaction */
+                  //  const approve = bbyDaoSafeInstance?.approveHash(safeTxHash)
+                } else {
+                    //execute
+                    console.log('ex', safeTxHash)
+                    console.log('sig')
+
+                    // return safeInstance.methods.execTransaction(
+                    //     to,
+                    //     valueInWei,
+                    //     data,
+                    //     operation,
+                    //     safeTxGas,
+                    //     baseGas,
+                    //     gasPrice,
+                    //     gasToken,
+                    //     refundReceiver,
+                    //     sigs,
+                    // )
+
+                }
+
 
 
                 // try {
