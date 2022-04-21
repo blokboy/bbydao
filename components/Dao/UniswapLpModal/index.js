@@ -178,31 +178,31 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                return `0x${TypedDataUtils.eip712Hash(typedData, "V4").toString('hex')}`
             }
 
-            if(!!txArgs.to) {
-               const SafeTxHash = generateSafeTxHash(bbyDaoSafe, txArgs)
-               console.log('hash', SafeTxHash)
-
-
-                try {
-                    console.log('hiii', bbyDaoSafeInstance.execTransaction(
-                        txArgs.to,
-                        txArgs.valueInWei?._hex,
-                        txArgs.data,
-                        txArgs.operation,
-                        txArgs.safeTxGas,
-                        txArgs.baseGas,
-                        txArgs.gasPrice,
-                        txArgs.gasToken,
-                        txArgs.refundReceiver,
-                        txArgs.nonce,
-                    ))
-                } catch (err) {
-                    console.error(`Error while creating transaction: ${err}`)
-
-                    throw err
-                }
-
-            }
+            // if(!!txArgs.to) {
+            //    const SafeTxHash = generateSafeTxHash(bbyDaoSafe, txArgs)
+            //    console.log('hash', SafeTxHash)
+            //
+            //
+            //     try {
+            //         console.log('hiii', bbyDaoSafeInstance.execTransaction(
+            //             txArgs.to,
+            //             txArgs.valueInWei?._hex,
+            //             txArgs.data,
+            //             txArgs.operation,
+            //             txArgs.safeTxGas,
+            //             txArgs.baseGas,
+            //             txArgs.gasPrice,
+            //             txArgs.gasToken,
+            //             txArgs.refundReceiver,
+            //             txArgs.nonce,
+            //         ))
+            //     } catch (err) {
+            //         console.error(`Error while creating transaction: ${err}`)
+            //
+            //         throw err
+            //     }
+            //
+            // }
 
 
 
