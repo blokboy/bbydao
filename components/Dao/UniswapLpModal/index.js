@@ -188,43 +188,27 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                 } else {
                     //execute
                     console.log('ex', safeTxHash)
-                    console.log('sig')
 
-                    // return safeInstance.methods.execTransaction(
-                    //     to,
-                    //     valueInWei,
-                    //     data,
-                    //     operation,
-                    //     safeTxGas,
-                    //     baseGas,
-                    //     gasPrice,
-                    //     gasToken,
-                    //     refundReceiver,
-                    //     sigs,
-                    // )
+                    try {
+                        // bbyDaoSafeInstance?.execTransaction(
+                        //     txArgs.to,
+                        //     txArgs.valueInWei,
+                        //     txArgs.data,
+                        //     txArgs.operation,
+                        //     txArgs.safeTxGas,
+                        //     txArgs.baseGas,
+                        //     txArgs.gasPrice,
+                        //     txArgs.gasToken,
+                        //     txArgs.refundReceiver,
+                        //     txArgs.nonce,
+                        // )
+                    } catch (err) {
+                        console.error(`Error while creating transaction: ${err}`)
+
+                        throw err
+                    }
 
                 }
-
-
-
-                // try {
-                //     console.log('hiii', bbyDaoSafeInstance.execTransaction(
-                //         txArgs.to,
-                //         txArgs.valueInWei?._hex,
-                //         txArgs.data,
-                //         txArgs.operation,
-                //         txArgs.safeTxGas,
-                //         txArgs.baseGas,
-                //         txArgs.gasPrice,
-                //         txArgs.gasToken,
-                //         txArgs.refundReceiver,
-                //         txArgs.nonce,
-                //     ))
-                // } catch (err) {
-                //     console.error(`Error while creating transaction: ${err}`)
-                //
-                //     throw err
-                // }
 
             }
 
