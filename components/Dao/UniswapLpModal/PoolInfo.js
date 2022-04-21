@@ -69,13 +69,13 @@ const PoolInfo = ({spender, info, signer, hasAllowance, setHasAllowance}) => {
                         <a href={info?.uris?.uniswap} target="_blank" className="underline">{pairName} Uniswap V2 Pool</a>
                     </div>
                     {!!info.uniswapTokensMinted && (
-                        <div className="w-full mb-2 bg-[#e4dfe0] p-3 rounded-xl flex flex-col items-center">
+                        <div className="w-full mb-2 bg-[#e4dfe0] dark:bg-[#1e293b] p-3 rounded-xl flex flex-col items-center">
                             <div><a href={info?.uris?.uniswap} target="_blank">Pool</a> Tokens Received</div>
                             <div className="font-thin">~ {prettyMinted(info?.uniswapTokensMinted)}</div>
                         </div>
                     )}
                     {!!info?.percentageOfPool && (
-                        <div className="w-full mb-2 bg-[#e4dfe0] p-3 rounded-xl flex flex-col items-center">
+                        <div className="w-full mb-2 bg-[#e4dfe0] dark:bg-[#1e293b] p-3 rounded-xl flex flex-col items-center">
                             <div>Share of <a href={info?.uris?.uniswap} target="_blank">{pairName} Pool</a></div>
                             <div className="font-thin">
                                 {prettyPercentage(eToNumber(info?.percentageOfPool))}
@@ -83,7 +83,7 @@ const PoolInfo = ({spender, info, signer, hasAllowance, setHasAllowance}) => {
                         </div>
                     )}
                     {!!info?.total && (
-                        <div className="w-full mb-2 bg-[#e4dfe0] p-3 rounded-xl flex flex-col items-center">
+                        <div className="w-full mb-2 bg-[#e4dfe0] dark:bg-[#1e293b] p-3 rounded-xl flex flex-col items-center">
                             <div>
                                 Total Tokens in <a href={info?.uris?.uniswap} target="_blank">{pairName} Pool</a>
                             </div>
