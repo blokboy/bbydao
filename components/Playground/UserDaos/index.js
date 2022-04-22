@@ -1,4 +1,5 @@
 import React from "react"
+import NoDaos from "./NoDaos"
 import DaoCard from "./DaoCard"
 import { useRouter } from "next/router"
 import { usePlaygroundStore } from "/stores/usePlaygroundStore"
@@ -26,12 +27,7 @@ const UserDaos = ({ user, data }) => {
   }, [reset, router.events])
 
   if (!userSafes?.length) {
-    return (
-      <div className="flex w-full flex-col lg:w-2/5">
-        <div className="text-3xl h-10 px-3">daos</div>
-        <div className="text-xl">No daos found</div>
-      </div>
-    )
+    return <NoDaos />
   }
 
   // if expandedDao is set, show expanded dao and remove other daos from view

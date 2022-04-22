@@ -8,7 +8,7 @@ const UserResults = ({ hits }) => {
   return (
     <div className="py-2">
       <span className="px-2 font-semibold">Users:</span>
-      <div className="grid grid-cols-1 gap-4 overflow-y-scroll px-2 pt-2 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 px-2 pt-2 md:grid-cols-2">
         {hits.map((hit, index) => (
           <Link key={index} href={`/${encodeURIComponent(hit.address)}`}>
             <a onClick={setSearchOpen}>

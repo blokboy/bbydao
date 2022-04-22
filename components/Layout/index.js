@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
   const searchOpen = useLayoutStore(state => state.searchOpen)
 
   return (
-    <main className="h-screen w-full">
+    <main className="w-full">
       <Nav />
       {searchOpen ? <Search /> : children}
       <ConnectModal />
