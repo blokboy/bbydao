@@ -95,7 +95,7 @@ const UserDetails = ({ address, ens }) => {
           </button>
         ) : (
           <button
-            className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white disabled:cursor-not-allowed disabled:cursor-not-allowed dark:bg-slate-900 dark:hover:bg-slate-700"
+            className="my-4 w-max rounded-full bg-slate-200 px-4 py-2 shadow hover:bg-white disabled:cursor-not-allowed dark:bg-slate-900 dark:hover:bg-slate-700"
             type="button"
             disabled={!friendStatus.data && friendStatus.isRequested}
             onClick={
