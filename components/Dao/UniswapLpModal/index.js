@@ -1,15 +1,15 @@
-import GnosisSafeSol from '@gnosis.pm/safe-contracts/build/artifacts/contracts/GnosisSafe.sol/GnosisSafe.json'
+import GnosisSafeSol     from '@gnosis.pm/safe-contracts/build/artifacts/contracts/GnosisSafe.sol/GnosisSafe.json'
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
-import {TypedDataUtils} from '@metamask/eth-sig-util'
+import {TypedDataUtils}  from '@metamask/eth-sig-util'
 
 import {ChainId, Fetcher, Route, Token, TokenAmount} from "@uniswap/sdk"
 import IUniswapV2ERC20                               from "@uniswap/v2-core/build/IUniswapV2ERC20.json";
 import IUniswapV2Router02                            from "@uniswap/v2-periphery/build/IUniswapV2Router02.json";
 import Modal                                         from "components/Layout/Modal"
 import CPK, {EthersAdapter}                          from 'contract-proxy-kit'
-import {BigNumber, ethers}                           from 'ethers'
-import {formatUnits}                                 from 'ethers/lib/utils'
-import useForm                                       from "hooks/useForm"
+import {BigNumber, ethers}            from 'ethers'
+import {defaultAbiCoder, formatUnits} from 'ethers/lib/utils'
+import useForm                        from "hooks/useForm"
 import {useRouter}                                   from 'next/router'
 import React, {useEffect, useMemo, useRef, useState} from "react"
 import {useDaoStore}                                 from "stores/useDaoStore"
@@ -54,7 +54,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
 
             /*  Initialize Gnosis CPK - set in state */
             const ethLibAdapter = new EthersAdapter({ethers, signer})
-            const cpk = await CPK.create({ethLibAdapter})
+            const cpk = await CPK.create({ethLibAdapter, ownerAccount: safeAddress})
             setCPK(cpk)
             const ownerAccount = await cpk.getOwnerAccount()
 
@@ -63,13 +63,13 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             const bbyDaoSafe = await safes?.safes.filter(safe => safe === currentBbyDao)[0]
             const bbyDaoSafeInstance = new ethers.Contract(bbyDaoSafe, GnosisSafeSol.abi, signer)
             console.log('bbyDao', bbyDaoSafeInstance)
-
-            /* bbyDAO Safe Version */
-            const bbyDaoSafeVersion = await bbyDaoSafeInstance.VERSION()
+            console.log('isOwner', await bbyDaoSafeInstance?.isOwner(signer._address))
+            // console.log('transactions', await bbyDaoSafeInstance?.getMultisigTransactions(bbyDaoSafe))
 
             /* last transaction made by bbyDAO */
             const transactions = await safeService.getAllTransactions(bbyDaoSafe)
             const lastTransaction = await transactions.results?.[transactions.count - 1]
+            console.log('transactions', transactions)
 
             /* Pre-validated Gnosis signature */
             // https://docs.gnosis-safe.io/contracts/signatures
@@ -85,27 +85,24 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             }
             const signature = getPreValidatedSignature(signer._address)
 
-            // 21000 - additional gas costs (e.g. base tx costs, transfer costs)
-            const MINIMUM_TRANSACTION_GAS = 21000
 
-            const valueInWei = (liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei))?._hex
+            const uniFragments = transactionData?.contract.interface.functions
+            let iface = new ethers.utils.Interface(IUniswapV2Router02.abi)
+            const data = iface.encodeFunctionData(
+                uniFragments['addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)'],
+                [transactionData.data.tokenA, transactionData.data.tokenB, transactionData.data.amountADesired, transactionData.data.amountBDesired,
+                    transactionData.data.amountAMin, transactionData.data.amountBMin, transactionData.data.addressTo, transactionData.data.deadline]
+            )
+            console.log('data', data)
+
+
 
             let txHash
             const txArgs = {
                 safeInstance: bbyDaoSafeInstance,
                 to: pair?.liquidityToken?.address,
-                valueInWei,
-                // data: transactionData?.contract.addLiquidity(
-                //     transactionData?.data.tokenA,
-                //     transactionData?.data.tokenB,
-                //     BigNumber.from(transactionData?.data.amountADesired),
-                //     BigNumber.from(transactionData?.data.amountBDesired),
-                //     BigNumber.from(transactionData?.data.amountAMin),
-                //     BigNumber.from(transactionData?.data.amountBMin),
-                //     transactionData?.data.addressTo,
-                //     transactionData?.data.deadline
-                // ),
-                data: '0x',
+                valueInWei: (liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei))?._hex,
+                data: data,
                 operation: CALL,
                 nonce: transactions.count + 1,
                 safeTxGas: 0, //TODO: check on this
@@ -116,19 +113,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                 sender: bbyDaoSafe,
                 sig: signature,
             }
-            console.log('cpk', cpk)
-            console.log('contract', transactionData?.contract)
-            // console.log('tran', transactionData?.contract.interface.functions.addLiquidity?.encode(
-            //     transactionData?.data.tokenA,
-            //     transactionData?.data.tokenB,
-            //     transactionData?.data.amountADesired,
-            //     transactionData?.data.amountBDesired,
-            //     transactionData?.data.amountAMin,
-            //     transactionData?.data.amountBMin,
-            //     transactionData?.data.addressTo,
-            //     transactionData?.data.deadline
-            // ))
-
 
 
             const primaryType = 'SafeTx'
@@ -170,38 +154,51 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                     },
                 }
 
-               return `0x${TypedDataUtils.eip712Hash(typedData, "V4").toString('hex')}`
+                return `0x${TypedDataUtils.eip712Hash(typedData, "V4").toString('hex')}`
             }
 
-            if(!!txArgs.to) {
-               const safeTxHash = generateSafeTxHash(bbyDaoSafe, txArgs)
-
+            if (!!txArgs.to) {
+                const safeTxHash = generateSafeTxHash(bbyDaoSafe, txArgs)
                 const threshold = await bbyDaoSafeInstance?.getThreshold()
 
-                if(threshold.toNumber() > 1) {
-                    // need sigs
+                if (threshold.toNumber() > 1) {
+                    // reject or ask for additional sigs
 
                     //also check for pending transactions
 
                     /* this works in submitting a transaction */
-                  //  const approve = bbyDaoSafeInstance?.approveHash(safeTxHash)
-                } else {
-                    //execute
+
+                  //   const approve = bbyDaoSafeInstance?.approveHash(safeTxHash)
+
+
+
+
+
+                    // const signedMessages = await bbyDaoSafeInstance?.signedMessages(safeTxHash)
+
                     console.log('ex', safeTxHash)
 
+
+                } else {
+
+                    //execute
+
+
                     try {
-                        // bbyDaoSafeInstance?.execTransaction(
-                        //     txArgs.to,
-                        //     txArgs.valueInWei,
-                        //     txArgs.data,
-                        //     txArgs.operation,
-                        //     txArgs.safeTxGas,
-                        //     txArgs.baseGas,
-                        //     txArgs.gasPrice,
-                        //     txArgs.gasToken,
-                        //     txArgs.refundReceiver,
-                        //     txArgs.nonce,
-                        // )
+
+                        const tx = bbyDaoSafeInstance?.execTransaction(
+                            txArgs.to,
+                            txArgs.valueInWei,
+                            txArgs.data,
+                            txArgs.operation,
+                            txArgs.safeTxGas,
+                            txArgs.baseGas,
+                            txArgs.gasPrice,
+                            txArgs.gasToken,
+                            txArgs.refundReceiver,
+                            txArgs.nonce,
+                        )
+
                     } catch (err) {
                         console.error(`Error while creating transaction: ${err}`)
 
@@ -211,8 +208,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                 }
 
             }
-
-
 
 
             // bbyDaoSafeInstance.methods.execTransaction(
@@ -227,7 +222,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             //     refundReceiver,
             //     sigs,
             // )
-
 
 
         }
@@ -246,7 +240,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
 
 
     const amount = (amount, decimals) =>
-        BigInt(Math.round(amount * (10 ** decimals)))
+        Math.round(amount * (10 ** decimals)).toString()
 
     const handleSubmit = async (e, liquidityInfo) => {
         e.preventDefault()
@@ -259,7 +253,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
         const tokenA = liquidityInfo.transactionInfo[0].token.address
         const tokenADecimals = liquidityInfo.transactionInfo[0].token.decimals
         const tokenAAmount = liquidityInfo.transactionInfo[0].amount
-        const amountADesired = amount(tokenAAmount, tokenADecimals)
+        const amountADesired = amount(tokenAAmount, tokenADecimals) // wondering if this is correct
         const amountAMin = amount(tokenAAmount - tokenAAmount * slippage, tokenADecimals)
 
         /* token B */
@@ -295,7 +289,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                         addressTo,
                         deadline
                     },
-                   contract
+                    contract
                 }
             )
 
