@@ -7,9 +7,9 @@ import IUniswapV2ERC20                               from "@uniswap/v2-core/buil
 import IUniswapV2Router02                            from "@uniswap/v2-periphery/build/IUniswapV2Router02.json";
 import Modal                                         from "components/Layout/Modal"
 import CPK, {EthersAdapter}                          from 'contract-proxy-kit'
-import {BigNumber, ethers}            from 'ethers'
-import {defaultAbiCoder, formatUnits} from 'ethers/lib/utils'
-import useForm                        from "hooks/useForm"
+import {BigNumber, ethers}                           from 'ethers'
+import {formatUnits}                                 from 'ethers/lib/utils'
+import useForm                                       from "hooks/useForm"
 import {useRouter}                                   from 'next/router'
 import React, {useEffect, useMemo, useRef, useState} from "react"
 import {useDaoStore}                                 from "stores/useDaoStore"
@@ -86,35 +86,36 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             const signature = getPreValidatedSignature(signer._address)
 
 
+            /* Encode uniswap addLiquidity function with input data  */
             const uniFragments = transactionData?.contract.interface.functions
             let iface = new ethers.utils.Interface(IUniswapV2Router02.abi)
-            const data = iface.encodeFunctionData(
+            const addLiquidityFnData = iface.encodeFunctionData(
                 uniFragments['addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)'],
                 [transactionData.data.tokenA, transactionData.data.tokenB, transactionData.data.amountADesired, transactionData.data.amountBDesired,
                     transactionData.data.amountAMin, transactionData.data.amountBMin, transactionData.data.addressTo, transactionData.data.deadline]
             )
-            console.log('data', data)
+            console.log('a', addLiquidityFnData)
 
-
-
+            /*  construct gnosis transaction object  */
             let txHash
             const txArgs = {
                 safeInstance: bbyDaoSafeInstance,
                 to: pair?.liquidityToken?.address,
                 valueInWei: (liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei))?._hex,
-                data: data,
+                data: addLiquidityFnData,
                 operation: CALL,
                 nonce: transactions.count + 1,
-                safeTxGas: 0, //TODO: check on this
+                safeTxGas: 0,
                 baseGas: 0,
-                gasPrice: '0',
+                gasPrice: 0,
                 gasToken: ZERO_ADDRESS,
                 refundReceiver: ZERO_ADDRESS,
                 sender: bbyDaoSafe,
-                sig: signature,
+                signature: signature,
             }
 
 
+            /*  generate transaction hash  */
             const primaryType = 'SafeTx'
             const generateSafeTxHash = (safeAddress, txArgs) => {
                 const messageTypes = {
@@ -157,26 +158,72 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                 return `0x${TypedDataUtils.eip712Hash(typedData, "V4").toString('hex')}`
             }
 
-            if (!!txArgs.to) {
+            if (!!txArgs.data && !!txArgs.valueInWei) {
                 const safeTxHash = generateSafeTxHash(bbyDaoSafe, txArgs)
                 const threshold = await bbyDaoSafeInstance?.getThreshold()
 
                 if (threshold.toNumber() > 1) {
-                    // reject or ask for additional sigs
+                    /*  Reject or ask for approvals
+                    *
+                    * in our new implementation of babyDAO's having a threshold of 1 automatically
+                    * this check wouldn't be necessary.
+                    * */
 
-                    //also check for pending transactions
-
-                    /* this works in submitting a transaction */
-
-                  //   const approve = bbyDaoSafeInstance?.approveHash(safeTxHash)
-
-
-
-
-
-                    // const signedMessages = await bbyDaoSafeInstance?.signedMessages(safeTxHash)
+                    /*
+                    // const approve = bbyDaoSafeInstance?.approveHash(safeTxHash)
+                    *  this approve hash works in approving a transaction hash, but I am not sure
+                    *  if this is actually necessary if we are using a pre-signed signature (which we are).
+                    * */
 
                     console.log('ex', safeTxHash)
+                    if (!!safeTxHash) {
+
+                        /*
+                        *
+                        * after we have generated the safeTaxHash that has a valid signature
+                        * we should be able to execute the transaction with the function below.
+                        * things I need to check to see why this is failing:
+                        *
+                        * 1. threshold being at 2 right now causing failure
+                        * 2. gasPrice & safeTxGas beings to 0 ---- https://docs.gnosis-safe.io/tutorials/tutorial_tx_service_initiate_sign
+                        * 3. signature is not actually valid and hash needs to be approved before exec
+                        *
+                        * error I am receiving:
+                        * https://docs.ethers.io/v5/troubleshooting/errors/#help-UNPREDICTABLE_GAS_LIMIT
+                        *
+                        *
+                        *
+                        * */
+
+                        // const tx = bbyDaoSafeInstance?.execTransaction(
+                        //     txArgs.to,
+                        //     txArgs.valueInWei,
+                        //     txArgs.data,
+                        //     txArgs.operation,
+                        //     txArgs.safeTxGas,
+                        //     txArgs.baseGas,
+                        //     txArgs.gasPrice,
+                        //     txArgs.gasToken,
+                        //     txArgs.refundReceiver,
+                        //     txArgs.signature,
+                        // )
+
+                        /// OR
+
+
+                        // const tx = cpk.execTransactions([
+                        //         {
+                        //             to: txArgs.to,
+                        //             value: txArgs.valueInWei,
+                        //             data: txArgs.data,
+                        //             operation: txArgs.operation,
+                        //         }
+                        //     ],
+                        //     {gasLimit: 1000000},
+                        // )
+                        // console.log('tx', tx)
+
+                    }
 
 
                 } else {
@@ -186,18 +233,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
 
                     try {
 
-                        const tx = bbyDaoSafeInstance?.execTransaction(
-                            txArgs.to,
-                            txArgs.valueInWei,
-                            txArgs.data,
-                            txArgs.operation,
-                            txArgs.safeTxGas,
-                            txArgs.baseGas,
-                            txArgs.gasPrice,
-                            txArgs.gasToken,
-                            txArgs.refundReceiver,
-                            txArgs.nonce,
-                        )
 
                     } catch (err) {
                         console.error(`Error while creating transaction: ${err}`)
@@ -208,20 +243,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                 }
 
             }
-
-
-            // bbyDaoSafeInstance.methods.execTransaction(
-            //     to,
-            //     valueInWei,
-            //     data,
-            //     operation,
-            //     safeTxGas,
-            //     baseGas,
-            //     gasPrice,
-            //     gasToken,
-            //     refundReceiver,
-            //     sigs,
-            // )
 
 
         }
