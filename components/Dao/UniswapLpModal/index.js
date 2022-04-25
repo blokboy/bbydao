@@ -13,8 +13,9 @@ import useForm                                       from "hooks/useForm"
 import {useRouter}                                   from 'next/router'
 import React, {useEffect, useMemo, useRef, useState} from "react"
 import {useDaoStore}                                 from "stores/useDaoStore"
-import {useSigner}                                   from 'wagmi'
-import PoolInfo                                      from './PoolInfo'
+import {useSigner}                              from 'wagmi'
+import {generateSafeTxHash, tryOffchainSigning} from './helpers'
+import PoolInfo                                 from './PoolInfo'
 import TokenInput                                    from './TokenInput'
 
 
@@ -49,27 +50,45 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
 
     const [cpk, setCPK] = useState(undefined)
     const [transactionData, setTransactionData] = useState(undefined)
-    const createGnosisTransaction = useMemo(async () => {
+
+
+    // export const tryOffchainSigning = async (safeTxHash, txArgs, isHW = false) => {
+    //     let signature
+    //
+    //     const signerByWallet = getSignersByWallet(isHW)
+    //     for (const signingFunc of signerByWallet) {
+    //         try {
+    //             signature = await signingFunc({ ...txArgs, safeTxHash })
+    //
+    //             break
+    //         } catch (err) {
+    //             console.error(err)
+    //             if (err.code === METAMASK_REJECT_CONFIRM_TX_ERROR_CODE) {
+    //                 throw err
+    //             }
+    //         }
+    //     }
+    //
+    //     return signature
+    // }
+
+
+    const createGnosisTransaction = async ({data, contract}) => {
         if (!!signer) {
+
+
 
             /*  Initialize Gnosis CPK - set in state */
             const ethLibAdapter = new EthersAdapter({ethers, signer})
             const cpk = await CPK.create({ethLibAdapter, ownerAccount: safeAddress})
-            setCPK(cpk)
-            const ownerAccount = await cpk.getOwnerAccount()
 
             /*  Initialize bbyDao Gnosis Safe Instance */
             const safes = await safeService.getSafesByOwner(signer._address)
             const bbyDaoSafe = await safes?.safes.filter(safe => safe === currentBbyDao)[0]
             const bbyDaoSafeInstance = new ethers.Contract(bbyDaoSafe, GnosisSafeSol.abi, signer)
-            console.log('bbyDao', bbyDaoSafeInstance)
-            console.log('isOwner', await bbyDaoSafeInstance?.isOwner(signer._address))
-            // console.log('transactions', await bbyDaoSafeInstance?.getMultisigTransactions(bbyDaoSafe))
 
             /* last transaction made by bbyDAO */
             const transactions = await safeService.getAllTransactions(bbyDaoSafe)
-            const lastTransaction = await transactions.results?.[transactions.count - 1]
-            console.log('transactions', transactions)
 
             /* Pre-validated Gnosis signature */
             // https://docs.gnosis-safe.io/contracts/signatures
@@ -85,14 +104,13 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             }
             const signature = getPreValidatedSignature(signer._address)
 
-
             /* Encode uniswap addLiquidity function with input data  */
-            const uniFragments = transactionData?.contract.interface.functions
-            let iface = new ethers.utils.Interface(IUniswapV2Router02.abi)
-            const addLiquidityFnData = iface.encodeFunctionData(
+            const uniFragments = contract.interface.functions
+            let uniRouterV2 = new ethers.utils.Interface(IUniswapV2Router02.abi)
+            const addLiquidityFnData = uniRouterV2.encodeFunctionData(
                 uniFragments['addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)'],
-                [transactionData.data.tokenA, transactionData.data.tokenB, transactionData.data.amountADesired, transactionData.data.amountBDesired,
-                    transactionData.data.amountAMin, transactionData.data.amountBMin, transactionData.data.addressTo, transactionData.data.deadline]
+                [data.tokenA, data.tokenB, data.amountADesired, data.amountBDesired,
+                    data.amountAMin, data.amountBMin, data.addressTo, data.deadline]
             )
             console.log('a', addLiquidityFnData)
 
@@ -110,56 +128,15 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                 gasPrice: 0,
                 gasToken: ZERO_ADDRESS,
                 refundReceiver: ZERO_ADDRESS,
-                sender: bbyDaoSafe,
-                signature: signature,
+                sender: signer._address,
+                sigs: signature,
             }
 
 
             /*  generate transaction hash  */
-            const primaryType = 'SafeTx'
-            const generateSafeTxHash = (safeAddress, txArgs) => {
-                const messageTypes = {
-                    EIP712Domain: [{type: 'address', name: 'verifyingContract'}],
-                    SafeTx: [
-                        {type: 'address', name: 'to'},
-                        {type: 'uint256', name: 'value'},
-                        {type: 'bytes', name: 'data'},
-                        {type: 'uint8', name: 'operation'},
-                        {type: 'uint256', name: 'safeTxGas'},
-                        {type: 'uint256', name: 'baseGas'},
-                        {type: 'uint256', name: 'gasPrice'},
-                        {type: 'address', name: 'gasToken'},
-                        {type: 'address', name: 'refundReceiver'},
-                        {type: 'uint256', name: 'nonce'},
-                    ],
-                }
-
-
-                const typedData = {
-                    types: messageTypes,
-                    domain: {
-                        verifyingContract: safeAddress,
-                    },
-                    primaryType,
-                    message: {
-                        to: txArgs.to,
-                        value: txArgs.valueInWei,
-                        data: txArgs.data,
-                        operation: txArgs.operation,
-                        safeTxGas: txArgs.safeTxGas,
-                        baseGas: txArgs.baseGas,
-                        gasPrice: txArgs.gasPrice,
-                        gasToken: txArgs.gasToken,
-                        refundReceiver: txArgs.refundReceiver,
-                        nonce: txArgs.nonce,
-                    },
-                }
-
-                return `0x${TypedDataUtils.eip712Hash(typedData, "V4").toString('hex')}`
-            }
+            const safeTxHash = generateSafeTxHash(safeAddress, txArgs)
 
             if (!!txArgs.data && !!txArgs.valueInWei) {
-                const safeTxHash = generateSafeTxHash(bbyDaoSafe, txArgs)
                 const threshold = await bbyDaoSafeInstance?.getThreshold()
 
                 if (threshold.toNumber() > 1) {
@@ -176,6 +153,8 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                     * */
 
                     console.log('ex', safeTxHash)
+                    tryOffchainSigning(safeTxHash, txArgs)
+
                     if (!!safeTxHash) {
 
                         /*
@@ -246,9 +225,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
 
 
         }
-
-
-    }, [signer, transactionData, liquidityInfo])
+    }
 
 
     // Close function provided to <Modal /> component
@@ -259,14 +236,13 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
         setMaxError("")
     }
 
-
     const amount = (amount, decimals) =>
         Math.round(amount * (10 ** decimals)).toString()
 
     const handleSubmit = async (e, liquidityInfo) => {
         e.preventDefault()
 
-        const contract = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02.abi, signer) // signer -- needs to be gnosis safe signer
+        const contract = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02.abi, signer)
         const pairHasEth = liquidityInfo.transactionInfo.filter(token => token.token.symbol === 'ETH')
         const slippage = .01 // default 1% slippage
 
@@ -289,17 +265,8 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
 
 
         if (pairHasEth.length === 0) {
-            // const addLiquidity = await contract.addLiquidity(
-            //     tokenA,
-            //     tokenB,
-            //     amountADesired,
-            //     amountBDesired,
-            //     amountAMin,
-            //     amountBMin,
-            //     addressTo,
-            //     deadline
-            // )
-            setTransactionData({
+            createGnosisTransaction(
+                {
                     data: {
                         tokenA,
                         tokenB,
@@ -313,7 +280,8 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                     contract
                 }
             )
-
+            // setTransactionData(
+            // )
 
             // console.log('add', addLiquidity)
         } else {
