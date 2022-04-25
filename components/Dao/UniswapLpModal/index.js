@@ -13,7 +13,7 @@ import {useRouter}                                   from 'next/router'
 import React, {useEffect, useMemo, useRef, useState} from "react"
 import {useDaoStore}                                 from "stores/useDaoStore"
 import {useSigner}                                               from 'wagmi'
-import {generateSafeTxHash, saveTxToHistory, tryOffchainSigning} from './helpers'
+import {generateSafeTxHash, saveTxToHistory, getEIP712Signature} from './helpers'
 import PoolInfo                                                  from './PoolInfo'
 import TokenInput                                    from './TokenInput'
 
@@ -132,7 +132,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
 
 
             /*  generate transaction hash  */
-            const safeTxHash = generateSafeTxHash(safeAddress, txArgs)
+            const safeTxHash = generateSafeTxHash(safeAddress, {...txArgs, value: txArgs.valueInWei})
 
             if (!!txArgs.data && !!txArgs.valueInWei) {
                 const threshold = await bbyDaoSafeInstance?.getThreshold()
@@ -149,11 +149,10 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                     if (!!safeTxHash) {
 
                         try {
-                            const signature = await tryOffchainSigning(safeTxHash, txArgs, signer)
+                            const signature = await getEIP712Signature(safeTxHash, txArgs, signer)
                             if (signature) {
                                 console.log('sig', signature)
                                await saveTxToHistory({...txArgs, signature})
-                                console.log('success', safeTxHash)
                             }
                         } catch (err) {
                             console.error(`Error while creating transaction: ${err}`)
