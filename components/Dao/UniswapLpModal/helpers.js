@@ -56,11 +56,15 @@ export const getEIP712Signature = async (safeTxHash, txArgs, signer) => {
     let signature
     const chainId = ChainId.MAINNET
     const typedData = await generateTypedDataFrom(txArgs)
+
+    console.log('txARgs', txArgs?.safeInstance?.domainSeparator())
+
+    // const domain = txArgs?.safeInstance?.domainSeparator()
     const domain = {
-        name: 'bbyDao',
-        version: '0.0.1',
+        name: "Gnosis Protocol",
+        version: "v2",
         chainId,
-        verifyingContract: txArgs.safeAddress,
+        verifyingContract: '0x9008D19f58AAbD9eD0D60971565AA8510560ab41',
     };
     const message = typedData.message
 
@@ -86,14 +90,8 @@ const calculateBodyFrom = async (
     origin,
     signature,
 ) => {
-
-
     const contractTransactionHash = await safeInstance
         .getTransactionHash(to, valueInWei, data, operation, safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, nonce)
-
-
-    console.log('v', valueInWei)
-    console.log('parse', parseInt(valueInWei))
 
     return {
         safe: toChecksumAddress(safeInstance.address),
@@ -121,7 +119,7 @@ export const getSafeServiceBaseUrl = (safeAddress) => `https://${getTxServiceUrl
 
 export const buildTxServiceUrl = (safeAddress) => {
     const address = toChecksumAddress(safeAddress)
-    return `${getSafeServiceBaseUrl(address)}/multisig-transactions/`
+    return `${getSafeServiceBaseUrl(address)}/multisig-transactions/?has_confirmations=True`
 }
 
 export const saveTxToHistory = async ({
@@ -161,20 +159,23 @@ export const saveTxToHistory = async ({
     )
 
     console.log('body', body)
-    console.log('isOwner', await safeInstance.isOwner(sender))
 
     /*  failing with error 422
     * https://safe-transaction.gnosis.io/
-    * Invalid ethereum address/User is not an owner/Invalid safeTxHash/Invalid signature/Nonce already executed/Sender is not an owner
+    *
+    *
+    *  Error from Network:
+    * "Contract-transaction-hash=0xaaa does not match provided contract-tx-hash=0xbbb"
+    *
     *  */
 
    const response = await axios.post(url, body)
-    console.log('response', response)
+   console.log('response', response)
 
 
-    // if (response.status !== 201) {
-    //     return Promise.reject(new Error('Error submitting the transaction'))
-    // }
-    //
-    // return Promise.resolve()
+    if (response.status !== 201) {
+        return Promise.reject(new Error('Error submitting the transaction'))
+    }
+
+    return Promise.resolve()
 }

@@ -1,21 +1,22 @@
 import GnosisSafeSol     from '@gnosis.pm/safe-contracts/build/artifacts/contracts/GnosisSafe.sol/GnosisSafe.json'
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
 
-import {ChainId, Fetcher, Route, Token, TokenAmount} from "@uniswap/sdk"
-import IUniswapV2ERC20                               from "@uniswap/v2-core/build/IUniswapV2ERC20.json";
-import IUniswapV2Router02                            from "@uniswap/v2-periphery/build/IUniswapV2Router02.json";
-import Modal                                         from "components/Layout/Modal"
-import CPK, {EthersAdapter}                          from 'contract-proxy-kit'
-import {BigNumber, ethers}                           from 'ethers'
-import {formatUnits}                                 from 'ethers/lib/utils'
-import useForm                                       from "hooks/useForm"
-import {useRouter}                                   from 'next/router'
-import React, {useEffect, useMemo, useRef, useState} from "react"
-import {useDaoStore}                                 from "stores/useDaoStore"
+import {ChainId, Fetcher, Route, Token, TokenAmount}             from "@uniswap/sdk"
+import IUniswapV2ERC20                                           from "@uniswap/v2-core/build/IUniswapV2ERC20.json";
+import IUniswapV2Router02
+                                                                 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json";
+import Modal                                                     from "components/Layout/Modal"
+import CPK, {EthersAdapter}                                      from 'contract-proxy-kit'
+import {BigNumber, ethers}                                       from 'ethers'
+import {formatUnits}                                             from 'ethers/lib/utils'
+import useForm                                                   from "hooks/useForm"
+import {useRouter}                                               from 'next/router'
+import React, {useEffect, useMemo, useRef, useState}             from "react"
+import {useDaoStore}                                             from "stores/useDaoStore"
 import {useSigner}                                               from 'wagmi'
-import {generateSafeTxHash, saveTxToHistory, getEIP712Signature} from './helpers'
+import {generateSafeTxHash, getEIP712Signature, saveTxToHistory} from './helpers'
 import PoolInfo                                                  from './PoolInfo'
-import TokenInput                                    from './TokenInput'
+import TokenInput                                                from './TokenInput'
 
 
 const UniswapLpModal = ({safeAddress, tokenLogos}) => {
@@ -46,35 +47,8 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
         "https://safe-transaction.gnosis.io"
     )
 
-
-    const [cpk, setCPK] = useState(undefined)
-    const [transactionData, setTransactionData] = useState(undefined)
-
-
-    // export const tryOffchainSigning = async (safeTxHash, txArgs, isHW = false) => {
-    //     let signature
-    //
-    //     const signerByWallet = getSignersByWallet(isHW)
-    //     for (const signingFunc of signerByWallet) {
-    //         try {
-    //             signature = await signingFunc({ ...txArgs, safeTxHash })
-    //
-    //             break
-    //         } catch (err) {
-    //             console.error(err)
-    //             if (err.code === METAMASK_REJECT_CONFIRM_TX_ERROR_CODE) {
-    //                 throw err
-    //             }
-    //         }
-    //     }
-    //
-    //     return signature
-    // }
-
-
     const createGnosisTransaction = async ({data, contract}) => {
         if (!!signer) {
-
 
             /*  Initialize Gnosis CPK - set in state */
             const ethLibAdapter = new EthersAdapter({ethers, signer})
@@ -123,7 +97,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                 nonce: transactions.count + 1,
                 safeTxGas: 0,
                 baseGas: 0,
-                gasPrice: 0,
+                gasPrice: '0',
                 gasToken: ZERO_ADDRESS,
                 refundReceiver: ZERO_ADDRESS,
                 sender: signer._address,
@@ -138,12 +112,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                 const threshold = await bbyDaoSafeInstance?.getThreshold()
 
                 if (threshold.toNumber() > 1) {
-                    /*  Reject or ask for approvals
-                    *
-                    * in our new implementation of babyDAO's having a threshold of 1 automatically
-                    * this check wouldn't be necessary.
-                    * */
-
+                    /*  Reject or ask for approvals */
 
                 } else {
                     if (!!safeTxHash) {
@@ -152,7 +121,10 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                             const signature = await getEIP712Signature(safeTxHash, txArgs, signer)
                             if (signature) {
                                 console.log('sig', signature)
-                               await saveTxToHistory({...txArgs, signature})
+                                /*   Contract-transaction-hash  does not match provided contract-tx-hash ERROR */
+
+
+                                await saveTxToHistory({...txArgs, signature})
                             }
                         } catch (err) {
                             console.error(`Error while creating transaction: ${err}`)
@@ -160,7 +132,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                         }
                     }
                 }
-
             }
         }
     }
@@ -218,10 +189,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                     contract
                 }
             )
-            // setTransactionData(
-            // )
-
-            // console.log('add', addLiquidity)
         } else {
             //     function addLiquidityETH(
             //         address token,
