@@ -6,9 +6,6 @@ module.exports = {
   darkMode: "class",
   theme: {
     extend: {
-      fontSize: {
-        xs: ".6rem",
-      },
       fontFamily: {
         sans: ["'M PLUS Rounded 1c'", "sans-serif"],
       },

@@ -1,4 +1,5 @@
 import React from "react"
+import NFTCard from "./NFTCard"
 import * as api from "/query/gnosisQuery"
 import { useQuery } from "react-query"
 
@@ -22,9 +23,7 @@ const DaoNFTs = ({ safe }) => {
       <div className="text-xl">nfts</div>
       <div className="grid grid-cols-2 gap-2">
         {daoNFTsData?.map((nft, i) => (
-          <div key={i} className="p-2">
-            <img src={nft.imageUri} alt={nft.name} />
-          </div>
+          <NFTCard key={i} nft={nft} />
         ))}
       </div>
     </div>
