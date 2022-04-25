@@ -120,11 +120,8 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                         try {
                             const signature = await getEIP712Signature(safeTxHash, txArgs, signer)
                             if (signature) {
-                                console.log('sig', signature)
-                                /*   Contract-transaction-hash  does not match provided contract-tx-hash ERROR */
-
-
-                                await saveTxToHistory({...txArgs, signature})
+                                const tx = await saveTxToHistory({...txArgs, safeTxHash, signature})
+                                console.log('tx', tx)
                             }
                         } catch (err) {
                             console.error(`Error while creating transaction: ${err}`)

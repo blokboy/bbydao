@@ -54,18 +54,12 @@ const generateTypedDataFrom = async ({
 
 export const getEIP712Signature = async (safeTxHash, txArgs, signer) => {
     let signature
-    const chainId = ChainId.MAINNET
+    const chainId = signer.provider._network.chainId || ChainId.MAINNET
     const typedData = await generateTypedDataFrom(txArgs)
-
-    console.log('txARgs', txArgs?.safeInstance?.domainSeparator())
-
-    // const domain = txArgs?.safeInstance?.domainSeparator()
     const domain = {
-        name: "Gnosis Protocol",
-        version: "v2",
-        chainId,
-        verifyingContract: '0x9008D19f58AAbD9eD0D60971565AA8510560ab41',
-    };
+        verifyingContract: txArgs.safeAddress,
+        chainId
+    }
     const message = typedData.message
 
     signature = await signer._signTypedData(domain, EIP712_SAFE_TX_TYPE, message)
