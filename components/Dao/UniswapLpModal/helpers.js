@@ -87,6 +87,7 @@ const calculateBodyFrom = async (
     const contractTransactionHash = await safeInstance
         .getTransactionHash(to, valueInWei, data, operation, safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, nonce)
 
+
     return {
         safe: toChecksumAddress(safeInstance.address),
         to: toChecksumAddress(to),

@@ -120,7 +120,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                         try {
                             const signature = await getEIP712Signature(safeTxHash, txArgs, signer)
                             if (signature) {
-                                const tx = await saveTxToHistory({...txArgs, safeTxHash, signature})
+                                const tx = await saveTxToHistory({...txArgs, signature})
                                 console.log('tx', tx)
                             }
                         } catch (err) {
