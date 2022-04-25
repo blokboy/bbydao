@@ -1,5 +1,5 @@
 import {TypedDataUtils} from '@metamask/eth-sig-util'
-import {ethers}         from 'ethers'
+import {ChainId}        from '@uniswap/sdk'
 
 export const generateSafeTxHash = (safeAddress, txArgs) => {
     const primaryType = 'SafeTx'
@@ -42,36 +42,6 @@ export const generateSafeTxHash = (safeAddress, txArgs) => {
 
     return `0x${TypedDataUtils.eip712Hash(typedData, "V4").toString('hex')}`
 }
-
-export const METAMASK_REJECT_CONFIRM_TX_ERROR_CODE = 4001
-
-export const getEIP712Signer = (version) => async (txArgs) => {
-    const typedData = await generateTypedDataFrom(txArgs)
-    const jsonTypedData = JSON.stringify(typedData)
-    let method = 'eth_signTypedData_v3'
-    if (version === 'v4') {
-        method = 'eth_signTypedData_v4'
-    }
-    if (!version) {
-        method = 'eth_signTypedData'
-    }
-    let params = version === 'v3' || version === 'v4' ? [txArgs.sender, jsonTypedData] : [jsonTypedData, txArgs.sender]
-
-    return new Promise((resolve, reject) => {
-        const provider = new ethers.providers.JsonRpcProvider();
-        const result = provider.send(method, params)
-
-        console.log('result', result)
-
-    })
-}
-
-const SIGNERS = {
-    EIP712_V3: getEIP712Signer('v3'),
-    EIP712_V4: getEIP712Signer('v4'),
-    EIP712: getEIP712Signer(),
-}
-
 
 const generateTypedDataFrom = async ({
                                          baseGas,
@@ -127,22 +97,27 @@ const generateTypedDataFrom = async ({
 }
 
 
-export const tryOffchainSigning = async (safeTxHash, txArgs) => {
+export const tryOffchainSigning = async (safeTxHash, txArgs, signer) => {
     let signature
+    const chainId = ChainId.MAINNET
+    const typedData = await generateTypedDataFrom(txArgs)
+    const domain = {
+        name: 'bbyDao',
+        version: '0.0.1',
+        chainId,
+        verifyingContract: txArgs.safeAddress,
+    };
+    const types = {SafeTx: typedData.types.SafeTx}
+    const message = typedData.message
 
-    const signerByWallet = [SIGNERS.EIP712_V3, SIGNERS.EIP712_V4, SIGNERS.EIP712, SIGNERS.ETH_SIGN]
-    for (const signingFunc of signerByWallet) {
-        try {
-            signature = await signingFunc({ ...txArgs, safeTxHash })
+    // let gasLimit = await ethers.provider.estimateGas({
+    //     to: homeFiContract.address,
+    //     from: signers[0].address,
+    //     data: data,
+    // });
 
-            break
-        } catch (err) {
-            console.error(err)
-            if (err.code === METAMASK_REJECT_CONFIRM_TX_ERROR_CODE) {
-                throw err
-            }
-        }
-    }
+
+    signature = await signer._signTypedData(domain, types, message)
 
     return signature
 }

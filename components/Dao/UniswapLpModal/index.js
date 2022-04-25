@@ -118,6 +118,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
             let txHash
             const txArgs = {
                 safeInstance: bbyDaoSafeInstance,
+                safeAddress: bbyDaoSafe,
                 to: pair?.liquidityToken?.address,
                 valueInWei: (liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei))?._hex,
                 data: addLiquidityFnData,
@@ -138,6 +139,7 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
 
             if (!!txArgs.data && !!txArgs.valueInWei) {
                 const threshold = await bbyDaoSafeInstance?.getThreshold()
+                console.log('t', threshold.toNumber())
 
                 if (threshold.toNumber() > 1) {
                     /*  Reject or ask for approvals
@@ -152,10 +154,12 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                     *  if this is actually necessary if we are using a pre-signed signature (which we are).
                     * */
 
-                    console.log('ex', safeTxHash)
-                    tryOffchainSigning(safeTxHash, txArgs)
-
+                } else {
                     if (!!safeTxHash) {
+                        console.log('less')
+                        console.log('ex', safeTxHash)
+                        const signature = tryOffchainSigning(safeTxHash, txArgs, signer)
+                        console.log('sig', signature)
 
                         /*
                         *
@@ -205,7 +209,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                     }
 
 
-                } else {
 
                     //execute
 
