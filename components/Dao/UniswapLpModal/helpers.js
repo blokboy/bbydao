@@ -1,5 +1,7 @@
-import {TypedDataUtils} from '@metamask/eth-sig-util'
-import {ChainId}        from '@uniswap/sdk'
+import {TypedDataUtils}    from '@metamask/eth-sig-util'
+import {ChainId}           from '@uniswap/sdk'
+import axios               from 'axios'
+import {toChecksumAddress} from 'ethereumjs-util'
 
 export const generateSafeTxHash = (safeAddress, txArgs) => {
     const primaryType = 'SafeTx'
@@ -120,4 +122,106 @@ export const tryOffchainSigning = async (safeTxHash, txArgs, signer) => {
     signature = await signer._signTypedData(domain, types, message)
 
     return signature
+}
+
+
+const calculateBodyFrom = async (
+    safeInstance,
+    to,
+    valueInWei,
+    data,
+    operation,
+    nonce,
+    safeTxGas,
+    baseGas,
+    gasPrice,
+    gasToken,
+    refundReceiver,
+    transactionHash,
+    sender,
+    origin,
+    signature,
+) => {
+
+
+    const contractTransactionHash = await safeInstance
+        .getTransactionHash(to, valueInWei, data, operation, safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, nonce)
+
+    return {
+        safe: toChecksumAddress(safeInstance.address),
+        to: toChecksumAddress(to),
+        value: valueInWei,
+        data,
+        operation,
+        nonce,
+        safeTxGas,
+        baseGas,
+        gasPrice,
+        gasToken,
+        refundReceiver,
+        contractTransactionHash,
+        transactionHash,
+        sender: toChecksumAddress(sender),
+        origin,
+        signature,
+    }
+}
+
+const getTxServiceUrl = () => 'safe-transaction.gnosis.io/api/v1'
+
+export const getSafeServiceBaseUrl = (safeAddress) => `https://${getTxServiceUrl()}/safes/${safeAddress}`
+
+export const buildTxServiceUrl = (safeAddress) => {
+    const address = toChecksumAddress(safeAddress)
+    return `${getSafeServiceBaseUrl(address)}/multisig-transactions/?has_confirmations=True`
+}
+
+export const saveTxToHistory = async ({
+    baseGas,
+    data,
+    gasPrice,
+    gasToken,
+    nonce,
+    operation,
+    origin,
+    refundReceiver,
+    safeInstance,
+    safeTxGas,
+    sender,
+    signature,
+    to,
+    txHash,
+    valueInWei,
+}) => {
+    console.log('safe', safeInstance)
+    const url = buildTxServiceUrl(safeInstance.address)
+    const body = await calculateBodyFrom(
+        safeInstance,
+        to,
+        valueInWei,
+        data,
+        operation,
+        nonce,
+        safeTxGas,
+        baseGas,
+        gasPrice,
+        gasToken,
+        refundReceiver,
+        txHash || null,
+        sender,
+        origin || null,
+        signature,
+    )
+    console.log('body', body)
+    console.log('url', url)
+
+    const response = await axios.post(url, body)
+
+    console.log('response', response)
+
+    if (response.status !== 201) {
+        return Promise.reject(new Error('Error submitting the transaction'))
+    }
+
+    return Promise.resolve()
 }

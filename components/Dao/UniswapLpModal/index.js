@@ -1,6 +1,5 @@
 import GnosisSafeSol     from '@gnosis.pm/safe-contracts/build/artifacts/contracts/GnosisSafe.sol/GnosisSafe.json'
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
-import {TypedDataUtils}  from '@metamask/eth-sig-util'
 
 import {ChainId, Fetcher, Route, Token, TokenAmount} from "@uniswap/sdk"
 import IUniswapV2ERC20                               from "@uniswap/v2-core/build/IUniswapV2ERC20.json";
@@ -13,9 +12,9 @@ import useForm                                       from "hooks/useForm"
 import {useRouter}                                   from 'next/router'
 import React, {useEffect, useMemo, useRef, useState} from "react"
 import {useDaoStore}                                 from "stores/useDaoStore"
-import {useSigner}                              from 'wagmi'
-import {generateSafeTxHash, tryOffchainSigning} from './helpers'
-import PoolInfo                                 from './PoolInfo'
+import {useSigner}                                               from 'wagmi'
+import {generateSafeTxHash, saveTxToHistory, tryOffchainSigning} from './helpers'
+import PoolInfo                                                  from './PoolInfo'
 import TokenInput                                    from './TokenInput'
 
 
@@ -77,7 +76,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
         if (!!signer) {
 
 
-
             /*  Initialize Gnosis CPK - set in state */
             const ethLibAdapter = new EthersAdapter({ethers, signer})
             const cpk = await CPK.create({ethLibAdapter, ownerAccount: safeAddress})
@@ -112,7 +110,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                 [data.tokenA, data.tokenB, data.amountADesired, data.amountBDesired,
                     data.amountAMin, data.amountBMin, data.addressTo, data.deadline]
             )
-            console.log('a', addLiquidityFnData)
 
             /*  construct gnosis transaction object  */
             let txHash
@@ -139,7 +136,6 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
 
             if (!!txArgs.data && !!txArgs.valueInWei) {
                 const threshold = await bbyDaoSafeInstance?.getThreshold()
-                console.log('t', threshold.toNumber())
 
                 if (threshold.toNumber() > 1) {
                     /*  Reject or ask for approvals
@@ -148,85 +144,25 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                     * this check wouldn't be necessary.
                     * */
 
-                    /*
-                    // const approve = bbyDaoSafeInstance?.approveHash(safeTxHash)
-                    *  this approve hash works in approving a transaction hash, but I am not sure
-                    *  if this is actually necessary if we are using a pre-signed signature (which we are).
-                    * */
 
                 } else {
                     if (!!safeTxHash) {
-                        console.log('less')
-                        console.log('ex', safeTxHash)
-                        const signature = tryOffchainSigning(safeTxHash, txArgs, signer)
-                        console.log('sig', signature)
 
-                        /*
-                        *
-                        * after we have generated the safeTaxHash that has a valid signature
-                        * we should be able to execute the transaction with the function below.
-                        * things I need to check to see why this is failing:
-                        *
-                        * 1. threshold being at 2 right now causing failure
-                        * 2. gasPrice & safeTxGas beings to 0 ---- https://docs.gnosis-safe.io/tutorials/tutorial_tx_service_initiate_sign
-                        * 3. signature is not actually valid and hash needs to be approved before exec
-                        *
-                        * error I am receiving:
-                        * https://docs.ethers.io/v5/troubleshooting/errors/#help-UNPREDICTABLE_GAS_LIMIT
-                        *
-                        *
-                        *
-                        * */
-
-                        // const tx = bbyDaoSafeInstance?.execTransaction(
-                        //     txArgs.to,
-                        //     txArgs.valueInWei,
-                        //     txArgs.data,
-                        //     txArgs.operation,
-                        //     txArgs.safeTxGas,
-                        //     txArgs.baseGas,
-                        //     txArgs.gasPrice,
-                        //     txArgs.gasToken,
-                        //     txArgs.refundReceiver,
-                        //     txArgs.signature,
-                        // )
-
-                        /// OR
-
-
-                        // const tx = cpk.execTransactions([
-                        //         {
-                        //             to: txArgs.to,
-                        //             value: txArgs.valueInWei,
-                        //             data: txArgs.data,
-                        //             operation: txArgs.operation,
-                        //         }
-                        //     ],
-                        //     {gasLimit: 1000000},
-                        // )
-                        // console.log('tx', tx)
-
+                        try {
+                            const signature = await tryOffchainSigning(safeTxHash, txArgs, signer)
+                            if (signature) {
+                                console.log('sig', signature)
+                               await saveTxToHistory({...txArgs, signature})
+                                console.log('success', safeTxHash)
+                            }
+                        } catch (err) {
+                            console.error(`Error while creating transaction: ${err}`)
+                            throw err
+                        }
                     }
-
-
-
-                    //execute
-
-
-                    try {
-
-
-                    } catch (err) {
-                        console.error(`Error while creating transaction: ${err}`)
-
-                        throw err
-                    }
-
                 }
 
             }
-
-
         }
     }
 
