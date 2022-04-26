@@ -34,7 +34,7 @@ const Nav = () => {
           <SearchIcon />
         </div>
       </div>
-      <div className="flex mr-2">
+      <div className="mr-2 flex">
         {data?.connected ? (
           <>
             <NetworkIconDropdown />
@@ -44,7 +44,7 @@ const Nav = () => {
           </>
         ) : null}
         {!data?.connected ? <ConnectButton /> : null}
-        <Menu />
+        <Menu address={accountData ? accountData.address : null} />
       </div>
 
       <ThemeToggle />

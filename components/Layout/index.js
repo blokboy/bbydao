@@ -7,6 +7,7 @@ import UnfriendModal from "../UserDashboard/UnfriendModal"
 import OfferModal from "../OpenSeaCollection/OfferModal"
 import BuyModal from "../OpenSeaCollection/BuyModal"
 import NetworkWarning from "./Nav/NetworkWarning"
+import MobileNotificationsModal from "../MobileNotificationsModal"
 
 const Layout = ({ children }) => {
   return (
@@ -21,6 +22,7 @@ const Layout = ({ children }) => {
       <OfferModal />
       <BuyModal />
       <UnfriendModal />
+      <MobileNotificationsModal />
     </main>
   )
 }
