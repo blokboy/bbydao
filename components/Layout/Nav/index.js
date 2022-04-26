@@ -20,7 +20,7 @@ const Nav = () => {
   })
 
   return (
-    <nav className="z-50 flex h-16 w-full items-center justify-between bg-slate-300 p-3 dark:bg-slate-900">
+    <nav className="z-50 flex h-16 w-full items-center justify-between bg-slate-300 p-3 dark:bg-slate-900 sticky top-0">
       <div className="flex md:w-full">
         <Link href={data?.connected ? `/user/${accountData?.address}` : `/`}>
           <a className="mr-3 flex w-10 transform transition duration-500 ease-in-out hover:-translate-y-0.5 md:w-auto">

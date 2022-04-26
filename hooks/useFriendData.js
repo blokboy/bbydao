@@ -4,7 +4,7 @@ import { useAccount, useConnect } from "wagmi"
 
 import * as api from "../query"
 
-export default function useFriendStatus(address) {
+export default function useFriendData(address) {
   const [{ data, error, loading }] = useAccount()
 
   const { data: friendData, refetch } = useQuery(
