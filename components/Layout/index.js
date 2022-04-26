@@ -6,11 +6,13 @@ import FriendsModal from "../UserDashboard/FriendsModal"
 import UnfriendModal from "../UserDashboard/UnfriendModal"
 import OfferModal from "../OpenSeaCollection/OfferModal"
 import BuyModal from "../OpenSeaCollection/BuyModal"
+import NetworkWarning from "./Nav/NetworkWarning"
 
 const Layout = ({ children }) => {
   return (
     <main className="h-screen w-full">
       <Nav />
+      <NetworkWarning />
       {children}
       <ConnectModal />
       <AppSearchModal />
