@@ -13,9 +13,9 @@ import useForm                                                   from "hooks/use
 import {useRouter}                                               from 'next/router'
 import React, {useEffect, useMemo, useRef, useState}             from "react"
 import {useDaoStore}                                             from "stores/useDaoStore"
-import {useSigner}                                               from 'wagmi'
-import {generateSafeTxHash, getEIP712Signature, saveTxToHistory} from './helpers'
-import PoolInfo                                                  from './PoolInfo'
+import {useSigner}                                                from 'wagmi'
+import {calculateSafeTxHash, getEIP712Signature, saveTxToHistory} from './helpers'
+import PoolInfo                                                   from './PoolInfo'
 import TokenInput                                                from './TokenInput'
 
 
@@ -87,9 +87,8 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
 
             /*  construct gnosis transaction object  */
             let txHash
-            const txArgs = {
+            const safeTx = {
                 safeInstance: bbyDaoSafeInstance,
-                safeAddress: bbyDaoSafe,
                 to: pair?.liquidityToken?.address,
                 valueInWei: (liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei))?._hex,
                 data: addLiquidityFnData,
@@ -106,10 +105,11 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
 
 
             /*  generate transaction hash  */
-            const safeTxHash = generateSafeTxHash(safeAddress, {...txArgs, value: txArgs.valueInWei})
+            const safeTxHash = calculateSafeTxHash(safeAddress, {...safeTx, value: safeTx.valueInWei})
 
-            if (!!txArgs.data && !!txArgs.valueInWei) {
+            if (!!safeTx.data && !!safeTx.valueInWei) {
                 const threshold = await bbyDaoSafeInstance?.getThreshold()
+                console.log('sig', signature)
 
                 if (threshold.toNumber() > 1) {
                     /*  Reject or ask for approvals */
@@ -118,9 +118,11 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                     if (!!safeTxHash) {
 
                         try {
-                            const signature = await getEIP712Signature(safeTxHash, txArgs, signer)
+                            const signature = await getEIP712Signature(safeTx, safeAddress, signer)
+
+                            console.log('signature', signature)
                             if (signature) {
-                                const tx = await saveTxToHistory({...txArgs, signature})
+                                const tx = await saveTxToHistory({...safeTx, safeTxHash, signature})
                                 console.log('tx', tx)
                             }
                         } catch (err) {

@@ -20,8 +20,8 @@ const EIP712_SAFE_TX_TYPE = {
     ]
 }
 const chainId = ChainId.MAINNET
-export const generateSafeTxHash = (safeAddress, txArgs) =>
-    utils._TypedDataEncoder.hash({verifyingContract: safeAddress, chainId}, EIP712_SAFE_TX_TYPE, txArgs)
+export const calculateSafeTxHash = (safeAddress, safeTx) =>
+    utils._TypedDataEncoder.hash({verifyingContract: safeAddress, chainId}, EIP712_SAFE_TX_TYPE, safeTx)
 
 const generateTypedDataFrom = async ({
                                          baseGas,
@@ -52,12 +52,12 @@ const generateTypedDataFrom = async ({
 }
 
 
-export const getEIP712Signature = async (safeTxHash, txArgs, signer) => {
+export const getEIP712Signature = async (safeTx, safeAddress, signer) => {
     let signature
     const chainId = signer.provider._network.chainId || ChainId.MAINNET
-    const typedData = await generateTypedDataFrom(txArgs)
+    const typedData = await generateTypedDataFrom(safeTx)
     const domain = {
-        verifyingContract: txArgs.safeAddress,
+        verifyingContract: safeAddress,
         chainId
     }
     const message = typedData.message
@@ -75,6 +75,7 @@ const calculateBodyFrom = async (
     operation,
     nonce,
     safeTxGas,
+    safeTxHash,
     baseGas,
     gasPrice,
     gasToken,
@@ -86,6 +87,10 @@ const calculateBodyFrom = async (
 ) => {
     const contractTransactionHash = await safeInstance
         .getTransactionHash(to, valueInWei, data, operation, safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, nonce)
+
+
+    console.log('con', contractTransactionHash)
+    console.log('safe', safeTxHash)
 
 
     return {
@@ -128,6 +133,7 @@ export const saveTxToHistory = async ({
                                           refundReceiver,
                                           safeInstance,
                                           safeTxGas,
+                                          safeTxHash,
                                           sender,
                                           signature,
                                           to,
@@ -143,6 +149,7 @@ export const saveTxToHistory = async ({
         operation,
         nonce,
         safeTxGas,
+        safeTxHash,
         baseGas,
         gasPrice,
         gasToken,
