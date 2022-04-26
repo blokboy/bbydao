@@ -91,6 +91,9 @@ const calculateBodyFrom = async (
 
     console.log('con', contractTransactionHash)
     console.log('safe', safeTxHash)
+    console.log('signature', signature)
+
+
 
 
     return {
@@ -99,17 +102,16 @@ const calculateBodyFrom = async (
         value: parseInt(valueInWei),
         data,
         operation,
-        nonce,
+        gasToken,
         safeTxGas,
         baseGas,
         gasPrice,
-        gasToken,
         refundReceiver,
+        nonce,
         contractTransactionHash,
-        transactionHash,
         sender: toChecksumAddress(sender),
-        origin,
         signature,
+        origin
     }
 }
 
@@ -179,5 +181,23 @@ export const saveTxToHistory = async ({
         return Promise.reject(new Error('Error submitting the transaction'))
     }
 
-    return Promise.resolve()
+    if(response.status === 201) {
+        console.log('safeInstance', safeInstance)
+        const execute = await safeInstance.executeTransaction({
+            to: body.to,
+            value: body.value,
+            data: body.data,
+            operation: body.operation,
+            safeTxGas: body.safeTxGas,
+            baseGas: body.baseGas,
+            gasPrice: body.gasPrice,
+            gasToken: body.gasToken,
+            refundReceiver: body.refundReceiver,
+            signature
+        })
+
+        console.log('execute', execute)
+    }
+
+    return Promise.resolve(response.status)
 }
