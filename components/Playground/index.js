@@ -17,7 +17,7 @@ const Playground = ({ address, data }) => {
   // user paths and experiences - bbyDAO and user discovery/connection
   return (
     <div className="flex lg:flex-row flex-col w-full">
-      <UserPanel address={address} />
+      <UserPanel user={userData?.address} address={address} />
       <UserDaos user={userData?.address} data={data} />
       <Feed />
     </div>
