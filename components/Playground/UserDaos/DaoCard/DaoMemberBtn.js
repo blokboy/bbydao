@@ -10,7 +10,7 @@ const DaoMemberBtn = ({ member }) => {
   // })
 
   return (
-    <Link href={`${member}`}>
+    <Link href={`playground/${member}`}>
       <a>
         <div
           className={
