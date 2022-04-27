@@ -38,7 +38,7 @@ const DaoName = ({safe, isMember}) => {
                         onChange={handleChange}
                         onFocus={handleFocus}
                         name={"name"}
-                        className={`focus:outline-0 bg-transparent ${isEditable ? 'border-b' : ''}`}
+                        className={`focus:outline-0 bg-transparent font-bold ${isEditable ? 'border-b' : ''}`}
                         disabled={!isEditable}
                     />
                 </form>
