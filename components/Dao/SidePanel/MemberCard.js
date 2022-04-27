@@ -11,7 +11,7 @@ const MemberCard = ({ member }) => {
 
   return (
     <>
-      <Link href={`/user/${member}`}>
+      <Link href={`/playground/${member}`}>
         <a className="mb-1 flex transform flex-row items-center justify-between rounded-xl p-1 transition duration-200 ease-in-out hover:-translate-x-0.5 hover:bg-slate-100 hover:shadow dark:hover:bg-slate-800">
           {/* <Davatar size={40} address={member} generatedAvatarType="blockies" /> */}
           <span className="ml-2 w-9/12 py-2 text-sm hover:bg-gradient-to-r hover:from-[#0DB2AC] hover:via-[#FC8D4D] hover:to-[#FABA32] hover:bg-clip-text hover:text-transparent">
