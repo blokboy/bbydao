@@ -9,6 +9,8 @@ import FriendsModal from "../UserDashboard/FriendsModal"
 import UnfriendModal from "../UserDashboard/UnfriendModal"
 import OfferModal from "../OpenSeaCollection/OfferModal"
 import BuyModal from "../OpenSeaCollection/BuyModal"
+import NetworkWarning from "./Nav/NetworkWarning"
+import MobileNotificationsModal from "../MobileNotificationsModal"
 
 const Layout = ({ children }) => {
   const searchOpen = useLayoutStore(state => state.searchOpen)
@@ -16,6 +18,7 @@ const Layout = ({ children }) => {
   return (
     <main className="w-full">
       <Nav />
+      <NetworkWarning />
       {searchOpen ? <Search /> : children}
       <ConnectModal />
       <AppSearchModal />
@@ -24,6 +27,7 @@ const Layout = ({ children }) => {
       <OfferModal />
       <BuyModal />
       <UnfriendModal />
+      <MobileNotificationsModal />
     </main>
   )
 }

@@ -11,45 +11,51 @@ const NotificationsIcon = ({ address }) => {
   const notificationCount = useUiStore(state => state.notificationCount)
   const setNotificationCount = useUiStore(state => state.setNotificationCount)
 
-  const { data } = useQuery(
-    ["notifications"],
-    () => api.userNotifications({ target: address }),
-    { staleTime: 180000 }
-  )
+  const { data } = useQuery(["notifications"], () => api.userNotifications({ target: address }), { staleTime: 180000 })
 
-  React.useEffect(() => {
-    if (!data) return
+  const handleNotificationData = React.useCallback(() => {
+    if (!data) {
+      return
+    }
+
     setNotificationCount(data?.notificationCount)
-  }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
+  }, [data])
 
-  const clickAway = event => {
+  const clickAway = React.useCallback(() => {
     if (!notificationsOpen) return
     setNotificationsOpen(false)
-  }
+  }, [notificationsOpen])
+
+  const openNotifications = React.useCallback(() => {
+    if (!notificationsOpen) {
+      setNotificationsOpen(true)
+    }
+  }, [notificationsOpen])
+
+  React.useEffect(handleNotificationData, [handleNotificationData])
 
   if (!address) return <></>
+
+  const notifNumberDisplay = React.useMemo(() => {
+    return notificationCount ? (
+      <span
+        className={
+          "absolute -mt-8 -mr-8 rounded-full bg-red-500 py-1 text-xs text-white" +
+          (notificationCount > 10 ? " px-1" : " px-2")
+        }
+      >
+        {notificationCount}
+      </span>
+    ) : null
+  }, [notificationCount])
 
   return (
     <ClickAwayListener onClickAway={clickAway}>
       <div className="mr-3 hidden flex-row items-center justify-center md:flex">
-        <button
-          className="nav-btn"
-          onClick={() => setNotificationsOpen(!notificationsOpen)}
-        >
+        <button className="nav-btn" onClick={openNotifications}>
           <FiBell />
         </button>
-        {notificationCount ? (
-          <span
-            className={
-              "absolute -mt-8 -mr-8 rounded-full bg-red-500 py-1 text-xs text-white" +
-              (notificationCount > 10 ? " px-1" : " px-2")
-            }
-          >
-            {notificationCount}
-          </span>
-        ) : (
-          <></>
-        )}
+        {notifNumberDisplay}
 
         <NotificationsDropdown
           data={data}
