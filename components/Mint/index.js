@@ -448,7 +448,7 @@ const Mint = ({ children }) => {
       {/* grid 1 */}
       <div className="flex flex-col items-center justify-center p-10">
         <div className="text-4xl md:text-6xl"> BbyDAO Card Collection </div>
-        <div className="text-l mt-3">
+        <div className="text-2xl mt-3">
         To mint one of { theme && theme === "dark" ? 5000 : 500 } available bbyDAO {theme && theme === "dark" ? "White" : "Black"} Cards, switch to 
         {theme && theme === "dark" ? " light" : " dark"} mode
         </div>
