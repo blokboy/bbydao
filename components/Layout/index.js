@@ -1,4 +1,7 @@
 import Nav from "./Nav"
+import Search from "./Search"
+import { useLayoutStore } from "/stores/useLayoutStore"
+
 import ConnectModal from "./ConnectModal"
 import AppSearchModal from "../AppSearchModal"
 import CreateThreadModal from "../Messages/CreateThreadModal"
@@ -10,11 +13,13 @@ import NetworkWarning from "./Nav/NetworkWarning"
 import MobileNotificationsModal from "../MobileNotificationsModal"
 
 const Layout = ({ children }) => {
+  const searchOpen = useLayoutStore(state => state.searchOpen)
+
   return (
-    <main className="h-screen w-full">
+    <main className="w-full">
       <Nav />
       <NetworkWarning />
-      {children}
+      {searchOpen ? <Search /> : children}
       <ConnectModal />
       <AppSearchModal />
       <CreateThreadModal />

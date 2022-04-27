@@ -5,6 +5,7 @@
 @layer base {
   html {
     /* @apply mx-3 md:mx-1; */
+    @apply overflow-y-scroll;
   }
 
   input[type=number]::-webkit-inner-spin-button,
