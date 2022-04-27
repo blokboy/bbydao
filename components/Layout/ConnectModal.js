@@ -36,7 +36,7 @@ const ConnectModal = () => {
               onClick={async () => {
                 const connected = await connect(connector)
                 if(connected?.data?.account.length > 0 && isLanding) {
-                    router.push(`/user/${connected?.data.account}`)
+                    router.push(`/playground/${connected?.data.account}`)
                 }
               }}
             >

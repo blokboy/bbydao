@@ -26,7 +26,7 @@ const FriendSearchCard = ({ friend, closeModal }) => {
             <></>
           )}
           <Link
-            href={`/user/${encodeURIComponent(
+            href={`/playground/${encodeURIComponent(
               friend.initiator === data?.address
                 ? friend.target
                 : friend.initiator
