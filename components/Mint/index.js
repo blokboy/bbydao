@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react"
-import { useConnect, useAccount } from "wagmi"
+import { useConnect, useProvider, useAccount } from "wagmi"
 import { useTheme } from "next-themes"
 import { ethers, Contract, BigNumber } from "ethers"
 
@@ -420,10 +420,12 @@ const minimalABI = [
 const Mint = ({ children }) => {
   const { theme, setTheme } = useTheme()
   const [count, setCount] = useState(1)
+
   const [{ data, error }, connect] = useConnect()
   const [{ data: accountData }, disconnect] = useAccount({
     fetchEns: true,
   })
+  const wagmiProvider = useProvider()
 
   const mintErrorModal = useLayoutStore(state => state.mintErrorModal)
   const setMintErrorModal = useLayoutStore(state => state.setMintErrorModal)
@@ -434,7 +436,7 @@ const Mint = ({ children }) => {
 
     try {
       if (data?.connected && accountData) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const provider = new ethers.providers.Web3Provider(window.ethereum) || wagmiProvider
         const signer = provider.getSigner()
         const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, minimalABI, signer)
         const value = theme === "dark" ? "0.8" : "0.08"
