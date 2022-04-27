@@ -31,7 +31,7 @@ const DaoCard = ({ user, safe }) => {
       {/* Pfp and Members Section */}
       <div className="flex w-full flex-col lg:flex-row">
         <DaoPfpIcon isMember={isMember} />
-        <DaoPfp />
+        <DaoPfp address={safe} />
         {/* TODO: loading and error states */}
         <DaoMembers owners={daoMembersData} />
       </div>

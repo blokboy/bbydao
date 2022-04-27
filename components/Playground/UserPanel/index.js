@@ -7,7 +7,7 @@ const UserPanel = ({ user, address }) => {
 
   return (
     <div className="flex w-full flex-col lg:w-1/5 p-3 space-y-3">
-      <Pfp />
+      <Pfp address={address} />
       <AddressEns address={address}/>
       <UserFollow user={user} address={address} />
     </div>
