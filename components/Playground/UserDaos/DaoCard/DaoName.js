@@ -1,13 +1,13 @@
 import useForm                      from 'hooks/useForm'
 import * as api                     from 'query'
-import React, {useState}            from 'react'
+import React, {useEffect, useState} from 'react'
 import {HiCheckCircle, HiPencilAlt} from 'react-icons/hi'
 import {useMutation, useQuery}      from 'react-query'
 import {walletSnippet}              from 'utils/helpers'
 
 const DaoName = ({safe, isMember}) => {
     const [isEditable, setIsEditable] = useState(false)
-    const {state, handleChange} = useForm()
+    const {state, setState, handleChange} = useForm()
     const {mutateAsync} = useMutation(api.updateDao, {
         refetchActive: true,
     })
@@ -19,13 +19,19 @@ const DaoName = ({safe, isMember}) => {
     const handleFocus = (e) => {
         e.target.select();
     }
-    const handleSave = (e) => {
+    const handleSave = () => {
         setIsEditable(flag => !flag)
         const shouldSave = !!state.name && data.name !== state.name
         if (isEditable && shouldSave) {
             mutateAsync({id: data.id, name: state.name})
         }
     }
+
+    useEffect(() => {
+        if (!!data?.name)
+            setState({name: data.name})
+
+    }, [data])
 
     return (
         <div className="flex flex-row items-center space-x-3">
@@ -34,11 +40,11 @@ const DaoName = ({safe, isMember}) => {
                     className="flex w-full flex-col space-y-8 py-4"
                 >
                     <input
-                        value={state?.name || data?.name || walletSnippet(safe)}
-                        onChange={handleChange}
+                        value={state?.name === undefined ? walletSnippet(safe) : state.name}
+                        onChange={(handleChange)}
                         onFocus={handleFocus}
                         name={"name"}
-                        className={`focus:outline-0 bg-transparent font-bold ${isEditable ? 'border-b' : ''}`}
+                        className={`focus:outline-0 bg-transparent font-bold rounded-xl p-4 ${isEditable ? 'shadow-inner bg-slate-200 dark:bg-slate-900' : ''}`}
                         disabled={!isEditable}
                     />
                 </form>
