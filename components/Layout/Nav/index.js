@@ -34,7 +34,7 @@ const Nav = () => {
           <SearchIcon />
         </div>
       </div>
-      <div className="flex">
+      <div className="flex space-x-2">
         {data?.connected ? (
           <>
             <NetworkIconDropdown />

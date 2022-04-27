@@ -75,7 +75,7 @@ const AccountDisplay = () => {
       <div className="relative rounded-full bg-slate-200 hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-800">
         <button
           type="button"
-          className="flex w-max cursor-pointer flex-row rounded-full border border-slate-400 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text p-2 font-semibold text-transparent shadow md:w-min"
+          className="flex w-max cursor-pointer flex-row rounded-full border border-slate-400 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text p-2 font-semibold text-transparent md:w-min"
           onClick={handleOpen}
         >
           {ensData
