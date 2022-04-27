@@ -12,18 +12,11 @@ const MessagesIcon = ({ address }) => {
   const setMessagesCount = useUiStore(state => state.setMessagesCount)
   const [count, setCount] = React.useState(count ? count : 0)
 
-  const { data } = useQuery(
-    ["threads", address],
-    () => api.getUserThreads({ address }),
-    { staleTime: 180000 }
-  )
+  const { data } = useQuery(["threads", address], () => api.getUserThreads({ address }), { staleTime: 180000 })
 
-  const threads = []
-  if (data) {
-    for (const [key, value] of Object.entries(data)) {
-      threads.push([key, value])
-    }
-  }
+  const threads = React.useMemo(() => {
+    return data ? Object.entries(data).map(([key, value]) => ({ title: key, data: value })) : []
+  }, [data])
 
   React.useEffect(() => {
     if (!data) return
@@ -42,17 +35,13 @@ const MessagesIcon = ({ address }) => {
   return (
     <ClickAwayListener onClickAway={clickAway}>
       <div className="mr-3 hidden flex-row items-center justify-center md:flex">
-        <button
-          className="nav-btn"
-          onClick={() => setMessagesOpen(!messagesOpen)}
-        >
+        <button className="nav-btn" onClick={() => setMessagesOpen(!messagesOpen)}>
           <FiMail />
         </button>
         {count > 0 ? (
           <span
             className={
-              "absolute -mt-8 -mr-8 rounded-full bg-red-500 py-1 text-xs text-white" +
-              (count > 10 ? " px-1" : " px-2")
+              "absolute -mt-8 -mr-8 rounded-full bg-red-500 py-1 text-xs text-white" + (count > 10 ? " px-1" : " px-2")
             }
           >
             {count}
@@ -62,12 +51,7 @@ const MessagesIcon = ({ address }) => {
         )}
 
         {/* && messagesCount */}
-        <MessagesDropdown
-          address={address}
-          messagesOpen={messagesOpen}
-          threads={threads}
-          clickAway={clickAway}
-        />
+        <MessagesDropdown address={address} messagesOpen={messagesOpen} threads={threads} clickAway={clickAway} />
       </div>
     </ClickAwayListener>
   )
