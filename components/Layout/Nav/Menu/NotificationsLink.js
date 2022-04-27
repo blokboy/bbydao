@@ -17,7 +17,7 @@ export default function NotificationsLink() {
   }, [isOpen, setOpen])
 
   return (
-    <li className="w-full">
+    <li className="w-full md:hidden">
       <button
         className="flex w-full items-center justify-start px-1 py-2 text-sm font-bold text-slate-800 hover:bg-slate-100 hover:shadow dark:text-white dark:hover:bg-slate-800"
         onClick={openModal}
