@@ -429,8 +429,8 @@ const Mint = ({ children }) => {
   const setMintErrorModal = useLayoutStore(state => state.setMintErrorModal)
   const [mintErrorMsg, setMintErrorMsg] = useState(null)
 
-  const handleMint = async () => {
-    const CONTRACT_ADDRESS = theme === "dark" ? "" : "0x3c0A2e850a2F92Aa6161Bc5E6495fb4Cb0E6d427"
+  const handleMint = async () => {    
+    const CONTRACT_ADDRESS = theme === "dark" ? "0x7c1F1DbF04fdA4BA03FC095Cd933B413965e9edD" : "0x40c61FEFaC6D67869240106A8EB9dD252501B75e";
 
     try {
       if (data?.connected && accountData) {
@@ -441,7 +441,7 @@ const Mint = ({ children }) => {
 
         const tx = await connectedContract.mint({ value: ethers.utils.parseEther(value) })
         await tx.wait()
-        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${tx.hash}`)
+        setMintErrorMsg(`Mined, see transaction: https://etherscan.io/tx/${tx.hash}`)
       }
     } catch (error) {
       setMintErrorMsg(error.message)
@@ -499,16 +499,16 @@ const Mint = ({ children }) => {
           {Number(`${theme && theme === "dark" ? 0.8 : 0.08}` * count).toFixed(2)} E
         </p>
         <div className="flex flex-row">
-          <div className="relative">
-            <button
-              className="mr-3 flex w-max transform flex-row rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow transition duration-500 ease-in-out hover:-translate-x-0.5 hover:bg-white hover:bg-gradient-to-l dark:hover:bg-slate-700"
-              onClick={() => handleMint(count)}
-            >
-              <span className="block rounded-full bg-slate-200 px-6 py-[0.45rem] font-bold text-[#FC8D4D] hover:bg-opacity-50 hover:text-white dark:bg-slate-900 dark:hover:bg-opacity-75">
-                mint!
-              </span>
-            </button>
-          </div>
+        <div className="relative">
+        <button
+          className="mr-3 flex w-max transform flex-row rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow transition duration-500 ease-in-out hover:-translate-x-0.5 hover:bg-white hover:bg-gradient-to-l dark:hover:bg-slate-700"
+          onClick={() => handleMint()}
+        >
+          <span className="block rounded-full bg-slate-200 px-6 py-[0.45rem] font-bold text-[#FC8D4D] hover:bg-opacity-50 hover:text-white dark:bg-slate-900 dark:hover:bg-opacity-75">
+            mint!
+          </span>
+        </button>
+      </div>
         </div>
       </div>
       {mintErrorModal && <MintErrorModal error={mintErrorMsg} />}
