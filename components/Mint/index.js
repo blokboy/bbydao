@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react"
-import { useConnect, useAccount } from "wagmi"
+import { useConnect, useProvider, useAccount } from "wagmi"
 import { useTheme } from "next-themes"
 import { ethers, Contract, BigNumber } from "ethers"
 
@@ -420,6 +420,7 @@ const minimalABI = [
 const Mint = ({ children }) => {
   const { theme, setTheme } = useTheme()
   const [count, setCount] = useState(1)
+
   const [{ data, error }, connect] = useConnect()
   const [{ data: accountData }, disconnect] = useAccount({
     fetchEns: true,
