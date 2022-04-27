@@ -20,7 +20,7 @@ const Nav = () => {
   })
 
   return (
-    <nav className="z-50 flex h-16 w-full items-center space-x-2 bg-slate-300 p-2 md:p-3 dark:bg-slate-900 sticky top-0">
+    <nav className="z-50 flex h-16 w-full items-center justify-between bg-slate-300 p-2 md:p-3 dark:bg-slate-900 sticky top-0">
       <div className="flex md:w-full">
         <Link href={data?.connected ? `/playground/${accountData?.address}` : `/`}>
           <a className="flex w-10 transform transition duration-500 ease-in-out hover:-translate-y-0.5 md:w-auto">
@@ -34,7 +34,7 @@ const Nav = () => {
           <SearchIcon />
         </div>
       </div>
-      <div className="flex space-x-2">
+      <div className="flex">
         {data?.connected ? (
           <>
             <NetworkIconDropdown />
