@@ -1,13 +1,13 @@
 import useForm                      from 'hooks/useForm'
 import * as api                     from 'query'
-import React, {useState}            from 'react'
+import React, {useEffect, useState} from 'react'
 import {HiCheckCircle, HiPencilAlt} from 'react-icons/hi'
 import {useMutation, useQuery}      from 'react-query'
 import {walletSnippet}              from 'utils/helpers'
 
 const DaoName = ({safe, isMember}) => {
     const [isEditable, setIsEditable] = useState(false)
-    const {state, handleChange} = useForm()
+    const {state, setState, handleChange} = useForm()
     const {mutateAsync} = useMutation(api.updateDao, {
         refetchActive: true,
     })
@@ -21,7 +21,8 @@ const DaoName = ({safe, isMember}) => {
     }
     const handleSave = (e) => {
         setIsEditable(flag => !flag)
-        if (isEditable) {
+        const shouldSave = !!state.name && data.name !== state.name
+        if (isEditable && shouldSave) {
             mutateAsync({id: data.id, name: state.name})
         }
     }
