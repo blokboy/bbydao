@@ -5,7 +5,7 @@ import { HiCheckCircle, HiPencilAlt } from "react-icons/hi"
 import { useMutation, useQueryClient } from "react-query"
 import { walletSnippet } from "utils/helpers"
 
-const DaoName = ({ safe, isMember }) => {
+const DaoName = ({ safe, isMember, loading }) => {
   const [isEditable, setIsEditable] = useState(false)
   const { state, setState, handleChange } = useForm()
   
@@ -19,8 +19,8 @@ const DaoName = ({ safe, isMember }) => {
   }, [daoData])
 
   const { mutateAsync: editDaoName } = useMutation(api.updateDao, {
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(["dao", safe], {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["dao", safe], {
         refetchActive: true,
       })
     }
@@ -51,7 +51,7 @@ const DaoName = ({ safe, isMember }) => {
       <div className="text-2xl">
         <form className="flex flex-col">
           <input
-            value={state?.name === undefined ? walletSnippet(safe) : state.name}
+            value={loading ? " " : daoData?.name === undefined ? walletSnippet(safe) : state.name}
             onChange={handleChange}
             onFocus={handleFocus}
             name={"name"}
@@ -60,7 +60,7 @@ const DaoName = ({ safe, isMember }) => {
             } rounded-xl p-2 font-bold ${isEditable ? "shadow-inner" : ""}`}
             disabled={!isEditable}
             type="text"
-            autofocus
+            autoFocus
           />
         </form>
       </div>

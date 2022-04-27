@@ -16,7 +16,7 @@ import { useQuery } from "react-query"
 
 const DaoCard = ({ user, safe }) => {
   // dao data from our backend
-  const { data } = useQuery(["dao", safe], () => api.getDao({ address: safe }), {
+  const { data, isLoading: daoDataLoading } = useQuery(["dao", safe], () => api.getDao({ address: safe }), {
     staleTime: 180000,
     refetchOnWindowFocus: false,
   })
@@ -50,7 +50,7 @@ const DaoCard = ({ user, safe }) => {
       {/* Dao Balance + Expand Dao Section */}
       <div className="flex flex-row items-end justify-between">
         <div className="flex flex-col">
-          <DaoName isMember={isMember} safe={safe} />
+          <DaoName isMember={isMember} safe={safe} loading={daoDataLoading} />
           <DaoBalance safe={safe} />
         </div>
         <ExpandDao safe={safe} />
