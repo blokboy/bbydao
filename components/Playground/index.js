@@ -2,13 +2,25 @@ import React from "react"
 import UserPanel from "./UserPanel"
 import Feed from "./Feed"
 import UserDaos from "./UserDaos"
-import { useAccount } from "wagmi"
+import { useAccount, useEnsLookup } from "wagmi"
+import * as api from "../../query"
+import { useMutation } from "react-query"
 
 const Playground = ({ address, data }) => {
   // data is the res from querying gnosis for the user's daos
   // address is the address of the profile being viewed
   // data:userData is the data of the signed-in user
   const [{ data: userData, error: userErr, loading: userLoading }, disconnect] = useAccount()
+  const [{ data: ensData, error: ensError, loading: ensLoading },lookupAddress,] = useEnsLookup({address: address})
+
+  const { status, mutateAsync } = useMutation(api.getUser)
+  React.useEffect(() => {
+    if (ensLoading) {
+      return
+    }
+    const req = { address: address, ens: ensData }
+    mutateAsync(req)
+  }, [ensLoading])
 
   // i think there's an opportunity to toggle UserDaos out for another set of components
   // Feed and UserDaos(or a component that contains UserDaos / toggles it out) are intended
