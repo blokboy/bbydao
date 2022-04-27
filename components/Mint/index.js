@@ -424,7 +424,7 @@ const Mint = ({ children }) => {
 
   const handleMint = async () => {
     
-    const CONTRACT_ADDRESS = theme === "dark" ? "" : "0x40c61FEFaC6D67869240106A8EB9dD252501B75e";
+    const CONTRACT_ADDRESS = theme === "dark" ? "0x7c1F1DbF04fdA4BA03FC095Cd933B413965e9edD" : "0x40c61FEFaC6D67869240106A8EB9dD252501B75e";
 
     try {
       if (data?.connected && accountData) {
