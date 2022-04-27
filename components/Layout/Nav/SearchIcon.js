@@ -6,7 +6,7 @@ const SearchIcon = () => {
   const setSearchOpen = useLayoutStore(state => state.setSearchOpen)
 
   return (
-    <div className="mr-3 flex-row items-center justify-center md:flex">
+    <div className="flex-row items-center justify-center md:flex">
       <button className="nav-btn" onClick={setSearchOpen}>
         <GoSearch />
       </button>

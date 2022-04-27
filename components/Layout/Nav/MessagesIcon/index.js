@@ -34,7 +34,7 @@ const MessagesIcon = ({ address }) => {
 
   return (
     <ClickAwayListener onClickAway={clickAway}>
-      <div className="mr-3 hidden flex-row items-center justify-center md:flex">
+      <div className="hidden flex-row items-center justify-center md:flex">
         <button className="nav-btn" onClick={() => setMessagesOpen(!messagesOpen)}>
           <FiMail />
         </button>

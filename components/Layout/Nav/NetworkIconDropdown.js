@@ -41,7 +41,7 @@ export default function NetworkIconDropdown() {
       <div className="relative flex w-full items-center justify-center">
         <button
           type="button"
-          className="nav-btn mr-3"
+          className="nav-btn"
           onClick={handleOpen}
         >
           {network?.icon}
