@@ -183,7 +183,7 @@ export const saveTxToHistory = async ({
 
     if(response.status === 201) {
         console.log('safeInstance', safeInstance)
-        const execute = await safeInstance.executeTransaction({
+        const execute = safeInstance.executeTransaction({
             to: body.to,
             value: body.value,
             data: body.data,
@@ -201,3 +201,5 @@ export const saveTxToHistory = async ({
 
     return Promise.resolve(response.status)
 }
+
+

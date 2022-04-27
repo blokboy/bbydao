@@ -120,8 +120,10 @@ const UniswapLpModal = ({safeAddress, tokenLogos}) => {
                 gasPrice: 0,
                 gasToken: ZERO_ADDRESS,
                 refundReceiver: ZERO_ADDRESS,
-                nonce: transactions.count + 1
+                nonce: nonce
             }, signer.provider._network.chainId))
+
+            console.log('chainId',  signer.provider._network.chainId)
 
 
 
