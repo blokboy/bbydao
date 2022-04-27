@@ -38,7 +38,7 @@ const DaoCard = ({ user, safe }) => {
 
       {/* Dao Balance + Expand Dao Section */}
       <div className="flex flex-row justify-between items-end">
-        <div className="flex flex-col w-">
+        <div className="flex flex-col">
           <DaoName isMember={isMember} safe={safe} />
           <DaoBalance safe={safe} />
         </div>
