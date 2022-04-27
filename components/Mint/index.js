@@ -425,7 +425,6 @@ const Mint = ({ children }) => {
   const [{ data: accountData }, disconnect] = useAccount({
     fetchEns: true,
   })
-  const wagmiProvider = useProvider()
 
   const mintErrorModal = useLayoutStore(state => state.mintErrorModal)
   const setMintErrorModal = useLayoutStore(state => state.setMintErrorModal)
@@ -436,7 +435,7 @@ const Mint = ({ children }) => {
 
     try {
       if (data?.connected && accountData) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum) || wagmiProvider
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
         const signer = provider.getSigner()
         const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, minimalABI, signer)
         const value = theme === "dark" ? "0.8" : "0.08"
