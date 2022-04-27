@@ -26,7 +26,7 @@
   }
 
   body {
-    @apply h-[100%] w-[100%] text-slate-800 dark:text-slate-100;
+    @apply h-full w-full text-slate-800 dark:text-slate-100;
     /* @apply bg-gradient-to-bl from-slate-100 via-[#d6e5eb] to-slate-300; */
     @apply bg-slate-300;
     /* @apply dark:bg-gradient-to-br dark:from-slate-800 dark:via-gray-900 dark:to-slate-900; */

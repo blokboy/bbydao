@@ -1,13 +1,13 @@
 import React from "react"
 import { GoSearch } from "react-icons/go"
-import { useUiStore } from "stores/useUiStore"
+import { useLayoutStore } from "stores/useLayoutStore"
 
 const SearchIcon = () => {
-  const setAppModalOpen = useUiStore(state => state.setAppModalOpen)
+  const setSearchOpen = useLayoutStore(state => state.setSearchOpen)
 
   return (
     <div className="mr-3 flex-row items-center justify-center md:flex">
-      <button className="nav-btn" onClick={setAppModalOpen}>
+      <button className="nav-btn" onClick={setSearchOpen}>
         <GoSearch />
       </button>
     </div>
