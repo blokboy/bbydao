@@ -1,22 +1,17 @@
-import SafeServiceClient from "@gnosis.pm/safe-service-client"
-
-import { ChainId, Fetcher, Route, Token, TokenAmount } from "@uniswap/sdk"
+import { ChainId, Fetcher, Route, Token } from "@uniswap/sdk"
 import IUniswapV2ERC20 from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
-import GnosisSafeSol from "ABIs/gnosisSafe.json"
 import Modal from "components/Layout/Modal"
-import CPK, { EthersAdapter } from "contract-proxy-kit"
-import { BigNumber, ethers } from "ethers"
-import { formatUnits } from "ethers/lib/utils"
+import { ethers } from "ethers"
 import useForm from "hooks/useForm"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useDaoStore } from "stores/useDaoStore"
-import { useSigner }                                                  from "wagmi"
-import {createGnosisTransaction, getEIP712Signature, saveTxToHistory} from "./helpers"
-import PoolInfo                                                       from "./PoolInfo"
+import { useSigner }                                                                 from "wagmi"
+import {amount, getLiquidityPairInfo, handleGnosisTransaction, readableTokenBalance} from "./helpers"
+import PoolInfo                                                                      from "./PoolInfo"
 import TokenInput from "./TokenInput"
 
-const UniswapLpModal = ({ safeAddress, safeOwners, tokenLogos }) => {
+const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const UniswapV2Router02 = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
   const [{ data: signer }] = useSigner()
   const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
@@ -43,8 +38,6 @@ const UniswapLpModal = ({ safeAddress, safeOwners, tokenLogos }) => {
     setMaxError("")
   }
 
-  const amount = (amount, decimals) => Math.round(amount * 10 ** decimals).toString()
-
   const handleSubmit = async (e, liquidityInfo) => {
     e.preventDefault()
 
@@ -66,13 +59,11 @@ const UniswapLpModal = ({ safeAddress, safeOwners, tokenLogos }) => {
     const amountBDesired = amount(tokenBAmount, tokenBDecimals)
     const amountBMin = amount(tokenBAmount - tokenBAmount * slippage, tokenBDecimals)
 
-    const addressTo = safeAddress
-    const deadline = Math.floor(Date.now() / 1000) + 60 * 20
-
     if (pairHasEth.length === 0) {
-      createGnosisTransaction({
+      handleGnosisTransaction({
         executingContract: {
           abi: IUniswapV2Router02.abi,
+          instance: uniswapV2RouterContract02,
           arguments: {
             tokenA,
             tokenB,
@@ -80,17 +71,16 @@ const UniswapLpModal = ({ safeAddress, safeOwners, tokenLogos }) => {
             amountBDesired,
             amountAMin,
             amountBMin,
-            addressTo,
-            deadline,
-          }
+            addressTo: safeAddress,
+            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+          },
+          fn: "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)",
         },
-        instance: uniswapV2RouterContract02,
         signer,
         safeAddress,
         to: pair?.liquidityToken?.address,
-        value: liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(
-            liquidityInfo?.transactionInfo?.[1]?.amountInWei
-        )?._hex
+        value: liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei)
+          ?._hex,
       })
     } else {
       //     function addLiquidityETH(
@@ -103,18 +93,6 @@ const UniswapLpModal = ({ safeAddress, safeOwners, tokenLogos }) => {
       // ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
     }
     // https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
-  }
-
-  /* Get Total Supply of LP pair on-chain  */
-  const totalPairSupply = async pair => {
-    /* create a generic provider and query for unsold market items */
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const contract = new ethers.Contract(pair.liquidityToken.address, IUniswapV2ERC20.abi, provider)
-    return await contract.totalSupply()
-  }
-  /* Human Readable Token Balance  */
-  const readableTokenBalance = token => {
-    return Number((token?.balance / 10 ** token?.token?.decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
   }
 
   /*  Construct object of selected tokens represented as Uniswap Token Objects */
@@ -168,11 +146,13 @@ const UniswapLpModal = ({ safeAddress, safeOwners, tokenLogos }) => {
           token1: token1,
           token1Input: token1Input,
           token1ETHConversion: pairToken.ethValue,
+          abi: IUniswapV2ERC20.abi,
         })
         setLiquidityInfo(liquidityInfo)
       }
     }
   }
+
   /* Handle setting max token values and retrieving liquidity pair information  */
   const handleSetMaxTokenValue = async (token, tokenRef) => {
     const token0 = uniswapTokens[token.token.symbol]
@@ -203,57 +183,9 @@ const UniswapLpModal = ({ safeAddress, safeOwners, tokenLogos }) => {
         token1: token1,
         token1Input: token1Input,
         token1ETHConversion: pairToken.ethValue,
+        abi: IUniswapV2ERC20.abi,
       })
       setLiquidityInfo(liquidityInfo)
-    }
-  }
-  /* Handle interaction with Uniswap to get LP information  */
-  const getLiquidityPairInfo = async ({
-    pair,
-    token0,
-    token0Input,
-    token0ETHConversion,
-    token1,
-    token1Input,
-    token1ETHConversion,
-  }) => {
-    if (!!pair) {
-      const total = await totalPairSupply(pair)
-      const totalTokenAmount = await new TokenAmount(pair.liquidityToken, total)
-      const token0Amount = await new TokenAmount(token0, amount(token0Input, token0?.decimals))
-      const token0AmountInEth = (token0Input * token0ETHConversion).toFixed(token0?.decimals).toString()
-      const token1Amount = await new TokenAmount(token1, amount(token1Input, token1?.decimals))
-      const token1AmountInEth = (token1Input * token1ETHConversion).toFixed(token1?.decimals).toString()
-      const uniswapTokensMinted = pair
-        ?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount)
-        .toFixed(pair.liquidityToken.decimals)
-      const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(pair.liquidityToken.decimals)
-      const uniswapPairURI = `https://v2.info.uniswap.org/pair/${pair.liquidityToken.address}`
-      const etherscanURI = `https://etherscan.io/address/${pair.liquidityToken.address}`
-
-      const transactionInfo = [
-        {
-          token: token0,
-          amount: Number(token0Input),
-          amountInWei: ethers.utils.parseEther(token0AmountInEth),
-        },
-        {
-          token: token1,
-          amount: Number(token1Input),
-          amountInWei: ethers.utils.parseEther(token1AmountInEth),
-        },
-      ]
-
-      return {
-        percentageOfPool,
-        total: formatUnits(BigNumber.from(total._hex)),
-        transactionInfo,
-        uniswapTokensMinted,
-        uris: {
-          uniswap: uniswapPairURI,
-          etherscan: etherscanURI,
-        },
-      }
     }
   }
 

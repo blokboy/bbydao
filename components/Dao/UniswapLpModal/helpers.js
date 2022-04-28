@@ -1,11 +1,11 @@
-import SafeServiceClient     from '@gnosis.pm/safe-service-client'
-import { ChainId }           from "@uniswap/sdk"
-import axios                 from "axios"
-import CPK, {EthersAdapter}  from 'contract-proxy-kit'
-import { toChecksumAddress } from "ethereumjs-util"
-
-import {ethers, utils} from "ethers"
-import GnosisSafeSol   from '../../../ABIs/gnosisSafe.json'
+import SafeServiceClient      from "@gnosis.pm/safe-service-client"
+import {ChainId, TokenAmount} from "@uniswap/sdk"
+import GnosisSafeSol          from "ABIs/gnosisSafe.json"
+import axios                  from "axios"
+import CPK, {EthersAdapter}   from "contract-proxy-kit"
+import {toChecksumAddress}    from "ethereumjs-util"
+import {BigNumber, ethers}    from "ethers"
+import {formatUnits}          from "ethers/lib/utils"
 
 const EIP712_SAFE_TX_TYPE = {
   // "SafeTx(address to,uint256 value,bytes data,uint8 operation,uint256 safeTxGas,uint256 baseGas,uint256 gasPrice,address gasToken,address refundReceiver,uint256 nonce)"
@@ -22,9 +22,6 @@ const EIP712_SAFE_TX_TYPE = {
     { type: "uint256", name: "nonce" },
   ],
 }
-const chainId = ChainId.MAINNET
-export const calculateSafeTxHash = (safeAddress, safeTx) =>
-  utils._TypedDataEncoder.hash({ verifyingContract: safeAddress, chainId }, EIP712_SAFE_TX_TYPE, safeTx)
 
 const generateTypedDataFrom = async ({
   baseGas,
@@ -164,33 +161,18 @@ export const saveTxToHistory = async ({
   const response = await axios.post(url, body)
 
   if (response.status !== 201) {
-    return Promise.reject(new Error("Error submitting the transaction"))
+    return undefined
   }
 
   if (response.status === 201) {
-    console.log("safeInstance", safeInstance)
-    // const execute = safeInstance.executeTransaction({
-    //   to: body.to,
-    //   value: body.value,
-    //   data: body.data,
-    //   operation: body.operation,
-    //   safeTxGas: body.safeTxGas,
-    //   baseGas: body.baseGas,
-    //   gasPrice: body.gasPrice,
-    //   gasToken: body.gasToken,
-    //   refundReceiver: body.refundReceiver,
-    //   signature,
-    // })
-    return {
-      safeTx: [
-        {
-          to: body.to,
-          value: body.value,
-          data: body.data,
-          operation: body.operation,
-        },
-      ],
-    }
+    return [
+      {
+        to: body.to,
+        value: body.value,
+        data: body.data,
+        operation: body.operation,
+      },
+    ]
   }
 }
 
@@ -200,34 +182,22 @@ const SIGNATURE_TYPE = "01"
 const CALL = 0
 export const getPreValidatedSignature = (from, initialString = EMPTY_DATA) => {
   return `${initialString}000000000000000000000000${from.replace(
-      EMPTY_DATA,
-      ""
+    EMPTY_DATA,
+    ""
   )}0000000000000000000000000000000000000000000000000000000000000000${SIGNATURE_TYPE}`
 }
 // https://docs.gnosis-safe.io/contracts/signatures
 
-export const constructDataFromContract = (contract) => {
+export const constructDataFromContract = contract => {
   /* Encode uniswap addLiquidity function with input contract.arguments  */
   const fragments = contract.instance.interface.functions
   let abi = new ethers.utils.Interface(contract.abi)
-  const data = abi.encodeFunctionData(
-      fragments["addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)"],
-      [
-        contract.arguments.tokenA,
-        contract.arguments.tokenB,
-        contract.arguments.amountADesired,
-        contract.arguments.amountBDesired,
-        contract.arguments.amountAMin,
-        contract.arguments.amountBMin,
-        contract.arguments.addressTo,
-        contract.arguments.deadline,
-      ]
-  )
+  const data = abi.encodeFunctionData(fragments[contract.fn], Object.values(contract.arguments))
 
-  return {data}
+  return { data }
 }
 
-export const createGnosisTransaction = async ({ executingContract, signer, safeAddress, to, value }) => {
+export const handleGnosisTransaction = async ({ executingContract, signer, safeAddress, to, value }) => {
   const safeService = new SafeServiceClient("https://safe-transaction.gnosis.io")
 
   if (!!signer) {
@@ -245,7 +215,7 @@ export const createGnosisTransaction = async ({ executingContract, signer, safeA
     const signature = getPreValidatedSignature(signer._address)
 
     /* Encode Data */
-    const {data} = constructDataFromContract(executingContract)
+    const { data } = constructDataFromContract(executingContract)
 
     /*  construct gnosis transaction object  */
     let txHash
@@ -265,9 +235,6 @@ export const createGnosisTransaction = async ({ executingContract, signer, safeA
       sigs: signature,
     }
 
-    /*  generate transaction hash  */
-    // const safeTxHash = calculateSafeTxHash(safeAddress, { ...safeTx, value: safeTx.valueInWei })
-
     if (!!safeTx.data && !!safeTx.valueInWei) {
       const threshold = await bbyDaoSafe?.getThreshold()
       if (threshold.toNumber() > 1) {
@@ -277,8 +244,9 @@ export const createGnosisTransaction = async ({ executingContract, signer, safeA
           const signature = await getEIP712Signature(safeTx, safeAddress, signer)
           if (signature) {
             const tx = await saveTxToHistory({ ...safeTx, signature })
-            if (Array.isArray(tx.safeTx) && tx?.safeTx?.length === 1) {
-              const execute = await cpk.execTransactions(tx.safeTx)
+
+            if (Array.isArray(tx) && tx?.length === 1) {
+              const execute = await cpk.execTransactions(tx)
               console.log("created", execute)
             }
           }
@@ -291,3 +259,68 @@ export const createGnosisTransaction = async ({ executingContract, signer, safeA
   }
 }
 
+export const amount = (amount, decimals) => Math.round(amount * 10 ** decimals).toString()
+
+/* Human Readable Token Balance  */
+export const readableTokenBalance = token => {
+  return Number((token?.balance / 10 ** token?.token?.decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
+}
+
+const totalPairSupply = async (pair, abi) => {
+  /* create a generic provider and query for unsold market items */
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const contract = new ethers.Contract(pair.liquidityToken.address, abi, provider)
+  return contract.totalSupply()
+}
+
+/* Handle interaction with Uniswap to get LP information  */
+export const getLiquidityPairInfo = async ({
+  pair,
+  token0,
+  token0Input,
+  token0ETHConversion,
+  token1,
+  token1Input,
+  token1ETHConversion,
+  abi,
+}) => {
+  if (!!pair) {
+    /* Get Total Supply of LP pair on-chain  */
+    const total = await totalPairSupply(pair, abi)
+    const totalTokenAmount = await new TokenAmount(pair.liquidityToken, total)
+    const token0Amount = await new TokenAmount(token0, amount(token0Input, token0?.decimals))
+    const token0AmountInEth = (token0Input * token0ETHConversion).toFixed(token0?.decimals).toString()
+    const token1Amount = await new TokenAmount(token1, amount(token1Input, token1?.decimals))
+    const token1AmountInEth = (token1Input * token1ETHConversion).toFixed(token1?.decimals).toString()
+    const uniswapTokensMinted = pair
+      ?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount)
+      .toFixed(pair.liquidityToken.decimals)
+    const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(pair.liquidityToken.decimals)
+    const uniswapPairURI = `https://v2.info.uniswap.org/pair/${pair.liquidityToken.address}`
+    const etherscanURI = `https://etherscan.io/address/${pair.liquidityToken.address}`
+
+    const transactionInfo = [
+      {
+        token: token0,
+        amount: Number(token0Input),
+        amountInWei: ethers.utils.parseEther(token0AmountInEth),
+      },
+      {
+        token: token1,
+        amount: Number(token1Input),
+        amountInWei: ethers.utils.parseEther(token1AmountInEth),
+      },
+    ]
+
+    return {
+      percentageOfPool,
+      total: formatUnits(BigNumber.from(total._hex)),
+      transactionInfo,
+      uniswapTokensMinted,
+      uris: {
+        uniswap: uniswapPairURI,
+        etherscan: etherscanURI,
+      },
+    }
+  }
+}
