@@ -83,7 +83,11 @@ const Dao = ({ data }) => {
             <EditDaoMemberModal safeAddress={data?.safeInfo.address} />
           )}
           {uniswapLpModalOpen && (
-            <UniswapLpModal safeAddress={data?.safeInfo.address} tokenLogos={tokenLogos}  />
+            <UniswapLpModal
+                safeAddress={data?.safeInfo.address}
+                safeOwners={data?.safeInfo.owners}
+                tokenLogos={tokenLogos}
+            />
           )}
           {uniswapSwapModalOpen && (
             <UniswapSwapModal safeAddress={data?.safeInfo.address} />
