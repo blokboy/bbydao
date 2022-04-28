@@ -5,14 +5,12 @@ import { HiCheckCircle, HiPencilAlt } from "react-icons/hi"
 import { useMutation, useQueryClient } from "react-query"
 import { walletSnippet } from "utils/helpers"
 
-const DaoName = ({ safe, isMember, loading }) => {
+const DaoName = ({ safe, isMember, daoData, daoIsLoading }) => {
   const [isEditable, setIsEditable] = useState(false)
   const { state, setState, handleChange } = useForm()
   
-  // useQueryClient to query for the dao data (fetched in DaoCard/index.js)
-  // also used to invalidate and refetch the dao data when the dao name is changed
+  // useQueryClient used to invalidate and refetch the dao data when the dao name is changed
   const queryClient = useQueryClient()
-  const daoData = queryClient.getQueryData(["dao", safe])
   
   React.useEffect(() => {
     if (!!daoData?.name) setState({ name: daoData.name })
@@ -51,7 +49,7 @@ const DaoName = ({ safe, isMember, loading }) => {
       <div className="text-2xl">
         <form className="flex flex-col">
           <input
-            value={loading ? " " : daoData?.name === undefined ? walletSnippet(safe) : state.name}
+            value={daoIsLoading ? " " : daoData?.name === undefined ? walletSnippet(safe) : state.name}
             onChange={handleChange}
             onFocus={handleFocus}
             name={"name"}
