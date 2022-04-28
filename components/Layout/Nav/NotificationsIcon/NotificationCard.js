@@ -50,7 +50,6 @@ const NotificationCard = ({ ...props }) => {
 
   React.useEffect(() => {
     if (seen || !notificationsOpen) return
-    console.log("is visible")
     updateNotifSeen()
   }, [isVisible]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
@@ -59,7 +58,6 @@ const NotificationCard = ({ ...props }) => {
       id: id,
       seen: true,
     }
-    console.log("mutate func:", req)
     // updateNotif.mutateAsync(req)
   }
 

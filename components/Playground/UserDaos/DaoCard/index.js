@@ -10,15 +10,26 @@ import DaoCardExpanded from "./DaoCardExpanded/index"
 
 import { usePlaygroundStore } from "/stores/usePlaygroundStore"
 
-import * as api from "/query/gnosisQuery"
+import * as api from "/query"
+import * as gnosisApi from "/query/gnosisQuery"
 import { useQuery } from "react-query"
 
 const DaoCard = ({ user, safe }) => {
+  // dao data from our backend
+  const { data, isLoading: daoDataLoading } = useQuery(["dao", safe], () => api.getDao({ address: safe }), {
+    staleTime: 180000,
+    refetchOnWindowFocus: false,
+  })
+
+  // daoMembers data from gnosisApi
   const {
     data: daoMembersData,
     error: daoMembersErr,
     isLoading: daoMembersLoading,
-  } = useQuery(["daoMembers", safe], () => api.daoMembers(safe), { staleTime: 200000, refetchOnWindowFocus: false })
+  } = useQuery(["daoMembers", safe], () => gnosisApi.daoMembers(safe), {
+    staleTime: 200000,
+    refetchOnWindowFocus: false,
+  })
 
   // check if user is in daoMembersData
   const isMember = daoMembersData?.includes(user)
@@ -26,20 +37,20 @@ const DaoCard = ({ user, safe }) => {
   const daoExpanded = usePlaygroundStore(state => state.daoExpanded)
 
   return (
-    <div className="flex flex-col dark:bg-slate-800 bg-slate-200 rounded-xl p-3 m-3">
+    <div className="m-3 flex flex-col rounded-xl bg-slate-200 p-3 dark:bg-slate-800">
       <DaoUtilityBar />
       {/* Pfp and Members Section */}
       <div className="flex w-full flex-col lg:flex-row">
         <DaoPfpIcon isMember={isMember} />
-        <DaoPfp />
+        <DaoPfp address={safe} />
         {/* TODO: loading and error states */}
         <DaoMembers owners={daoMembersData} />
       </div>
 
       {/* Dao Balance + Expand Dao Section */}
-      <div className="flex flex-row justify-between items-end">
-        <div className="flex flex-col w-">
-          <DaoName isMember={isMember} safe={safe} />
+      <div className="flex flex-row items-end justify-between">
+        <div className="flex flex-col">
+          <DaoName isMember={isMember} safe={safe} loading={daoDataLoading} />
           <DaoBalance safe={safe} />
         </div>
         <ExpandDao safe={safe} />

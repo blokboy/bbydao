@@ -10,7 +10,7 @@ const UserResults = ({ hits }) => {
       <span className="px-2 font-semibold">Users:</span>
       <div className="grid grid-cols-1 gap-4 px-2 pt-2 md:grid-cols-2">
         {hits.map((hit, index) => (
-          <Link key={index} href={`/${encodeURIComponent(hit.address)}`}>
+          <Link key={index} href={`/playground/${encodeURIComponent(hit.address)}`}>
             <a onClick={setSearchOpen}>
               <div className="flex h-16 flex-row rounded bg-slate-300 shadow dark:bg-slate-800 items-center justify-center">
                   <div className="rounded-full h-10 w-10 border border-white"></div>
