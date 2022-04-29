@@ -9,18 +9,37 @@ import UserPanel from "./UserPanel"
 const Playground = ({ address, data }) => {
   // data is the res from querying gnosis for the user's daos
   // address is the address of the profile being viewed
-  // data:userData is the data of the signed-in user
+  // data: userData is the data of the signed-in user
   const [{ data: userData, error: userErr, loading: userLoading }] = useAccount()
   const [{ data: ensData, error: ensError, loading: ensLoading }] = useEnsLookup({ address: address })
 
-  const { status, mutateAsync: getUser } = useMutation(api.getUser)
+  // getUser sends a POST req to our api with the address of the profile being viewed
+  // if that address does not exist in our backend, it creates a new user record
+  const { mutateAsync: updateUser } = useMutation(api.updateUser)
+  const {
+    data: getUserData,
+    status: getUserStatus,
+    mutateAsync: getUser,
+  } = useMutation(api.getUser, {
+    // working out how to access this, how we can treat it the same as the data from a useQuery
+    mutationKey: ["user data", address],
+  })
+
+  // this useEffect is intended to fire when ensLoading from wagmi is false (to see if an ens lookup was successful)
+  // if the ens lookup was successful, and the user ens on our backend does not match the ens lookup from wagmi,
+  // we update the user's ens on our backend to match the ens lookup from wagmi
   React.useEffect(() => {
     if (ensLoading) {
       return
     }
     const req = { address: address, ens: ensData }
-    // see if we can adjust our getUser function to update ens
-    getUser(req)
+    getUser(req, {
+      onSuccess: () => {
+        if (getUserData?.ens !== ensData) {
+          updateUser({ id: getUserData.id, ens: ensData })
+        }
+      },
+    })
   }, [ensLoading])
 
   // i think there's an opportunity to toggle UserDaos out for another set of components
