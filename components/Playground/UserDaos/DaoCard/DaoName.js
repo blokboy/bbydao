@@ -1,12 +1,12 @@
 import useForm from "hooks/useForm"
 import * as api from "query"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { HiCheckCircle, HiPencilAlt } from "react-icons/hi"
 import { useMutation, useQueryClient } from "react-query"
 import { walletSnippet } from "utils/helpers"
 
 const DaoName = ({ safe, isMember, daoData, daoIsLoading }) => {
-  const [isEditable, setIsEditable] = useState(false)
+  const [isEditable, setIsEditable] = React.useState(false)
   const { state, setState, handleChange } = useForm()
   
   // useQueryClient used to invalidate and refetch the dao data when the dao name is changed
@@ -58,7 +58,6 @@ const DaoName = ({ safe, isMember, daoData, daoIsLoading }) => {
             } rounded-xl p-2 font-bold ${isEditable ? "shadow-inner" : ""}`}
             disabled={!isEditable}
             type="text"
-            autoFocus
           />
         </form>
       </div>
