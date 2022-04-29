@@ -34,7 +34,6 @@ export const getUserFeed = async req => {
 // { id: string, ens: string }
 export const updateUser = async req => {
   const res = await api.put("/accounts", req)
-  console.log("query: Update User", res.data)
   return res.data
 }
 
