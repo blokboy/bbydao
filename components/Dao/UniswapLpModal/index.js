@@ -29,9 +29,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0.token.symbol)[0].uri
   const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1.token.symbol)[0].uri
   const supplyDisabled = !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1
-
-  // Close function provided to <Modal /> component
-  const closeUniswapLpModal = e => {
+  const closeUniswapLpModal = () => {
     setLpToken0({})
     setLpToken1({})
     setUniswapLpModalOpen()
@@ -64,7 +62,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
         executingContract: {
           abi: IUniswapV2Router02.abi,
           instance: uniswapV2RouterContract02,
-          arguments: {
+          args: {
             tokenA,
             tokenB,
             amountADesired,

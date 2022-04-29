@@ -1,11 +1,12 @@
-import SafeServiceClient      from "@gnosis.pm/safe-service-client"
-import {ChainId, TokenAmount} from "@uniswap/sdk"
-import GnosisSafeSol          from "ABIs/gnosisSafe.json"
-import axios                  from "axios"
-import CPK, {EthersAdapter}   from "contract-proxy-kit"
-import {toChecksumAddress}    from "ethereumjs-util"
-import {BigNumber, ethers}    from "ethers"
-import {formatUnits}          from "ethers/lib/utils"
+import SafeServiceClient        from "@gnosis.pm/safe-service-client"
+import { ChainId, TokenAmount } from "@uniswap/sdk"
+import GnosisSafeSol            from "ABIs/gnosisSafe.json"
+import axios                    from "axios"
+import CPK, { EthersAdapter }   from "contract-proxy-kit"
+import { toChecksumAddress }    from "ethereumjs-util"
+import { BigNumber, ethers }    from "ethers"
+import { formatUnits }          from "ethers/lib/utils"
+import {isEmpty}                from '../../../utils/helpers'
 
 const EIP712_SAFE_TX_TYPE = {
   // "SafeTx(address to,uint256 value,bytes data,uint8 operation,uint256 safeTxGas,uint256 baseGas,uint256 gasPrice,address gasToken,address refundReceiver,uint256 nonce)"
@@ -36,34 +37,27 @@ const generateTypedDataFrom = async ({
   valueInWei,
 }) => {
   return {
-    message: {
-      to,
-      value: valueInWei,
-      data,
-      operation,
-      safeTxGas,
-      baseGas,
-      gasPrice,
-      gasToken,
-      refundReceiver,
-      nonce: Number(nonce),
-    },
+    to,
+    value: valueInWei,
+    data,
+    operation,
+    safeTxGas,
+    baseGas,
+    gasPrice,
+    gasToken,
+    refundReceiver,
+    nonce: Number(nonce),
   }
 }
 
 export const getEIP712Signature = async (safeTx, safeAddress, signer) => {
-  let signature
   const chainId = signer.provider._network.chainId || ChainId.MAINNET
   const typedData = await generateTypedDataFrom(safeTx)
   const domain = {
     verifyingContract: safeAddress,
-    chainId,
+    chainId
   }
-  const message = typedData.message
-
-  signature = await signer._signTypedData(domain, EIP712_SAFE_TX_TYPE, message)
-
-  return signature
+  return await signer._signTypedData(domain, EIP712_SAFE_TX_TYPE, typedData)
 }
 
 const calculateBodyFrom = async (
@@ -161,18 +155,23 @@ export const saveTxToHistory = async ({
   const response = await axios.post(url, body)
 
   if (response.status !== 201) {
-    return undefined
+    return {}
   }
 
   if (response.status === 201) {
-    return [
-      {
-        to: body.to,
-        value: body.value,
-        data: body.data,
-        operation: body.operation,
-      },
-    ]
+    console.log('body', body)
+    return {
+      to: body.to,
+      valueInWei: body.value,
+      data: body.data,
+      operation: body.operation,
+      safeTxGas: body.safeTxGas,
+      baseGas: body.baseGas,
+      gasPrice: body.gasPrice,
+      gasToken: body.gasToken,
+      refundReceiver: body.refundReceiver,
+      signature: body.signature
+    }
   }
 }
 
@@ -192,7 +191,7 @@ export const constructDataFromContract = contract => {
   /* Encode uniswap addLiquidity function with input contract.arguments  */
   const fragments = contract.instance.interface.functions
   let abi = new ethers.utils.Interface(contract.abi)
-  const data = abi.encodeFunctionData(fragments[contract.fn], Object.values(contract.arguments))
+  const data = abi.encodeFunctionData(fragments[contract.fn], Object.values(contract.args))
 
   return { data }
 }
@@ -201,10 +200,6 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
   const safeService = new SafeServiceClient("https://safe-transaction.gnosis.io")
 
   if (!!signer) {
-    /*  Initialize Gnosis CPK - set in state */
-    const ethLibAdapter = new EthersAdapter({ ethers, signer })
-    const cpk = await CPK.create({ ethLibAdapter })
-
     /*  Initialize bbyDao Gnosis Safe Instance */
     const bbyDaoSafe = new ethers.Contract(safeAddress, GnosisSafeSol.abi, signer)
 
@@ -218,7 +213,6 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
     const { data } = constructDataFromContract(executingContract)
 
     /*  construct gnosis transaction object  */
-    let txHash
     const safeTx = {
       safeInstance: bbyDaoSafe,
       to: to,
@@ -244,10 +238,23 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
           const signature = await getEIP712Signature(safeTx, safeAddress, signer)
           if (signature) {
             const tx = await saveTxToHistory({ ...safeTx, signature })
+            console.log('TX', tx)
+            if (!isEmpty(tx)) {
+              console.log("tx", tx)
+              const execute = await bbyDaoSafe?.execTransaction(
+                tx.to,
+                tx.valueInWei,
+                tx.data,
+                tx.operation,
+                tx.safeTxGas,
+                tx.baseGas,
+                tx.gasPrice,
+                tx.gasToken,
+                tx.refundReceiver,
+                tx.signature
+              )
 
-            if (Array.isArray(tx) && tx?.length === 1) {
-              const execute = await cpk.execTransactions(tx)
-              console.log("created", execute)
+              console.log('exe', execute)
             }
           }
         } catch (err) {

@@ -8,12 +8,12 @@ import { walletSnippet } from "utils/helpers"
 const DaoName = ({ safe, isMember, loading }) => {
   const [isEditable, setIsEditable] = useState(false)
   const { state, setState, handleChange } = useForm()
-  
+
   // useQueryClient to query for the dao data (fetched in DaoCard/index.js)
   // also used to invalidate and refetch the dao data when the dao name is changed
   const queryClient = useQueryClient()
   const daoData = queryClient.getQueryData(["dao", safe])
-  
+
   React.useEffect(() => {
     if (!!daoData?.name) setState({ name: daoData.name })
   }, [daoData])
@@ -60,7 +60,7 @@ const DaoName = ({ safe, isMember, loading }) => {
             } rounded-xl p-2 font-bold ${isEditable ? "shadow-inner" : ""}`}
             disabled={!isEditable}
             type="text"
-            autoFocus
+           // autoFocus
           />
         </form>
       </div>
