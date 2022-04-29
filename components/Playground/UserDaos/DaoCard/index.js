@@ -40,13 +40,17 @@ const DaoCard = ({ user, safe }) => {
     return daoData ? daoData.imgUri : null
   }, [daoData])
 
+  const daoId = React.useMemo(() => {
+    return daoData ? daoData.id : null
+  }, [daoData])
+
   return (
     <div className="m-3 flex flex-col rounded-xl bg-slate-200 p-3 dark:bg-slate-800">
       <DaoUtilityBar />
       {/* Pfp and Members Section */}
       <div className="flex w-full flex-col lg:flex-row">
         <DaoPfpIcon isMember={isMember} />
-        <DaoPfp imgUri={imgUri} members={daoMembersData} address={safe} />
+        <DaoPfp daoId={daoId} imgUri={imgUri} members={daoMembersData} address={safe} />
         {/* TODO: loading and error states */}
         <DaoMembers owners={daoMembersData} />
       </div>

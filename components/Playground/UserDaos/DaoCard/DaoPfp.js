@@ -8,7 +8,7 @@ import { useMutation, useQueryClient } from "react-query"
 import * as api from "query"
 import useCollectibles from "../../../../hooks/useCollectibles"
 
-const DaoPfp = ({ address, imgUri, members }) => {
+const DaoPfp = ({ address, imgUri, members, daoId }) => {
   const [{ data: account }] = useAccount()
   const router = useRouter()
 
@@ -50,12 +50,18 @@ const DaoPfp = ({ address, imgUri, members }) => {
   }, [])
 
   const handleUpdate = React.useCallback(() => {
-    if (!selectedImg) {
+    if (!selectedImg || !daoId) {
       return
     }
-    // TODO grab DAO id as either props or make hook so that this call works
-    updateDao({ imgUri: selectedImg })
-  }, [selectedImg, updateDao])
+    updateDao({ id: daoId, imgUri: selectedImg })
+  }, [selectedImg, daoId, updateDao])
+
+  const handleRemoval = React.useCallback(() => {
+    if (!imgUri || !daoId) {
+      return
+    }
+    updateDao({ id: daoId, imgUri: null })
+  }, [imgUri, daoId])
 
   React.useEffect(() => {
     if (isMember) {
@@ -74,13 +80,13 @@ const DaoPfp = ({ address, imgUri, members }) => {
             <div className="w-full max-w-2xl rounded-xl bg-slate-200 px-4 py-8 shadow-lg dark:bg-slate-900">
               <h2 className="text-center text-lg">Update bbyDAO Profile Picture</h2>
               <p className="mt-2 text-center font-light">Choose from any of your bbyDAO's NFTs</p>
-              <ul className="mt-8 md:grid md:w-auto md:grid-cols-3 md:gap-4">
+              <ul className="mt-8 h-72 overflow-y-scroll md:grid md:w-auto md:grid-cols-3 md:gap-4">
                 {collectibles.map(nft => (
-                  <li key={nft.address} className="mt-4 w-full md:mt-0 md:w-auto">
+                  <li key={nft.address} className="mt-4 w-full px-4 md:mt-0 md:w-auto">
                     <button
                       type="button"
                       onClick={selectedImg === nft.imageUri ? () => deselectImg() : () => selectImg(nft.imageUri)}
-                      className={`m-auto flex h-full h-48 w-48 flex-col items-center justify-center rounded border border-2 border-transparent p-4 duration-200 hover:border-black ${
+                      className={`m-auto flex h-full h-48 w-full flex-col items-center justify-center rounded border border-2 border-transparent p-4 duration-200 hover:border-black md:w-48 ${
                         selectedImg === nft.imageUri ? "border-black" : ""
                       }`}
                     >
@@ -92,17 +98,25 @@ const DaoPfp = ({ address, imgUri, members }) => {
                   </li>
                 ))}
               </ul>
-              <div className="mt-8 flex items-center justify-center">
+              <div className="mt-8 flex flex-col-reverse items-center justify-center md:flex-row">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="mr-4 w-32 rounded-lg bg-slate-100 px-4 py-2 text-center font-bold shadow-lg dark:bg-slate-600"
+                  className="mt-4 w-full rounded-lg bg-slate-100 px-4 py-2 text-center font-bold shadow-lg dark:bg-slate-600 md:mt-0 md:mr-4 md:w-32"
                 >
                   cancel
                 </button>
                 <button
                   type="button"
-                  className="w-32 rounded-lg bg-green-400 px-4 py-2 text-center font-bold shadow-lg disabled:opacity-75"
+                  className="mt-4 w-full rounded-lg bg-red-600 px-4 py-2 text-center font-bold text-white shadow-lg disabled:opacity-75 md:mr-4 md:mt-0 md:w-32"
+                  disabled={imgUri === null}
+                  onClick={handleRemoval}
+                >
+                  remove
+                </button>
+                <button
+                  type="button"
+                  className="w-full rounded-lg bg-green-600 px-4 py-2 text-center font-bold text-white shadow-lg disabled:opacity-75 md:w-32"
                   onClick={handleUpdate}
                   disabled={selectedImg === null}
                 >
@@ -114,7 +128,15 @@ const DaoPfp = ({ address, imgUri, members }) => {
           document.querySelector("body")
         )
       : null
-  }, [isOpen, selectedImg, selectImg, deselectImg, handleUpdate])
+  }, [isOpen, selectedImg, selectImg, deselectImg, handleUpdate, imgUri, handleRemoval])
+
+  const imgDisplay = React.useMemo(() => {
+    return imgUri ? (
+      <img src={imgUri} alt="" className="h-auto w-full" />
+    ) : (
+      <Davatar size={144} address={address} generatedAvatarType="blockies" />
+    )
+  }, [imgUri])
 
   return (
     <>
@@ -126,7 +148,7 @@ const DaoPfp = ({ address, imgUri, members }) => {
         disabled={!isMember}
         onClick={openModal}
       >
-        <Davatar size={144} address={address} generatedAvatarType="blockies" />
+        {imgDisplay}
       </button>
       {modal}
     </>
