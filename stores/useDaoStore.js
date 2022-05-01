@@ -24,4 +24,8 @@ export const useDaoStore = create(set => ({
   // lpToken 1
   lpToken1: {},
   setLpToken1: lpToken1 => set(state => ({ lpToken1 })),
+
+  // bbyDao to bbyDao follow modal display
+  followModalOpen: false,
+  setFollowModalOpen: () => set(state => ({ followModalOpen : !state.followModalOpen}))
 }))
