@@ -36,6 +36,14 @@ export const customStyles = {
     ...provided,
     color: document.documentElement.className === "dark" ? "#fff" : "#2d3748",
     backgroundColor:
+      document.documentElement.className === "dark" ? "#2d3748" : "#fff",
+    borderWidth: "0.5px",
+    borderRadius: "0.25rem",
+  }),
+  multiValueRemove: (provided, state) => ({
+    ...provided,
+    color: document.documentElement.className === "dark" ? "#fff" : "#2d3748",
+    backgroundColor:
       document.documentElement.className === "dark" ? "rgb(15 23 42)" : "#fff",
     borderWidth: "0.5px",
     borderRadius: "0.25rem",
