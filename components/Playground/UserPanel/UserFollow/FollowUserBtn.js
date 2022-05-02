@@ -1,7 +1,6 @@
 import React from "react"
 import { BiUserPlus } from "react-icons/bi"
 import { BiUserCheck } from "react-icons/bi"
-
 import * as api from "/query"
 import { useMutation, useQueryClient } from "react-query"
 
