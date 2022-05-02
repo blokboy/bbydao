@@ -11,7 +11,7 @@ const UserPanel = ({ user, address }) => {
       <Pfp address={address} />
       <AddressEns address={address}/>
       <UserFollow user={user} address={address} />
-      <CreateBbyDaoBtn />
+      {user === address ? <CreateBbyDaoBtn /> : null}
     </div>
   )
 }

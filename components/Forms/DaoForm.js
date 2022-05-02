@@ -4,14 +4,17 @@ import { customStyles } from "./customStyles"
 import useForm from "hooks/useForm"
 import { HiX } from "react-icons/hi"
 import { useUiStore } from "stores/useUiStore"
-import { useConnect } from "wagmi"
+import { useConnect, useAccount } from "wagmi"
 import { ethers } from "ethers"
 import { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
 import { Safe, SafeFactory, SafeAccountConfig } from "@gnosis.pm/safe-core-sdk"
 import * as api from "query"
 import { useQuery, useMutation } from "react-query"
 
-const DaoForm = ({ address }) => {
+const DaoForm = () => {
+  const [{ data: accountData, error: accountError, loading: accountLoading }, disconnect] = useAccount()
+  let address = accountData?.address
+
   const [txWaiting, setTxWaiting] = React.useState(false)
   const { state, setState, handleChange } = useForm()
   const [selectedOptions, setSelectedOptions] = React.useState([])
@@ -19,24 +22,17 @@ const DaoForm = ({ address }) => {
   const createDaoModalOpen = useUiStore(state => state.createDaoModalOpen)
   const setCreateDaoModalOpen = useUiStore(state => state.setCreateDaoModalOpen)
 
-  const { data: friendData } = useQuery(
-    ["friends", address],
-    () => api.getFriends({ initiator: address }),
-    {
-      refetchOnWindowFocus: false,
-      staleTime: 180000,
-    }
-  )
+  const { data: friendData } = useQuery(["friends", address], () => api.getFriends({ initiator: address }), {
+    refetchOnWindowFocus: false,
+    staleTime: 180000,
+  })
 
   const { status, mutateAsync } = useMutation(api.createDao)
 
   const friends = friendData?.map(friend => {
     return {
       value: friend.initiator === address ? friend.target : friend.initiator,
-      label:
-        friend.initiator === address
-          ? friend.targetEns || friend.target
-          : friend.initiatorEns,
+      label: friend.initiator === address ? friend.targetEns || friend.target : friend.initiatorEns,
     }
   })
 
@@ -62,8 +58,7 @@ const DaoForm = ({ address }) => {
     })
     const safeFactory = await SafeFactory.create({ ethAdapter })
     const owners = ownerList
-    const threshold =
-      ownerList.length === 2 ? 2 : Math.ceil(ownerList.length / 2)
+    const threshold = ownerList.length === 2 ? 2 : Math.ceil(ownerList.length / 2)
     const safeAccountConfig = {
       owners,
       threshold,
@@ -117,9 +112,7 @@ const DaoForm = ({ address }) => {
           <div className="mt-10 motion-safe:animate-[bounce_3s_ease-in-out_infinite]">
             <img alt="" src="/babydao.png" width={200} height={200} />
           </div>
-          <h1 className="animation animate-pulse text-xl">
-            please check your wallet...
-          </h1>
+          <h1 className="animation animate-pulse text-xl">please check your wallet...</h1>
         </div>
       </div>
     )
@@ -141,9 +134,7 @@ const DaoForm = ({ address }) => {
               <HiX />
             </button>
           </div>
-          <div className="mb-3 w-full text-center text-xl font-bold">
-            create your dao
-          </div>
+          <div className="mb-3 w-full text-center text-xl font-bold">create your dao</div>
 
           <div className="mb-3">
             <label className="mb-2 block text-sm font-bold" htmlFor="invites">
