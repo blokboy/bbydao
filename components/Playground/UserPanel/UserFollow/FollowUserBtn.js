@@ -10,7 +10,7 @@ const FollowUserBtn = ({ user, address, friendStatus }) => {
   // follow enum is 4
   // once request is sent (onSuccess), invalidate cached data and refetch
   const queryClient = useQueryClient()
-  const {status, mutateAsync} = useMutation(api.reqRelationship, {
+  const {status, mutateAsync: follow} = useMutation(api.reqRelationship, {
     onSuccess: async () => {
       await queryClient.invalidateQueries(["friends", address], {
         refetchActive: true,
@@ -24,14 +24,35 @@ const FollowUserBtn = ({ user, address, friendStatus }) => {
       target: address,
       status: 4,
     }
-    mutateAsync(req)
+    follow(req)
+  }
+
+  const {mutateAsync: unfollow} = useMutation(api.updateRelationship, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(["friends", address], {
+        refetchActive: true,
+      })
+    },
+  })
+  const handleUnfollow = () => {
+    if (!address || !user) return
+    const req = {
+      id: friendStatus?.data?.id,
+      initiator: user,
+      target: address,
+      status: 0,
+    }
+    unfollow(req)
   }
 
   if (friendStatus?.isFollowing) {
     return (
-      <button className="flex w-36 flex-row items-center justify-center space-x-3 rounded-lg border border-green-300 bg-slate-200 p-1 dark:border-green-300 dark:bg-slate-800" disabled>
+      <button 
+      className="flex w-36 flex-row items-center justify-center space-x-3 rounded-lg border border-slate-200 bg-slate-200 p-1 dark:border-slate-800 dark:bg-slate-800 hover:dark:bg-slate-700 hover:dark:border-red-300 hover:border-red-300"
+      onClick={handleUnfollow}
+      >
         <BiUserCheck size={18} />
-        <span>following</span>
+        <span>unfollow</span>
       </button>
     )
   }

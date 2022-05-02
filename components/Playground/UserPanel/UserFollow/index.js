@@ -1,7 +1,6 @@
 import React from "react"
 import UserFollowers from "./UserFollowers"
 import FollowUserBtn from "./FollowUserBtn"
-
 import useFriendData from "hooks/useFriendData"
 
 // user and address are passed down from the index Playground component
@@ -10,14 +9,13 @@ import useFriendData from "hooks/useFriendData"
 const UserFollow = ({ user, address }) => {
   // determine relationship of user to address
   const [friendData, { friendStatus }] = useFriendData(address)
-  console.log('friendData:',friendData)
+  console.log("friendData:", friendData)
 
   const parsedList = React.useMemo(() => {
     let list = []
     if (friendData) {
       for (const friend of friendData) {
-        console.log('friend', friend)
-        // relationship status = 4 (follower) 
+        // relationship status = 4 (follower)
         // & the address of the profile being viewed is not the initiator of the relationship
         if (friend.status === 4 && friend.initiator !== address) {
           list.push(friend)
@@ -30,8 +28,10 @@ const UserFollow = ({ user, address }) => {
   }, [friendData])
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-1">
-      <UserFollowers numFollowers={parsedList?.length} />
+    <div className="flex flex-col items-center justify-center space-y-2">
+      <div className="flex flex-row space-x-2">
+        <UserFollowers numFollowers={parsedList?.length} friendStatus={friendStatus} />
+      </div>
       {user === address ? null : <FollowUserBtn user={user} address={address} friendStatus={friendStatus} />}
     </div>
   )
