@@ -1,5 +1,6 @@
 import Nav from "./Nav"
-import Search from "./Search"
+import dynamic from 'next/dynamic'
+const Search = dynamic(() => import('./Search'))
 import { useLayoutStore } from "/stores/useLayoutStore"
 
 import ConnectModal from "./ConnectModal"

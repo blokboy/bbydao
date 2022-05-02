@@ -29,7 +29,7 @@ const FollowUserBtn = ({ user, address, friendStatus }) => {
 
   if (friendStatus?.isFollowing) {
     return (
-      <button className="flex w-28 flex-row items-center justify-center space-x-3 rounded-lg border border-green-300 bg-slate-200 p-1 dark:border-green-300 dark:bg-slate-800" disabled>
+      <button className="flex w-36 flex-row items-center justify-center space-x-3 rounded-lg border border-green-300 bg-slate-200 p-1 dark:border-green-300 dark:bg-slate-800" disabled>
         <BiUserCheck size={18} />
         <span>following</span>
       </button>
@@ -38,7 +38,7 @@ const FollowUserBtn = ({ user, address, friendStatus }) => {
 
   return (
     <button 
-    className="flex w-28 flex-row items-center justify-center space-x-3 rounded-lg border bg-slate-200 p-1 hover:border-teal-300 dark:border-slate-800 dark:bg-slate-800 dark:hover:border-teal-300 dark:hover:bg-slate-700"
+    className="flex w-36 flex-row items-center justify-center space-x-3 rounded-lg border bg-slate-200 p-1 hover:border-teal-300 dark:border-slate-800 dark:bg-slate-800 dark:hover:border-teal-300 dark:hover:bg-slate-700"
     onClick={handleFollow}
     >
       <BiUserPlus size={18} />
