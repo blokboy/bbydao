@@ -10,29 +10,28 @@ import useFriendData from "hooks/useFriendData"
 const UserFollow = ({ user, address }) => {
   // determine relationship of user to address
   const [friendData, { friendStatus }] = useFriendData(address)
+  console.log('friendData:',friendData)
 
   const parsedList = React.useMemo(() => {
-    let list = {
-      friends: [],
-      following: [],
-    }
-
+    let list = []
     if (friendData) {
       for (const friend of friendData) {
-        if (friend.status === 4) {
-          list.following.push(friend)
+        console.log('friend', friend)
+        // relationship status = 4 (follower) 
+        // & the address of the profile being viewed is not the initiator of the relationship
+        if (friend.status === 4 && friend.initiator !== address) {
+          list.push(friend)
         } else {
-          list.friends.push(friend)
+          null
         }
       }
     }
-
     return list
   }, [friendData])
 
   return (
     <div className="flex flex-col items-center justify-center space-y-1">
-      <UserFollowers numFollowers={parsedList?.following?.length} />
+      <UserFollowers numFollowers={parsedList?.length} />
       {user === address ? null : <FollowUserBtn user={user} address={address} friendStatus={friendStatus} />}
     </div>
   )
