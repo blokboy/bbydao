@@ -2,6 +2,7 @@ import React from "react"
 import Pfp from "./Pfp"
 import AddressEns from "./AddressEns"
 import UserFollow from "./UserFollow"
+import CreateBbyDaoBtn from './CreateBbyDaoBtn';
 
 const UserPanel = ({ user, address }) => {
 
@@ -10,6 +11,7 @@ const UserPanel = ({ user, address }) => {
       <Pfp address={address} />
       <AddressEns address={address}/>
       <UserFollow user={user} address={address} />
+      {user === address ? <CreateBbyDaoBtn /> : null}
     </div>
   )
 }
