@@ -124,7 +124,7 @@ const calculateBodyFrom = async (
     nonce,
     contractTransactionHash,
     sender: ethers.utils.getAddress(sender),
-    signature,
+    // signature,
     origin,
   }
 }
@@ -141,7 +141,7 @@ const safeTransactionV2GasEstimate = safeAddress => {
   return `https://safe-relay.gnosis.io/api/v1/safes/${address}/transactions/estimate/`
 }
 
-export const saveTxToHistory = async ({
+export const proposeAnExecuteTransaction = async ({
   baseGas,
   data,
   gasPrice,
@@ -152,7 +152,7 @@ export const saveTxToHistory = async ({
   refundReceiver,
   safeInstance,
   safeTxGas,
-    safeService,
+  safeService,
   sender,
   signature,
   to,
@@ -193,7 +193,7 @@ export const saveTxToHistory = async ({
     safeTransaction,
     safeTxHash,
     senderAddress: sender,
-    origin
+    origin,
   })
   const pendingTxs = await safeService.getPendingTransactions(safeInstance.address)
   const transaction = await safeService.getTransaction(safeTxHash)
@@ -203,13 +203,12 @@ export const saveTxToHistory = async ({
   await safeService.confirmTransaction(hash, sig.data)
   // const owner1Signature = await safeSdk.signTransaction(safeTransaction)
 
-
   const executeTxResponse = await safeSdk.executeTransaction(safeTransaction)
   const receipt = executeTxResponse.transactionResponse && (await executeTxResponse.transactionResponse.wait())
   console.log("e", safeTransaction)
   // console.log('o', owner1Signature)
   console.log("ex", executeTxResponse)
-  console.log('receip', receipt)
+  console.log("receip", receipt)
 
   // const response = await axios.post(url, body)
   // // const response = {status: 202}
@@ -270,8 +269,8 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
     const bbyDaoSafe = new ethers.Contract(safeAddress, GnosisSafeSol.abi, signer)
 
     /* last transaction made by bbyDAO */
-    const nonce = await safeService.getNextNonce(safeAddress)
-    // const nonce = 1
+    // const nonce = await safeService.getNextNonce(safeAddress)
+    const nonce = 3
 
     /* Pre-validated Gnosis signature */
     const signature = getPreValidatedSignature(signer._address)
@@ -288,43 +287,35 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
       safeInstance: bbyDaoSafe,
       to: to,
       valueInWei: value,
+      // valueInWei: 0,
       data: data,
       operation: CALL,
       nonce: nonce,
-      safeTxGas: 0,
+      // safeTxGas: 0,
       baseGas: 0,
-      gasPrice: 0,
+      // gasPrice: 0,
       gasToken: ZERO_ADDRESS,
       refundReceiver: ZERO_ADDRESS,
       sender: signer._address,
       signature,
+      //temp
+      gasPrice: 30,
+      safeTxGas: 200000,
     }
 
-    if (!!safeTx.data && !!safeTx.valueInWei) {
+    if (!!safeTx.data) {
       const threshold = await bbyDaoSafe?.getThreshold()
       if (threshold.toNumber() > 1) {
         /*  Reject or ask for approvals */
       } else {
         try {
-          const signature = await getEIP712Signature(safeTx, safeAddress, signer, bbyDaoSafe)
-          if (signature) {
-            const tx = await saveTxToHistory({ ...safeTx, signature })
-            if (!isEmpty(tx)) {
-              const execute = await bbyDaoSafe?.execTransaction(
-                tx.to,
-                tx.valueInWei.toString(),
-                tx.data,
-                tx.operation,
-                tx.safeTxGas,
-                tx.baseGas,
-                tx.gasPrice,
-                tx.gasToken,
-                tx.refundReceiver,
-                tx.signature
-              )
-              console.log("exe", execute)
-            }
-          }
+          const tx = await proposeAnExecuteTransaction({ ...safeTx, signature })
+
+          // const signature = await getEIP712Signature(safeTx, safeAddress, signer, bbyDaoSafe)
+          // if (signature) {
+          //   const tx = await saveTxToHistory({ ...safeTx, signature })
+          //
+          // }
         } catch (err) {
           console.error(`Error while creating transaction: ${err}`)
           throw err

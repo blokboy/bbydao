@@ -80,6 +80,15 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
         value: liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei)
           ?._hex,
       })
+
+      console.log('0', liquidityInfo?.transactionInfo?.[0] )
+      console.log('1', liquidityInfo?.transactionInfo?.[1] )
+
+      console.log('0', liquidityInfo?.transactionInfo?.[0].amountInWei )
+      console.log('1', liquidityInfo?.transactionInfo?.[1].amountInWei )
+
+
+
     } else {
       //     function addLiquidityETH(
       //         address token,
