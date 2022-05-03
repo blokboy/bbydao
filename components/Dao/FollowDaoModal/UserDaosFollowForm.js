@@ -1,39 +1,60 @@
 import React from "react"
+import { useMutation } from "react-query"
+import { reqRelationship } from "query"
 import DaoListItem from "./DaoListItem"
-import { getUserDao } from "query"
+import { useDaoStore } from "stores/useDaoStore"
 
 
-const UserDaosFollowForm = ({user, targetDao}) => {
+
+const UserDaosFollowForm = ({userDaos, targetDao}) => {
     {/* get the user's daos */}
     {/* list the user's daos */}
     {/* collect array of bbydao addresses */}
     {/* take each address and follow with map */}
-    const { status, mutateAsync } = useMutation(getUserDao)
+    const [selectedDaos, setSelectedDaos] = React.useState([])
+    const { data, status, mutate: followDao } = useMutation(reqRelationship, {
+        onSuccess: () => {
+            console.log(data)
+        }
+    })
+    const setFollowModalClosed = useDaoStore( state => state.setFollowModalOpen )
 
-
-
-    const handleSubmit = () => {
-        console.log("UserDaosFollowForm Submit")
-    }
+    const handleSubmit = React.useCallback(() => {
+        if (!userDaos) return
+        const selectedUserDaos = userDaos.filter((d, index) => selectedDaos.includes(index))
+        selectedUserDaos.map((dao)=>{
+            const req = { 
+                initiator: dao.address,
+                target: targetDao,
+                status: 5 
+            }
+            followDao(req)
+        })
+        setFollowModalClosed()
+    }, [userDaos])
+    
+    
+    
 
     const handleItemClick = (id) => {
         // get id and add to list
         // or remove 
-        console.log(id)
+        if(selectedDaos.includes(id)){
+            setSelectedDaos(selectedDaos.filter((e)=> e != id))
+        } else {
+            setSelectedDaos([id, ...selectedDaos])
+        }
     }
 
-
-
-
+    // TODO: sizing of modal and loading states
 
     return (
         <div className="w-full">
-            <p>Wait, you haven't joined any bbyDAOs yet :/</p>
             <ul className="list-none">
-                <DaoListItem daoName={"super bbyDAO"} isFollowing={true} id={1} onClick={handleItemClick.bind(this)} />
-                <DaoListItem daoName={"super saiyan bbyDAO"} id={2} onClick={handleItemClick.bind(this)} />
-                <DaoListItem daoName={"super saiyan God bbyDAO"} id={3} onClick={handleItemClick.bind(this)} />
-                <DaoListItem daoName={"super saiyan God super saiyan bbyDAO"} id={4} onClick={handleItemClick.bind(this)} />
+                {!userDaos && <p className="items-center">Wait, you haven't joined any bbyDAOs yet :/</p>}
+                {userDaos && userDaos.map((dao, index) => {
+                    return <DaoListItem daoName={dao.name} isFollowing={false} id={index} onClick={handleItemClick.bind(this)} />
+                })}
             </ul>
             
             <button
