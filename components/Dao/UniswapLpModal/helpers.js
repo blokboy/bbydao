@@ -1,15 +1,13 @@
-import SafeServiceClient        from "@gnosis.pm/safe-service-client"
+import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import { ChainId, TokenAmount } from "@uniswap/sdk"
-import GnosisSafeSol            from "ABIs/gnosisSafe.json"
-import axios                    from "axios"
-import CPK, { EthersAdapter }   from "contract-proxy-kit"
-import { toChecksumAddress }    from "ethereumjs-util"
-import { BigNumber, ethers }    from "ethers"
-import { formatUnits }          from "ethers/lib/utils"
-import {isEmpty}                from '../../../utils/helpers'
+import GnosisSafeSol from "@gnosis.pm/safe-contracts/build/artifacts/contracts/GnosisSafe.sol/GnosisSafe.json"
+import axios from "axios"
+import { BigNumber, ethers } from "ethers"
+import { formatUnits } from "ethers/lib/utils"
+import { isEmpty } from "utils/helpers"
+import { createSafeSdk } from "../../../utils/createSafeSdk"
 
-const EIP712_SAFE_TX_TYPE = {
-  // "SafeTx(address to,uint256 value,bytes data,uint8 operation,uint256 safeTxGas,uint256 baseGas,uint256 gasPrice,address gasToken,address refundReceiver,uint256 nonce)"
+export const EIP712_SAFE_TX_TYPE = {
   SafeTx: [
     { type: "address", name: "to" },
     { type: "uint256", name: "value" },
@@ -24,6 +22,18 @@ const EIP712_SAFE_TX_TYPE = {
   ],
 }
 
+export const hexToBytes = hexString => {
+  if (hexString.length % 2 !== 0) {
+    throw "Must have an even number of hex digits to convert to bytes"
+  }
+  let numBytes = hexString.length / 2
+  let byteArray = new Uint8Array(numBytes)
+  for (let i = 0; i < numBytes; i++) {
+    byteArray[i] = parseInt(hexString.substr(i * 2, 2), 16)
+  }
+  return byteArray
+}
+
 const generateTypedDataFrom = async ({
   baseGas,
   data,
@@ -36,17 +46,20 @@ const generateTypedDataFrom = async ({
   to,
   valueInWei,
 }) => {
+  const bytes = hexToBytes(data)
+  const value = parseInt(amount(ethers.utils.formatEther(valueInWei)))
+
   return {
-    to,
+    to: ethers.utils.getAddress(to),
     value: valueInWei,
-    data,
+    data: bytes,
     operation,
     safeTxGas,
     baseGas,
     gasPrice,
-    gasToken,
-    refundReceiver,
-    nonce: Number(nonce),
+    gasToken: ethers.utils.getAddress(gasToken),
+    refundReceiver: ethers.utils.getAddress(refundReceiver),
+    nonce: nonce,
   }
 }
 
@@ -54,10 +67,17 @@ export const getEIP712Signature = async (safeTx, safeAddress, signer) => {
   const chainId = signer.provider._network.chainId || ChainId.MAINNET
   const typedData = await generateTypedDataFrom(safeTx)
   const domain = {
+    chainId,
     verifyingContract: safeAddress,
-    chainId
   }
-  return await signer._signTypedData(domain, EIP712_SAFE_TX_TYPE, typedData)
+  const signature = await signer?._signTypedData(domain, EIP712_SAFE_TX_TYPE, typedData)
+  const recoveredAddress = ethers.utils.verifyTypedData(domain, EIP712_SAFE_TX_TYPE, typedData, signature)
+
+  /*  this confirms our signature is correct  */
+  console.log("recoveredAddress", recoveredAddress)
+  console.log("address", signer._address)
+
+  return signature
 }
 
 const calculateBodyFrom = async (
@@ -79,7 +99,7 @@ const calculateBodyFrom = async (
 ) => {
   const contractTransactionHash = await safeInstance.getTransactionHash(
     to,
-    valueInWei,
+    BigNumber.from(amount(parseFloat(ethers.utils.formatEther(valueInWei)))), // tho it seems a hexString is bigNumberish this fn seems to want a BN
     data,
     operation,
     safeTxGas,
@@ -91,9 +111,9 @@ const calculateBodyFrom = async (
   )
 
   return {
-    safe: toChecksumAddress(safeInstance.address),
-    to: toChecksumAddress(to),
-    value: parseInt(valueInWei),
+    safe: ethers.utils.getAddress(safeInstance.address),
+    to: ethers.utils.getAddress(to),
+    value: amount(parseFloat(ethers.utils.formatEther(valueInWei))),
     data,
     operation,
     gasToken,
@@ -103,7 +123,7 @@ const calculateBodyFrom = async (
     refundReceiver,
     nonce,
     contractTransactionHash,
-    sender: toChecksumAddress(sender),
+    sender: ethers.utils.getAddress(sender),
     signature,
     origin,
   }
@@ -111,9 +131,14 @@ const calculateBodyFrom = async (
 
 const getTxServiceUrl = () => "safe-transaction.gnosis.io/api/v1"
 const getSafeServiceBaseUrl = safeAddress => `https://${getTxServiceUrl()}/safes/${safeAddress}`
-const buildTxServiceUrl = safeAddress => {
-  const address = toChecksumAddress(safeAddress)
+const safeTransactionV1MultisigTransaction = safeAddress => {
+  const address = ethers.utils.getAddress(safeAddress)
   return `${getSafeServiceBaseUrl(address)}/multisig-transactions/?has_confirmations=True`
+}
+
+const safeTransactionV2GasEstimate = safeAddress => {
+  const address = ethers.utils.getAddress(safeAddress)
+  return `https://safe-relay.gnosis.io/api/v1/safes/${address}/transactions/estimate/`
 }
 
 export const saveTxToHistory = async ({
@@ -127,13 +152,14 @@ export const saveTxToHistory = async ({
   refundReceiver,
   safeInstance,
   safeTxGas,
+    safeService,
   sender,
   signature,
   to,
   txHash,
   valueInWei,
 }) => {
-  const url = buildTxServiceUrl(safeInstance.address)
+  const url = safeTransactionV1MultisigTransaction(safeInstance.address)
   const body = await calculateBodyFrom(
     safeInstance,
     to,
@@ -152,27 +178,60 @@ export const saveTxToHistory = async ({
     signature
   )
 
-  const response = await axios.post(url, body)
+  console.log("body", body)
 
-  if (response.status !== 201) {
-    return {}
-  }
+  // const gasEstimateUrl = await safeTransactionV2GasEstimate(safeInstance.address)
+  // const gasEstimate = await axios.post(gasEstimateUrl, {safe: safeInstance.address, to, value: parseFloat(amount(ethers.utils.formatEther(valueInWei))), data, operation, gasToken})
+  // console.log('gas', gasEstimate)
 
-  if (response.status === 201) {
-    console.log('body', body)
-    return {
-      to: body.to,
-      valueInWei: body.value,
-      data: body.data,
-      operation: body.operation,
-      safeTxGas: body.safeTxGas,
-      baseGas: body.baseGas,
-      gasPrice: body.gasPrice,
-      gasToken: body.gasToken,
-      refundReceiver: body.refundReceiver,
-      signature: body.signature
-    }
-  }
+  // /*  Use SDK instead of manually constructing all of this  */
+  const safeSdk = await createSafeSdk(safeInstance.address)
+  const safeTransaction = await safeSdk.createTransaction(body)
+  const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
+  await safeService.proposeTransaction({
+    safeAddress: safeInstance.address,
+    safeTransaction,
+    safeTxHash,
+    senderAddress: sender,
+    origin
+  })
+  const pendingTxs = await safeService.getPendingTransactions(safeInstance.address)
+  const transaction = await safeService.getTransaction(safeTxHash)
+
+  const hash = transaction?.safeTxHash
+  let sig = await safeSdk.signTransactionHash(hash)
+  await safeService.confirmTransaction(hash, sig.data)
+  // const owner1Signature = await safeSdk.signTransaction(safeTransaction)
+
+
+  const executeTxResponse = await safeSdk.executeTransaction(safeTransaction)
+  const receipt = executeTxResponse.transactionResponse && (await executeTxResponse.transactionResponse.wait())
+  console.log("e", safeTransaction)
+  // console.log('o', owner1Signature)
+  console.log("ex", executeTxResponse)
+  console.log('receip', receipt)
+
+  // const response = await axios.post(url, body)
+  // // const response = {status: 202}
+  // //
+  // if (response.status !== 201) {
+  //   return {}
+  // }
+  //
+  // if (response.status === 201) {
+  //   return {
+  //     to: body.to,
+  //     valueInWei: body.value,
+  //     data: body.data,
+  //     operation: body.operation,
+  //     safeTxGas: body.safeTxGas,
+  //     baseGas: body.baseGas,
+  //     gasPrice: body.gasPrice,
+  //     gasToken: body.gasToken,
+  //     refundReceiver: body.refundReceiver,
+  //     signature: body.signature,
+  //   }
+  // }
 }
 
 const EMPTY_DATA = "0x"
@@ -187,11 +246,18 @@ export const getPreValidatedSignature = (from, initialString = EMPTY_DATA) => {
 }
 // https://docs.gnosis-safe.io/contracts/signatures
 
-export const constructDataFromContract = contract => {
+/*
+
+
+
+ */
+export const contractInterface = contract => {
   /* Encode uniswap addLiquidity function with input contract.arguments  */
   const fragments = contract.instance.interface.functions
   let abi = new ethers.utils.Interface(contract.abi)
   const data = abi.encodeFunctionData(fragments[contract.fn], Object.values(contract.args))
+
+  console.log("args", contract.args, Object.values(contract.args))
 
   return { data }
 }
@@ -205,15 +271,20 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
 
     /* last transaction made by bbyDAO */
     const nonce = await safeService.getNextNonce(safeAddress)
+    // const nonce = 1
 
     /* Pre-validated Gnosis signature */
     const signature = getPreValidatedSignature(signer._address)
 
     /* Encode Data */
-    const { data } = constructDataFromContract(executingContract)
+    const { data } = contractInterface(executingContract)
+
+    // const safeTxGas = await bbyDaoSafe?.requiredTxGas(ethers.utils.getAddress(to),amount(parseFloat(ethers.utils.formatEther(value))), hexToBytes(data), CALL)
+    // console.log('safe', safeTxGas)
 
     /*  construct gnosis transaction object  */
     const safeTx = {
+      safeService,
       safeInstance: bbyDaoSafe,
       to: to,
       valueInWei: value,
@@ -226,7 +297,7 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
       gasToken: ZERO_ADDRESS,
       refundReceiver: ZERO_ADDRESS,
       sender: signer._address,
-      sigs: signature,
+      signature,
     }
 
     if (!!safeTx.data && !!safeTx.valueInWei) {
@@ -235,15 +306,13 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
         /*  Reject or ask for approvals */
       } else {
         try {
-          const signature = await getEIP712Signature(safeTx, safeAddress, signer)
+          const signature = await getEIP712Signature(safeTx, safeAddress, signer, bbyDaoSafe)
           if (signature) {
             const tx = await saveTxToHistory({ ...safeTx, signature })
-            console.log('TX', tx)
             if (!isEmpty(tx)) {
-              console.log("tx", tx)
               const execute = await bbyDaoSafe?.execTransaction(
                 tx.to,
-                tx.valueInWei,
+                tx.valueInWei.toString(),
                 tx.data,
                 tx.operation,
                 tx.safeTxGas,
@@ -253,8 +322,7 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
                 tx.refundReceiver,
                 tx.signature
               )
-
-              console.log('exe', execute)
+              console.log("exe", execute)
             }
           }
         } catch (err) {
@@ -266,7 +334,7 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
   }
 }
 
-export const amount = (amount, decimals) => Math.round(amount * 10 ** decimals).toString()
+export const amount = (amount, decimals) => Math.round(amount * 10 ** (decimals || 18)).toString()
 
 /* Human Readable Token Balance  */
 export const readableTokenBalance = token => {

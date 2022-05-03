@@ -1,14 +1,14 @@
 import { ChainId, Fetcher, Route, Token } from "@uniswap/sdk"
 import IUniswapV2ERC20 from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
-import Modal from "components/Layout/Modal"
-import { ethers } from "ethers"
-import useForm from "hooks/useForm"
+import Modal               from "components/Layout/Modal"
+import {BigNumber, ethers} from "ethers"
+import useForm             from "hooks/useForm"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useDaoStore } from "stores/useDaoStore"
-import { useSigner }                                                                 from "wagmi"
-import {amount, getLiquidityPairInfo, handleGnosisTransaction, readableTokenBalance} from "./helpers"
-import PoolInfo                                                                      from "./PoolInfo"
+import { useSigner, useSignTypedData } from "wagmi"
+import { amount, getLiquidityPairInfo, handleGnosisTransaction, readableTokenBalance } from "./helpers"
+import PoolInfo from "./PoolInfo"
 import TokenInput from "./TokenInput"
 
 const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
@@ -63,20 +63,20 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
           abi: IUniswapV2Router02.abi,
           instance: uniswapV2RouterContract02,
           args: {
-            tokenA,
-            tokenB,
-            amountADesired,
-            amountBDesired,
-            amountAMin,
-            amountBMin,
-            addressTo: safeAddress,
+            tokenA: ethers.utils.getAddress(tokenA),
+            tokenB: ethers.utils.getAddress(tokenB),
+            amountADesired: BigNumber.from(amountADesired),
+            amountBDesired:  BigNumber.from(amountBDesired),
+            amountAMin:  BigNumber.from(amountAMin),
+            amountBMin:  BigNumber.from(amountBMin),
+            addressTo: ethers.utils.getAddress(safeAddress),
             deadline: Math.floor(Date.now() / 1000) + 60 * 20,
           },
           fn: "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)",
         },
         signer,
         safeAddress,
-        to: pair?.liquidityToken?.address,
+        to: UniswapV2Router02,
         value: liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei)
           ?._hex,
       })
