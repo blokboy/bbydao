@@ -73,7 +73,7 @@ const UserDaos = ({ user, data }) => {
   if (userSafes.length && !expandedDao) {
     return (
       <div className="flex w-full flex-col lg:w-2/5 space-y-6">
-        <div className="text-3xl h-10 px-3">daos</div>
+        <div className="text-3xl h-10 px-3 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text font-semibold text-transparent">bbyDAOs</div>
         {userSafes.map((safe, index) => (
           <DaoCard key={index} user={user} safe={safe} />
         ))}

@@ -5,6 +5,7 @@ import DaoPfp from "./DaoPfp"
 import DaoBalance from "./DaoBalance"
 import DaoMembers from "./DaoMembers"
 import DaoName from "./DaoName"
+import DaoFollowers from "./DaoFollowers"
 import ExpandDao from "./ExpandDao"
 import DaoCardExpanded from "./DaoCardExpanded/index"
 
@@ -46,7 +47,7 @@ const DaoCard = ({ user, safe }) => {
 
   return (
     <div className="m-3 flex flex-col rounded-xl bg-slate-200 p-3 dark:bg-slate-800">
-      <DaoUtilityBar />
+      <DaoUtilityBar isMember={isMember} />
       {/* Pfp and Members Section */}
       <div className="flex w-full flex-col lg:flex-row">
         <DaoPfpIcon isMember={isMember} />
@@ -59,6 +60,7 @@ const DaoCard = ({ user, safe }) => {
       <div className="flex flex-row items-end justify-between">
         <div className="flex flex-col">
           <DaoName isMember={isMember} safe={safe} daoData={daoData} daoIsLoading={daoIsLoading} />
+          <DaoFollowers address={safe} />
           <DaoBalance safe={safe} />
         </div>
         <ExpandDao safe={safe} />

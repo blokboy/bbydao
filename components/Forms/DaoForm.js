@@ -160,7 +160,7 @@ const DaoForm = () => {
             <input
               value={state?.name}
               onChange={handleChange}
-              className="focus:shadow-outline w-full appearance-none rounded border bg-slate-200 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
+              className="focus:shadow-outline w-full appearance-none rounded border bg-slate-100 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
               id="name"
               name="name"
               type="text"
