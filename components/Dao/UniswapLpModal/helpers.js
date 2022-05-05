@@ -1,12 +1,33 @@
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import { ChainId, TokenAmount } from "@uniswap/sdk"
 import GnosisSafeSol from "@gnosis.pm/safe-contracts/build/artifacts/contracts/GnosisSafe.sol/GnosisSafe.json"
-import axios from "axios"
 import { BigNumber, ethers } from "ethers"
 import { formatUnits } from "ethers/lib/utils"
-import { isEmpty } from "utils/helpers"
-import { createSafeSdk } from "../../../utils/createSafeSdk"
+import { createSafeSdk } from "utils/createSafeSdk"
 
+
+/*  hex string to bytes  */
+export const hexToBytes = hexString => {
+  if (hexString.length % 2 !== 0) {
+    throw "Must have an even number of hex digits to convert to bytes"
+  }
+  let numBytes = hexString.length / 2
+  let byteArray = new Uint8Array(numBytes)
+  for (let i = 0; i < numBytes; i++) {
+    byteArray[i] = parseInt(hexString.substr(i * 2, 2), 16)
+  }
+  return byteArray
+}
+
+/*  decimal integer  */
+export const amount = (amount, decimals) => Math.round(amount * 10 ** (decimals || 18)).toString()
+
+/* Human Readable Token Balance  */
+export const readableTokenBalance = token => {
+  return Number((token?.balance / 10 ** token?.token?.decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
+}
+
+/* Gnosis Safe SafeTx Typed Data Format  */
 export const EIP712_SAFE_TX_TYPE = {
   SafeTx: [
     { type: "address", name: "to" },
@@ -20,18 +41,6 @@ export const EIP712_SAFE_TX_TYPE = {
     { type: "address", name: "refundReceiver" },
     { type: "uint256", name: "nonce" },
   ],
-}
-
-export const hexToBytes = hexString => {
-  if (hexString.length % 2 !== 0) {
-    throw "Must have an even number of hex digits to convert to bytes"
-  }
-  let numBytes = hexString.length / 2
-  let byteArray = new Uint8Array(numBytes)
-  for (let i = 0; i < numBytes; i++) {
-    byteArray[i] = parseInt(hexString.substr(i * 2, 2), 16)
-  }
-  return byteArray
 }
 
 const generateTypedDataFrom = async ({
@@ -99,7 +108,7 @@ const calculateBodyFrom = async (
 ) => {
   const contractTransactionHash = await safeInstance.getTransactionHash(
     to,
-    BigNumber.from(amount(parseFloat(ethers.utils.formatEther(valueInWei)))), // tho it seems a hexString is bigNumberish this fn seems to want a BN
+    valueInWei, // tho it seems a hexString is bigNumberish this fn seems to want a BN
     data,
     operation,
     safeTxGas,
@@ -122,9 +131,9 @@ const calculateBodyFrom = async (
     gasPrice,
     refundReceiver,
     nonce,
-    contractTransactionHash,
+    //  contractTransactionHash, //commented out because when using the SDK generating this
     sender: ethers.utils.getAddress(sender),
-    // signature,
+    // signature, //commented out because when using the SDK generating this
     origin,
   }
 }
@@ -141,7 +150,7 @@ const safeTransactionV2GasEstimate = safeAddress => {
   return `https://safe-relay.gnosis.io/api/v1/safes/${address}/transactions/estimate/`
 }
 
-export const proposeAnExecuteTransaction = async ({
+export const executeTransaction = async ({
   baseGas,
   data,
   gasPrice,
@@ -174,17 +183,23 @@ export const proposeAnExecuteTransaction = async ({
     refundReceiver,
     txHash || null,
     sender,
-    origin || null,
-    signature
+    origin || null
   )
-
-  console.log("body", body)
 
   // const gasEstimateUrl = await safeTransactionV2GasEstimate(safeInstance.address)
   // const gasEstimate = await axios.post(gasEstimateUrl, {safe: safeInstance.address, to, value: parseFloat(amount(ethers.utils.formatEther(valueInWei))), data, operation, gasToken})
   // console.log('gas', gasEstimate)
 
-  // /*  Use SDK instead of manually constructing all of this  */
+  /*
+  *
+  *
+  *
+  * Using SDK here instead of manually constructing, signing and
+  * executing with Gnosis API which was the original
+  * attempt (most of the code in this file).
+  *
+  *
+  *   */
   const safeSdk = await createSafeSdk(safeInstance.address)
   const safeTransaction = await safeSdk.createTransaction(body)
   const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
@@ -197,18 +212,23 @@ export const proposeAnExecuteTransaction = async ({
   })
   const pendingTxs = await safeService.getPendingTransactions(safeInstance.address)
   const transaction = await safeService.getTransaction(safeTxHash)
-
   const hash = transaction?.safeTxHash
-  let sig = await safeSdk.signTransactionHash(hash)
+  const sig = await safeSdk.signTransactionHash(hash)
   await safeService.confirmTransaction(hash, sig.data)
-  // const owner1Signature = await safeSdk.signTransaction(safeTransaction)
-
   const executeTxResponse = await safeSdk.executeTransaction(safeTransaction)
   const receipt = executeTxResponse.transactionResponse && (await executeTxResponse.transactionResponse.wait())
-  console.log("e", safeTransaction)
-  // console.log('o', owner1Signature)
-  console.log("ex", executeTxResponse)
-  console.log("receip", receipt)
+  console.log("receipt", receipt)
+
+
+  /*
+  *
+  *
+  * When not using the SDK was attempting to post directly
+  * to gnosis safe api -- this failed with "Signer not an owner"
+  * even when confirming signature contains address of sender so opted
+  * to use the SDK above
+  *
+  * */
 
   // const response = await axios.post(url, body)
   // // const response = {status: 202}
@@ -245,18 +265,12 @@ export const getPreValidatedSignature = (from, initialString = EMPTY_DATA) => {
 }
 // https://docs.gnosis-safe.io/contracts/signatures
 
-/*
 
-
-
- */
+/*  Encode Contract function and Param data  */
 export const contractInterface = contract => {
-  /* Encode uniswap addLiquidity function with input contract.arguments  */
   const fragments = contract.instance.interface.functions
   let abi = new ethers.utils.Interface(contract.abi)
   const data = abi.encodeFunctionData(fragments[contract.fn], Object.values(contract.args))
-
-  console.log("args", contract.args, Object.values(contract.args))
 
   return { data }
 }
@@ -269,11 +283,11 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
     const bbyDaoSafe = new ethers.Contract(safeAddress, GnosisSafeSol.abi, signer)
 
     /* last transaction made by bbyDAO */
-    const nonce = await safeService.getNextNonce(safeAddress)
-    // const nonce = 3
+    // const nonce = await safeService.getNextNonce(safeAddress)
+    const nonce = 3
 
     /* Pre-validated Gnosis signature */
-    const signature = getPreValidatedSignature(signer._address)
+    //const signature = getPreValidatedSignature(signer._address)
 
     /* Encode Data */
     const { data } = contractInterface(executingContract)
@@ -287,7 +301,6 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
       safeInstance: bbyDaoSafe,
       to: to,
       valueInWei: value,
-      // valueInWei: 0,
       data: data,
       operation: CALL,
       nonce: nonce,
@@ -297,9 +310,9 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
       gasToken: ZERO_ADDRESS,
       refundReceiver: ZERO_ADDRESS,
       sender: signer._address,
-      signature,
+      //  signature,
       //temp
-      gasPrice: 30,
+      gasPrice: 60,
       safeTxGas: 200000,
     }
 
@@ -309,7 +322,11 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
         /*  Reject or ask for approvals */
       } else {
         try {
-          const tx = await proposeAnExecuteTransaction({ ...safeTx, signature })
+          const tx = await executeTransaction({ ...safeTx })
+
+          /*  Before using the SDK we generated signature then attempted
+          * to execute transaction. This was failing so opted for SDK.
+          *   */
 
           // const signature = await getEIP712Signature(safeTx, safeAddress, signer, bbyDaoSafe)
           // if (signature) {
@@ -325,13 +342,8 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
   }
 }
 
-export const amount = (amount, decimals) => Math.round(amount * 10 ** (decimals || 18)).toString()
 
-/* Human Readable Token Balance  */
-export const readableTokenBalance = token => {
-  return Number((token?.balance / 10 ** token?.token?.decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
-}
-
+/*  Get Total Pair supply from Uniswap Contract */
 const totalPairSupply = async (pair, abi) => {
   /* create a generic provider and query for unsold market items */
   const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -364,7 +376,6 @@ export const getLiquidityPairInfo = async ({
     const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(pair.liquidityToken.decimals)
     const uniswapPairURI = `https://v2.info.uniswap.org/pair/${pair.liquidityToken.address}`
     const etherscanURI = `https://etherscan.io/address/${pair.liquidityToken.address}`
-
     const transactionInfo = [
       {
         token: token0,

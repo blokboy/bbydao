@@ -1,12 +1,12 @@
 import { ChainId, Fetcher, Route, Token } from "@uniswap/sdk"
 import IUniswapV2ERC20 from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
-import Modal               from "components/Layout/Modal"
-import {BigNumber, ethers} from "ethers"
-import useForm             from "hooks/useForm"
+import Modal from "components/Layout/Modal"
+import { BigNumber, ethers } from "ethers"
+import useForm from "hooks/useForm"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useDaoStore } from "stores/useDaoStore"
-import { useSigner, useSignTypedData } from "wagmi"
+import { useSigner } from "wagmi"
 import { amount, getLiquidityPairInfo, handleGnosisTransaction, readableTokenBalance } from "./helpers"
 import PoolInfo from "./PoolInfo"
 import TokenInput from "./TokenInput"
@@ -19,7 +19,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const lpToken1 = useDaoStore(state => state.lpToken1)
   const setLpToken1 = useDaoStore(state => state.setLpToken1)
   const setLpToken0 = useDaoStore(state => state.setLpToken0)
-  const { state, setState, handleChange } = useForm()
+  const { state, setState } = useForm()
   const token0InputRef = useRef()
   const token1InputRef = useRef()
   const [pair, setPair] = useState()
@@ -41,7 +41,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
 
     const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02.abi, signer)
     const pairHasEth = liquidityInfo.transactionInfo.filter(token => token.token.symbol === "ETH")
-    const slippage = 0.01 // default 1% slippage
+    const slippage = 0.055 // default 5.5% slippage
 
     /* token A */
     const tokenA = liquidityInfo.transactionInfo[0].token.address
@@ -65,10 +65,10 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
           args: {
             tokenA: ethers.utils.getAddress(tokenA),
             tokenB: ethers.utils.getAddress(tokenB),
-            amountADesired: amountADesired,
-            amountBDesired:  amountBDesired,
-            amountAMin:  amountAMin,
-            amountBMin:  amountBMin,
+            amountADesired: BigNumber.from(amountADesired),
+            amountBDesired: BigNumber.from(amountBDesired),
+            amountAMin: BigNumber.from(amountAMin),
+            amountBMin: BigNumber.from(amountBMin),
             addressTo: ethers.utils.getAddress(safeAddress),
             deadline: Math.floor(Date.now() / 1000) + 60 * 20,
           },
@@ -77,18 +77,10 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
         signer,
         safeAddress,
         to: UniswapV2Router02,
-        value: liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei)
-          ?._hex,
+        value: 0,
+        // value: liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei)
+        //   ?._hex,
       })
-
-      console.log('0', liquidityInfo?.transactionInfo?.[0] )
-      console.log('1', liquidityInfo?.transactionInfo?.[1] )
-
-      console.log('0', liquidityInfo?.transactionInfo?.[0].amountInWei )
-      console.log('1', liquidityInfo?.transactionInfo?.[1].amountInWei )
-
-
-
     } else {
       //     function addLiquidityETH(
       //         address token,
@@ -97,9 +89,8 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
       //         uint amountETHMin,
       //         address to,
       //         uint deadline
-      // ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
+      // )
     }
-    // https://docs.uniswap.org/protocol/V2/reference/smart-contracts/router-02#addliquidity
   }
 
   /*  Construct object of selected tokens represented as Uniswap Token Objects */
