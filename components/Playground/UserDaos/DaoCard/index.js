@@ -1,4 +1,6 @@
-import React from "react"
+import React, { useMemo } from "react"
+import { useDaoStore } from "../../../../stores/useDaoStore"
+import UniswapLpModal from "../../../Dao/UniswapLpModal"
 import DaoUtilityBar from "./DaoUtilityBar"
 import DaoPfpIcon from "./DaoPfpIcon"
 import DaoPfp from "./DaoPfp"
@@ -16,6 +18,8 @@ import * as gnosisApi from "/query/gnosisQuery"
 import { useQuery } from "react-query"
 
 const DaoCard = ({ user, safe }) => {
+  const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
+
   // dao data from our backend
   const { data: daoData, isLoading: daoIsLoading } = useQuery(["dao", safe], () => api.getDao({ address: safe }), {
     staleTime: 180000,
@@ -31,6 +35,24 @@ const DaoCard = ({ user, safe }) => {
     staleTime: 200000,
     refetchOnWindowFocus: false,
   })
+
+  const {
+    data: daoTokensData,
+    error: daoTokensErr,
+    isLoading: daoTokensLoading,
+  } = useQuery(["daoTokens", safe], () => gnosisApi.daoBalance(safe), {
+    staleTime: 200000,
+    refetchOnWindowFocus: false,
+  })
+
+  const tokenLogos = useMemo(() => {
+    return daoTokensData?.reduce((acc = [], cv) => {
+      const uri = cv?.token?.logoUri
+      const symbol = cv?.token?.symbol
+      uri && symbol ? acc.push({ uri, symbol }) : null
+      return acc
+    }, [])
+  }, [daoTokensData])
 
   // check if user is in daoMembersData
   const isMember = daoMembersData?.includes(user)
@@ -67,7 +89,8 @@ const DaoCard = ({ user, safe }) => {
       </div>
 
       {/* Dao Card Expanded */}
-      {daoExpanded ? <DaoCardExpanded isMember={isMember} safe={safe} /> : null}
+      {daoExpanded ? <DaoCardExpanded isMember={isMember} safe={safe} tokens={daoTokensData} /> : null}
+      {uniswapLpModalOpen && <UniswapLpModal safeAddress={safe} tokenLogos={tokenLogos} />}
     </div>
   )
 }
