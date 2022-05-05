@@ -18,6 +18,18 @@ import { walletSnippet } from "utils/helpers"
 import { useDaoStore } from "stores/useDaoStore"
 import { useOsStore } from "stores/useOsStore"
 import { useUiStore } from "stores/useUiStore"
+import { walletSnippet } from "utils/helpers"
+import EditDaoMemberModal from "./EditDaoMemberModal"
+import Nurseries from "./Nurseries"
+import ProposalHistory from "./ProposalHistory"
+import SidePanel from "./SidePanel"
+import FollowModal from "./SidePanel/FollowModal"
+import TokensNfts from "./TokensNfts"
+import SellModal from "./TokensNfts/SellModal"
+import TransactionModal from "./TransactionModal"
+import TxHistory from "./TxHistory"
+import UniswapLpModal from "./UniswapLpModal"
+import UniswapSwapModal from "./UniswapSwapModal"
 
 const Dao = ({ data }) => {
   const osSellModalOpen = useOsStore(state => state.osSellModalOpen)
