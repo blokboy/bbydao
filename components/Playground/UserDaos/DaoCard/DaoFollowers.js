@@ -8,8 +8,6 @@ const DaoFollowers = ({ address }) => {
     let list = []
     if (friendData) {
       for (const friend of friendData) {
-        // relationship status = 4 (follower)
-        // & the address of the profile being viewed is not the initiator of the relationship
         if (friend.status === 4 && friend.initiator !== address) {
           list.push(friend)
         } else {
