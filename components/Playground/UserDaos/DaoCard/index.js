@@ -26,6 +26,10 @@ const DaoCard = ({ user, safe }) => {
     refetchOnWindowFocus: false,
   })
 
+  // query for if dao is apart of nursery
+
+
+
   // daoMembers data from gnosisApi
   const {
     data: daoMembersData,
@@ -72,7 +76,7 @@ const DaoCard = ({ user, safe }) => {
       <DaoUtilityBar isMember={isMember} />
       {/* Pfp and Members Section */}
       <div className="flex w-full flex-col lg:flex-row">
-        <DaoPfpIcon isMember={isMember} />
+        <DaoPfpIcon safe={safe} />
         <DaoPfp daoId={daoId} imgUri={imgUri} members={daoMembersData} address={safe} />
         {/* TODO: loading and error states */}
         <DaoMembers owners={daoMembersData} />
