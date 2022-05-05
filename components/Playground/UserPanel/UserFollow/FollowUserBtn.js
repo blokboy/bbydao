@@ -60,7 +60,7 @@ const FollowUserBtn = ({ user, address, friendStatus }) => {
     return unfollowDisplay ? (
       <div className="absolute w-36 translate-y-2 rounded-lg border border-red-600 bg-slate-200 p-1.5 text-xs text-red-600 dark:border-red-300 dark:bg-slate-800 dark:text-red-300">
         <button
-          className="flex flex-row space-x-1 rounded-lg border bg-slate-200 p-2 text-xs hover:border-red-300 dark:border-slate-800 dark:bg-slate-800 dark:hover:border-red-300 dark:hover:bg-slate-700"
+          className="flex flex-row w-full space-x-1 rounded-lg border bg-slate-200 p-2 text-xs hover:border-red-300 dark:border-slate-800 dark:bg-slate-800 dark:hover:border-red-300 dark:hover:bg-slate-700"
           onClick={handleUnfollow}
         >
           <BiUserX size={16} />
