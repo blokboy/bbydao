@@ -91,7 +91,7 @@ const Search = () => {
       </div>
       {/* RESULTS */}
       {/* if there are hits in the search, pass them to Results */}
-      <div className="flex md:w-1/2 w-full">
+      <div className="flex lg:w-1/2 w-full">
         {!query.length ? (
           <>
             <div className="flex h-24 w-full items-center justify-center">

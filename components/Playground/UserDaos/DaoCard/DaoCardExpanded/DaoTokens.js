@@ -13,7 +13,7 @@ const DaoTokens = ({ safe }) => {
   return (
     <div className="flex flex-col">
       <div className="text-xl">tokens</div>
-      <div className="grid grid-cols-2 gap-2 py-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 py-2">
         {daoTokensData?.map((token, i) => (
           <div
             key={i}

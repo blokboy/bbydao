@@ -1,18 +1,16 @@
 import useForm from "hooks/useForm"
 import * as api from "query"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { HiCheckCircle, HiPencilAlt } from "react-icons/hi"
 import { useMutation, useQueryClient } from "react-query"
 import { walletSnippet } from "utils/helpers"
 
-const DaoName = ({ safe, isMember, loading }) => {
-  const [isEditable, setIsEditable] = useState(false)
+const DaoName = ({ safe, isMember, daoData, daoIsLoading }) => {
+  const [isEditable, setIsEditable] = React.useState(false)
   const { state, setState, handleChange } = useForm()
 
-  // useQueryClient to query for the dao data (fetched in DaoCard/index.js)
-  // also used to invalidate and refetch the dao data when the dao name is changed
+  // useQueryClient used to invalidate and refetch the dao data when the dao name is changed
   const queryClient = useQueryClient()
-  const daoData = queryClient.getQueryData(["dao", safe])
 
   React.useEffect(() => {
     if (!!daoData?.name) setState({ name: daoData.name })
@@ -23,7 +21,7 @@ const DaoName = ({ safe, isMember, loading }) => {
       queryClient.invalidateQueries(["dao", safe], {
         refetchActive: true,
       })
-    }
+    },
   })
 
   const handleFocus = e => {
@@ -51,16 +49,15 @@ const DaoName = ({ safe, isMember, loading }) => {
       <div className="text-2xl">
         <form className="flex flex-col">
           <input
-            value={loading ? " " : daoData?.name === undefined ? walletSnippet(safe) : state.name}
+            value={daoIsLoading ? " " : daoData?.name === undefined ? walletSnippet(safe) : state.name}
             onChange={handleChange}
             onFocus={handleFocus}
             name={"name"}
-            className={`focus:outline-0 w-full bg-slate-${isEditable ? "300" : "200"} dark:bg-slate-${
+            className={`w-full focus:outline-0 bg-slate-${isEditable ? "300" : "200"} dark:bg-slate-${
               isEditable ? "900" : "800"
             } rounded-xl p-2 font-bold ${isEditable ? "shadow-inner" : ""}`}
             disabled={!isEditable}
             type="text"
-           // autoFocus
           />
         </form>
       </div>

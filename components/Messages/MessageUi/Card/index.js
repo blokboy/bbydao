@@ -5,10 +5,11 @@ import React, { useState }     from "react"
 import { isMobile }            from "react-device-detect"
 import { useMutation }         from "react-query"
 import { walletSnippet }       from "utils/helpers"
-import { useAccount }          from "wagmi"
+import { useAccount, useEnsLookup }          from "wagmi"
 import EmojiButton             from "./EmojiButton"
 import MobileEmojiPickerButton from "./MobileEmojiPickerButton"
 import ReactionBar             from "./ReactionBar"
+
 
 const MessageCard = ({ message }) => {
   const [isActive, setIsActive] = useState(false)
@@ -16,6 +17,9 @@ const MessageCard = ({ message }) => {
   const [reactions, setReactions] = useState(message.reactions)
   const { theme } = useTheme()
   const [{ data: accountData }] = useAccount()
+  const [{ data: ensData, error: ensError, loading: ensLoading }, lookupAddress] = useEnsLookup({
+    address: message?.sender,
+  })
 
   // timestamp that prints out diff from current time
   const diffTimeStamp = () => {
@@ -143,7 +147,7 @@ const MessageCard = ({ message }) => {
         <div className="flex items-center">
           <span
             className="font-bold"
-            children={walletSnippet(message?.sender)}
+            children={ensData ? ensData : walletSnippet(message?.sender)}
           />
           <div
             className="pl-2 text-[.8rem] font-thin"
