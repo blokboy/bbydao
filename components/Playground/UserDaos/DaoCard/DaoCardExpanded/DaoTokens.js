@@ -1,14 +1,7 @@
 import React from "react"
 import TokenCard from './TokenCard';
-import * as api from "/query/gnosisQuery"
-import { useQuery } from "react-query"
 
-const DaoTokens = ({ safe }) => {
-  const {
-    data: daoTokensData,
-    error: daoTokensErr,
-    isLoading: daoTokensLoading,
-  } = useQuery(["daoTokens", safe], () => api.daoBalance(safe), { staleTime: 200000, refetchOnWindowFocus: false })
+const DaoTokens = ({ tokens }) => {
 
   return (
     <div className="flex flex-col">
