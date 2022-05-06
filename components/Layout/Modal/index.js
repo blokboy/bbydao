@@ -6,7 +6,7 @@ const Modal = ({ close, children, heading }) => {
   const ref = React.useRef(null)
   React.useEffect(() => {
     ref?.current?.focus()
-  }, [])
+  }, [ref])
   const handleKeyDown = event => {
     if (event.keyCode === 27) {
       close()
