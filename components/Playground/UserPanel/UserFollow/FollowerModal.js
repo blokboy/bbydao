@@ -4,7 +4,7 @@ import { walletSnippet } from "utils/helpers"
 import useForm from "hooks/useForm"
 
 const FollowerModal = ({ followers }) => {
-  const { state,  handleChange } = useForm()
+  const { state, handleChange } = useForm()
   const filter = useMemo(() => {
     return followers.reduce((acc = [], cv) => {
       if (cv.initiatorEns.includes(state.name) || cv.initiator.includes?.(state.name)) {
@@ -22,13 +22,18 @@ const FollowerModal = ({ followers }) => {
       </form>
 
       <div className="flex flex-col py-4">
-        {(filter.length === 0 && state.name.length === 0 && !!followers ? followers : filter)?.map(f => (
+        {(filter.length === 0 && !state.name && !!followers ? followers : filter)?.map(f => (
           <Link href={`/playground/${f.initiator}`} key={f.id}>
             <div className="mb-2 rounded-lg bg-slate-300 p-4 hover:cursor-pointer hover:bg-slate-400 hover:text-white dark:bg-slate-800 dark:hover:bg-slate-700">
               {f.initiatorEns || walletSnippet(f.initiator)}
             </div>
           </Link>
         ))}
+        {((filter?.length === 0 && state?.name?.length > 0) || !followers) && (
+            <div>
+                No Results
+            </div>
+        )}
       </div>
     </div>
   )
