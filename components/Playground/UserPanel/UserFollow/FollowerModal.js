@@ -24,7 +24,7 @@ const FollowerModal = ({ followers }) => {
           onChange={handleChange}
           value={state?.name || ""}
           className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-3xl leading-tight focus:outline-none dark:bg-slate-800"
-          placeholder={'Search for Followers'}
+          placeholder={'Type to search'}
         />
       </form>
 

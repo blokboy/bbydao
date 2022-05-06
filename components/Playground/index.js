@@ -25,16 +25,6 @@ const Playground = ({ address, data }) => {
     mutationKey: ["address data", address],
   })
 
-
-  /*  Set currently viewed profile in global store */
-  useQuery("targetAddress", () => api.getUser({ address }), {
-    enabled: !!address,
-    retryOnMount: false,
-    refetchOnWindowFocus: false,
-    staleTime: Infinity,
-  })
-
-
   // this useEffect is intended to fire when ensLoading from wagmi is false (to see if an ens lookup was successful)
   // if the ens lookup was successful, and the user ens on our backend does not match the ens lookup from wagmi,
   // we update the user's ens on our backend to match the ens lookup from wagmi
@@ -51,6 +41,15 @@ const Playground = ({ address, data }) => {
       },
     })
   }, [ensLoading])
+
+
+  /*  Set currently viewed profile in React Query cache -- accessible with queryKey "targetAddress" */
+  useQuery("targetAddress", () => api.getUser({ address }), {
+    enabled: !!address,
+    retryOnMount: true,
+    refetchOnWindowFocus: true,
+    // staleTime: Infinity,
+  })
 
   // i think there's an opportunity to toggle UserDaos out for another set of components
   // Feed and UserDaos(or a component that contains UserDaos / toggles it out) are intended
