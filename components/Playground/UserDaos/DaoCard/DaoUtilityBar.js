@@ -8,7 +8,7 @@ const DaoUtilityBar = ({ isMember }) => {
   return (
     <div className="flex h-0 w-full flex-row items-end justify-end space-x-1">
       {isMember ? (
-        <button className="-transform-y-6 flex h-6 w-auto items-center justify-center rounded-full border border-slate-400 bg-slate-200 p-1 text-xs shadow hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-600">
+        <button className="-transform-y-6 flex h-6 w-auto items-center justify-center rounded-full border border-slate-400 bg-slate-200 p-1 text-xs shadow hover:border-teal-300 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-600">
           create nursery
         </button>
       ) : (

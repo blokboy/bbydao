@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import React, { useEffect, useMemo } from "react"
 import { useDaoStore } from "../../../../stores/useDaoStore"
 import UniswapLpModal from "../../../Dao/UniswapLpModal"
 import DaoUtilityBar from "./DaoUtilityBar"
@@ -15,16 +15,33 @@ import { usePlaygroundStore } from "/stores/usePlaygroundStore"
 
 import * as api from "/query"
 import * as gnosisApi from "/query/gnosisQuery"
-import { useQuery } from "react-query"
+import { useMutation, useQuery } from "react-query"
 
 const DaoCard = ({ user, safe }) => {
   const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
+
+  const { mutateAsync: createDao } = useMutation(api.createDao)
 
   // dao data from our backend
   const { data: daoData, isLoading: daoIsLoading } = useQuery(["dao", safe], () => api.getDao({ address: safe }), {
     staleTime: 180000,
     refetchOnWindowFocus: false,
+    // onError:
   })
+
+  // create dao if dao does not exist in our backend
+  useEffect(() => {
+    if (!daoData) {
+      createDao({
+        name: safe,
+        type: 1,
+        address: safe,
+        members: daoMembersData,
+      })
+    }
+  }, [daoIsLoading])
+
+  // query for if dao is apart of nursery
 
   // daoMembers data from gnosisApi
   const {
@@ -36,6 +53,7 @@ const DaoCard = ({ user, safe }) => {
     refetchOnWindowFocus: false,
   })
 
+  // daoBalance data from gnosisApi
   const {
     data: daoTokensData,
     error: daoTokensErr,
@@ -72,7 +90,7 @@ const DaoCard = ({ user, safe }) => {
       <DaoUtilityBar isMember={isMember} />
       {/* Pfp and Members Section */}
       <div className="flex w-full flex-col lg:flex-row">
-        <DaoPfpIcon isMember={isMember} />
+        <DaoPfpIcon safe={safe} />
         <DaoPfp daoId={daoId} imgUri={imgUri} members={daoMembersData} address={safe} />
         {/* TODO: loading and error states */}
         <DaoMembers owners={daoMembersData} />

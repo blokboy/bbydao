@@ -1,5 +1,5 @@
-import React, { useMemo } from "react"
-import { useMutation } from "react-query"
+import React, { useMemo }           from "react"
+import {useMutation, useQuery}      from "react-query"
 import { useAccount, useEnsLookup } from "wagmi"
 import * as api from "query"
 import Feed from "./Feed"
@@ -17,12 +17,12 @@ const Playground = ({ address, data }) => {
   // if that address does not exist in our backend, it creates a new user record
   const { mutateAsync: updateUser } = useMutation(api.updateUser)
   const {
-    data: getUserData,
-    status: getUserStatus,
-    mutateAsync: getUser,
+    data: getAddressData,
+    status: getAddressStatus,
+    mutateAsync: getAddress,
   } = useMutation(api.getUser, {
     // working out how to access this, how we can treat it the same as the data from a useQuery
-    mutationKey: ["user data", address],
+    mutationKey: ["address data", address],
   })
 
   // this useEffect is intended to fire when ensLoading from wagmi is false (to see if an ens lookup was successful)
@@ -33,20 +33,30 @@ const Playground = ({ address, data }) => {
       return
     }
     const req = { address: address, ens: ensData }
-    getUser(req, {
+    getAddress(req, {
       onSuccess: () => {
-        if (getUserData?.ens !== ensData) {
-          updateUser({ id: getUserData.id, ens: ensData })
+        if (getAddressData?.ens !== ensData) {
+          updateUser({ id: getAddressData.id, ens: ensData })
         }
       },
     })
   }, [ensLoading])
 
+
+  /*  Set currently viewed profile in React Query cache -- accessible with queryKey "targetAddress" */
+  useQuery("targetAddress", () => api.getUser({ address }), {
+    enabled: !!address,
+    retryOnMount: true,
+    refetchOnWindowFocus: true,
+    // staleTime: Infinity,
+  })
+
   // i think there's an opportunity to toggle UserDaos out for another set of components
   // Feed and UserDaos(or a component that contains UserDaos / toggles it out) are intended
   // to interact with each other, actions taken in both sections should lead to discovery
   // and exploration of the app - making each column or section modular could provide unique
-  // user paths and experiences - bbyDAO and user discovery/connection
+  // user paths and experiences - bbyDAO and user discovery/connection'
+
   return (
     <div className="flex w-full flex-col lg:flex-row">
       <UserPanel user={userData?.address} address={address} />

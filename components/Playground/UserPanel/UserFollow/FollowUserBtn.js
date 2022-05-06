@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "react-query"
 import ClickAwayListener from "react-click-away-listener"
 
 const FollowUserBtn = ({ user, address, friendStatus }) => {
+  // follow logic
   // request follow relationship with reqRelationship
   // follow enum is 4
   // once request is sent (onSuccess), invalidate cached data and refetch
@@ -16,17 +17,23 @@ const FollowUserBtn = ({ user, address, friendStatus }) => {
       })
     },
   })
+  // getting signed in user data from react-query cache in order to pass the initiatorEns to the mutation
+  const signedUser = queryClient.getQueryData(["signedUser", user])
   const handleFollow = () => {
     if (!address || !user) return
     const req = {
-      initiator: user,
+      initiator: signedUser?.address || user,
+      initiatorEns: signedUser?.ens,
       target: address,
       status: 4,
     }
+    console.log('follow req', req)
     follow(req)
   }
 
-  const { mutateAsync: unfollow } = useMutation(api.updateRelationship, {
+  // unfollow logic
+  // onSuccess, invalidate cached data and refetch
+  const { mutateAsync: unfollow } = useMutation(api.deleteRelationship, {
     onSuccess: async () => {
       await queryClient.invalidateQueries(["friends", address], {
         refetchActive: true,
@@ -36,10 +43,8 @@ const FollowUserBtn = ({ user, address, friendStatus }) => {
   const handleUnfollow = () => {
     if (!address || !user) return
     const req = {
-      id: friendStatus?.data?.id,
-      initiator: user,
+      initiator: signedUser?.address || user,
       target: address,
-      status: 0,
     }
     unfollow(req)
   }

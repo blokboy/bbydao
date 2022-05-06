@@ -7,7 +7,8 @@ const Modal = ({close, children, heading}) => {
     <Portal node={document && document.getElementById('modal')}>
       <div className="absolute top-0 h-screen w-screen" onClick={() => close()}>
         <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-          <div className="flex w-full justify-end">
+          <div className="flex w-full justify-end py-4">
+            <div className="w-full text-center text-xl font-medium">{heading}</div>
             <button
               className="modal-close-btn"
               onClick={() => close()}
@@ -15,7 +16,6 @@ const Modal = ({close, children, heading}) => {
               <HiX />
             </button>
           </div>
-          <div className="w-full text-center text-xl font-medium">{heading}</div>
           {children}
         </div>
       </div>
