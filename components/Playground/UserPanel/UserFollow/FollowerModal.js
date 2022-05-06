@@ -7,7 +7,7 @@ const FollowerModal = ({ followers }) => {
   const { state, handleChange } = useForm()
   const filter = useMemo(() => {
     return followers.reduce((acc = [], cv) => {
-      if (cv.initiatorEns.includes(state.name) || cv.initiator.includes?.(state.name)) {
+      if (cv.initiatorEns?.includes(state.name) || cv.initiator?.includes?.(state.name)) {
         acc.push(cv)
       }
 
