@@ -33,7 +33,7 @@ const DaoCard = ({ user, safe }) => {
   useEffect(() => {
     if (!daoData) {
       createDao({
-        name: "",
+        name: safe,
         type: 1,
         address: safe,
         members: daoMembersData,
