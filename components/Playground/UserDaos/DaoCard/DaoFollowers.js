@@ -35,7 +35,6 @@ const DaoFollowers = ({ address }) => {
         {parsedList?.length} followers
       </button>
 
-      {console.log('b', bbyDao)}
       {followerModal && (
         <Modal heading={`${bbyDao?.name || walletSnippet(bbyDao?.address)}'s followers`} close={toggleFollowerModal}>
           <FollowerModal followers={parsedList} />
