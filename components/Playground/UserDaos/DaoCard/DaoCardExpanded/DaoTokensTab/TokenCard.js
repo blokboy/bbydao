@@ -54,17 +54,17 @@ const TokenCard = ({ token }) => {
         {isEmpty(lpToken0) && (
           <>
             <button
-              className="w-12 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500"
+              className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500"
               onClick={() => console.log("hii")}
             >
               send
             </button>
-            <button className="w-12 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setSwapToken}>
+            <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setSwapToken}>
               swap
             </button>
           </>
         )}
-        <button className="w-12 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setLpToken}>
+        <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setLpToken}>
           {isEmpty(lpToken0) && isEmpty(lpToken1) ? "LP" : isActive ? "Selected" : "Pair"}
         </button>
       </div>
