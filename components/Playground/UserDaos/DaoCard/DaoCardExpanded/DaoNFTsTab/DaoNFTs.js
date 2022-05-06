@@ -3,7 +3,7 @@ import NFTCard from "./NFTCard"
 import * as api from "/query/gnosisQuery"
 import { useQuery } from "react-query"
 
-const DaoNFTs = ({ safe }) => {
+const DaoNFTsTab = ({ safe }) => {
   const {
     data: daoNFTsData,
     error: daoNFTsErr,
@@ -30,4 +30,4 @@ const DaoNFTs = ({ safe }) => {
   )
 }
 
-export default DaoNFTs
+export default DaoNFTsTab

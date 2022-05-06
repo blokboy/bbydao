@@ -1,7 +1,7 @@
 import React from "react"
 import TokenCard from './TokenCard';
 
-const DaoTokens = ({ tokens }) => {
+const DaoTokensTab = ({ tokens }) => {
 
   return (
     <div className="flex flex-col">
@@ -13,4 +13,4 @@ const DaoTokens = ({ tokens }) => {
   )
 }
 
-export default DaoTokens
+export default DaoTokensTab

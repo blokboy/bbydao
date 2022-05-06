@@ -1,4 +1,4 @@
-const InfoTab = () => {
+const DaoInfoTab = () => {
 
   const NurseryCard = ({ card }) => {
     return <div>{card}</div>
@@ -16,4 +16,4 @@ const InfoTab = () => {
   )
 }
 
-export default InfoTab
+export default DaoInfoTab
