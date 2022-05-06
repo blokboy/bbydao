@@ -1,9 +1,11 @@
-import React from "react"
-import Link from "next/link"
+import React             from "react"
+import Link              from "next/link"
+import {useQueryClient}  from 'react-query'
 import { walletSnippet } from "utils/helpers"
 
 const FollowerModal = ({ followers }) => {
-  return (
+
+    return (
     <div>
       <div className="flex flex-col py-4">
         {!!followers &&

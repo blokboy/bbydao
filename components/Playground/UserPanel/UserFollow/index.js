@@ -26,10 +26,11 @@ const UserFollow = ({ user, address }) => {
     return list
   }, [friendData])
 
+
   return (
     <div className="flex flex-col items-center justify-center space-y-2">
       <div className="flex flex-row space-x-2">
-        <UserFollowers user={address} numFollowers={parsedList?.length} followers={parsedList} friendStatus={friendStatus} />
+        <UserFollowers address={address} numFollowers={parsedList?.length} followers={parsedList} friendStatus={friendStatus} />
       </div>
       {user === address ? null : <FollowUserBtn user={user} address={address} friendStatus={friendStatus} />}
     </div>

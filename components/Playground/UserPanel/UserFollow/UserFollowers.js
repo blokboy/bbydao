@@ -1,16 +1,20 @@
-import React from "react"
-import { BsPeople } from "react-icons/bs"
-import Modal from "components/Layout/Modal"
-import FollowerModal from "./FollowerModal"
+import React            from "react"
+import { BsPeople }     from "react-icons/bs"
+import Modal            from "components/Layout/Modal"
+import {useQueryClient} from 'react-query'
+import {walletSnippet}  from '../../../../utils/helpers'
+import FollowerModal    from "./FollowerModal"
 
-const UserFollowers = ({ user, numFollowers, followers, friendStatus }) => {
+const UserFollowers = ({ address, numFollowers, followers, friendStatus }) => {
+  const queryClient = useQueryClient()
+  const target = queryClient.getQueryData("targetAddress")
+  const userName = target?.ens || walletSnippet(address)
+
   const [followerModal, setFollowerModal] = React.useState(false)
 
   const toggleFollowerModal = React.useCallback(() => {
     setFollowerModal(!followerModal)
   }, [followerModal, setFollowerModal])
-
-  console.log('user', user)
 
   return (
     <div className="flex flex-row items-center justify-center space-x-2">
@@ -27,8 +31,8 @@ const UserFollowers = ({ user, numFollowers, followers, friendStatus }) => {
         </div>
       </button>
       {followerModal && (
-        <Modal heading={"followers"} close={toggleFollowerModal}>
-          <FollowerModal followers={followers} />
+        <Modal heading={`${userName}'s followers`} close={toggleFollowerModal}>
+          <FollowerModal  followers={followers} />
         </Modal>
       )}
     </div>
