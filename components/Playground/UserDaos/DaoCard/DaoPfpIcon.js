@@ -1,34 +1,31 @@
-import React, {useCallback} from "react"
-import Image                from "next/image"
-import { MdOutlineCrib }    from "react-icons/md"
-import { HiExternalLink }   from "react-icons/hi"
-import {usePlaygroundStore} from 'stores/usePlaygroundStore'
+import React from "react"
+import { MdOutlineCrib } from "react-icons/md"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
 
-const DaoPfpIcon = ( {safe}) => {
-  // follow button if not following
-  // uniswap button if user is an owner of the dao
+const DaoPfpIcon = ({ safe }) => {
+  const daoExpanded = usePlaygroundStore(state => state.daoExpanded)
+  const setDaoExpanded = usePlaygroundStore(state => state.setDaoExpanded)
+  const setExpandedDao = usePlaygroundStore(state => state.setExpandedDao)
+  const setExpandedPanel = usePlaygroundStore(state => state.setExpandedPanel)
 
-  // maybe instead this could serve as an emoji status indicator, or a link to dao page
-    const setDaoExpanded = usePlaygroundStore(state => state.setDaoExpanded)
-    const setExpandedDao = usePlaygroundStore(state => state.setExpandedDao)
-    const setExpandedPanel = usePlaygroundStore(state => state.setExpandedPanel)
-
-
-    const handleExpand = useCallback(() => {
-        setDaoExpanded()
-        setExpandedDao(safe)
-        setExpandedPanel("info")
-
-    }, [])
+  const handleExpand = React.useCallback(() => {
+    if (daoExpanded) {
+      setExpandedPanel("info")
+      return
+    }
+    setDaoExpanded()
+    setExpandedDao(safe)
+    setExpandedPanel("info")
+  }, [])
 
   return (
     <div className="absolute space-y-1">
       <button
-          className="flex h-8 w-8 items-center justify-center rounded-full border text-white z-50 border-slate-400 bg-slate-200 p-1 shadow hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-700"
-          aria-label={'Nursery Info'}
-          onClick={() => handleExpand()}
+        className="z-50 flex h-8 w-8 items-center justify-center rounded-full border border-slate-400 bg-slate-200 p-1 text-white shadow hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-700"
+        aria-label={"Nursery Info"}
+        onClick={() => handleExpand()}
       >
-          <MdOutlineCrib />
+        <MdOutlineCrib />
       </button>
     </div>
   )

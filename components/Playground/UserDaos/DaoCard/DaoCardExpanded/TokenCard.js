@@ -3,10 +3,9 @@ import { FaEthereum } from "react-icons/fa"
 import { useDaoStore } from "stores/useDaoStore"
 import { isEmpty } from "utils/helpers"
 
-const TokenCard = ({ token, i }) => {
+const TokenCard = ({ token }) => {
   const setUniswapSwapModalOpen = useDaoStore(state => state.setUniswapSwapModalOpen)
   const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
-  // const setTxModalOpen = useDaoStore(state => state.setTxModalOpen)
   const lpToken0 = useDaoStore(state => state.lpToken0)
   const setLpToken0 = useDaoStore(state => state.setLpToken0)
   const lpToken1 = useDaoStore(state => state.lpToken1)
@@ -37,14 +36,12 @@ const TokenCard = ({ token, i }) => {
 
   return (
     <div
-      key={i}
       className="flex w-full flex-row justify-between rounded-xl bg-slate-100 p-2 dark:bg-slate-700 xl:flex-col"
     >
       <div className="flex w-full flex-row space-x-2">
         <div className="flex h-10 w-10 items-center justify-center overflow-clip rounded-full border border-white">
-          {token?.token?.logoUri ? <img src={token?.token?.logoUri} alt={i} /> : <FaEthereum size={30} />}
+          {token?.token?.logoUri ? <img src={token?.token?.logoUri} alt={""} /> : <FaEthereum size={30} />}
         </div>
-        {/* <div>{token?.token?.symbol ? token?.token?.symbol : "ETH"}</div> */}
         <div className="flex h-full flex-col rounded-xl bg-slate-200 p-1 text-xs dark:bg-slate-600">
           <span>
             {(token?.balance / 10 ** 18).toFixed(3)} {token.token?.symbol ? token.token.symbol : "ETH"}

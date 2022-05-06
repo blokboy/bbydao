@@ -28,8 +28,6 @@ const DaoCard = ({ user, safe }) => {
 
   // query for if dao is apart of nursery
 
-
-
   // daoMembers data from gnosisApi
   const {
     data: daoMembersData,
@@ -40,6 +38,7 @@ const DaoCard = ({ user, safe }) => {
     refetchOnWindowFocus: false,
   })
 
+  // daoBalance data from gnosisApi
   const {
     data: daoTokensData,
     error: daoTokensErr,
