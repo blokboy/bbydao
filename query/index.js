@@ -45,6 +45,14 @@ export const reqRelationship = async req => {
   return res.data
 }
 
+// get relationship
+// { initiator: id, target: id, status: enum }
+export const getRelationship = async req => {
+  const res = await api.post("/relationship/where", req)
+  console.log("getRelationship response:", res.data)
+  return res.data
+}
+
 // update relationship
 // { id: relationshipRef, notificationId: notificationId, status: enum }
 export const updateRelationship = async req => {
@@ -118,6 +126,13 @@ export const createDao = async req => {
 // { address: string }
 export const getDao = async req => {
   const res = await api.post("/dao/dao", req)
+  return res.data
+}
+
+//get user dao
+// { address: string }
+export const getUserDao = async req => {
+  const res = await api.post("/dao/user", req)
   return res.data
 }
 
