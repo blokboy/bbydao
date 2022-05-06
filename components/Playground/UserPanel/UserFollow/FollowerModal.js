@@ -18,7 +18,14 @@ const FollowerModal = ({ followers }) => {
   return (
     <div>
       <form>
-        <input id="name" name="name" onChange={handleChange} value={state?.name || ""} />
+        <input
+          id="name"
+          name="name"
+          onChange={handleChange}
+          value={state?.name || ""}
+          className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-3xl leading-tight focus:outline-none dark:bg-slate-800"
+          placeholder={'Search for Followers'}
+        />
       </form>
 
       <div className="flex flex-col py-4">
@@ -29,11 +36,7 @@ const FollowerModal = ({ followers }) => {
             </div>
           </Link>
         ))}
-        {((filter?.length === 0 && state?.name?.length > 0) || !followers) && (
-            <div>
-                No Results
-            </div>
-        )}
+        {((filter?.length === 0 && state?.name?.length > 0) || !followers) && <div>No Results</div>}
       </div>
     </div>
   )
