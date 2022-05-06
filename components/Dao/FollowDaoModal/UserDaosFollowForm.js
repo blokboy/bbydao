@@ -5,16 +5,18 @@ import DaoListItem from "./DaoListItem"
 import { useDaoStore } from "stores/useDaoStore"
 
 
-
 const UserDaosFollowForm = ({userDaos, targetDao}) => {
     {/* get the user's daos */}
     {/* list the user's daos */}
     {/* collect array of bbydao addresses */}
-    {/* take each address and follow with map */}
+    {/* take each address and follow */}
     const [selectedDaos, setSelectedDaos] = React.useState([])
     const { data, status, mutate: followDao } = useMutation(reqRelationship, {
         onSuccess: () => {
             console.log(data)
+        },
+        onError: (e) => {
+            console.log(e)
         }
     })
     const setFollowModalClosed = useDaoStore( state => state.setFollowModalOpen )
@@ -31,14 +33,11 @@ const UserDaosFollowForm = ({userDaos, targetDao}) => {
             followDao(req)
         })
         setFollowModalClosed()
-    }, [userDaos])
+    }, [userDaos, selectedDaos])
     
-    
-    
-
     const handleItemClick = (id) => {
         // get id and add to list
-        // or remove 
+        // or remove if already present
         if(selectedDaos.includes(id)){
             setSelectedDaos(selectedDaos.filter((e)=> e != id))
         } else {
@@ -46,23 +45,29 @@ const UserDaosFollowForm = ({userDaos, targetDao}) => {
         }
     }
 
-    // TODO: sizing of modal and loading states
+    // TODO: loading state animation
+    if (!userDaos) return (
+        <p className="text-center">Loading...</p>
+    )
 
     return (
-        <div className="w-full">
-            <ul className="list-none">
-                {!userDaos && <p className="items-center">Wait, you haven't joined any bbyDAOs yet :/</p>}
-                {userDaos && userDaos.map((dao, index) => {
-                    return <DaoListItem daoName={dao.name} isFollowing={false} id={index} onClick={handleItemClick.bind(this)} />
-                })}
-            </ul>
+        <div className="flex flex-col w-full h-full justify-between">
+                <ul className="list-none w-full h-full overflow-y-auto px-5">
+                    {userDaos.length == 0 && 
+                        <p className="text-center"> You haven't joined any bbyDAOs yet :/</p>
+                    }
+                    
+                    {userDaos && userDaos.map((dao, index) => {
+                        return <DaoListItem dao={dao} key={index} id={index} targetDao={targetDao} onClick={handleItemClick.bind(this)} />
+                    })}
+                </ul>
             
-            <button
-            className="focus:shadow-outline w-full rounded-xl border-2 bg-slate-300 py-3 px-4 font-bold shadow-xl hover:border-2 hover:border-[#0db2ac93] hover:bg-slate-100 hover:shadow-sm focus:outline-none dark:bg-slate-800"
-            onClick={handleSubmit}
-            >
-            submit
-            </button>
+                <button
+                className="focus:shadow-outline w-full rounded-xl border-2 bg-slate-300 py-3 px-4 font-bold shadow-xl hover:border-2 hover:border-[#0db2ac93] hover:bg-slate-100 hover:shadow-sm focus:outline-none dark:bg-slate-800"
+                onClick={handleSubmit}
+                >
+                submit
+                </button>
         </div>
     )
 

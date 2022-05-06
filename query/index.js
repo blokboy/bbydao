@@ -45,6 +45,14 @@ export const reqRelationship = async req => {
   return res.data
 }
 
+// get relationship
+// { initiator: id, target: id, status: enum }
+export const getRelationship = async req => {
+  const res = await api.post("/relationship/where", req)
+  console.log("getRelationship response:", res.data)
+  return res.data
+}
+
 // update relationship
 // { id: relationshipRef, notificationId: notificationId, status: enum }
 export const updateRelationship = async req => {

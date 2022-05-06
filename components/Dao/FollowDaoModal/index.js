@@ -10,8 +10,7 @@ import useSafes from "hooks/useSafes"
 
 const FollowDaoModal = ({user, targetDao}) => {
   const safes = useSafes(user)
-  const [userDaos, setUserDaos] = React.useState()
-  const { data, status, mutateAsync: getUserDaos } = useMutation(getUserDao)
+  const { data: userDaos, mutateAsync: getUserDaos } = useMutation(getUserDao)
 
   const setFollowModalOpen = useDaoStore(
     state => state.setFollowModalOpen
@@ -36,8 +35,8 @@ const FollowDaoModal = ({user, targetDao}) => {
       close={setFollowModalOpen}
       heading={"Which bbyDAO(s) should follow this?"}
     >
-        <div className="w-full h-full justify-center items-center">
-            <UserDaosFollowForm userDaos={data} targetDao={targetDao} /> 
+        <div className="w-full md:h-60 lg:h-80 sm:h-40 py-5 justify-center items-center">
+            <UserDaosFollowForm userDaos={userDaos} targetDao={targetDao} /> 
         </div>
         
     </Modal>
