@@ -4,6 +4,7 @@ import { HiDotsHorizontal } from "react-icons/hi"
 import { useConnect } from "wagmi"
 
 import DashboardLink from "./DashboardLink"
+import MintLink from "./MintLink"
 import MenuThemeToggle from "./MenuThemeToggle"
 import MessagesLink from "./MessagesLink"
 import ExploreLink from "./ExploreLink"
@@ -42,6 +43,7 @@ const Menu = ({ address }) => {
           {data.connected ? (
             <>
               <DashboardLink />
+              <MintLink />
               <MessagesLink />
               <NotificationsLink notifications={notifications} />
               <FeedLink />

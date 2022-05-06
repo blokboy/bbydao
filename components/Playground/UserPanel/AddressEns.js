@@ -26,7 +26,9 @@ const AddressEns = ({ address }) => {
 
   if (ensLoading || !address) {
     return (
-      <div className="flex h-10 w-full animate-pulse justify-center rounded-xl bg-slate-200 dark:bg-slate-800"></div>
+      <div className="flex h-10 w-full flex-row items-center justify-center">
+        <div className="flex h-full w-44 animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800"></div>
+      </div>
     )
   }
 

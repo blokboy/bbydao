@@ -27,4 +27,9 @@ export const allDaoTx = async safeAddress => {
   return data
 }
 
+export const safesByOwner = async signerAddress => {
+  const { data } = await api.get(`owners/${signerAddress}/safes`)
+  return data
+}
+
 

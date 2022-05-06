@@ -21,7 +21,7 @@ const Feed = () => {
   const reset = React.useCallback(() => {
     setExpandedDao(null)
   }, [setExpandedDao])
-  
+
   const router = useRouter()
   React.useEffect(() => {
     router.events.on("routeChangeStart", reset)
@@ -34,26 +34,30 @@ const Feed = () => {
     refetchOnWindowFocus: false,
   })
 
-  const daoTxs = txs?.results?.map((tx, i) => <TxCard tx={tx} key={i} />)
+  const daoTxs = React.useMemo(() => {
+    const txsToMap = txs && txs?.results ? txs?.results : []
+
+    return txsToMap ? txsToMap.map((tx, i) => <TxCard tx={tx} key={i} />) : null
+  }, [txs])
 
   return (
-    <div className="flex w-full flex-col lg:w-2/5 space-y-6">
-      <div className="h-10 flex flex-row space-x-2 overflow-x-auto no-scrollbar dark:bg-slate-900 bg-slate-300 px-3">
-        <div className="space-x-3 dark:bg-slate-800 bg-slate-100 border border-slate-100 dark:border-slate-800 hover:dark:border-white hover:border-white hover:dark:bg-slate-700 hover:bg-slate-200 rounded-xl p-1 my-1">
+    <div className="flex w-full flex-col space-y-6 lg:w-2/5">
+      <div className="no-scrollbar flex h-10 flex-row space-x-2 overflow-x-auto bg-slate-300 px-3 dark:bg-slate-900">
+        <div className="my-1 space-x-3 rounded-xl border border-slate-100 bg-slate-100 p-1 hover:border-white hover:bg-slate-200 dark:border-slate-800 dark:bg-slate-800 hover:dark:border-white hover:dark:bg-slate-700">
           <span>🔥</span>
           <span>hot</span>
         </div>
-        <div className="space-x-3 dark:bg-slate-800 bg-slate-100 border border-slate-100 dark:border-slate-800 hover:dark:border-white hover:border-white hover:dark:bg-slate-700 hover:bg-slate-200 rounded-xl p-1 my-1">
+        <div className="my-1 space-x-3 rounded-xl border border-slate-100 bg-slate-100 p-1 hover:border-white hover:bg-slate-200 dark:border-slate-800 dark:bg-slate-800 hover:dark:border-white hover:dark:bg-slate-700">
           <span>💙</span>
           <span>following</span>
         </div>
-        <div className="space-x-3 dark:bg-slate-800 bg-slate-100 border border-slate-100 dark:border-slate-800 hover:dark:border-white hover:border-white hover:dark:bg-slate-700 hover:bg-slate-200 rounded-xl p-1 my-1">
+        <div className="my-1 space-x-3 rounded-xl border border-slate-100 bg-slate-100 p-1 hover:border-white hover:bg-slate-200 dark:border-slate-800 dark:bg-slate-800 hover:dark:border-white hover:dark:bg-slate-700">
           <span>⭐</span>
           <span>favorites</span>
         </div>
       </div>
       {/* could be daoTxs or feed items  */}
-      <div className="flex space-y-3 flex-col px-3">{daoTxs}</div>
+      <div className="flex flex-col space-y-3 px-3">{daoTxs}</div>
     </div>
   )
 }

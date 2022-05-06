@@ -8,10 +8,10 @@ import { walletSnippet } from "utils/helpers"
 const DaoName = ({ safe, isMember, daoData, daoIsLoading }) => {
   const [isEditable, setIsEditable] = React.useState(false)
   const { state, setState, handleChange } = useForm()
-  
+
   // useQueryClient used to invalidate and refetch the dao data when the dao name is changed
   const queryClient = useQueryClient()
-  
+
   React.useEffect(() => {
     if (!!daoData?.name) setState({ name: daoData.name })
   }, [daoData])
@@ -21,7 +21,7 @@ const DaoName = ({ safe, isMember, daoData, daoIsLoading }) => {
       queryClient.invalidateQueries(["dao", safe], {
         refetchActive: true,
       })
-    }
+    },
   })
 
   const handleFocus = e => {
@@ -53,7 +53,7 @@ const DaoName = ({ safe, isMember, daoData, daoIsLoading }) => {
             onChange={handleChange}
             onFocus={handleFocus}
             name={"name"}
-            className={`focus:outline-0 w-full bg-slate-${isEditable ? "300" : "200"} dark:bg-slate-${
+            className={`w-full focus:outline-0 bg-slate-${isEditable ? "300" : "200"} dark:bg-slate-${
               isEditable ? "900" : "800"
             } rounded-xl p-2 font-bold ${isEditable ? "shadow-inner" : ""}`}
             disabled={!isEditable}
