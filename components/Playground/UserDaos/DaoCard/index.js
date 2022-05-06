@@ -69,11 +69,7 @@ const DaoCard = ({ user, safe }) => {
 
   return (
     <div className="m-3 flex flex-col rounded-xl bg-slate-200 p-3 dark:bg-slate-800">
-<<<<<<< HEAD
       <DaoUtilityBar user={user} isMember={isMember} address={safe} />
-=======
-      <DaoUtilityBar isMember={isMember} />
->>>>>>> main
       {/* Pfp and Members Section */}
       <div className="flex w-full flex-col lg:flex-row">
         <DaoPfpIcon isMember={isMember} />
