@@ -3,12 +3,14 @@ import { BsPeople } from "react-icons/bs"
 import Modal from "components/Layout/Modal"
 import FollowerModal from "./FollowerModal"
 
-const UserFollowers = ({ numFollowers, followers, friendStatus }) => {
+const UserFollowers = ({ user, numFollowers, followers, friendStatus }) => {
   const [followerModal, setFollowerModal] = React.useState(false)
 
   const toggleFollowerModal = React.useCallback(() => {
     setFollowerModal(!followerModal)
   }, [followerModal, setFollowerModal])
+
+  console.log('user', user)
 
   return (
     <div className="flex flex-row items-center justify-center space-x-2">

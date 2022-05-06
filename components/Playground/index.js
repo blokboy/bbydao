@@ -47,6 +47,8 @@ const Playground = ({ address, data }) => {
   // to interact with each other, actions taken in both sections should lead to discovery
   // and exploration of the app - making each column or section modular could provide unique
   // user paths and experiences - bbyDAO and user discovery/connection
+
+  console.log('userData', userData)
   return (
     <div className="flex w-full flex-col lg:flex-row">
       <UserPanel user={userData?.address} address={address} />
