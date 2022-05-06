@@ -9,6 +9,7 @@ const UserFollowers = ({ address, numFollowers, followers, friendStatus }) => {
   const queryClient = useQueryClient()
   const target = queryClient.getQueryData("targetAddress")
   const userName = target?.ens || walletSnippet(address)
+  console.log('target', target)
 
   const [followerModal, setFollowerModal] = React.useState(false)
 
