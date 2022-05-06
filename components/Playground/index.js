@@ -35,7 +35,6 @@ const Playground = ({ address, data }) => {
     const req = { address: address, ens: ensData }
     getUser(req, {
       onSuccess: () => {
-        console.log("getUserData", getUserData)
         if (getUserData?.ens !== ensData) {
           updateUser({ id: getUserData.id, ens: ensData })
         }
