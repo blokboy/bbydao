@@ -49,7 +49,7 @@ const DaoName = ({ safe, isMember, daoData, daoIsLoading }) => {
       <div className="text-2xl">
         <form className="flex flex-col">
           <input
-            value={daoIsLoading ? " " : daoData?.name === undefined ? walletSnippet(safe) : state.name}
+            value={daoIsLoading ? " " : daoData?.name === undefined ? walletSnippet(safe) : (state.name || '')}
             onChange={handleChange}
             onFocus={handleFocus}
             name={"name"}
