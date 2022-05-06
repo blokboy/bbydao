@@ -27,7 +27,7 @@ class MyDocument extends Document {
           <NextScript />
           <div
             id="modal"
-            className="fixed top-0 h-screen w-screen z-20 bg-[#4b515066] empty:hidden"
+            className="fixed top-0 h-screen w-screen z-50 bg-[#4b515066] backdrop-blur empty:hidden"
           />
         </body>
       </Html>
