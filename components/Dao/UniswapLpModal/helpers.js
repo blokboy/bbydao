@@ -283,8 +283,8 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
     const bbyDaoSafe = new ethers.Contract(safeAddress, GnosisSafeSol.abi, signer)
 
     /* last transaction made by bbyDAO */
-    // const nonce = await safeService.getNextNonce(safeAddress)
-    const nonce = 3
+    const nonce = await safeService.getNextNonce(safeAddress)
+    // const nonce = 3
 
     /* Pre-validated Gnosis signature */
     //const signature = getPreValidatedSignature(signer._address)
