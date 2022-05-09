@@ -284,7 +284,7 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
 
     /* last transaction made by bbyDAO */
     const nonce = await safeService.getNextNonce(safeAddress)
-    // const nonce = 3
+    // const nonce = 4
 
     /* Pre-validated Gnosis signature */
     //const signature = getPreValidatedSignature(signer._address)
@@ -304,16 +304,16 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
       data: data,
       operation: CALL,
       nonce: nonce,
-      // safeTxGas: 0,
+      safeTxGas: 0,
       baseGas: 0,
-      // gasPrice: 0,
+      gasPrice: 0,
       gasToken: ZERO_ADDRESS,
       refundReceiver: ZERO_ADDRESS,
       sender: signer._address,
       //  signature,
       //temp
-      gasPrice: 60,
-      safeTxGas: 200000,
+      // gasPrice: 60,
+      // safeTxGas: 200000,
     }
 
     if (!!safeTx.data) {
