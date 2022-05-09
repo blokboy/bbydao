@@ -56,8 +56,8 @@ const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance, safeAd
         abi: minimalABI,
         instance: contract,
         args: {
-          tokenAddress: contract?.address,
-          allowance: BigNumber.from(max256),
+          spender,
+          value: BigNumber.from(max256),
         },
         fn: "approve(address,uint256)",
       },
@@ -74,6 +74,8 @@ const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance, safeAd
   useMemo(async () => {
     const allowed = await tokenContracts
     setHasAllowance(allowed.allowedToSpend)
+
+    console.log('allowed', allowed)
   }, [tokenContracts])
 
   return (

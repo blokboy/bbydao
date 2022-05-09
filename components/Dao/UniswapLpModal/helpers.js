@@ -284,7 +284,7 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
 
     /* last transaction made by bbyDAO */
     const nonce = await safeService.getNextNonce(safeAddress)
-    // const nonce = 4
+    // const nonce = 7
 
     /* Pre-validated Gnosis signature */
     //const signature = getPreValidatedSignature(signer._address)
