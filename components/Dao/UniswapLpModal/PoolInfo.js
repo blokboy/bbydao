@@ -5,7 +5,7 @@ import { eToNumber, isEmpty, max256, NumberFromBig } from "utils/helpers"
 import {handleGnosisTransaction}                     from './helpers'
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 
-const PoolInfo = ({ spender, pairAddress, info, signer, hasAllowance, setHasAllowance, safeAddress }) => {
+const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, safeAddress }) => {
   const token0 = info?.transactionInfo?.[0].token
   const token1 = info?.transactionInfo?.[1].token
   const prettyPercentage = decimal => (decimal * 100 < 0.01 ? "< .01%" : `${(decimal * 100).toFixed(2)}%`)
@@ -18,18 +18,36 @@ const PoolInfo = ({ spender, pairAddress, info, signer, hasAllowance, setHasAllo
     .slice(0, -1)
 
 
+  const pairContract = useMemo(async () => {
+    let contract, pairAllowanceAmount
+
+    if (!!signer) {
+      if (!!pair) {
+        contract = new ethers.Contract(pair?.address, IUniswapV2Pair["abi"], signer)
+        const allowance = await contract.allowance(safeAddress, spender)
+        pairAllowanceAmount = await NumberFromBig(allowance._hex, pair.decimals)
+      }
+
+    }
+    return {
+      contract,
+      allowedToSpend: { pair: pairAllowanceAmount > 0 },
+    }
+  }, [pair])
+
+
   const tokenContracts = useMemo(async () => {
     let token0Contract, token1Contract, token0AllowanceAmount, token1AllowanceAmount
 
     if (!!signer) {
       if (!!token0) {
-        token0Contract = new ethers.Contract(pairAddress, IUniswapV2Pair["abi"], signer)
+        token0Contract = new ethers.Contract(token0?.address, minimalABI, signer)
         const allowance = await token0Contract.allowance(safeAddress, spender)
         token0AllowanceAmount = await NumberFromBig(allowance._hex, token0.decimals)
       }
 
       if (!!token1) {
-        token1Contract = new ethers.Contract(pairAddress, IUniswapV2Pair["abi"], signer)
+        token1Contract = new ethers.Contract(token1?.address, minimalABI, signer)
         const allowance = await token1Contract.allowance(safeAddress, spender)
         token1AllowanceAmount = await NumberFromBig(allowance._hex, token1.decimals)
       }
@@ -44,6 +62,27 @@ const PoolInfo = ({ spender, pairAddress, info, signer, hasAllowance, setHasAllo
   const handleApproveToken = async (tokenContracts, index) => {
     const contracts = await tokenContracts
     const contract = await contracts.contracts[index]
+
+    handleGnosisTransaction({
+      executingContract: {
+        abi: minimalABI,
+        instance: contract,
+        args: {
+          spender,
+          value: BigNumber.from(max256),
+        },
+        fn: "approve(address,uint256)",
+      },
+      signer,
+      safeAddress,
+      to: contract?.address,
+      value: 0
+    })
+  }
+
+  const handleApprovePair = async (pairContract) => {
+    const pair = await pairContract
+    const contract = await pair.contract
 
     handleGnosisTransaction({
       executingContract: {
@@ -64,9 +103,16 @@ const PoolInfo = ({ spender, pairAddress, info, signer, hasAllowance, setHasAllo
 
   useMemo(async () => {
     const allowed = await tokenContracts
-    setHasAllowance(allowed.allowedToSpend)
+    setHasAllowance({...hasAllowance, ...allowed.allowedToSpend})
 
   }, [tokenContracts])
+
+  useMemo(async () => {
+    const allowed = await pairContract
+    setHasAllowance({...hasAllowance, ...allowed.allowedToSpend})
+
+  }, [pairContract])
+
 
   return (
     <div>
@@ -126,6 +172,15 @@ const PoolInfo = ({ spender, pairAddress, info, signer, hasAllowance, setHasAllo
               >
                 Approve {token1?.symbol}
               </div>
+            )}
+            {console.log('pair', pair)}
+            {(hasAllowance.token0 && token0) && (hasAllowance.token1 && token1) && (!hasAllowance.pair && pair) && (
+                <div
+                    className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+                    onClick={() => handleApprovePair(pairContract, 0)}
+                >
+                  Approve {pairName}
+                </div>
             )}
           </div>
         </div>

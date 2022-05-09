@@ -284,7 +284,8 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
 
     /* last transaction made by bbyDAO */
     // const nonce = await safeService.getNextNonce(safeAddress)
-    const nonce = 8
+
+    const nonce = 11 // have been using this on our safe where the nonce order is messe dup
 
     /* Pre-validated Gnosis signature */
     //const signature = getPreValidatedSignature(signer._address)

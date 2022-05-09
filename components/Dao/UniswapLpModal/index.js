@@ -29,7 +29,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const [hasAllowance, setHasAllowance] = useState()
   const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0.token.symbol)[0].uri
   const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1.token.symbol)[0].uri
-  const supplyDisabled = !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1
+  const supplyDisabled = !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1 || !hasAllowance?.pair
   const closeUniswapLpModal = () => {
     setLpToken0({})
     setLpToken1({})
@@ -230,12 +230,11 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
           state={state}
           logo={token1Logo}
         />
-        {console.log('p', pair?.liquidityToken?.address)}
         <div className="mb-8 w-full">
           {liquidityInfo && (
             <PoolInfo
               spender={UniswapV2Router02}
-              pairAddress={pair?.liquidityToken?.address}
+              pair={pair?.liquidityToken}
               info={liquidityInfo}
               signer={signer}
               hasAllowance={hasAllowance}
