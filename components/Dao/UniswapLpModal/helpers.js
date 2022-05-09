@@ -283,9 +283,9 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
     const bbyDaoSafe = new ethers.Contract(safeAddress, GnosisSafeSol.abi, signer)
 
     /* last transaction made by bbyDAO */
-    // const nonce = await safeService.getNextNonce(safeAddress)
+    const nonce = await safeService.getNextNonce(safeAddress)
 
-    const nonce = 11 // have been using this on our safe where the nonce order is messe dup
+    // const nonce = 11 // have been using this on our safe where the nonce order is messe dup
 
     /* Pre-validated Gnosis signature */
     //const signature = getPreValidatedSignature(signer._address)
