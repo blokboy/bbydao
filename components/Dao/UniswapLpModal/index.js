@@ -1,15 +1,17 @@
-import { ChainId, Fetcher, Route, Token } from "@uniswap/sdk"
-import IUniswapV2ERC20 from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
-import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
-import Modal from "components/Layout/Modal"
-import { BigNumber, ethers } from "ethers"
-import useForm from "hooks/useForm"
-import React, { useEffect, useMemo, useRef, useState } from "react"
-import { useDaoStore } from "stores/useDaoStore"
-import { useSigner } from "wagmi"
+import { ChainId, Fetcher, Route, Token }                                              from "@uniswap/sdk"
+import IUniswapV2ERC20                                                                 from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
+import IUniswapV2Router02                                                              from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
+import Modal                                                                           from "components/Layout/Modal"
+import { BigNumber, ethers }                                                           from "ethers"
+import useForm                                                                         from "hooks/useForm"
+import React, { useEffect, useMemo, useRef, useState }                                 from "react"
+import { useDaoStore }                                                                 from "stores/useDaoStore"
+import { useSigner }                                                                   from "wagmi"
+import ControlledModal
+                                                                                       from '../../Layout/Modal/ControlledModal'
 import { amount, getLiquidityPairInfo, handleGnosisTransaction, readableTokenBalance } from "./helpers"
-import PoolInfo from "./PoolInfo"
-import TokenInput from "./TokenInput"
+import PoolInfo                                                                        from "./PoolInfo"
+import TokenInput                                                                      from "./TokenInput"
 
 const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const UniswapV2Router02 = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
@@ -202,7 +204,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   }, [])
 
   return (
-    <Modal close={closeUniswapLpModal} heading={"Add Liquidity"}>
+    <ControlledModal close={closeUniswapLpModal} heading={"Add Liquidity"}>
       <div className="mt-2 rounded-xl bg-[#eda67e24] p-4 font-thin text-[#FC8D4D]">
         <span className="font-bold">Tip:</span> When you add liquidity, you will receive pool tokens representing your
         position. These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at
@@ -256,7 +258,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
           )}
         </div>
       </form>
-    </Modal>
+    </ControlledModal>
   )
 }
 
