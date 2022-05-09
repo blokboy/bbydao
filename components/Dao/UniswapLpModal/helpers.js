@@ -283,8 +283,8 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
     const bbyDaoSafe = new ethers.Contract(safeAddress, GnosisSafeSol.abi, signer)
 
     /* last transaction made by bbyDAO */
-    const nonce = await safeService.getNextNonce(safeAddress)
-    // const nonce = 7
+    // const nonce = await safeService.getNextNonce(safeAddress)
+    const nonce = 8
 
     /* Pre-validated Gnosis signature */
     //const signature = getPreValidatedSignature(signer._address)
@@ -292,6 +292,7 @@ export const handleGnosisTransaction = async ({ executingContract, signer, safeA
     /* Encode Data */
     const { data } = contractInterface(executingContract)
 
+    console.log('hii', to, value, data, CALL)
     // const safeTxGas = await bbyDaoSafe?.requiredTxGas(ethers.utils.getAddress(to),amount(parseFloat(ethers.utils.formatEther(value))), hexToBytes(data), CALL)
     // console.log('safe', safeTxGas)
 

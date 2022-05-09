@@ -3,11 +3,11 @@ import { minimalABI }                                from "hooks/useERC20Contrac
 import { useMemo, useState }                         from "react"
 import { eToNumber, isEmpty, max256, NumberFromBig } from "utils/helpers"
 import {handleGnosisTransaction}                     from './helpers'
+import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 
-const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance, safeAddress }) => {
+const PoolInfo = ({ spender, pairAddress, info, signer, hasAllowance, setHasAllowance, safeAddress }) => {
   const token0 = info?.transactionInfo?.[0].token
   const token1 = info?.transactionInfo?.[1].token
-  const signerAddress = signer?._address
   const prettyPercentage = decimal => (decimal * 100 < 0.01 ? "< .01%" : `${(decimal * 100).toFixed(2)}%`)
   const prettyMinted = amount => parseFloat(amount)?.toFixed(3)
   const prettyTotal = amount => Math.round(amount).toLocaleString("en-US")
@@ -17,21 +17,19 @@ const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance, safeAd
     }, "")
     .slice(0, -1)
 
+
   const tokenContracts = useMemo(async () => {
     let token0Contract, token1Contract, token0AllowanceAmount, token1AllowanceAmount
 
     if (!!signer) {
       if (!!token0) {
-        token0Contract = new ethers.Contract(token0?.address, minimalABI, signer)
+        token0Contract = new ethers.Contract(pairAddress, IUniswapV2Pair["abi"], signer)
         const allowance = await token0Contract.allowance(safeAddress, spender)
         token0AllowanceAmount = await NumberFromBig(allowance._hex, token0.decimals)
-
-        console.log('to', token0Contract, allowance)
-
       }
 
       if (!!token1) {
-        token1Contract = new ethers.Contract(token1?.address, minimalABI, signer)
+        token1Contract = new ethers.Contract(pairAddress, IUniswapV2Pair["abi"], signer)
         const allowance = await token1Contract.allowance(safeAddress, spender)
         token1AllowanceAmount = await NumberFromBig(allowance._hex, token1.decimals)
       }
@@ -46,14 +44,10 @@ const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance, safeAd
   const handleApproveToken = async (tokenContracts, index) => {
     const contracts = await tokenContracts
     const contract = await contracts.contracts[index]
-    //const approve = await contract.approve(spender, BigNumber.from(max256))
-
-    console.log('contract', contract)
-
 
     handleGnosisTransaction({
       executingContract: {
-        abi: minimalABI,
+        abi: IUniswapV2Pair["abi"],
         instance: contract,
         args: {
           spender,
@@ -66,16 +60,12 @@ const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance, safeAd
       to: contract?.address,
       value: 0
     })
-
-
-    // console.log("approve", approve)
   }
 
   useMemo(async () => {
     const allowed = await tokenContracts
     setHasAllowance(allowed.allowedToSpend)
 
-    console.log('allowed', allowed)
   }, [tokenContracts])
 
   return (

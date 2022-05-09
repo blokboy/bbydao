@@ -1,6 +1,7 @@
 import { ChainId, Fetcher, Route, Token } from "@uniswap/sdk"
 import IUniswapV2ERC20 from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
+
 import Modal from "components/Layout/Modal"
 import { BigNumber, ethers } from "ethers"
 import useForm from "hooks/useForm"
@@ -12,7 +13,7 @@ import PoolInfo from "./PoolInfo"
 import TokenInput from "./TokenInput"
 
 const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
-  const UniswapV2Router02 = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+  const UniswapV2Router02 =  ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const [{ data: signer }] = useSigner()
   const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
   const lpToken0 = useDaoStore(state => state.lpToken0)
@@ -39,9 +40,9 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const handleSubmit = async (e, liquidityInfo) => {
     e.preventDefault()
 
-    const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02.abi, signer)
+    const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
     const pairHasEth = liquidityInfo.transactionInfo.filter(token => token.token.symbol === "ETH")
-    const slippage = 0.055 // default 5.5% slippage
+    const slippage = 0.25 // default 5.5% slippage
 
     /* token A */
     const tokenA = liquidityInfo.transactionInfo[0].token.address
@@ -60,7 +61,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
     if (pairHasEth.length === 0) {
       handleGnosisTransaction({
         executingContract: {
-          abi: IUniswapV2Router02.abi,
+          abi: IUniswapV2Router02["abi"],
           instance: uniswapV2RouterContract02,
           args: {
             tokenA: ethers.utils.getAddress(tokenA),
@@ -229,10 +230,12 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
           state={state}
           logo={token1Logo}
         />
+        {console.log('p', pair?.liquidityToken?.address)}
         <div className="mb-8 w-full">
           {liquidityInfo && (
             <PoolInfo
-              spender={pair?.liquidityToken?.address}
+              spender={UniswapV2Router02}
+              pairAddress={pair?.liquidityToken?.address}
               info={liquidityInfo}
               signer={signer}
               hasAllowance={hasAllowance}
