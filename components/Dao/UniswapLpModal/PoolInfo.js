@@ -1,9 +1,10 @@
-import { ethers, BigNumber } from "ethers"
-import { minimalABI } from "hooks/useERC20Contract"
-import { useMemo, useState } from "react"
+import { ethers, BigNumber }                         from "ethers"
+import { minimalABI }                                from "hooks/useERC20Contract"
+import { useMemo, useState }                         from "react"
 import { eToNumber, isEmpty, max256, NumberFromBig } from "utils/helpers"
+import {handleGnosisTransaction}                     from './helpers'
 
-const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance }) => {
+const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance, safeAddress }) => {
   const token0 = info?.transactionInfo?.[0].token
   const token1 = info?.transactionInfo?.[1].token
   const signerAddress = signer?._address
@@ -22,13 +23,16 @@ const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance }) => {
     if (!!signer) {
       if (!!token0) {
         token0Contract = new ethers.Contract(token0?.address, minimalABI, signer)
-        const allowance = await token0Contract.allowance(signerAddress, spender)
+        const allowance = await token0Contract.allowance(safeAddress, spender)
         token0AllowanceAmount = await NumberFromBig(allowance._hex, token0.decimals)
+
+        console.log('to', token0Contract, allowance)
+
       }
 
       if (!!token1) {
         token1Contract = new ethers.Contract(token1?.address, minimalABI, signer)
-        const allowance = await token1Contract.allowance(signerAddress, spender)
+        const allowance = await token1Contract.allowance(safeAddress, spender)
         token1AllowanceAmount = await NumberFromBig(allowance._hex, token1.decimals)
       }
     }
@@ -42,8 +46,29 @@ const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance }) => {
   const handleApproveToken = async (tokenContracts, index) => {
     const contracts = await tokenContracts
     const contract = await contracts.contracts[index]
-    const approve = await contract.approve(spender, BigNumber.from(max256))
-    console.log("approve", approve)
+    //const approve = await contract.approve(spender, BigNumber.from(max256))
+
+    console.log('contract', contract)
+
+
+    handleGnosisTransaction({
+      executingContract: {
+        abi: minimalABI,
+        instance: contract,
+        args: {
+          tokenAddress: contract?.address,
+          allowance: BigNumber.from(max256),
+        },
+        fn: "approve(address,uint256)",
+      },
+      signer,
+      safeAddress,
+      to: contract?.address,
+      value: 0
+    })
+
+
+    // console.log("approve", approve)
   }
 
   useMemo(async () => {

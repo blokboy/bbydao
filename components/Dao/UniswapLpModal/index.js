@@ -237,6 +237,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
               signer={signer}
               hasAllowance={hasAllowance}
               setHasAllowance={setHasAllowance}
+              safeAddress={safeAddress}
             />
           )}
           {state[lpToken0?.token?.symbol] > 0 && state[lpToken1?.token?.symbol] > 0 && (
