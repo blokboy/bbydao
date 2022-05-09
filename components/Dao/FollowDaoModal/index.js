@@ -8,12 +8,16 @@ import UserDaosFollowForm from "./UserDaosFollowForm"
 import useSafes from "hooks/useSafes"
 
 
-const FollowDaoModal = ({user, targetDao}) => {
+const FollowDaoModal = ({user}) => {
   const safes = useSafes(user)
   const { data: userDaos, mutateAsync: getUserDaos } = useMutation(getUserDao)
 
   const setFollowModalOpen = useDaoStore(
     state => state.setFollowModalOpen
+  )
+
+  const targetDao = useDaoStore(
+    state => state.followDaoModalTarget
   )
 
   React.useEffect(()=>{

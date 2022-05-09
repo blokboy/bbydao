@@ -13,7 +13,7 @@ const UserDaosFollowForm = ({userDaos, targetDao}) => {
     const [selectedDaos, setSelectedDaos] = React.useState([])
     const { data, status, mutate: followDao } = useMutation(reqRelationship, {
         onSuccess: () => {
-            console.log(data)
+            //console.log(data)
         },
         onError: (e) => {
             console.log(e)

@@ -17,6 +17,10 @@ const DaoUtilityBar = ({ user, isMember, address }) => {
   const setFollowModalOpen = useDaoStore(
     state => state.setFollowModalOpen
   )
+
+  const setTarget = useDaoStore(
+    state => state.setFollowDaoModalTarget
+  )
   
   const followModalOpen = useDaoStore(
     state => state.followModalOpen
@@ -31,6 +35,11 @@ const DaoUtilityBar = ({ user, isMember, address }) => {
       })
     },
   })
+
+  const handleFollowDao = () => {
+    setTarget(address);
+    setFollowModalOpen();
+  }
 
   const handleFollow = () => {
     if (!address || !user) return
@@ -55,7 +64,7 @@ const DaoUtilityBar = ({ user, isMember, address }) => {
       ):(
         <React.Fragment>
         <button className="flex -transform-y-6 h-6 w-6 items-center justify-center rounded-full border text-blue-700 dark:text-blue-300 border-slate-400 bg-slate-200 p-1 shadow hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-600"
-                onClick={setFollowModalOpen}
+                onClick={handleFollowDao}
                 title='Follow bbyDAO as a bbyDAO'
         >
           <RiUserFollowLine />

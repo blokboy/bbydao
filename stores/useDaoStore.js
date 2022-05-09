@@ -27,5 +27,8 @@ export const useDaoStore = create(set => ({
 
   // bbyDao to bbyDao follow modal display
   followModalOpen: false,
-  setFollowModalOpen: () => set(state => ({ followModalOpen : !state.followModalOpen}))
+  setFollowModalOpen: () => set(state => ({ followModalOpen : !state.followModalOpen})),
+
+  followDaoModalTarget: "",
+  setFollowDaoModalTarget: followDaoModalTarget => set(state => ({followDaoModalTarget}))
 }))
