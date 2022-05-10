@@ -1,15 +1,16 @@
 import React, { useEffect, useMemo } from "react"
-import { useDaoStore } from "../../../../stores/useDaoStore"
-import UniswapLpModal from "../../../Dao/UniswapLpModal"
-import DaoUtilityBar from "./DaoUtilityBar"
-import DaoPfpIcon from "./DaoPfpIcon"
-import DaoPfp from "./DaoPfp"
-import DaoBalance from "./DaoBalance"
-import DaoMembers from "./DaoMembers"
-import DaoName from "./DaoName"
-import DaoFollowers from "./DaoFollowers"
-import ExpandDao from "./ExpandDao"
-import DaoCardExpanded from "./DaoCardExpanded/index"
+import { useDaoStore }               from "../../../../stores/useDaoStore"
+import UniswapLpModal                from "../../../Dao/UniswapLpModal"
+import RemoveLiquidity               from '../../../Dao/UniswapLpModal/RemoveLiquidity'
+import DaoUtilityBar                 from "./DaoUtilityBar"
+import DaoPfpIcon                    from "./DaoPfpIcon"
+import DaoPfp                        from "./DaoPfp"
+import DaoBalance                    from "./DaoBalance"
+import DaoMembers                    from "./DaoMembers"
+import DaoName                       from "./DaoName"
+import DaoFollowers                  from "./DaoFollowers"
+import ExpandDao                     from "./ExpandDao"
+import DaoCardExpanded               from "./DaoCardExpanded/index"
 
 import { usePlaygroundStore } from "/stores/usePlaygroundStore"
 
@@ -19,6 +20,7 @@ import { useMutation, useQuery } from "react-query"
 
 const DaoCard = ({ user, safe }) => {
   const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
+  const uniswapRemoveLpModalOpen = useDaoStore(state => state.uniswapRemoveLpModalOpen)
 
   const { mutateAsync: createDao } = useMutation(api.createDao)
 
@@ -60,6 +62,15 @@ const DaoCard = ({ user, safe }) => {
     isLoading: daoTokensLoading,
   } = useQuery(["daoTokens", safe], () => gnosisApi.daoBalance(safe), {
     staleTime: 200000,
+    refetchOnWindowFocus: true,
+  })
+
+  const {
+    data: daoTokenssData,
+    error: daoTokenssErr,
+    isLoading: daoTokenssLoading,
+  } = useQuery(["daoTokenList", safe], () => gnosisApi.daoNFTs(safe), {
+    staleTime: 200000,
     refetchOnWindowFocus: false,
   })
 
@@ -67,7 +78,12 @@ const DaoCard = ({ user, safe }) => {
     return daoTokensData?.reduce((acc = [], cv) => {
       const uri = cv?.token?.logoUri
       const symbol = cv?.token?.symbol
-      uri && symbol ? acc.push({ uri, symbol }) : null
+      const isETH = parseInt(cv?.ethValue) === 1 && cv?.token === null && cv?.tokenAddress === null
+      uri && symbol
+        ? acc.push({ uri, symbol })
+        : isETH
+        ? acc.push({ uri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png", symbol: "ETH" })
+        : null
       return acc
     }, [])
   }, [daoTokensData])
