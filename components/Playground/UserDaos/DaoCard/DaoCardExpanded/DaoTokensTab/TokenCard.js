@@ -85,7 +85,10 @@ const TokenCard = ({ token }) => {
         <div className="flex h-10 w-10 items-center justify-center overflow-clip rounded-full border border-white">
           {token?.token?.logoUri ? <img src={token?.token?.logoUri} alt={""} /> : <FaEthereum size={30} />}
         </div>
-        <div className="flex h-full flex-col rounded-xl bg-slate-200 p-1 text-xs dark:bg-slate-600">
+        <div className="flex h-full w-auto flex-col rounded-xl bg-slate-200 p-1 text-xs dark:bg-slate-600">
+          <span>
+            {token.token?.name ? token.token.name : "Ethereum"}
+          </span>
           <span>
             {(token?.balance / 10 ** 18).toFixed(3)} {token.token?.symbol ? token.token.symbol : "ETH"}
           </span>
