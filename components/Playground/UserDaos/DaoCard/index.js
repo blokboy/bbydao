@@ -60,8 +60,20 @@ const DaoCard = ({ user, safe }) => {
     isLoading: daoTokensLoading,
   } = useQuery(["daoTokens", safe], () => gnosisApi.daoBalance(safe), {
     staleTime: 200000,
+    refetchOnWindowFocus: true,
+  })
+
+  const {
+    data: daoTokenssData,
+    error: daoTokenssErr,
+    isLoading: daoTokenssLoading,
+  } = useQuery(["daoTokenList", safe], () => gnosisApi.daoNFTs(safe), {
+    staleTime: 200000,
     refetchOnWindowFocus: false,
   })
+
+  console.log('da', daoTokenssData)
+  console.log('balances', daoTokensData)
 
   const tokenLogos = useMemo(() => {
     return daoTokensData?.reduce((acc = [], cv) => {

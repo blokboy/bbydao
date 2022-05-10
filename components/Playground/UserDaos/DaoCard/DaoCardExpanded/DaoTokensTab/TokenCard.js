@@ -19,6 +19,8 @@ const TokenCard = ({ token }) => {
     (token?.tokenAddress === null && lpToken1?.tokenAddress === WETH)
   const isETH = (token) =>
       parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null
+  const isUniV2 = token?.token?.symbol === 'UNI-V2'
+  console.log('isUniV2', isUniV2)
 
   const setLpToken = () => {
     if (!isActive) {
@@ -83,25 +85,35 @@ const TokenCard = ({ token }) => {
         </div>
       </div>
 
-      {parseInt(token?.fiatBalance) !== 0 && (
-        <div className="flex flex-row space-x-2 p-1 xl:justify-center">
-          {isEmpty(lpToken0) && (
-            <>
-              <button
-                className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500"
-                onClick={() => console.log("hii")}
-              >
-                send
-              </button>
-              <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setSwapToken}>
-                swap
-              </button>
-            </>
-          )}
-          <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setLpToken}>
-            {isEmpty(lpToken0) && isEmpty(lpToken1) ? "LP" : isActive ? "Selected" : "Pair"}
-          </button>
-        </div>
+      {(parseInt(token?.fiatBalance) !== 0) && (
+          <>
+            {(!isUniV2 && (
+                <div className="flex flex-row space-x-2 p-1 xl:justify-center">
+                  {isEmpty(lpToken0) && (
+                      <>
+                        <button
+                            className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500"
+                            onClick={() => console.log("hii")}
+                        >
+                          send
+                        </button>
+                        <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setSwapToken}>
+                          swap
+                        </button>
+                      </>
+                  )}
+                  <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setLpToken}>
+                    {isEmpty(lpToken0) && isEmpty(lpToken1) ? "LP" : isActive ? "Selected" : "Pair"}
+                  </button>
+                </div>
+            )) || (
+                <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-slate-500">
+                  Remove Liquidity
+                </button>
+            )}
+
+          </>
+
       )}
     </div>
   )
