@@ -1,29 +1,44 @@
-import React from "react"
-import Select from "react-select"
-import { customStyles } from "./customStyles"
-import useForm from "hooks/useForm"
-import { useConnect, useAccount } from "wagmi"
+import { EthersAdapter, Safe, SafeFactory } from "@gnosis.pm/safe-core-sdk"
 import { ethers } from "ethers"
-import { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
-import { Safe, SafeFactory, SafeAccountConfig } from "@gnosis.pm/safe-core-sdk"
+import { Field, Form, Formik } from "formik"
 import * as api from "query"
-import { useQuery, useMutation } from "react-query"
+import React, { useCallback } from "react"
+import { useMutation, useQuery } from "react-query"
+import Select from "react-select"
+import { useAccount, useProvider, useSigner } from "wagmi"
+import * as Yup from "yup"
+import { customStyles } from "./customStyles"
+
+const Input = ({ name }) => {
+  return (
+    <Field
+      className="focus:shadow-outline w-full appearance-none rounded border bg-slate-100 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
+      id="name"
+      name={name}
+      placeholder={name}
+    />
+  )
+}
 
 const DaoForm = () => {
-  const [{ data: accountData, error: accountError, loading: accountLoading }, disconnect] = useAccount()
-  let address = accountData?.address
+  const [{ data: signer }] = useSigner()
+
+  const address = React.useMemo(() => {
+    if (!signer) {
+      return null
+    }
+
+    return signer?._address
+  }, [signer])
 
   const [txWaiting, setTxWaiting] = React.useState(false)
-  const { state, setState, handleChange } = useForm()
-  const [selectedOptions, setSelectedOptions] = React.useState([])
-  const [{ data, error }, connect] = useConnect()
-
   const { data: friendData } = useQuery(["friends", address], () => api.getFriends({ initiator: address }), {
     refetchOnWindowFocus: false,
     staleTime: 180000,
+    enabled: !!signer,
   })
 
-  const { status, mutateAsync } = useMutation(api.createDao)
+  const { status, mutateAsync: createDao } = useMutation(api.createDao)
 
   const friends = friendData?.map(friend => {
     return {
@@ -32,59 +47,61 @@ const DaoForm = () => {
     }
   })
 
-  const handleSelectedOptions = options => {
-    const selectedAddresses = options.map(option => option.value)
-    setSelectedOptions(selectedAddresses)
-  }
+  // console.log('signer', signer)
 
-  const createBabyDao = async (e, ownerList) => {
-    if (!address) {
-      console.log("DaoForm.js no owner address")
-      return
-    }
-    await window.ethereum.enable()
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts",
-    })
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const owner1 = provider.getSigner(0)
-    const ethAdapter = new EthersAdapter({
-      ethers,
-      signer: owner1,
-    })
-    const safeFactory = await SafeFactory.create({ ethAdapter })
-    const owners = ownerList
-    const threshold = ownerList.length === 2 ? 2 : Math.ceil(ownerList.length / 2)
-    const safeAccountConfig = {
-      owners,
-      threshold,
-    }
-    const safeSdk = await safeFactory.deploySafe(safeAccountConfig)
-    return safeSdk
-  }
+  const createBabyDao = useCallback(
+    async (ownerList, signer) => {
+      if (!signer) {
+        return
+      }
 
-  const handleSubmit = async e => {
-    e.preventDefault()
-    if (!selectedOptions.length) {
-      console.log("please select at least one friend")
-      return
-    }
-    const ownerList = [address, ...selectedOptions]
-    setTxWaiting(true)
-    const bbyDao = await createBabyDao(e, ownerList)
-    console.log("DaoForm.js bbyDao", bbyDao)
+      try {
+        const ethAdapter = new EthersAdapter({
+          ethers,
+          signer,
+        })
+        const safeFactory = await SafeFactory.create({ ethAdapter })
+        console.log("ownerList", ownerList)
 
-    // request to backend with dao info
-    const req = {
-      name: state.name,
-      type: 1,
-      address: bbyDao.getAddress(),
-      members: ownerList,
-    }
-    mutateAsync(req)
-    setTxWaiting(false)
-    // closeModal()
-  }
+        const owners = ownerList
+        const threshold = ownerList.length === 2 ? 2 : Math.ceil(ownerList.length / 2)
+        const safeAccountConfig = {
+          owners,
+          threshold,
+        }
+        return await safeFactory.deploySafe(safeAccountConfig)
+      } catch (err) {
+        console.log("err", err)
+      }
+    },
+    [signer]
+  )
+
+  const handleSubmit = useCallback(
+    async ({ invites, name, signer }) => {
+      try {
+        const ownerList = [address, ...invites]
+        setTxWaiting(true)
+
+        const bbyDao = await createBabyDao(ownerList, signer)
+        const bbyDaoAddress = await bbyDao.getAddress()
+        console.log("DaoForm.js bbyDao", bbyDao)
+
+        // request to backend with dao info
+        const req = {
+          name,
+          type: 1,
+          address: bbyDaoAddress,
+          members: ownerList,
+        }
+        await createDao(req)
+        setTxWaiting(false)
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    [createDao, address]
+  )
 
   if (txWaiting) {
     return (
@@ -97,52 +114,66 @@ const DaoForm = () => {
     )
   }
 
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().min(1, "Name is too short!").required("Required"),
+    invites: Yup.array().min(1, "you need at least one friend!").required("Required"),
+  })
+
   return (
-      <form
-        className="flex h-full w-full flex-col p-4"
-        onSubmit={handleSubmit}
-      >
-        <div className="mb-3">
-          <label className="mb-2 block text-sm font-bold" htmlFor="invites">
-            invite friends
-          </label>
-          <p className="mb-2 text-xs">select from your friends</p>
-          <Select
-            // defaultValue={}
-            styles={customStyles}
-            isMulti
-            name="invites"
-            options={friends}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            onChange={handleSelectedOptions}
-          />
-        </div>
+    <Formik
+      initialErrors={{}}
+      initialValues={{
+        invites: [],
+        name: "",
+        signer,
+      }}
+      onSubmit={values => handleSubmit({ ...values })}
+      validationSchema={validationSchema}
+      enableReinitialize={true}
+    >
+      {({ values, isSubmitting, setFieldValue, errors }) => (
+        <fieldset disabled={isSubmitting}>
+          <Form className="flex h-full w-full flex-col p-4">
+            <div className="mb-3">
+              {errors.invites ? <div>{errors.invites}</div> : null}
+              <label className="mb-2 block text-sm font-bold" htmlFor="invites">
+                invite friends
+              </label>
+              <p className="mb-2 text-xs">select from your friends</p>
+              <Select
+                // defaultValue={}
+                styles={customStyles}
+                isMulti
+                name="invites"
+                options={friends}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                onChange={e => {
+                  const selectedAddresses = e.map(option => option.value)
+                  setFieldValue("invites", selectedAddresses)
+                }}
+              />
+            </div>
+            <div className="mb-8">
+              {errors.name ? <div>{errors.name}</div> : null}
+              <label className="mb-2 block text-sm font-bold" htmlFor="name">
+                name
+              </label>
+              <Input name={"name"} />
+            </div>
 
-        <div className="mb-8">
-          <label className="mb-2 block text-sm font-bold" htmlFor="name">
-            name
-          </label>
-          <input
-            value={state?.name}
-            onChange={handleChange}
-            className="focus:shadow-outline w-full appearance-none rounded border bg-slate-100 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
-            id="name"
-            name="name"
-            type="text"
-            placeholder="name"
-          />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <button
-            className="focus:shadow-outline mb-3 w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
-            type="submit"
-          >
-            save
-          </button>
-        </div>
-      </form>
+            <div className="flex items-center justify-between">
+              <button
+                className="focus:shadow-outline mb-3 w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
+                type="submit"
+              >
+                save
+              </button>
+            </div>
+          </Form>
+        </fieldset>
+      )}
+    </Formik>
   )
 }
 
