@@ -17,10 +17,6 @@ export const useDaoStore = create(set => ({
   uniswapLpModalOpen: false,
   setUniswapLpModalOpen: () => set(state => ({ uniswapLpModalOpen: !state.uniswapLpModalOpen })),
 
-  // uniswap remove lp modal display
-  uniswapRemoveLpModalOpen: false,
-  setUniswapRemoveLpModalOpen: () => set(state => ({ uniswapRemoveLpModalOpen: !state.uniswapRemoveLpModalOpen })),
-
   // lpToken 0
   lpToken0: {},
   setLpToken0: lpToken0 => set(state => ({ lpToken0 })),

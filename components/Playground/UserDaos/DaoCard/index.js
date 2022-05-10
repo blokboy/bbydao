@@ -125,8 +125,6 @@ const DaoCard = ({ user, safe }) => {
       {/* Dao Card Expanded */}
       {daoExpanded ? <DaoCardExpanded isMember={isMember} safe={safe} tokens={daoTokensData} /> : null}
       {uniswapLpModalOpen && <UniswapLpModal safeAddress={safe} tokenLogos={tokenLogos} />}
-      {uniswapRemoveLpModalOpen && <RemoveLiquidity safeAddress={safe} tokenLogos={tokenLogos} />}
-
     </div>
   )
 }
