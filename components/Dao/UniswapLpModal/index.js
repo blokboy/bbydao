@@ -26,8 +26,8 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const [liquidityInfo, setLiquidityInfo] = React.useState({})
   const [maxError, setMaxError] = React.useState("")
   const [hasAllowance, setHasAllowance] = React.useState()
-  const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0?.token?.symbol)[0].uri
-  const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1?.token?.symbol)[0].uri
+  const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0?.token?.symbol)[0]?.uri
+  const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1?.token?.symbol)[0]?.uri
   const supplyDisabled =
     !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1 || !hasAllowance?.pair
   const closeUniswapLpModal = () => {

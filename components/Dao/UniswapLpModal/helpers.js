@@ -69,19 +69,16 @@ export const executeTransaction = async ({
    *
    * */
   const safeTx = {
-    safe: ethers.utils.getAddress(safeInstance.address),
     to: ethers.utils.getAddress(to),
     value: amount(parseFloat(ethers.utils.formatEther(valueInWei))),
     data,
     operation,
-    gasToken,
     safeTxGas,
     baseGas,
     gasPrice,
+    gasToken,
     refundReceiver,
-    nonce,
-    sender: ethers.utils.getAddress(sender),
-    origin,
+    nonce
   }
 
   /*
@@ -94,7 +91,7 @@ export const executeTransaction = async ({
   const safeTransaction = await safeSdk.createTransaction(safeTx)
   const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
   await safeService.proposeTransaction({
-    safeAddress: safeInstance.address,
+    safeAddress: ethers.utils.getAddress(safeInstance.address),
     safeTransaction,
     safeTxHash,
     senderAddress: sender,
