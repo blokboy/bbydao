@@ -11,6 +11,7 @@ import { Provider, chain, defaultChains } from "wagmi"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect"
 import { WalletLinkConnector } from "wagmi/connectors/walletLink"
+import { GnosisConnector } from "utils/gnosisConnector"
 
 function MyApp({ Component, pageProps, ...appProps }) {
   const [queryClient] = React.useState(() => new QueryClient())
@@ -40,6 +41,7 @@ function MyApp({ Component, pageProps, ...appProps }) {
           jsonRpcUrl: `${rpcUrl}/${infuraId}`,
         },
       }),
+      new GnosisConnector({ chains })
     ]
   }
 
@@ -55,7 +57,7 @@ function MyApp({ Component, pageProps, ...appProps }) {
 
   return (
     <ThemeProvider attribute="class">
-      <Provider autoConnect connectors={connectors}>
+      <Provider connectors={connectors}>
         <QueryClientProvider client={queryClient}>
           <Layout>
             {loading ? (
