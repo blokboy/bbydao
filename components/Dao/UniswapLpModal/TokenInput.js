@@ -22,7 +22,7 @@ const TokenInput = ({
         required
         max={lpToken?.balance / 10 ** lpToken?.token?.decimals}
         ref={token1InputRef}
-        disabled={!pair || parseInt(lpToken.fiatBalance) === 0}
+        disabled={!pair || parseInt(lpToken?.fiatBalance) === 0}
       />
       <div className="text-l my-3 flex items-center justify-center rounded-xl bg-slate-200 py-1 px-6 shadow-xl dark:bg-slate-700">
         <img src={logo} className="mr-2 h-8 w-8 min-w-fit rounded-full" />
@@ -36,7 +36,7 @@ const TokenInput = ({
         className={`flex cursor-pointer justify-end rounded-lg bg-[#eda67e24] py-0.5 px-2 text-[.8rem] text-[#FC8D4D] hover:bg-[#f98c4e57] ${
           !pair ? "pointer-events-none" : ""
         }`}
-        onClick={() => (!pair || parseInt(lpToken.fiatBalance) === 0) ? null : handleSetMaxTokenValue(lpToken, token1InputRef)}
+        onClick={() => (!pair || parseInt(lpToken?.fiatBalance) === 0) ? null : handleSetMaxTokenValue(lpToken, token1InputRef)}
       >
         MAX
       </div>
