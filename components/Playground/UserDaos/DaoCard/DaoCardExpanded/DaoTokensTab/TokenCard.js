@@ -17,11 +17,13 @@ const TokenCard = ({ token }) => {
     lpToken1?.tokenAddress === token?.tokenAddress ||
     (token?.tokenAddress === null && lpToken0?.tokenAddress === WETH) ||
     (token?.tokenAddress === null && lpToken1?.tokenAddress === WETH)
+  const isETH = (token) =>
+      parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null
+
   const setLpToken = () => {
     if (!isActive) {
       if (Object.keys(lpToken0).length === 0) {
-        if (token?.token === null && token?.tokenAddress === null) {
-          // may want a better qualifier than this
+        if (isETH(token)) {
           setLpToken0({
             ...token,
             token: {
@@ -41,8 +43,7 @@ const TokenCard = ({ token }) => {
         Object.keys(lpToken0).length !== 0 &&
         token.tokenAddress !== lpToken0.tokenAddress
       ) {
-        if (token?.token === null && token?.tokenAddress === null) {
-          // may want a better qualifier than this
+        if (isETH(token)) {
           setLpToken1({
             ...token,
             token: {

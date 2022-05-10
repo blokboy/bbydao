@@ -113,13 +113,13 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
       if (!!token0) {
         token0Contract = new ethers.Contract(token0?.address, minimalABI, signer)
         const allowance = await token0Contract.allowance(safeAddress, spender)
-        token0AllowanceAmount = await NumberFromBig(allowance._hex, token0.decimals)
+        token0AllowanceAmount = await NumberFromBig(allowance?._hex, token0.decimals)
       }
 
       if (!!token1) {
         token1Contract = new ethers.Contract(token1?.address, minimalABI, signer)
         const allowance = await token1Contract.allowance(safeAddress, spender)
-        token1AllowanceAmount = await NumberFromBig(allowance._hex, token1.decimals)
+        token1AllowanceAmount = await NumberFromBig(allowance?._hex, token1.decimals)
       }
     }
 

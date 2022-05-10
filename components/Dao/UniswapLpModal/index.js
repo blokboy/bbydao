@@ -172,7 +172,6 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
 
     const route = new Route([pair], uniswapTokens[token.token.symbol])
     const midPrice = route.midPrice.toSignificant(6)
-    const invertMidPrice = route.midPrice.invert().toSignificant(6)
     const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.token.symbol)[0][1]
     const token1Input = token0Input * midPrice
 
