@@ -54,15 +54,15 @@ export const executeTransaction = async ({
   /*
    * Construct Gnosis Safe Transaction (SafeTx) Object
    * "SafeTx(address to,
-   *         uint256 value,
-   *         bytes data,
-   *         uint8 operation,
-   *         uint256 safeTxGas,
-   *         uint256 baseGas,
-   *         uint256 gasPrice,
-   *         address gasToken,
-   *         address refundReceiver,
-   *         uint256 nonce
+   *   uint256 value,
+   *   bytes data,
+   *   uint8 operation,
+   *   uint256 safeTxGas,
+   *   uint256 baseGas,
+   *   uint256 gasPrice,
+   *   address gasToken,
+   *   address refundReceiver,
+   *   uint256 nonce
    * )"
    *
    * https://github.com/safe-global/safe-contracts/blob/main/contracts/GnosisSafe.sol
@@ -108,7 +108,7 @@ export const executeTransaction = async ({
   return executeTxResponse?.transactionResponse && (await executeTxResponse.transactionResponse.wait())
 }
 
-export const handleGnosisTransaction = async ({ executingContract: contract, signer, safeAddress, to, value }) => {
+export const handleGnosisTransaction = async ({ contract, signer, safeAddress, to, value }) => {
   const safeService = new SafeServiceClient("https://safe-transaction.gnosis.io")
 
   if (!!signer) {

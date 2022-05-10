@@ -29,14 +29,14 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
     const contract = await contracts.contracts[index]
 
     handleGnosisTransaction({
-      executingContract: {
+      contract: {
         abi: minimalABI,
         instance: contract,
+        fn: "approve(address,uint256)",
         args: {
           spender,
           value: BigNumber.from(max256),
         },
-        fn: "approve(address,uint256)",
       },
       signer,
       safeAddress,
@@ -58,7 +58,7 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
     const contract = await pair.contract
 
     handleGnosisTransaction({
-      executingContract: {
+      contract: {
         abi: IUniswapV2Pair["abi"],
         instance: contract,
         args: {
@@ -114,7 +114,6 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
         token0Contract = new ethers.Contract(token0?.address, minimalABI, signer)
         const allowance = await token0Contract.allowance(safeAddress, spender)
         token0AllowanceAmount = await NumberFromBig(allowance._hex, token0.decimals)
-        console.log("a", token0Contract, spender)
       }
 
       if (!!token1) {

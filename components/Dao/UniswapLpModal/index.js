@@ -26,8 +26,8 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const [liquidityInfo, setLiquidityInfo] = React.useState({})
   const [maxError, setMaxError] = React.useState("")
   const [hasAllowance, setHasAllowance] = React.useState()
-  const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0.token.symbol)[0].uri
-  const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1.token.symbol)[0].uri
+  const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0?.token?.symbol)[0].uri
+  const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1?.token?.symbol)[0].uri
   const supplyDisabled =
     !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1 || !hasAllowance?.pair
   const closeUniswapLpModal = () => {
@@ -80,11 +80,13 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
     const amountBDesired = amount(tokenBAmount, tokenBDecimals)
     const amountBMin = amount(tokenBAmount - tokenBAmount * slippage, tokenBDecimals)
 
+    /* addLiquidity or addLiquidityEth  */
     if (pairHasEth.length === 0) {
       handleGnosisTransaction({
-        executingContract: {
+        contract: {
           abi: IUniswapV2Router02["abi"],
           instance: uniswapV2RouterContract02,
+          fn: "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)",
           args: {
             tokenA: ethers.utils.getAddress(tokenA),
             tokenB: ethers.utils.getAddress(tokenB),
@@ -95,7 +97,6 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
             addressTo: ethers.utils.getAddress(safeAddress),
             deadline: Math.floor(Date.now() / 1000) + 60 * 20,
           },
-          fn: "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)",
         },
         signer,
         safeAddress,
