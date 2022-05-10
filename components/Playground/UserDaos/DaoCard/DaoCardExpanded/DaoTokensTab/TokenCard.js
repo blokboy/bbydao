@@ -26,7 +26,7 @@ const TokenCard = ({ token }) => {
             ...token,
             token: {
               decimals: 18,
-              logoUri: "",
+              logoUri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
               name: "Ether",
               symbol: "ETH",
             },
@@ -47,7 +47,7 @@ const TokenCard = ({ token }) => {
             ...token,
             token: {
               decimals: 18,
-              logoUri: "",
+              logoUri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
               name: "Ether",
               symbol: "ETH",
             },

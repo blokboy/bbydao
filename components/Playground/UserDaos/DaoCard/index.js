@@ -67,7 +67,12 @@ const DaoCard = ({ user, safe }) => {
     return daoTokensData?.reduce((acc = [], cv) => {
       const uri = cv?.token?.logoUri
       const symbol = cv?.token?.symbol
-      uri && symbol ? acc.push({ uri, symbol }) : null
+      const isETH = parseInt(cv?.ethValue) === 1 && cv?.token === null && cv?.tokenAddress === null
+      uri && symbol
+        ? acc.push({ uri, symbol })
+        : isETH
+        ? acc.push({ uri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png", symbol: "ETH" })
+        : null
       return acc
     }, [])
   }, [daoTokensData])

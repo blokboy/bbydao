@@ -146,6 +146,8 @@ export const handleGnosisTransaction = async ({ contract, signer, safeAddress, t
         try {
           const tx = await executeTransaction(safeTx)
           console.log("tx", tx)
+          // do something on success
+
         } catch (err) {
           console.error(`Error while creating transaction: ${err}`)
           throw err
