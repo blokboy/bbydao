@@ -132,14 +132,14 @@ const DaoForm = () => {
       enableReinitialize={true}
     >
       {({ values, isSubmitting, setFieldValue, errors }) => (
-        <fieldset disabled={isSubmitting}>
-          <Form className="flex h-full w-full flex-col p-4">
-            <div className="mb-3">
-              {errors.invites ? <div>{errors.invites}</div> : null}
-              <label className="mb-2 block text-sm font-bold" htmlFor="invites">
+        <fieldset className="h-full w-full" disabled={isSubmitting}>
+          <Form className="flex flex-col p-4">
+            <div className="w-full">
+              {errors.invites ? <div className="p-2">{errors.invites}</div> : null}
+              <label className="p-2 block text-sm font-bold" htmlFor="invites">
                 invite friends
               </label>
-              <p className="mb-2 text-xs">select from your friends</p>
+              <p className="p-2 text-xs">select from your friends</p>
               <Select
                 // defaultValue={}
                 styles={customStyles}
@@ -155,7 +155,7 @@ const DaoForm = () => {
               />
             </div>
             <div className="mb-8">
-              {errors.name ? <div>{errors.name}</div> : null}
+              {errors.name ? <div className="p-2">{errors.name}</div> : null}
               <label className="mb-2 block text-sm font-bold" htmlFor="name">
                 name
               </label>
