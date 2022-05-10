@@ -1,8 +1,10 @@
-import { ethers } from "ethers"
+import { ethers }           from "ethers"
 import React, { useEffect } from "react"
-import { FaEthereum } from "react-icons/fa"
-import { useDaoStore } from "stores/useDaoStore"
-import { isEmpty } from "utils/helpers"
+import { FaEthereum }       from "react-icons/fa"
+import { useDaoStore }      from "stores/useDaoStore"
+import { isEmpty }          from "utils/helpers"
+import RemoveLiquidity      from '../../../../../Dao/UniswapLpModal/RemoveLiquidity'
+import Modal      from 'components/Layout/Modal'
 
 const TokenCard = ({ token }) => {
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
@@ -113,11 +115,16 @@ const TokenCard = ({ token }) => {
                   </button>
                 </div>
             )) || (
-                <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-slate-500" onClick={() => removeLiquidity()}>
-                  Remove Liquidity
-                </button>
+                <Modal
+                    heading={"Remove Liquidity"}
+                    trigger={
+                  <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-slate-500" onClick={() => removeLiquidity()}>
+                    Remove Liquidity
+                  </button>
+                }>
+                  <RemoveLiquidity token={token} />
+                </Modal>
             )}
-
           </>
 
       )}

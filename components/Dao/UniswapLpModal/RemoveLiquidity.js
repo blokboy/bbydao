@@ -4,7 +4,7 @@ import { useSigner } from "wagmi"
 import { useDaoStore } from "../../../stores/useDaoStore"
 import ControlledModal from "../../Layout/Modal/ControlledModal"
 
-const RemoveLiquidity = ({ safeAddress, tokenLogos }) => {
+const RemoveLiquidity = ({token }) => {
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const [{ data: signer }] = useSigner()
   const setUniswapRemoveLpModalOpen = useDaoStore(state => state.setUniswapRemoveLpModalOpen)
@@ -15,7 +15,7 @@ const RemoveLiquidity = ({ safeAddress, tokenLogos }) => {
 
   return (
     <ControlledModal close={closeUniswapRemoveLpModal} heading={"Add Liquidity"}>
-      {safeAddress}
+      {console.log('TOKEN', token)}
     </ControlledModal>
   )
 }

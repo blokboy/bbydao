@@ -74,9 +74,6 @@ const DaoCard = ({ user, safe }) => {
     refetchOnWindowFocus: false,
   })
 
-  console.log('da', daoTokenssData)
-  console.log('balances', daoTokensData)
-
   const tokenLogos = useMemo(() => {
     return daoTokensData?.reduce((acc = [], cv) => {
       const uri = cv?.token?.logoUri
