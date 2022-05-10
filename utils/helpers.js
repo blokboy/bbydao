@@ -36,6 +36,29 @@ export const isEmpty = object => {
   return true
 }
 
+
+/**
+ * Converts HexString to Bytes
+ *
+ * @params string
+ * @returns Uint8Array
+ */
+
+export const hexToBytes = hexString => {
+  if (hexString.length % 2 !== 0) {
+    throw "Must have an even number of hex digits to convert to bytes"
+  }
+  let numBytes = hexString.length / 2
+  let byteArray = new Uint8Array(numBytes)
+  for (let i = 0; i < numBytes; i++) {
+    byteArray[i] = parseInt(hexString.substr(i * 2, 2), 16)
+  }
+  return byteArray
+}
+
+
+
+
 /**
  * Converts BigInt to Number
  *

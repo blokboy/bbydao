@@ -1,19 +1,18 @@
+import React from "react"
+import { useDaoStore } from "stores/useDaoStore"
+import { useSigner } from "wagmi"
 import { ChainId, Fetcher, Route, Token } from "@uniswap/sdk"
 import IUniswapV2ERC20 from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
-
-import Modal from "components/Layout/Modal"
 import { BigNumber, ethers } from "ethers"
+import Modal from "components/Layout/Modal"
 import useForm from "hooks/useForm"
-import React, { useEffect, useMemo, useRef, useState } from "react"
-import { useDaoStore } from "stores/useDaoStore"
-import { useSigner } from "wagmi"
 import { amount, getLiquidityPairInfo, handleGnosisTransaction, readableTokenBalance } from "./helpers"
 import PoolInfo from "./PoolInfo"
 import TokenInput from "./TokenInput"
 
 const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
-  const UniswapV2Router02 =  ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
+  const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const [{ data: signer }] = useSigner()
   const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
   const lpToken0 = useDaoStore(state => state.lpToken0)
@@ -21,15 +20,16 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const setLpToken1 = useDaoStore(state => state.setLpToken1)
   const setLpToken0 = useDaoStore(state => state.setLpToken0)
   const { state, setState } = useForm()
-  const token0InputRef = useRef()
-  const token1InputRef = useRef()
-  const [pair, setPair] = useState()
-  const [liquidityInfo, setLiquidityInfo] = useState({})
-  const [maxError, setMaxError] = useState("")
-  const [hasAllowance, setHasAllowance] = useState()
+  const token0InputRef = React.useRef()
+  const token1InputRef = React.useRef()
+  const [pair, setPair] = React.useState()
+  const [liquidityInfo, setLiquidityInfo] = React.useState({})
+  const [maxError, setMaxError] = React.useState("")
+  const [hasAllowance, setHasAllowance] = React.useState()
   const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0.token.symbol)[0].uri
   const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1.token.symbol)[0].uri
-  const supplyDisabled = !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1 || !hasAllowance?.pair
+  const supplyDisabled =
+    !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1 || !hasAllowance?.pair
   const closeUniswapLpModal = () => {
     setLpToken0({})
     setLpToken1({})
@@ -37,6 +37,28 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
     setMaxError("")
   }
 
+  /*  Construct object of selected tokens represented as Uniswap Token Objects */
+  const uniswapTokens = React.useMemo(() => {
+    const token0 = new Token(
+      ChainId.MAINNET,
+      lpToken0?.tokenAddress,
+      lpToken0?.token?.decimals,
+      lpToken0?.token?.symbol,
+      lpToken0?.token?.name
+    )
+
+    const token1 = new Token(
+      ChainId.MAINNET,
+      lpToken1?.tokenAddress,
+      lpToken1?.token?.decimals,
+      lpToken1?.token?.symbol,
+      lpToken1?.token?.name
+    )
+
+    return { [lpToken0?.token?.symbol]: token0, [lpToken1?.token?.symbol]: token1 }
+  }, [lpToken0, lpToken1])
+
+  /* Propose and Execute uniswapV2Router02 - addLiquidity   */
   const handleSubmit = async (e, liquidityInfo) => {
     e.preventDefault()
 
@@ -79,8 +101,6 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
         safeAddress,
         to: UniswapV2Router02,
         value: 0,
-        // value: liquidityInfo?.transactionInfo?.[0]?.amountInWei.add(liquidityInfo?.transactionInfo?.[1]?.amountInWei)
-        //   ?._hex,
       })
     } else {
       //     function addLiquidityETH(
@@ -93,27 +113,6 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
       // )
     }
   }
-
-  /*  Construct object of selected tokens represented as Uniswap Token Objects */
-  const uniswapTokens = useMemo(() => {
-    const token0 = new Token(
-      ChainId.MAINNET,
-      lpToken0?.tokenAddress,
-      lpToken0?.token?.decimals,
-      lpToken0?.token?.symbol,
-      lpToken0?.token?.name
-    )
-
-    const token1 = new Token(
-      ChainId.MAINNET,
-      lpToken1?.tokenAddress,
-      lpToken1?.token?.decimals,
-      lpToken1?.token?.symbol,
-      lpToken1?.token?.name
-    )
-
-    return { [lpToken0?.token?.symbol]: token0, [lpToken1?.token?.symbol]: token1 }
-  }, [lpToken0, lpToken1])
 
   /* Handle setting token values and retrieving liquidity pair information  */
   const handleSetTokenValue = async (e, token, tokenRef) => {
@@ -198,7 +197,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
     )
     await setPair(uniPair)
   }
-  useEffect(() => {
+  React.useEffect(() => {
     init()
   }, [])
 
