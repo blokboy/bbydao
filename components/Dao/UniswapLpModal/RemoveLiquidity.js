@@ -33,7 +33,7 @@ const RemoveLiquidity = ({ token }) => {
           min="0"
           max="100"
           onChange={handleChange}
-          value={liquidity}
+          value={liquidity || 0}
         />
         <div className="grid grid-cols-2">
           <button
