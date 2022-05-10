@@ -1,40 +1,55 @@
 import React from "react"
 import { HiX } from "react-icons/hi"
-import { Portal } from "react-portal"
+import { PortalWithState } from "react-portal"
 
-const Modal = ({ close, children, heading }) => {
-  const ref = React.useRef(null)
-  React.useEffect(() => {
-    ref?.current?.focus()
-  }, [])
-  const handleKeyDown = event => {
-    if (event.keyCode === 27) {
-      close()
-    }
+const Modal = ({ onClose = () => {}, children, trigger, triggerText, heading }) => {
+  const node = document ? document.querySelector("body") : null
+
+  const handleClose = React.useCallback(
+    callbackFunc => {
+      onClose()
+      callbackFunc()
+    },
+    [onClose]
+  )
+
+  if (!node) {
+    return null
   }
 
   return (
-    <Portal node={document && document.getElementById("modal")}>
-      <div className="absolute top-0 h-screen w-screen" onClick={() => close()}>
-        <div
-          className="modal-container"
-          onClick={e => e.stopPropagation()}
-          role="document"
-          aria-modal={true}
-          tabIndex={0}
-          onKeyDown={e => handleKeyDown(e)}
-          ref={ref}
-        >
-          <div className="flex w-full justify-end py-4">
-            <div className="w-full text-center text-xl font-medium">{heading}</div>
-            <button className="modal-close-btn" onClick={() => close()}>
-              <HiX />
+    <PortalWithState node={node} closeOnEsc>
+      {({ openPortal, closePortal, portal }) => (
+        <>
+          {trigger ? (
+            React.cloneElement(trigger, {
+              onClick: openPortal,
+            })
+          ) : (
+            <button type="button" onClick={openPortal}>
+              {triggerText}
             </button>
-          </div>
-          {children}
-        </div>
-      </div>
-    </Portal>
+          )}
+          {portal(
+            <div
+              id="modal-background"
+              className="fixed inset-0 z-50 backdrop-blur"
+              onClick={e => (e.target?.id === "modal-background" ? closePortal() : () => {})}
+            >
+              <div className="modal-container fade-in-up" role="dialog" aria-modal={true}>
+                <div className="flex w-full justify-end py-4">
+                  <div className="w-full text-center text-xl font-medium">{heading}</div>
+                  <button className="modal-close-btn" onClick={() => handleClose(closePortal)}>
+                    <HiX />
+                  </button>
+                </div>
+                {children}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </PortalWithState>
   )
 }
 

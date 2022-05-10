@@ -5,8 +5,8 @@ import { ChainId, Fetcher, Route, Token } from "@uniswap/sdk"
 import IUniswapV2ERC20 from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 import { BigNumber, ethers } from "ethers"
-import Modal from "components/Layout/Modal"
 import useForm from "hooks/useForm"
+import ControlledModal from "components/Layout/Modal/ControlledModal"
 import { amount, getLiquidityPairInfo, handleGnosisTransaction, readableTokenBalance } from "./helpers"
 import PoolInfo from "./PoolInfo"
 import TokenInput from "./TokenInput"
@@ -214,7 +214,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   }, [])
 
   return (
-    <Modal close={closeUniswapLpModal} heading={"Add Liquidity"}>
+    <ControlledModal close={closeUniswapLpModal} heading={"Add Liquidity"}>
       <div className="mt-2 rounded-xl bg-[#eda67e24] p-4 font-thin text-[#FC8D4D]">
         <span className="font-bold">Tip:</span> When you add liquidity, you will receive pool tokens representing your
         position. These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at
@@ -270,7 +270,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
           )}
         </div>
       </form>
-    </Modal>
+    </ControlledModal>
   )
 }
 
