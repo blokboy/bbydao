@@ -1,6 +1,6 @@
-import { ethers } from "ethers"
-import React from "react"
-import { useSigner } from "wagmi"
+import { ethers }         from "ethers"
+import React, {useEffect} from "react"
+import { useSigner }      from "wagmi"
 import useForm from "hooks/useForm"
 
 const RemoveLiquidity = ({ token }) => {
@@ -8,6 +8,12 @@ const RemoveLiquidity = ({ token }) => {
   const [{ data: signer }] = useSigner()
   const { state, setState, handleChange } = useForm()
   const { liquidity } = state
+
+  useEffect(() => {
+    if(!liquidity)
+      setState({liquidity: 0})
+
+  }, [])
 
   return (
     <div>
@@ -55,9 +61,15 @@ const RemoveLiquidity = ({ token }) => {
             MAX
           </button>
         </div>
+        <div>
+          Amount of Tokens You will Receive back
+        </div>
+        <div>
+          Current Position
+        </div>
       </div>
 
-      {console.log("token", liquidity)}
+      {console.log("token", token)}
     </div>
   )
 }
