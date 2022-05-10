@@ -1,15 +1,16 @@
 import React, { useEffect, useMemo } from "react"
-import { useDaoStore } from "../../../../stores/useDaoStore"
-import UniswapLpModal from "../../../Dao/UniswapLpModal"
-import DaoUtilityBar from "./DaoUtilityBar"
-import DaoPfpIcon from "./DaoPfpIcon"
-import DaoPfp from "./DaoPfp"
-import DaoBalance from "./DaoBalance"
-import DaoMembers from "./DaoMembers"
-import DaoName from "./DaoName"
-import DaoFollowers from "./DaoFollowers"
-import ExpandDao from "./ExpandDao"
-import DaoCardExpanded from "./DaoCardExpanded/index"
+import { useDaoStore }               from "../../../../stores/useDaoStore"
+import UniswapLpModal                from "../../../Dao/UniswapLpModal"
+import RemoveLiquidity               from '../../../Dao/UniswapLpModal/RemoveLiquidity'
+import DaoUtilityBar                 from "./DaoUtilityBar"
+import DaoPfpIcon                    from "./DaoPfpIcon"
+import DaoPfp                        from "./DaoPfp"
+import DaoBalance                    from "./DaoBalance"
+import DaoMembers                    from "./DaoMembers"
+import DaoName                       from "./DaoName"
+import DaoFollowers                  from "./DaoFollowers"
+import ExpandDao                     from "./ExpandDao"
+import DaoCardExpanded               from "./DaoCardExpanded/index"
 
 import { usePlaygroundStore } from "/stores/usePlaygroundStore"
 
@@ -19,6 +20,7 @@ import { useMutation, useQuery } from "react-query"
 
 const DaoCard = ({ user, safe }) => {
   const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
+  const uniswapRemoveLpModalOpen = useDaoStore(state => state.uniswapRemoveLpModalOpen)
 
   const { mutateAsync: createDao } = useMutation(api.createDao)
 
@@ -126,6 +128,8 @@ const DaoCard = ({ user, safe }) => {
       {/* Dao Card Expanded */}
       {daoExpanded ? <DaoCardExpanded isMember={isMember} safe={safe} tokens={daoTokensData} /> : null}
       {uniswapLpModalOpen && <UniswapLpModal safeAddress={safe} tokenLogos={tokenLogos} />}
+      {/*{uniswapRemoveLpModalOpen && <RemoveLiquidity safeAddress={safe} tokenLogos={tokenLogos} />}*/}
+
     </div>
   )
 }

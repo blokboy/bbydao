@@ -8,6 +8,8 @@ const TokenCard = ({ token }) => {
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const setUniswapSwapModalOpen = useDaoStore(state => state.setUniswapSwapModalOpen)
   const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
+  const setUniswapRemoveLpModalOpen = useDaoStore(state => state.setUniswapRemoveLpModalOpen)
+
   const lpToken0 = useDaoStore(state => state.lpToken0)
   const setLpToken0 = useDaoStore(state => state.setLpToken0)
   const lpToken1 = useDaoStore(state => state.lpToken1)
@@ -71,6 +73,10 @@ const TokenCard = ({ token }) => {
     setUniswapSwapModalOpen(true)
   }
 
+  const removeLiquidity = () => {
+    setUniswapRemoveLpModalOpen()
+  }
+
   return (
     <div className="flex w-full flex-row justify-between rounded-xl bg-slate-100 p-2 dark:bg-slate-700 xl:flex-col">
       <div className="flex w-full flex-row space-x-2">
@@ -107,7 +113,7 @@ const TokenCard = ({ token }) => {
                   </button>
                 </div>
             )) || (
-                <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-slate-500">
+                <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-slate-500" onClick={() => removeLiquidity()}>
                   Remove Liquidity
                 </button>
             )}
