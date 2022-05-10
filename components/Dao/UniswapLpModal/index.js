@@ -111,7 +111,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
           instance: uniswapV2RouterContract02,
           fn: "addLiquidityETH(address,uint256,uint256,uint256,address,uint256)",
           args: {
-            token: ethers.utils.getAddress(pair?.liquidityToken?.address),
+            token: ethers.utils.getAddress(tokenA === WETH ? tokenB : tokenA),
             amountTokenDesired: tokenA === WETH ? BigNumber.from(amountBDesired) : BigNumber.from(amountADesired),
             amountTokenMin: tokenA === WETH ? BigNumber.from(amountBMin) : BigNumber.from(amountAMin),
             amountETHMin: tokenA === WETH ? BigNumber.from(amountAMin) : BigNumber.from(amountBMin),
