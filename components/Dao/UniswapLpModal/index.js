@@ -104,14 +104,26 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
         value: 0,
       })
     } else {
-      //     function addLiquidityETH(
-      //         address token,
-      //         uint amountTokenDesired,
-      //         uint amountTokenMin,
-      //         uint amountETHMin,
-      //         address to,
-      //         uint deadline
-      // )
+      const WETH = await uniswapV2RouterContract02?.WETH()
+      handleGnosisTransaction({
+        contract: {
+          abi: IUniswapV2Router02["abi"],
+          instance: uniswapV2RouterContract02,
+          fn: "addLiquidityETH(address,uint256,uint256,uint256,address,uint256)",
+          args: {
+            token: ethers.utils.getAddress(pair?.liquidityToken?.address),
+            amountTokenDesired: tokenA === WETH ? BigNumber.from(amountBDesired) : BigNumber.from(amountADesired),
+            amountTokenMin: tokenA === WETH ? BigNumber.from(amountBMin) : BigNumber.from(amountAMin),
+            amountETHMin: tokenA === WETH ? BigNumber.from(amountAMin) : BigNumber.from(amountBMin),
+            addressTo: ethers.utils.getAddress(safeAddress),
+            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+          },
+        },
+        signer,
+        safeAddress,
+        to: UniswapV2Router02,
+        value: tokenA === WETH ? BigNumber.from(amountADesired) : BigNumber.from(amountBDesired),
+      })
     }
   }
 
@@ -164,7 +176,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
     const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.token.symbol)[0][1]
     const token1Input = token0Input * midPrice
 
-    if (token?.fiatBalance > pairToken?.fiatBalance) {
+    if (parseInt(token?.fiatBalance) > parseInt(pairToken?.fiatBalance)) {
       setMaxError(`Insufficient ${pairToken?.token?.symbol} balance`)
       setState(state => ({ ...state, [token.token.symbol]: 0 }))
       setState(state => ({ ...state, [token1.symbol]: 0 }))

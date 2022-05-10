@@ -1,27 +1,61 @@
-import React from "react"
+import { ethers } from "ethers"
+import React, { useEffect } from "react"
 import { FaEthereum } from "react-icons/fa"
 import { useDaoStore } from "stores/useDaoStore"
 import { isEmpty } from "utils/helpers"
 
 const TokenCard = ({ token }) => {
+  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const setUniswapSwapModalOpen = useDaoStore(state => state.setUniswapSwapModalOpen)
   const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
   const lpToken0 = useDaoStore(state => state.lpToken0)
   const setLpToken0 = useDaoStore(state => state.setLpToken0)
   const lpToken1 = useDaoStore(state => state.lpToken1)
   const setLpToken1 = useDaoStore(state => state.setLpToken1)
-  const isActive = lpToken0?.tokenAddress === token?.tokenAddress || lpToken1?.tokenAddress === token?.tokenAddress
+  const isActive =
+    lpToken0?.tokenAddress === token?.tokenAddress ||
+    lpToken1?.tokenAddress === token?.tokenAddress ||
+    (token?.tokenAddress === null && lpToken0?.tokenAddress === WETH) ||
+    (token?.tokenAddress === null && lpToken1?.tokenAddress === WETH)
   const setLpToken = () => {
     if (!isActive) {
       if (Object.keys(lpToken0).length === 0) {
-        setLpToken0(token)
+        if (token?.token === null && token?.tokenAddress === null) {
+          // may want a better qualifier than this
+          setLpToken0({
+            ...token,
+            token: {
+              decimals: 18,
+              logoUri: "",
+              name: "Ether",
+              symbol: "ETH",
+            },
+            tokenAddress: WETH,
+          })
+        } else {
+          setLpToken0(token)
+        }
       }
       if (
         Object.keys(lpToken1).length === 0 &&
         Object.keys(lpToken0).length !== 0 &&
         token.tokenAddress !== lpToken0.tokenAddress
       ) {
-        setLpToken1(token)
+        if (token?.token === null && token?.tokenAddress === null) {
+          // may want a better qualifier than this
+          setLpToken1({
+            ...token,
+            token: {
+              decimals: 18,
+              logoUri: "",
+              name: "Ether",
+              symbol: "ETH",
+            },
+            tokenAddress: WETH,
+          })
+        } else {
+          setLpToken1(token)
+        }
         setUniswapLpModalOpen(true)
       }
     } else {
