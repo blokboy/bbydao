@@ -6,8 +6,8 @@ export const useUiStore = create(set => ({
   setAppModalOpen: () => set(state => ({ appModalOpen: !state.appModalOpen })),
 
   // create dao modal display
-  createDaoModalOpen: false,
-  setCreateDaoModalOpen: () => set(state => ({ createDaoModalOpen: !state.createDaoModalOpen })),
+  //createDaoModalOpen: false,
+  //setCreateDaoModalOpen: () => set(state => ({ createDaoModalOpen: !state.createDaoModalOpen })),
 
   // follow dao modal display
   followDaoModalOpen: false,
