@@ -35,9 +35,7 @@ const TokenCard = ({ token }) => {
   }
 
   return (
-    <div
-      className="flex w-full flex-row justify-between rounded-xl bg-slate-100 p-2 dark:bg-slate-700 xl:flex-col"
-    >
+    <div className="flex w-full flex-row justify-between rounded-xl bg-slate-100 p-2 dark:bg-slate-700 xl:flex-col">
       <div className="flex w-full flex-row space-x-2">
         <div className="flex h-10 w-10 items-center justify-center overflow-clip rounded-full border border-white">
           {token?.token?.logoUri ? <img src={token?.token?.logoUri} alt={""} /> : <FaEthereum size={30} />}
@@ -50,24 +48,26 @@ const TokenCard = ({ token }) => {
         </div>
       </div>
 
-      <div className="flex flex-row space-x-2 xl:justify-center p-1">
-        {isEmpty(lpToken0) && (
-          <>
-            <button
-              className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500"
-              onClick={() => console.log("hii")}
-            >
-              send
-            </button>
-            <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setSwapToken}>
-              swap
-            </button>
-          </>
-        )}
-        <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setLpToken}>
-          {isEmpty(lpToken0) && isEmpty(lpToken1) ? "LP" : isActive ? "Selected" : "Pair"}
-        </button>
-      </div>
+      {parseInt(token?.fiatBalance) !== 0 && (
+        <div className="flex flex-row space-x-2 p-1 xl:justify-center">
+          {isEmpty(lpToken0) && (
+            <>
+              <button
+                className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500"
+                onClick={() => console.log("hii")}
+              >
+                send
+              </button>
+              <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setSwapToken}>
+                swap
+              </button>
+            </>
+          )}
+          <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setLpToken}>
+            {isEmpty(lpToken0) && isEmpty(lpToken1) ? "LP" : isActive ? "Selected" : "Pair"}
+          </button>
+        </div>
+      )}
     </div>
   )
 }
