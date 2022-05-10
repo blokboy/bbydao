@@ -3,7 +3,7 @@ import axios from "axios"
 const api = axios.create({ baseURL: "https://safe-transaction.gnosis.io/api/v1/" })
 
 export const daoBalance = async safeAddress => {
-  const { data } = await api.get(`safes/${safeAddress}/balances/usd/?limit=10&trusted=false&exclude_spam=true`)
+  const { data } = await api.get(`safes/${safeAddress}/balances/usd/?trusted=false&exclude_spam=false`)
   return data
 }
 
@@ -23,7 +23,7 @@ export const daoTokens = async safeAddress => {
 }
 
 export const allDaoTx = async safeAddress => {
-  const { data } = await api.get(`safes/${safeAddress}/all-transactions/?executed=false&queued=true&trusted=true`)
+  const { data } = await api.get(`safes/${safeAddress}/all-transactions/?ordering=submissionDate&executed=false&queued=true&trusted=true`)
   return data
 }
 
