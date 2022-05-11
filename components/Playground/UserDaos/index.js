@@ -9,7 +9,7 @@ import { BiCopy } from "react-icons/bi"
 // TODO: determine all possible views UserDaos state
 const UserDaos = ({ user, address, data }) => {
   const userSafes = data?.safes
-  // const address = data?.address
+
   const expandedDao = usePlaygroundStore(state => state.expandedDao)
   const setExpanedDao = usePlaygroundStore(state => state.setExpandedDao)
   const setDaoExpanded = usePlaygroundStore(state => state.setDaoExpanded)

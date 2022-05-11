@@ -19,6 +19,13 @@ export const getFriends = async req => {
   return res.data
 }
 
+// get user daos
+// { address: string }
+export const getUserDaos = async req => {
+  const res = await api.post("/dao/user", req)
+  return res.data
+}
+
 // get all users
 export const getUsers = async () => {
   const res = await api.get("/accounts")
