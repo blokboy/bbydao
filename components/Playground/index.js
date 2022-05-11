@@ -60,7 +60,7 @@ const Playground = ({ address, data }) => {
   return (
     <div className="flex w-full flex-col lg:flex-row">
       <UserPanel user={userData?.address} address={address} />
-      <UserDaos user={userData?.address} data={data} />
+      <UserDaos user={userData?.address} data={data} address={address} />
       <Feed />
     </div>
   )

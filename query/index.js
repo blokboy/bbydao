@@ -57,6 +57,7 @@ export const updateRelationship = async req => {
 // { initiator: address, target: address }
 export const deleteRelationship = async req => {
   const res = await api.post("/relationship/delete", req)
+  console.log("deleteRelationship response:", res.data)
   return res.data
 }
 
@@ -119,7 +120,6 @@ export const createDao = async req => {
   const res = await api.post("/dao/create", req)
   return res.data
 }
-
 
 //get dao
 // { address: string }
