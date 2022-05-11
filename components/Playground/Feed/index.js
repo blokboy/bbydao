@@ -41,7 +41,7 @@ const Feed = () => {
   }, [txs])
 
   return (
-    <div className="flex w-full flex-col space-y-6 lg:w-2/5">
+    <div className="mt-6 md:mt-0 flex w-full flex-col space-y-6 lg:w-2/5">
       <div className="no-scrollbar flex h-10 flex-row space-x-2 overflow-x-auto bg-slate-300 px-3 dark:bg-slate-900">
         <div className="my-1 space-x-3 rounded-xl border border-slate-100 bg-slate-100 p-1 hover:border-white hover:bg-slate-200 dark:border-slate-800 dark:bg-slate-800 hover:dark:border-white hover:dark:bg-slate-700">
           <span>🔥</span>
@@ -57,7 +57,7 @@ const Feed = () => {
         </div>
       </div>
       {/* could be daoTxs or feed items  */}
-      <div className="flex flex-col space-y-3 px-3">{daoTxs}</div>
+      <div className="flex flex-col p-3 pt-0 max-h-[80vh] overflow-y-auto mr-2">{daoTxs}</div>
     </div>
   )
 }
