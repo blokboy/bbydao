@@ -24,7 +24,7 @@ const RemoveLiquidity = ({ token }) => {
   const [toReceive, setToReceive] = useState({})
   const pairName = token?.token?.name.replace("Uniswap V2", "").replace("Pool", "")
   const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
-  const slippage = .055
+  const slippage = 0.055
 
   React.useMemo(async () => {
     if (!!signer) {
@@ -35,18 +35,14 @@ const RemoveLiquidity = ({ token }) => {
         UniswapV2ERC20["abi"],
         signer
       )
-
       const totalSupply = await pairContract?.totalSupply()
       const bbyDaoBalance = await pairERC20Contract?.balanceOf(bbyDao)
       const percentageOfPool =
         NumberFromBig(bbyDaoBalance, pairToken?.decimals) / NumberFromBig(totalSupply, pairToken?.decimals)
       const bbyDaoAllowance = await pairERC20Contract?.allowance(bbyDao, UniswapV2Router02)
       const kLast = await pairContract?.kLast()
-
-      console.log('PAIR', await pairContract)
-      console.log('PAIRERC', await pairERC20Contract)
-
       const reserves = await pairContract?.getReserves()
+
       const token0Contract = new ethers.Contract(
         ethers.utils.getAddress(await pairContract?.token0()),
         minimalABI,
@@ -176,42 +172,32 @@ const RemoveLiquidity = ({ token }) => {
   }
 
   const handleRemoveLiquidity = () => {
-    const liquidity = ethers.utils.parseUnits(breakDown?.bbyDaoBalance.toString())
-    const amountAMin = ethers.utils.parseUnits((toReceive.token0 - (toReceive.token0 * slippage)).toString())
-    const amountBMin = ethers.utils.parseUnits((toReceive.token1 - (toReceive.token1 * slippage)).toString())
+    const bbyDaoBalance = ethers.utils.parseUnits(breakDown?.bbyDaoBalance.toString())
+    const liq = bbyDaoBalance.mul(ethers.utils.parseUnits((liquidity / 100).toString())) // THIS IS WRONG
+    const amountAMin = ethers.utils.parseUnits((toReceive.token0 - toReceive.token0 * slippage).toString())
+    const amountBMin = ethers.utils.parseUnits((toReceive.token1 - toReceive.token1 * slippage).toString())
     const amountMins = {
       [breakDown.token0.symbol]: amountAMin,
-      [breakDown.token1.symbol]: amountBMin
+      [breakDown.token1.symbol]: amountBMin,
     }
-
-    const addrs = [breakDown.token0, breakDown.token1]
-    const hasWETH = addrs.filter(item => item.address === breakDown.WETH).length > 0
-
-
-    //   function removeLiquidityETH(
-    //       address token,
-    //       uint liquidity,
-    //       uint amountTokenMin,
-    //       uint amountETHMin,
-    //       address to,
-    //       uint deadline
-    // ) external returns (uint amountToken, uint amountETH);
+    const addresses = [breakDown.token0, breakDown.token1]
+    const hasWETH = addresses.filter(item => item.address === breakDown.WETH).length > 0
 
 
-    if(hasWETH) {
-      const WETHToken = addrs.filter(item => item.address === breakDown.WETH)?.[0]
-      const pairToken = addrs.filter(item => item.address !== breakDown.WETH)?.[0]
+    if (hasWETH) {
+      const WETHToken = addresses?.filter(item => item.address === breakDown.WETH)?.[0]
+      const pairToken = addresses?.filter(item => item.address !== breakDown.WETH)?.[0]
       const amountTokenMin = amountMins[pairToken.symbol]
       const amountETHMin = amountMins[WETHToken.symbol]
 
       handleGnosisTransaction({
         contract: {
           abi: IUniswapV2Router02["abi"],
-          instance: uniswapV2RouterContract02,
+           instance: uniswapV2RouterContract02,
           fn: "removeLiquidityETH(address,uint256,uint256,uint256,address,uint256)",
           args: {
             token: ethers.utils.getAddress(pairToken?.address),
-            liquidity,
+            liquidity: liq,
             amountTokenMin,
             amountETHMin,
             addressTo: ethers.utils.getAddress(bbyDao),
@@ -223,8 +209,6 @@ const RemoveLiquidity = ({ token }) => {
         to: UniswapV2Router02,
         value: 0,
       })
-
-
     } else {
       handleGnosisTransaction({
         contract: {
@@ -234,7 +218,7 @@ const RemoveLiquidity = ({ token }) => {
           args: {
             tokenA: ethers.utils.getAddress(breakDown.token0.address),
             tokenB: ethers.utils.getAddress(breakDown.token1.address),
-            liquidity,
+            liquidity: liq,
             amountAMin,
             amountBMin,
             addressTo: ethers.utils.getAddress(bbyDao),
