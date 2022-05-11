@@ -37,6 +37,10 @@ export const isEmpty = object => {
 }
 
 
+export const round = num => Math.round( num * 100 + Number.EPSILON ) / 100
+
+
+
 /**
  * Converts HexString to Bytes
  *
@@ -55,6 +59,7 @@ export const hexToBytes = hexString => {
   }
   return byteArray
 }
+
 
 
 

@@ -11,6 +11,7 @@ const CALL = 0
 /*  decimal integer  */
 export const amount = (amount, decimals) => Math.round(amount * 10 ** (decimals || 18)).toString()
 
+
 /* Human Readable Token Balance  */
 export const readableTokenBalance = token => {
   if(parseInt(token?.fiatBalance) === 0)
@@ -142,6 +143,8 @@ export const handleGnosisTransaction = async ({ contract, signer, safeAddress, t
       const threshold = await bbyDaoSafe?.getThreshold()
       if (threshold.toNumber() > 1) {
         /*  Reject or ask for approvals */
+
+
       } else {
         try {
           const tx = await executeTransaction(safeTx)
