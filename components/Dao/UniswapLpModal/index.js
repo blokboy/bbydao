@@ -10,6 +10,7 @@ import ControlledModal from "components/Layout/Modal/ControlledModal"
 import { amount, getLiquidityPairInfo, handleGnosisTransaction, readableTokenBalance } from "./helpers"
 import PoolInfo from "./PoolInfo"
 import TokenInput from "./TokenInput"
+import useGnosisTransaction from "../../../hooks/useGnosisTransaction"
 
 const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
@@ -30,6 +31,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1?.token?.symbol)[0]?.uri
   const supplyDisabled =
     !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1 || !hasAllowance?.pair
+  const { gnosisTransaction } = useGnosisTransaction(safeAddress)
   const closeUniswapLpModal = () => {
     setLpToken0({})
     setLpToken1({})
@@ -105,8 +107,8 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
       })
     } else {
       const WETH = await uniswapV2RouterContract02?.WETH()
-      handleGnosisTransaction({
-        contract: {
+      gnosisTransaction(
+        {
           abi: IUniswapV2Router02["abi"],
           instance: uniswapV2RouterContract02,
           fn: "addLiquidityETH(address,uint256,uint256,uint256,address,uint256)",
@@ -119,11 +121,29 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
             deadline: Math.floor(Date.now() / 1000) + 60 * 20,
           },
         },
-        signer,
-        safeAddress,
-        to: UniswapV2Router02,
-        value: tokenA === WETH ? BigNumber.from(amountADesired) : BigNumber.from(amountBDesired),
-      })
+        UniswapV2Router02,
+        tokenA === WETH ? BigNumber.from(amountADesired) : BigNumber.from(amountBDesired)
+      )
+
+      // handleGnosisTransaction({
+      //   contract: {
+      //     abi: IUniswapV2Router02["abi"],
+      //     instance: uniswapV2RouterContract02,
+      //     fn: "addLiquidityETH(address,uint256,uint256,uint256,address,uint256)",
+      //     args: {
+      //       token: ethers.utils.getAddress(tokenA === WETH ? tokenB : tokenA),
+      //       amountTokenDesired: tokenA === WETH ? BigNumber.from(amountBDesired) : BigNumber.from(amountADesired),
+      //       amountTokenMin: tokenA === WETH ? BigNumber.from(amountBMin) : BigNumber.from(amountAMin),
+      //       amountETHMin: tokenA === WETH ? BigNumber.from(amountAMin) : BigNumber.from(amountBMin),
+      //       addressTo: ethers.utils.getAddress(safeAddress),
+      //       deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+      //     },
+      //   },
+      //   signer,
+      //   safeAddress,
+      //   to: UniswapV2Router02,
+      //   value: tokenA === WETH ? BigNumber.from(amountADesired) : BigNumber.from(amountBDesired),
+      // })
     }
   }
 

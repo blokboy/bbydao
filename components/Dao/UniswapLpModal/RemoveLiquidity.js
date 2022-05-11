@@ -175,6 +175,7 @@ const RemoveLiquidity = ({ token }) => {
     const bbyDaoBalance = ethers.utils.parseUnits(breakDown?.bbyDaoBalance.toString())
     const liq = bbyDaoBalance.mul(ethers.utils.parseUnits((liquidity / 100).toString())) // THIS IS WRONG
 
+    console.log('num', (Number(breakDown?.bbyDaoBalance) * 10 ** pairToken?.decimals) * ((liquidity / 100)))
 
     const amountAMin = ethers.utils.parseUnits((toReceive.token0 - toReceive.token0 * slippage).toString())
     const amountBMin = ethers.utils.parseUnits((toReceive.token1 - toReceive.token1 * slippage).toString())
@@ -192,25 +193,25 @@ const RemoveLiquidity = ({ token }) => {
       const amountTokenMin = amountMins[pairToken.symbol]
       const amountETHMin = amountMins[WETHToken.symbol]
 
-      handleGnosisTransaction({
-        contract: {
-          abi: IUniswapV2Router02["abi"],
-           instance: uniswapV2RouterContract02,
-          fn: "removeLiquidityETH(address,uint256,uint256,uint256,address,uint256)",
-          args: {
-            token: ethers.utils.getAddress(pairToken?.address),
-            liquidity: liq,
-            amountTokenMin,
-            amountETHMin,
-            addressTo: ethers.utils.getAddress(bbyDao),
-            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-          },
-        },
-        signer,
-        safeAddress: bbyDao,
-        to: UniswapV2Router02,
-        value: 0,
-      })
+      // handleGnosisTransaction({
+      //   contract: {
+      //     abi: IUniswapV2Router02["abi"],
+      //      instance: uniswapV2RouterContract02,
+      //     fn: "removeLiquidityETH(address,uint256,uint256,uint256,address,uint256)",
+      //     args: {
+      //       token: ethers.utils.getAddress(pairToken?.address),
+      //       liquidity: liq,
+      //       amountTokenMin,
+      //       amountETHMin,
+      //       addressTo: ethers.utils.getAddress(bbyDao),
+      //       deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+      //     },
+      //   },
+      //   signer,
+      //   safeAddress: bbyDao,
+      //   to: UniswapV2Router02,
+      //   value: 0,
+      // })
     } else {
       handleGnosisTransaction({
         contract: {
