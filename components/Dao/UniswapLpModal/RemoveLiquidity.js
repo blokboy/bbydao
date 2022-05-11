@@ -20,6 +20,7 @@ const RemoveLiquidity = ({ token }) => {
   const queryClient = useQueryClient()
   const bbyDao = queryClient.getQueryData("expandedDao")
   const [breakDown, setBreakDown] = useState({})
+  const [toReceive, setToReceive] = useState({})
   const pairName = token?.token?.name.replace("Uniswap V2", "").replace("Pool", "")
 
   React.useMemo(async () => {
@@ -100,6 +101,11 @@ const RemoveLiquidity = ({ token }) => {
         )
         .toFixed(pairToken.decimals)
 
+      setToReceive({
+        token0Amount,
+        token1Amount,
+      })
+
       setBreakDown({
         ...breakDown,
         poolTokens: NumberFromBig(bbyDaoBalance, pairToken?.decimals),
@@ -108,27 +114,40 @@ const RemoveLiquidity = ({ token }) => {
         percentageOfPool: `${
           percentageOfPool * 100 < 0.01 ? "< 0.01" : parseFloat((percentageOfPool * 100).toString()).toFixed(6)
         }%`,
-        tokens: {
-          token0: {
-            name: token0.name,
-            symbol: token0.symbol,
-            priceInPair: priceOfToken0InToken1,
-            amount: token0Amount
-          },
-          token1: {
-            name: token1.name,
-            symbol: token1.symbol,
-            priceInPair: priceOfToken1InToken0,
-            amount: token1Amount
-          },
+        token0: {
+          name: token0.name,
+          symbol: token0.symbol,
+          priceInPair: priceOfToken0InToken1,
+          amount: token0Amount,
+        },
+        token1: {
+          name: token1.name,
+          symbol: token1.symbol,
+          priceInPair: priceOfToken1InToken0,
+          amount: token1Amount,
         },
       })
     }
   }, [tokenAddress, signer, bbyDao])
 
   useEffect(() => {
+    if(!!breakDown) {
+      setToReceive({
+        token0: breakDown?.token0?.amount * (liquidity / 100),
+        token1: breakDown?.token1?.amount * (liquidity / 100)
+      })
+    }
+
+
+  }, [liquidity])
+
+  const init = () => {
     if (!liquidity) setState({ liquidity: 0 })
+  }
+  useEffect(() => {
+    init()
   }, [])
+
 
   const handleApprovePair = async contract => {
     handleGnosisTransaction({
@@ -194,26 +213,40 @@ const RemoveLiquidity = ({ token }) => {
             MAX
           </button>
         </div>
-        <div>Amount of Tokens You will Receive back</div>
+        <div className="p-4 mb-2 border rounded">
+          Amount of Tokens You will Receive back
+          <div>
+            <div>{breakDown?.token0?.symbol}</div>
+            <div>{toReceive?.token0}</div>
+          </div>
+
+          <div>
+            <div>{breakDown?.token1?.symbol}</div>
+            <div>{toReceive?.token1}</div>
+          </div>
+        </div>
         <div>
           <div>
             <div>Your Position</div>
             <div>{pairName}</div>
             <div>Your Total Pool Tokens: {breakDown?.poolTokens}</div>
             <div>Your Pool Share: {breakDown?.percentageOfPool}</div>
-            <div>{breakDown?.tokens?.token0?.symbol}: {breakDown?.tokens?.token0?.amount}</div>
-            <div>{breakDown?.tokens?.token1?.symbol}: {breakDown?.tokens?.token1?.amount}</div>
-
+            <div>
+              {breakDown?.token0?.symbol}: {breakDown?.token0?.amount}
+            </div>
+            <div>
+              {breakDown?.token1?.symbol}: {breakDown?.token1?.amount}
+            </div>
           </div>
           <div>
             <div>Price</div>
             <div>
-              1 {breakDown?.tokens?.token0?.symbol} = {breakDown?.tokens?.token0?.priceInPair}{" "}
-              {breakDown?.tokens?.token1?.symbol}
+              1 {breakDown?.token0?.symbol} = {breakDown?.token0?.priceInPair}{" "}
+              {breakDown?.token1?.symbol}
             </div>
             <div>
-              1 {breakDown?.tokens?.token1?.symbol} = {breakDown?.tokens?.token1?.priceInPair}{" "}
-              {breakDown?.tokens?.token0?.symbol}
+              1 {breakDown?.token1?.symbol} = {breakDown?.token1?.priceInPair}{" "}
+              {breakDown?.token0?.symbol}
             </div>
           </div>
         </div>

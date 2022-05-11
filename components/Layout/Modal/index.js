@@ -33,7 +33,7 @@ const Modal = ({ onClose = () => {}, children, trigger, triggerText, heading }) 
           {portal(
             <div
               id="modal-background"
-              className="fixed inset-0 z-50 backdrop-blur"
+              className="fixed inset-0 z-50 backdrop-blur overflow-y-scroll"
               onClick={e => (e.target?.id === "modal-background" ? closePortal() : () => {})}
             >
               <div className="modal-container fade-in-up" role="dialog" aria-modal={true}>
