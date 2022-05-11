@@ -10,7 +10,9 @@ import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.j
 
 import { max256, NumberFromBig } from "utils/helpers"
 import { minimalABI } from "../../../hooks/useERC20Contract"
-import { amount, handleGnosisTransaction } from "./helpers"
+import { amount } from "./helpers"
+import useGnosisTransaction from "../../../hooks/useGnosisTransaction"
+
 
 const RemoveLiquidity = ({ token }) => {
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
@@ -25,6 +27,8 @@ const RemoveLiquidity = ({ token }) => {
   const pairName = token?.token?.name.replace("Uniswap V2", "").replace("Pool", "")
   const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
   const slippage = 0.055
+  const { gnosisTransaction } = useGnosisTransaction(bbyDao)
+
 
   React.useMemo(async () => {
     if (!!signer) {
@@ -154,8 +158,8 @@ const RemoveLiquidity = ({ token }) => {
   }, [])
 
   const handleApprovePair = async contract => {
-    handleGnosisTransaction({
-      contract: {
+    gnosisTransaction(
+      {
         abi: IUniswapV2Pair["abi"],
         instance: contract,
         args: {
@@ -164,11 +168,9 @@ const RemoveLiquidity = ({ token }) => {
         },
         fn: "approve(address,uint256)",
       },
-      signer,
-      bbyDao,
-      to: contract?.address,
-      value: 0,
-    })
+      contract?.address,
+      0
+    )
   }
 
   const handleRemoveLiquidity = () => {
@@ -193,46 +195,42 @@ const RemoveLiquidity = ({ token }) => {
       const amountTokenMin = amountMins[pairToken.symbol]
       const amountETHMin = amountMins[WETHToken.symbol]
 
-      // handleGnosisTransaction({
-      //   contract: {
-      //     abi: IUniswapV2Router02["abi"],
-      //      instance: uniswapV2RouterContract02,
-      //     fn: "removeLiquidityETH(address,uint256,uint256,uint256,address,uint256)",
-      //     args: {
-      //       token: ethers.utils.getAddress(pairToken?.address),
-      //       liquidity: liq,
-      //       amountTokenMin,
-      //       amountETHMin,
-      //       addressTo: ethers.utils.getAddress(bbyDao),
-      //       deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-      //     },
-      //   },
-      //   signer,
-      //   safeAddress: bbyDao,
-      //   to: UniswapV2Router02,
-      //   value: 0,
-      // })
-    } else {
-      handleGnosisTransaction({
-        contract: {
-          abi: IUniswapV2Router02["abi"],
-          instance: uniswapV2RouterContract02,
-          fn: "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)",
-          args: {
-            tokenA: ethers.utils.getAddress(breakDown.token0.address),
-            tokenB: ethers.utils.getAddress(breakDown.token1.address),
-            liquidity: liq,
-            amountAMin,
-            amountBMin,
-            addressTo: ethers.utils.getAddress(bbyDao),
-            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+      gnosisTransaction(
+          {
+            abi: IUniswapV2Router02["abi"],
+            instance: uniswapV2RouterContract02,
+            fn: "removeLiquidityETH(address,uint256,uint256,uint256,address,uint256)",
+            args: {
+              token: ethers.utils.getAddress(pairToken?.address),
+              liquidity: liq,
+              amountTokenMin,
+              amountETHMin,
+              addressTo: ethers.utils.getAddress(bbyDao),
+              deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+            },
           },
-        },
-        signer,
-        safeAddress: bbyDao,
-        to: UniswapV2Router02,
-        value: 0,
-      })
+          UniswapV2Router02,
+          0
+      )
+    } else {
+      gnosisTransaction(
+          {
+            abi: IUniswapV2Router02["abi"],
+            instance: uniswapV2RouterContract02,
+            fn: "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)",
+            args: {
+              tokenA: ethers.utils.getAddress(breakDown.token0.address),
+              tokenB: ethers.utils.getAddress(breakDown.token1.address),
+              liquidity: liq,
+              amountAMin,
+              amountBMin,
+              addressTo: ethers.utils.getAddress(bbyDao),
+              deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+            },
+          },
+          UniswapV2Router02,
+          0
+      )
     }
   }
 

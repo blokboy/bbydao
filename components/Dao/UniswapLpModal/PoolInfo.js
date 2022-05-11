@@ -2,10 +2,11 @@ import React from "react"
 import { ethers, BigNumber } from "ethers"
 import { minimalABI } from "hooks/useERC20Contract"
 import { eToNumber, isEmpty, max256, NumberFromBig } from "utils/helpers"
-import { handleGnosisTransaction } from "./helpers"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
+import useGnosisTransaction from "../../../hooks/useGnosisTransaction"
 
 const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, safeAddress }) => {
+  const { gnosisTransaction } = useGnosisTransaction(safeAddress)
   const token0 = info?.transactionInfo?.[0].token
   const token1 = info?.transactionInfo?.[1].token
   const prettyPercentage = decimal => (decimal * 100 < 0.01 ? "< .01%" : `${(decimal * 100).toFixed(2)}%`)
@@ -27,22 +28,19 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
   const handleApproveToken = async (tokenContracts, index) => {
     const contracts = await tokenContracts
     const contract = await contracts.contracts[index]
-
-    handleGnosisTransaction({
-      contract: {
-        abi: minimalABI,
-        instance: contract,
-        fn: "approve(address,uint256)",
-        args: {
-          spender,
-          value: BigNumber.from(max256),
+    gnosisTransaction(
+        {
+          abi: minimalABI,
+          instance: contract,
+          fn: "approve(address,uint256)",
+          args: {
+            spender,
+            value: BigNumber.from(max256),
+          },
         },
-      },
-      signer,
-      safeAddress,
-      to: contract?.address,
-      value: 0,
-    })
+        contract?.address,
+        0
+    )
   }
 
   /*
@@ -57,8 +55,8 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
     const pair = await pairContract
     const contract = await pair.contract
 
-    handleGnosisTransaction({
-      contract: {
+    gnosisTransaction(
+      {
         abi: IUniswapV2Pair["abi"],
         instance: contract,
         args: {
@@ -67,11 +65,10 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
         },
         fn: "approve(address,uint256)",
       },
-      signer,
-      safeAddress,
-      to: contract?.address,
-      value: 0,
-    })
+      contract?.address,
+      0
+    )
+
   }
 
   /*

@@ -7,7 +7,7 @@ import React from "react"
 import { useDaoStore } from "stores/useDaoStore"
 import { useSigner } from "wagmi"
 import ControlledModal from "components/Layout/Modal/ControlledModal"
-import { amount, getLiquidityPairInfo, handleGnosisTransaction, readableTokenBalance } from "./helpers"
+import { amount, getLiquidityPairInfo, readableTokenBalance } from "./helpers"
 import PoolInfo from "./PoolInfo"
 import TokenInput from "./TokenInput"
 import useGnosisTransaction from "../../../hooks/useGnosisTransaction"
@@ -84,8 +84,8 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
 
     /* addLiquidity or addLiquidityEth  */
     if (pairHasEth.length === 0) {
-      handleGnosisTransaction({
-        contract: {
+      gnosisTransaction(
+        {
           abi: IUniswapV2Router02["abi"],
           instance: uniswapV2RouterContract02,
           fn: "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)",
@@ -100,11 +100,9 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
             deadline: Math.floor(Date.now() / 1000) + 60 * 20,
           },
         },
-        signer,
-        safeAddress,
-        to: UniswapV2Router02,
-        value: 0,
-      })
+        UniswapV2Router02,
+        0
+      )
     } else {
       const WETH = await uniswapV2RouterContract02?.WETH()
       gnosisTransaction(
@@ -124,26 +122,6 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
         UniswapV2Router02,
         tokenA === WETH ? BigNumber.from(amountADesired) : BigNumber.from(amountBDesired)
       )
-
-      // handleGnosisTransaction({
-      //   contract: {
-      //     abi: IUniswapV2Router02["abi"],
-      //     instance: uniswapV2RouterContract02,
-      //     fn: "addLiquidityETH(address,uint256,uint256,uint256,address,uint256)",
-      //     args: {
-      //       token: ethers.utils.getAddress(tokenA === WETH ? tokenB : tokenA),
-      //       amountTokenDesired: tokenA === WETH ? BigNumber.from(amountBDesired) : BigNumber.from(amountADesired),
-      //       amountTokenMin: tokenA === WETH ? BigNumber.from(amountBMin) : BigNumber.from(amountAMin),
-      //       amountETHMin: tokenA === WETH ? BigNumber.from(amountAMin) : BigNumber.from(amountBMin),
-      //       addressTo: ethers.utils.getAddress(safeAddress),
-      //       deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-      //     },
-      //   },
-      //   signer,
-      //   safeAddress,
-      //   to: UniswapV2Router02,
-      //   value: tokenA === WETH ? BigNumber.from(amountADesired) : BigNumber.from(amountBDesired),
-      // })
     }
   }
 
