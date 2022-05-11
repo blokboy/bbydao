@@ -57,6 +57,7 @@ export const updateRelationship = async req => {
 // { initiator: address, target: address }
 export const deleteRelationship = async req => {
   const res = await api.post("/relationship/delete", req)
+  console.log("deleteRelationship response:", res.data)
   return res.data
 }
 

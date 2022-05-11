@@ -118,15 +118,17 @@ const TokenCard = ({ token }) => {
                   </button>
                 </div>
             )) || (
+              <div className="flex flex-row space-x-2 p-1 xl:justify-center">
                 <Modal
                     heading={"Remove Liquidity"}
                     trigger={
-                  <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-slate-500" onClick={() => removeLiquidity()}>
+                      <button className="w-32 rounded-lg bg-blue-400 p-1 text-sm hover:bg-slate-500" onClick={() => removeLiquidity()}>
                     Remove Liquidity
                   </button>
                 }>
                   <RemoveLiquidity token={token} />
                 </Modal>
+            </div>
             )}
           </>
 

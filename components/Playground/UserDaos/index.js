@@ -7,9 +7,9 @@ import { BiCopy } from "react-icons/bi"
 
 // this is currently only set up to display expandable dao cards
 // TODO: determine all possible views UserDaos state
-const UserDaos = ({ user, data }) => {
+const UserDaos = ({ user, address, data }) => {
   const userSafes = data?.safes
-  const address = data?.address
+  // const address = data?.address
   const expandedDao = usePlaygroundStore(state => state.expandedDao)
   const setExpanedDao = usePlaygroundStore(state => state.setExpandedDao)
   const setDaoExpanded = usePlaygroundStore(state => state.setDaoExpanded)
@@ -63,7 +63,7 @@ const UserDaos = ({ user, data }) => {
         </button>
         <div>{toast}</div>
         </div>
-        <DaoCard user={user} safe={expandedDao} />
+        <DaoCard user={user} address={address} safe={expandedDao} />
       </div>
     )
   }
@@ -75,7 +75,7 @@ const UserDaos = ({ user, data }) => {
       <div className="flex w-full flex-col lg:w-2/5 space-y-6">
         <div className="text-3xl h-10 px-3 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text font-semibold text-transparent">bbyDAOs</div>
         {userSafes?.map((safe, index) => (
-          <DaoCard key={safe} user={user} safe={safe} />
+          <DaoCard key={safe} user={user} address={address} safe={safe} />
         ))}
       </div>
     )
