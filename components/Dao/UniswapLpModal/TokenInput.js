@@ -20,12 +20,10 @@ const TokenInput = ({
         step={0.000001}
         placeholder="0.0"
         required
-        //  min="0"
         max={lpToken?.balance / 10 ** lpToken?.token?.decimals}
         ref={token1InputRef}
         disabled={!pair}
       />
-      {/* Button to select token  */}
       <div className="text-l my-3 flex items-center justify-center rounded-xl bg-slate-200 py-1 px-6 shadow-xl dark:bg-slate-700">
         <img src={logo} className="mr-2 h-8 w-8 min-w-fit rounded-full" />
         {lpToken?.token?.symbol ? lpToken?.token?.symbol : ""}

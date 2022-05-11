@@ -1,35 +1,125 @@
+import React from "react"
 import { ethers, BigNumber } from "ethers"
 import { minimalABI } from "hooks/useERC20Contract"
-import { useMemo, useState } from "react"
 import { eToNumber, isEmpty, max256, NumberFromBig } from "utils/helpers"
+import { handleGnosisTransaction } from "./helpers"
+import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 
-const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance }) => {
+const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, safeAddress }) => {
   const token0 = info?.transactionInfo?.[0].token
   const token1 = info?.transactionInfo?.[1].token
-  const signerAddress = signer?._address
   const prettyPercentage = decimal => (decimal * 100 < 0.01 ? "< .01%" : `${(decimal * 100).toFixed(2)}%`)
   const prettyMinted = amount => parseFloat(amount)?.toFixed(3)
   const prettyTotal = amount => Math.round(amount).toLocaleString("en-US")
-  const pairName = info?.transactionInfo
+  const prettyPairName = info?.transactionInfo
     ?.reduce((acc, cv) => {
       return acc + cv.token.symbol + "/"
     }, "")
     .slice(0, -1)
 
-  const tokenContracts = useMemo(async () => {
+  /*
+   * Approve Tokens:
+   *
+   * Send a gnosis transaction to allow the spender (uniswapV2Router02)
+   * to spend the token being approved on behalf of the owner (bbyDao)
+   *
+   * */
+  const handleApproveToken = async (tokenContracts, index) => {
+    const contracts = await tokenContracts
+    const contract = await contracts.contracts[index]
+
+    handleGnosisTransaction({
+      contract: {
+        abi: minimalABI,
+        instance: contract,
+        fn: "approve(address,uint256)",
+        args: {
+          spender,
+          value: BigNumber.from(max256),
+        },
+      },
+      signer,
+      safeAddress,
+      to: contract?.address,
+      value: 0,
+    })
+  }
+
+  /*
+   * Approve Pair:
+   *
+   * Send a gnosis transaction to allow the spender (uniswapV2Router02)
+   * to spend the UNIV-V2 LP token being approved on behalf of the owner (bbyDao)
+   *
+   * */
+
+  const handleApprovePair = async pairContract => {
+    const pair = await pairContract
+    const contract = await pair.contract
+
+    handleGnosisTransaction({
+      contract: {
+        abi: IUniswapV2Pair["abi"],
+        instance: contract,
+        args: {
+          spender,
+          value: BigNumber.from(max256),
+        },
+        fn: "approve(address,uint256)",
+      },
+      signer,
+      safeAddress,
+      to: contract?.address,
+      value: 0,
+    })
+  }
+
+  /*
+   *
+   * Allowance Check:
+   *
+   * Check whether the spender (uniswapV2Router02) is allowed to
+   * spend (TransferFrom) the UNI-V2 LP Token on behalf of the owner (bbyDao).
+   *
+   * */
+
+  const pairContract = React.useMemo(async () => {
+    let contract, pairAllowanceAmount
+    if (!!signer && !!pair) {
+      contract = new ethers.Contract(pair?.address, IUniswapV2Pair["abi"], signer)
+      const allowance = await contract.allowance(safeAddress, spender)
+      pairAllowanceAmount = await NumberFromBig(allowance._hex, pair.decimals)
+    }
+    return {
+      contract,
+      allowedToSpend: { pair: pairAllowanceAmount > 0 },
+    }
+  }, [pair])
+
+  /*
+   *
+   * Allowance Check:
+   *
+   * Check whether the spender (uniswapV2Router02) is allowed to
+   * spend (TransferFrom) the two Tokens that compose the Pair
+   * on behalf of the owner (bbyDao).
+   *
+   * */
+
+  const tokenContracts = React.useMemo(async () => {
     let token0Contract, token1Contract, token0AllowanceAmount, token1AllowanceAmount
 
     if (!!signer) {
       if (!!token0) {
         token0Contract = new ethers.Contract(token0?.address, minimalABI, signer)
-        const allowance = await token0Contract.allowance(signerAddress, spender)
-        token0AllowanceAmount = await NumberFromBig(allowance._hex, token0.decimals)
+        const allowance = await token0Contract.allowance(safeAddress, spender)
+        token0AllowanceAmount = await NumberFromBig(allowance?._hex, token0.decimals)
       }
 
       if (!!token1) {
         token1Contract = new ethers.Contract(token1?.address, minimalABI, signer)
-        const allowance = await token1Contract.allowance(signerAddress, spender)
-        token1AllowanceAmount = await NumberFromBig(allowance._hex, token1.decimals)
+        const allowance = await token1Contract.allowance(safeAddress, spender)
+        token1AllowanceAmount = await NumberFromBig(allowance?._hex, token1.decimals)
       }
     }
 
@@ -39,25 +129,34 @@ const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance }) => {
     }
   }, [token0, token1])
 
-  const handleApproveToken = async (tokenContracts, index) => {
-    const contracts = await tokenContracts
-    const contract = await contracts.contracts[index]
-    const approve = await contract.approve(spender, BigNumber.from(max256))
-    console.log("approve", approve)
-  }
+  /*
+   *
+   * Listen for Allowance:
+   *
+   * Set a local state hasAllowance that determines
+   * whether or not the supply button is disabled.
+   *
+   * TODO: on receipt of transaction update hasAllowance variable
+   *
+   * */
 
-  useMemo(async () => {
+  React.useMemo(async () => {
     const allowed = await tokenContracts
-    setHasAllowance(allowed.allowedToSpend)
+    setHasAllowance({ ...hasAllowance, ...allowed.allowedToSpend })
   }, [tokenContracts])
 
+  React.useMemo(async () => {
+    const allowed = await pairContract
+    setHasAllowance({ ...hasAllowance, ...allowed.allowedToSpend })
+  }, [pairContract])
+
   return (
-    <div>
+    <>
       {!isEmpty(info) && (
         <div className="flex flex-col items-center px-12">
           <div className="mb-2">
             <a href={info?.uris?.uniswap} target="_blank" className="underline">
-              {pairName} Uniswap V2 Pool
+              {prettyPairName} Uniswap V2 Pool
             </a>
           </div>
           {!!info.uniswapTokensMinted && (
@@ -76,7 +175,7 @@ const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance }) => {
               <div>
                 Share of{" "}
                 <a href={info?.uris?.uniswap} target="_blank">
-                  {pairName} Pool
+                  {prettyPairName} Pool
                 </a>
               </div>
               <div className="font-thin">{prettyPercentage(eToNumber(info?.percentageOfPool))}</div>
@@ -87,13 +186,13 @@ const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance }) => {
               <div>
                 Total Tokens in{" "}
                 <a href={info?.uris?.uniswap} target="_blank">
-                  {pairName} Pool
+                  {prettyPairName} Pool
                 </a>
               </div>
               <div className="font-thin">~ {prettyTotal(info?.total)}</div>
             </div>
           )}
-          <div className="my-4 grid w-full grid-cols-2 justify-between gap-4">
+          <div className="my-4 flex w-full justify-center gap-4">
             {!hasAllowance.token0 && token0 && (
               <div
                 className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
@@ -110,10 +209,18 @@ const PoolInfo = ({ spender, info, signer, hasAllowance, setHasAllowance }) => {
                 Approve {token1?.symbol}
               </div>
             )}
+            {hasAllowance.token0 && token0 && hasAllowance.token1 && token1 && !hasAllowance.pair && pair && (
+              <div
+                className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+                onClick={() => handleApprovePair(pairContract)}
+              >
+                Approve {prettyPairName} UNI-V2 LP Token
+              </div>
+            )}
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
 
