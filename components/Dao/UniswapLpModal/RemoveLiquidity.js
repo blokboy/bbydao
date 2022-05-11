@@ -1,12 +1,13 @@
-import {BigNumber, ethers}                         from "ethers"
+import {ChainId, Fetcher, Token} from '@uniswap/sdk'
+import {BigNumber, ethers}       from "ethers"
 import React, { useCallback, useEffect, useState } from "react"
 import { useQueryClient }                          from "react-query"
 import { useSigner }                               from "wagmi"
 import useForm                                     from "hooks/useForm"
 import IUniswapV2Pair                              from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import UniswapV2ERC20                              from "@uniswap/v2-core/build/UniswapV2ERC20.json"
+
 import {max256, NumberFromBig}                     from 'utils/helpers'
-import {toBN}                                      from 'web3-utils'
 import {minimalABI}                                from '../../../hooks/useERC20Contract'
 import {amount, handleGnosisTransaction}           from './helpers'
 
@@ -20,7 +21,6 @@ const RemoveLiquidity = ({ token }) => {
   const bbyDao = queryClient.getQueryData("expandedDao")
   const [breakDown, setBreakDown] = useState({})
   const pairName = token?.token?.name.replace("Uniswap V2", "").replace("Pool", "")
-  console.log('TO', )
 
    React.useMemo(async () => {
     if (!!signer) {
@@ -30,51 +30,77 @@ const RemoveLiquidity = ({ token }) => {
         UniswapV2ERC20["abi"],
         signer
       )
-      console.log("to", token)
 
-      console.log("token", tokenAddress)
+
       // console.log('contract', pairContract)
       // console.log('contract 2', pairERC20Contract)
-      console.log("bbyDao", bbyDao)
 
       const totalSupply = await pairContract?.totalSupply()
-      const reserves = await pairContract?.getReserves()
       const bbyDaoBalance = await pairERC20Contract?.balanceOf(bbyDao)
       const percentageOfPool =  NumberFromBig(bbyDaoBalance, pairToken?.decimals) / NumberFromBig(totalSupply, pairToken?.decimals)
       const bbyDaoAllowance = await pairERC20Contract?.allowance(bbyDao, UniswapV2Router02)
 
-      console.log('tot', NumberFromBig(totalSupply, pairToken?.decimals))
-      const totalPriceEth = NumberFromBig(totalSupply, pairToken?.decimals) * parseFloat(token.ethValue)
-      console.log('pr', totalPriceEth)
 
-      const reserve0 = reserves[0]
-      const reserve1 = reserves[1]
-
-
-      const token0 = await pairContract?.token0()
-      const token1 = await pairContract?.token1()
-      const price0 = await pairContract?.price0CumulativeLast()
-      const price1 = await pairContract?.price1CumulativeLast()
-      const token0Contract =  new ethers.Contract(ethers.utils.getAddress(tokenAddress), minimalABI, signer)
-      const token1Contract =  new ethers.Contract(ethers.utils.getAddress(tokenAddress), minimalABI, signer)
-
-
-      console.log('token0', token0Contract)
-
-
-      // function getTokenPrice(pairAddress, amount) {
-      //   pair = IUniswapV2Pair(pairAddress);
-      //    token1 = IERC20(pair.token1);
-      //   (Res0, Res1,) = pair.getReserves();
-      //
-      //   // decimals
-      //   uint res0 = Res0*(10**token1.decimals());
-      //   return((amount*res0)/Res1); // return amount of token0 needed to buy token1
-      // }
+      const reserves = await pairContract?.getReserves()
+      const token0Contract =  new ethers.Contract(ethers.utils.getAddress(await pairContract?.token0()), minimalABI, signer)
+      const token1Contract =  new ethers.Contract(ethers.utils.getAddress(await pairContract?.token1()), minimalABI, signer)
 
 
 
-      console.log('pr', price0.toString(), price1.toString())
+      const token0 = {
+        address:  await pairContract?.token0(),
+        decimals: await token0Contract?.decimals(),
+        symbol: await token0Contract?.symbol(),
+        name: await token0Contract?.name(),
+        reserves: reserves[0]
+      }
+
+      const token1 = {
+        address:  await pairContract?.token1(),
+        decimals: await token1Contract?.decimals(),
+        symbol: await token1Contract?.symbol(),
+        name: await token1Contract?.name(),
+        reserves: reserves[1]
+      }
+
+      const priceOfToken1InToken0 = Number((Number(token0.reserves) * token0.decimals) / (Number(token1.reserves) * token1.decimals))
+      const priceOfToken0InToken1 = Number((Number(token1.reserves) * token1.decimals) / (Number(token0.reserves) * token0.decimals))
+
+      const factory = await pairContract?.factory()
+
+
+       console.log('to', Number(totalSupply / (10 ** pairToken?.decimals)))
+
+      const uniswapTokens = async () => {
+        const uniToken0 = new Token(
+            ChainId.MAINNET,
+            token0?.address,
+            token0?.decimals,
+            token0?.symbol,
+            token0?.name
+        )
+
+        const uniToken1 = new Token(
+            ChainId.MAINNET,
+            token1?.address,
+            token1?.decimals,
+            token1?.symbol,
+            token1?.name
+        )
+
+        return { [token0.symbol]: uniToken0, [token1.symbol]: uniToken1 }
+      }
+      const uniTokens = await uniswapTokens()
+      const uniPair = await Fetcher.fetchPairData(
+          uniTokens[token0.symbol],
+          uniTokens[token1.symbol]
+      )
+
+      // console.log('uniPair', uniPair)
+
+      console.log('uniPair', uniPair?.liquidityToken, totalSupply, bbyDaoBalance)
+
+      console.log('m', uniPair?.getLiquidityValue(uniPair?.liquidityToken, totalSupply, bbyDaoBalance))
 
 
       setBreakDown({
@@ -82,7 +108,19 @@ const RemoveLiquidity = ({ token }) => {
         poolTokens: NumberFromBig(bbyDaoBalance, pairToken?.decimals),
         hasAllowance: parseFloat(amount(bbyDaoAllowance, pairToken?.decimals)) > 0,
         pairContract,
-        percentageOfPool: `${((percentageOfPool * 100) < .01 ) ? '< 0.01' : parseFloat((percentageOfPool * 100).toString()).toFixed(6)}%`
+        percentageOfPool: `${((percentageOfPool * 100) < .01 ) ? '< 0.01' : parseFloat((percentageOfPool * 100).toString()).toFixed(6)}%`,
+        tokens: {
+          token0: {
+            name: token0.name,
+            symbol: token0.symbol,
+            priceInPair: priceOfToken0InToken1
+          },
+          token1: {
+            name: token1.name,
+            symbol: token1.symbol,
+            priceInPair: priceOfToken1InToken0
+          }
+        }
       })
 
     }
@@ -163,9 +201,14 @@ const RemoveLiquidity = ({ token }) => {
           <div>{pairName}</div>
           <div>Your Total Pool Tokens: {breakDown?.poolTokens}</div>
           <div>Your Pool Share: {breakDown?.percentageOfPool}</div>
+          <div>
+            <div>Price</div>
+            <div>1 {breakDown?.tokens?.token0?.symbol} = {breakDown?.tokens?.token0?.priceInPair} {breakDown?.tokens?.token1?.symbol}</div>
+            <div>1 {breakDown?.tokens?.token1?.symbol} = {breakDown?.tokens?.token1?.priceInPair} {breakDown?.tokens?.token0?.symbol}</div>
+
+          </div>
 
         </div>
-        {console.log("brea", breakDown)}
       </div>
 
       {breakDown.hasAllowance === false && (
