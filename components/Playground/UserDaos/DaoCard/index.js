@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react"
+import React from "react"
 import { useDaoStore } from "../../../../stores/useDaoStore"
 import UniswapLpModal from "../../../Dao/UniswapLpModal"
 import RemoveLiquidity from "../../../Dao/UniswapLpModal/RemoveLiquidity"
@@ -32,8 +32,8 @@ const DaoCard = ({ user, safe, address }) => {
   })
 
   // create dao if dao does not exist in our backend
-  useEffect(() => {
-    if (!daoData) {
+  React.useEffect(() => {
+    if (!daoData && !daoIsLoading) {
       createDao({
         name: safe,
         type: 1,
@@ -74,7 +74,7 @@ const DaoCard = ({ user, safe, address }) => {
     refetchOnWindowFocus: false,
   })
 
-  const tokenLogos = useMemo(() => {
+  const tokenLogos = React.useMemo(() => {
     return daoTokensData?.reduce((acc = [], cv) => {
       const uri = cv?.token?.logoUri
       const symbol = cv?.token?.symbol
