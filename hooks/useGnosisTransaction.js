@@ -37,6 +37,7 @@ export default function useGnosisTransaction(safeAddress) {
         }
 
         const nonce = await safeService.getNextNonce(safeAddress)
+
         /* Encode Data */
         const { data } = contractInterface(contract)
 

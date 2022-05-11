@@ -7,13 +7,10 @@ export default function useSafeSdk(safeAddress) {
   const [{ data: signer, loading }] = useSigner()
   const [sdkInstance, setSdkInstance] = useState(null)
 
-
   const handleSdkInstance = React.useCallback(async () => {
     if (sdkInstance !== null) {
       return
     }
-    console.log('signer', signer)
-      console.log('loading', loading)
 
     try {
       if (!signer) {
@@ -32,9 +29,9 @@ export default function useSafeSdk(safeAddress) {
   }, [safeAddress, signer])
 
   React.useEffect(() => {
-      if(signer) {
-          handleSdkInstance()
-      }
+    if (signer) {
+      handleSdkInstance()
+    }
   }, [handleSdkInstance, signer])
 
   return sdkInstance

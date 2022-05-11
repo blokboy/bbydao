@@ -68,7 +68,6 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
       contract?.address,
       0
     )
-
   }
 
   /*
