@@ -1,12 +1,12 @@
-import { EthersAdapter, Safe, SafeFactory } from "@gnosis.pm/safe-core-sdk"
+import React from "react"
+import * as api from "query"
+import { useMutation, useQuery } from "react-query"
+import { EthersAdapter, SafeFactory } from "@gnosis.pm/safe-core-sdk"
+import { useSigner } from "wagmi"
 import { ethers } from "ethers"
 import { Field, Form, Formik } from "formik"
-import * as api from "query"
-import React, { useCallback } from "react"
-import { useMutation, useQuery } from "react-query"
-import Select from "react-select"
-import { useAccount, useProvider, useSigner } from "wagmi"
 import * as Yup from "yup"
+import Select from "react-select"
 import { customStyles } from "./customStyles"
 
 const Input = ({ name }) => {
@@ -22,47 +22,56 @@ const Input = ({ name }) => {
 
 const DaoForm = () => {
   const [{ data: signer }] = useSigner()
-
   const address = React.useMemo(() => {
     if (!signer) {
       return null
     }
-
     return signer?._address
   }, [signer])
 
-  const [txWaiting, setTxWaiting] = React.useState(false)
   const { data: friendData } = useQuery(["friends", address], () => api.getFriends({ initiator: address }), {
     refetchOnWindowFocus: false,
     staleTime: 180000,
     enabled: !!signer,
   })
 
-  const { status, mutateAsync: createDao } = useMutation(api.createDao)
+  const parsedList = React.useMemo(() => {
+    let list = []
+    if (friendData) {
+      for (const friend of friendData) {
+        // relationship status = 4 (follower)
+        // & the address of the profile being viewed is not the initiator of the relationship
+        if (friend.status === 4 && friend.initiator !== address) {
+          list.push(friend)
+        } else {
+          null
+        }
+      }
+    }
+    return list
+  }, [friendData])
 
-  const friends = friendData?.map(friend => {
+  const friends = parsedList?.map(friend => {
     return {
       value: friend.initiator === address ? friend.target : friend.initiator,
       label: friend.initiator === address ? friend.targetEns || friend.target : friend.initiatorEns,
     }
   })
+  
+  const { status, mutateAsync: createDao } = useMutation(api.createDao)
+  const [txWaiting, setTxWaiting] = React.useState(false)
 
-  // console.log('signer', signer)
-
-  const createBabyDao = useCallback(
+  const createBabyDao = React.useCallback(
     async (ownerList, signer) => {
       if (!signer) {
         return
       }
-
       try {
         const ethAdapter = new EthersAdapter({
           ethers,
           signer,
         })
         const safeFactory = await SafeFactory.create({ ethAdapter })
-        console.log("ownerList", ownerList)
-
         const owners = ownerList
         const threshold = ownerList.length === 2 ? 2 : Math.ceil(ownerList.length / 2)
         const safeAccountConfig = {
@@ -77,16 +86,13 @@ const DaoForm = () => {
     [signer]
   )
 
-  const handleSubmit = useCallback(
+  const handleSubmit = React.useCallback(
     async ({ invites, name, signer }) => {
       try {
         const ownerList = [address, ...invites]
         setTxWaiting(true)
-
         const bbyDao = await createBabyDao(ownerList, signer)
         const bbyDaoAddress = await bbyDao.getAddress()
-        console.log("DaoForm.js bbyDao", bbyDao)
-
         // request to backend with dao info
         const req = {
           name,
