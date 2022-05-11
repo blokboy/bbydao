@@ -174,6 +174,8 @@ const RemoveLiquidity = ({ token }) => {
   const handleRemoveLiquidity = () => {
     const bbyDaoBalance = ethers.utils.parseUnits(breakDown?.bbyDaoBalance.toString())
     const liq = bbyDaoBalance.mul(ethers.utils.parseUnits((liquidity / 100).toString())) // THIS IS WRONG
+
+
     const amountAMin = ethers.utils.parseUnits((toReceive.token0 - toReceive.token0 * slippage).toString())
     const amountBMin = ethers.utils.parseUnits((toReceive.token1 - toReceive.token1 * slippage).toString())
     const amountMins = {
