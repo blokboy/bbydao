@@ -13,37 +13,43 @@ import { amount } from "./helpers"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 
 const RemoveLiquidity = ({ token }) => {
-  const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const [{ data: signer }] = useSigner()
-  const { state, setState, handleChange } = useForm()
-  const { liquidity } = state
-  const { tokenAddress, decimals, token: pairToken } = token
   const queryClient = useQueryClient()
-  const bbyDao = queryClient.getQueryData("expandedDao")
+  const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const [breakDown, setBreakDown] = useState({})
   const [toReceive, setToReceive] = useState({})
+  const { state, setState, handleChange } = useForm()
+
+  const bbyDao = queryClient.getQueryData("expandedDao")
   const pairName = token?.token?.name.replace("Uniswap V2", "").replace("Pool", "")
-  const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
+  const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
+  const { liquidity } = state
+  const { tokenAddress, token: pairToken } = token
   const slippage = 0.055
-  const { gnosisTransaction } = useGnosisTransaction(bbyDao)
+
+  /* Contracts */
+  const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
+  const pairContract = new ethers.Contract(ethers.utils.getAddress(tokenAddress), IUniswapV2Pair["abi"], signer)
+  const pairERC20Contract = new ethers.Contract(
+      ethers.utils.getAddress(tokenAddress),
+      UniswapV2ERC20["abi"],
+      signer
+  )
+
 
   React.useMemo(async () => {
     if (!!signer) {
       const WETH = await uniswapV2RouterContract02?.WETH()
-      const pairContract = new ethers.Contract(ethers.utils.getAddress(tokenAddress), IUniswapV2Pair["abi"], signer)
-      const pairERC20Contract = new ethers.Contract(
-        ethers.utils.getAddress(tokenAddress),
-        UniswapV2ERC20["abi"],
-        signer
-      )
       const totalSupply = await pairContract?.totalSupply()
       const bbyDaoBalance = await pairERC20Contract?.balanceOf(bbyDao)
-      const percentageOfPool =
-        NumberFromBig(bbyDaoBalance, pairToken?.decimals) / NumberFromBig(totalSupply, pairToken?.decimals)
+
+      const percentageOfPool = NumberFromBig(bbyDaoBalance, pairToken?.decimals) / NumberFromBig(totalSupply, pairToken?.decimals)
       const bbyDaoAllowance = await pairERC20Contract?.allowance(bbyDao, UniswapV2Router02)
       const kLast = await pairContract?.kLast()
       const reserves = await pairContract?.getReserves()
 
+
+      /* Construct Uniswap Token Objects  */
       const token0Contract = new ethers.Contract(
         ethers.utils.getAddress(await pairContract?.token0()),
         minimalABI,
@@ -70,6 +76,14 @@ const RemoveLiquidity = ({ token }) => {
         name: await token1Contract?.name(),
         reserves: reserves[1],
       }
+
+      const uniswapTokens = async () => {
+        const uniToken0 = new Token(ChainId.MAINNET, token0?.address, token0?.decimals, token0?.symbol, token0?.name)
+        const uniToken1 = new Token(ChainId.MAINNET, token1?.address, token1?.decimals, token1?.symbol, token1?.name)
+        return { [token0.symbol]: uniToken0, [token1.symbol]: uniToken1 }
+      }
+
+      /* Get Price Of Data  */
       const priceOfToken1InToken0 = Number(
         (Number(token0.reserves) * token0.decimals) / (Number(token1.reserves) * token1.decimals)
       )
@@ -77,20 +91,18 @@ const RemoveLiquidity = ({ token }) => {
         (Number(token1.reserves) * token1.decimals) / (Number(token0.reserves) * token0.decimals)
       )
 
-      const uniswapTokens = async () => {
-        const uniToken0 = new Token(ChainId.MAINNET, token0?.address, token0?.decimals, token0?.symbol, token0?.name)
-        const uniToken1 = new Token(ChainId.MAINNET, token1?.address, token1?.decimals, token1?.symbol, token1?.name)
-        return { [token0.symbol]: uniToken0, [token1.symbol]: uniToken1 }
-      }
+      /*  Fetch Data about PAir */
       const uniTokens = await uniswapTokens()
       const uniPair = await Fetcher.fetchPairData(uniTokens[token0.symbol], uniTokens[token1.symbol])
-      const totalSupplyTokenAmount = new TokenAmount(uniPair?.liquidityToken, totalSupply)
-      const bbyDaoLiquidityTokenAmount = new TokenAmount(uniPair?.liquidityToken, bbyDaoBalance)
+
+
+      const totalTokenSupplyOfLP = new TokenAmount(uniPair?.liquidityToken, totalSupply)
+      const totalBbyDaoLPTokens = new TokenAmount(uniPair?.liquidityToken, bbyDaoBalance)
       const token0Amount = uniPair
         ?.getLiquidityValue(
           uniPair.tokenAmounts[0].token,
-          totalSupplyTokenAmount,
-          bbyDaoLiquidityTokenAmount,
+          totalTokenSupplyOfLP,
+          totalBbyDaoLPTokens,
           false,
           kLast
         )
@@ -98,8 +110,8 @@ const RemoveLiquidity = ({ token }) => {
       const token1Amount = uniPair
         ?.getLiquidityValue(
           uniPair.tokenAmounts[1].token,
-          totalSupplyTokenAmount,
-          bbyDaoLiquidityTokenAmount,
+          totalTokenSupplyOfLP,
+          totalBbyDaoLPTokens,
           false,
           kLast
         )
@@ -111,7 +123,6 @@ const RemoveLiquidity = ({ token }) => {
       })
 
       setBreakDown({
-        ...breakDown,
         WETH,
         bbyDaoBalance,
         poolTokens: NumberFromBig(bbyDaoBalance, pairToken?.decimals),
@@ -136,10 +147,13 @@ const RemoveLiquidity = ({ token }) => {
         },
       })
     }
-  }, [tokenAddress, signer, bbyDao])
+  }, [tokenAddress, signer, bbyDao, pairToken])
 
   useEffect(() => {
-    if (!!breakDown?.token0?.amount || !!breakDown?.token?.am) {
+    console.log('liq', liquidity)
+    console.log('br', breakDown?.token0)
+    if (!!breakDown?.token0?.amount || !!breakDown?.token?.amount) {
+      console.log('hii')
       setToReceive({
         token0: breakDown?.token0?.amount * (liquidity / 100),
         token1: breakDown?.token1?.amount * (liquidity / 100),
