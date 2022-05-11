@@ -6,6 +6,7 @@ import { useSigner } from "wagmi"
 import useForm from "hooks/useForm"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import UniswapV2ERC20 from "@uniswap/v2-core/build/UniswapV2ERC20.json"
+import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 
 import { max256, NumberFromBig } from "utils/helpers"
 import { minimalABI } from "../../../hooks/useERC20Contract"
@@ -22,6 +23,8 @@ const RemoveLiquidity = ({ token }) => {
   const [breakDown, setBreakDown] = useState({})
   const [toReceive, setToReceive] = useState({})
   const pairName = token?.token?.name.replace("Uniswap V2", "").replace("Pool", "")
+  const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
+  const slippage = .055
 
   React.useMemo(async () => {
     if (!!signer) {
@@ -108,6 +111,7 @@ const RemoveLiquidity = ({ token }) => {
 
       setBreakDown({
         ...breakDown,
+        bbyDaoBalance,
         poolTokens: NumberFromBig(bbyDaoBalance, pairToken?.decimals),
         hasAllowance: parseFloat(amount(bbyDaoAllowance, pairToken?.decimals)) > 0,
         pairContract,
@@ -115,12 +119,14 @@ const RemoveLiquidity = ({ token }) => {
           percentageOfPool * 100 < 0.01 ? "< 0.01" : parseFloat((percentageOfPool * 100).toString()).toFixed(6)
         }%`,
         token0: {
+          address: token0.address,
           name: token0.name,
           symbol: token0.symbol,
           priceInPair: priceOfToken0InToken1,
           amount: token0Amount,
         },
         token1: {
+          address: token1.address,
           name: token1.name,
           symbol: token1.symbol,
           priceInPair: priceOfToken1InToken0,
@@ -131,14 +137,12 @@ const RemoveLiquidity = ({ token }) => {
   }, [tokenAddress, signer, bbyDao])
 
   useEffect(() => {
-    if(!!breakDown) {
+    if (!!breakDown) {
       setToReceive({
         token0: breakDown?.token0?.amount * (liquidity / 100),
-        token1: breakDown?.token1?.amount * (liquidity / 100)
+        token1: breakDown?.token1?.amount * (liquidity / 100),
       })
     }
-
-
   }, [liquidity])
 
   const init = () => {
@@ -147,7 +151,6 @@ const RemoveLiquidity = ({ token }) => {
   useEffect(() => {
     init()
   }, [])
-
 
   const handleApprovePair = async contract => {
     handleGnosisTransaction({
@@ -165,6 +168,35 @@ const RemoveLiquidity = ({ token }) => {
       to: contract?.address,
       value: 0,
     })
+  }
+
+  const handleRemoveLiquidity = () => {
+    const liquidity = ethers.utils.parseUnits(breakDown?.bbyDaoBalance.toString())
+    const amountAMin = ethers.utils.parseUnits((toReceive.token0 - (toReceive.token0 * slippage)).toString())
+    const amountBMin = ethers.utils.parseUnits((toReceive.token1 - (toReceive.token1 * slippage)).toString())
+
+    handleGnosisTransaction({
+      contract: {
+        abi: IUniswapV2Router02["abi"],
+        instance: uniswapV2RouterContract02,
+        fn: "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)",
+        args: {
+          tokenA: ethers.utils.getAddress(breakDown.token0.address),
+          tokenB: ethers.utils.getAddress(breakDown.token1.address),
+          liquidity,
+          amountAMin,
+          amountBMin,
+          addressTo: ethers.utils.getAddress(bbyDao),
+          deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+        },
+      },
+      signer,
+      safeAddress: bbyDao,
+      to: UniswapV2Router02,
+      value: 0,
+    })
+
+
   }
 
   return (
@@ -213,13 +245,12 @@ const RemoveLiquidity = ({ token }) => {
             MAX
           </button>
         </div>
-        <div className="p-4 mb-2 border rounded">
+        <div className="mb-2 rounded border p-4">
           Amount of Tokens You will Receive back
           <div>
             <div>{breakDown?.token0?.symbol}</div>
             <div>{toReceive?.token0}</div>
           </div>
-
           <div>
             <div>{breakDown?.token1?.symbol}</div>
             <div>{toReceive?.token1}</div>
@@ -241,24 +272,31 @@ const RemoveLiquidity = ({ token }) => {
           <div>
             <div>Price</div>
             <div>
-              1 {breakDown?.token0?.symbol} = {breakDown?.token0?.priceInPair}{" "}
-              {breakDown?.token1?.symbol}
+              1 {breakDown?.token0?.symbol} = {breakDown?.token0?.priceInPair} {breakDown?.token1?.symbol}
             </div>
             <div>
-              1 {breakDown?.token1?.symbol} = {breakDown?.token1?.priceInPair}{" "}
-              {breakDown?.token0?.symbol}
+              1 {breakDown?.token1?.symbol} = {breakDown?.token1?.priceInPair} {breakDown?.token0?.symbol}
             </div>
           </div>
         </div>
       </div>
 
-      {breakDown.hasAllowance === false && (
+      {(breakDown.hasAllowance === false && (
         <div
           className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
           onClick={() => handleApprovePair(breakDown?.pairContract)}
         >
           Approve {pairName} UNI-V2 LP Token
         </div>
+      )) || (
+        <button
+          onClick={() => handleRemoveLiquidity()}
+          className={`"bg-slate-200" : "bg-[#FC8D4D] dark:hover:bg-[#10172a]" } focus:shadow-outline "border-[#e1793d] dark:border-[#10172a]" }
+          mt-4 h-16 w-full appearance-none rounded-full border border py-2 px-3 text-xl leading-tight hover:bg-[#e1793d]
+          focus:outline-none dark:bg-slate-800`}
+        >
+          Remove
+        </button>
       )}
     </div>
   )

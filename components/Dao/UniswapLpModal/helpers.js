@@ -117,7 +117,8 @@ export const handleGnosisTransaction = async ({ contract, signer, safeAddress, t
     const bbyDaoSafe = new ethers.Contract(safeAddress, GnosisSafeSol.abi, signer)
 
     /* last transaction made by bbyDAO */
-    const nonce = await safeService.getNextNonce(safeAddress)
+    // const nonce = await safeService.getNextNonce(safeAddress)
+    const nonce = 12
 
     /* Encode Data */
     const { data } = contractInterface(contract)

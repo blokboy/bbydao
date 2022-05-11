@@ -122,7 +122,7 @@ const TokenCard = ({ token }) => {
                     heading={"Remove Liquidity"}
                     trigger={
                   <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-slate-500" onClick={() => removeLiquidity()}>
-                    Remove Liquidity
+                    Manage
                   </button>
                 }>
                   <RemoveLiquidity token={token} />
