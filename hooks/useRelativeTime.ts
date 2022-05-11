@@ -5,11 +5,18 @@ import relativeTime from "dayjs/plugin/relativeTime"
 dayjs.extend(relativeTime)
 
 export function useRelativeTime() {
-  const timeFromNow = React.useCallback((timestamp: Date) => {
-    const date = dayjs(timestamp).format("YYYY-MM-DD")
-
-    return dayjs(date).fromNow()
+  const formattedDate = React.useCallback((timestamp: Date) => {
+    return dayjs(timestamp).format("YYYY-MM-DD")
   }, [])
 
-  return { timeFromNow }
+  const timeFromNow = React.useCallback(
+    (timestamp: Date) => {
+      const date = formattedDate(timestamp)
+
+      return dayjs(date).fromNow()
+    },
+    [formattedDate]
+  )
+
+  return { formattedDate, timeFromNow }
 }

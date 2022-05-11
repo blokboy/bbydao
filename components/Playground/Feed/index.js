@@ -57,7 +57,7 @@ const Feed = () => {
         </div>
       </div>
       {/* could be daoTxs or feed items  */}
-      <div className="flex flex-col p-3 pt-0 max-h-[400px] overflow-y-auto mr-2">{daoTxs}</div>
+      <div className="flex flex-col p-3 pt-0 max-h-[80vh] overflow-y-auto mr-2">{daoTxs}</div>
     </div>
   )
 }
