@@ -118,6 +118,7 @@ const TokenCard = ({ token }) => {
                   </button>
                 </div>
             )) || (
+              <div className="flex flex-row space-x-2 p-1 xl:justify-center">
                 <Modal
                     heading={"Remove Liquidity"}
                     trigger={
@@ -127,6 +128,7 @@ const TokenCard = ({ token }) => {
                 }>
                   <RemoveLiquidity token={token} />
                 </Modal>
+            </div>
             )}
           </>
 

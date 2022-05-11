@@ -1,16 +1,16 @@
-import React, { useEffect, useMemo } from "react"
-import { useDaoStore }               from "../../../../stores/useDaoStore"
-import UniswapLpModal                from "../../../Dao/UniswapLpModal"
-import RemoveLiquidity               from '../../../Dao/UniswapLpModal/RemoveLiquidity'
-import DaoUtilityBar                 from "./DaoUtilityBar"
-import DaoPfpIcon                    from "./DaoPfpIcon"
-import DaoPfp                        from "./DaoPfp"
-import DaoBalance                    from "./DaoBalance"
-import DaoMembers                    from "./DaoMembers"
-import DaoName                       from "./DaoName"
-import DaoFollowers                  from "./DaoFollowers"
-import ExpandDao                     from "./ExpandDao"
-import DaoCardExpanded               from "./DaoCardExpanded/index"
+import React from "react"
+import { useDaoStore } from "../../../../stores/useDaoStore"
+import UniswapLpModal from "../../../Dao/UniswapLpModal"
+import RemoveLiquidity from "../../../Dao/UniswapLpModal/RemoveLiquidity"
+import DaoUtilityBar from "./DaoUtilityBar"
+import DaoPfpIcon from "./DaoPfpIcon"
+import DaoPfp from "./DaoPfp"
+import DaoBalance from "./DaoBalance"
+import DaoMembers from "./DaoMembers"
+import DaoName from "./DaoName"
+import DaoFollowers from "./DaoFollowers"
+import ExpandDao from "./ExpandDao"
+import DaoCardExpanded from "./DaoCardExpanded/index"
 
 import { usePlaygroundStore } from "/stores/usePlaygroundStore"
 
@@ -18,7 +18,7 @@ import * as api from "/query"
 import * as gnosisApi from "/query/gnosisQuery"
 import { useMutation, useQuery } from "react-query"
 
-const DaoCard = ({ user, safe }) => {
+const DaoCard = ({ user, safe, address }) => {
   const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
   const uniswapRemoveLpModalOpen = useDaoStore(state => state.uniswapRemoveLpModalOpen)
 
@@ -32,8 +32,8 @@ const DaoCard = ({ user, safe }) => {
   })
 
   // create dao if dao does not exist in our backend
-  useEffect(() => {
-    if (!daoData) {
+  React.useEffect(() => {
+    if (!daoData && !daoIsLoading) {
       createDao({
         name: safe,
         type: 1,
@@ -43,7 +43,7 @@ const DaoCard = ({ user, safe }) => {
     }
   }, [daoIsLoading])
 
-  // query for if dao is apart of nursery
+  // query for if dao is a part of any nurseries
 
   // daoMembers data from gnosisApi
   const {
@@ -74,7 +74,7 @@ const DaoCard = ({ user, safe }) => {
     refetchOnWindowFocus: false,
   })
 
-  const tokenLogos = useMemo(() => {
+  const tokenLogos = React.useMemo(() => {
     return daoTokensData?.reduce((acc = [], cv) => {
       const uri = cv?.token?.logoUri
       const symbol = cv?.token?.symbol
@@ -103,7 +103,7 @@ const DaoCard = ({ user, safe }) => {
 
   return (
     <div className="m-3 flex flex-col rounded-xl bg-slate-200 p-3 dark:bg-slate-800">
-      <DaoUtilityBar isMember={isMember} />
+      <DaoUtilityBar user={user} safe={safe} isMember={isMember} />
       {/* Pfp and Members Section */}
       <div className="flex w-full flex-col lg:flex-row">
         <DaoPfpIcon safe={safe} />
