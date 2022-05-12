@@ -1,10 +1,10 @@
-import { ChainId, Token }          from "@uniswap/sdk"
-import defaultTokens               from "@uniswap/default-token-list"
-import React                       from "react"
-import useForm                     from "hooks/useForm"
+import { ChainId, Token } from "@uniswap/sdk"
+import defaultTokens from "@uniswap/default-token-list"
+import React from "react"
+import useForm from "hooks/useForm"
 import { HiOutlineSwitchVertical } from "react-icons/hi"
-import { flatten }                 from "utils/helpers"
-import TokenInput                  from './TokenInput'
+import { flatten } from "utils/helpers"
+import TokenInput from "./TokenInput"
 const Swap = ({ token }) => {
   const { state, handleChange } = useForm()
   const defaultTokenList = defaultTokens?.["tokens"]
@@ -25,7 +25,7 @@ const Swap = ({ token }) => {
   }, [token])
   const [tokens, setTokens] = React.useState({
     token0: flatten(isEth),
-    token1: null,
+    token1: undefined,
   })
 
   const tokenNames = React.useMemo(() => {
@@ -45,23 +45,49 @@ const Swap = ({ token }) => {
     }, [])
   }, [state.symbol])
 
-  const handlePickToken = React.useCallback(picked => {
-    const index = defaultTokenList.findIndex(token => token.symbol === picked)
-    setTokens({ ...tokens, token1: defaultTokenList[index] })
-  }, [tokens])
+  const handlePickToken = React.useCallback(
+    picked => {
+      const index = defaultTokenList.findIndex(token => token.symbol === picked)
+
+      //check if user has token in list if so populate obj with gnosis data
+      //TODO: component should be aware of token list, react Query thing?
+
+      const token1 = {
+        ...defaultTokenList[index],
+        balance: 0,
+        ethValue: 0,
+        fiatBalance: 0,
+        fiatCode: "USD",
+      }
+      setTokens({ ...tokens, token1 })
+    },
+    [tokens]
+  )
 
   const switchTokenPlacement = React.useCallback(() => {
     setTokens({ token0: tokens.token1, token1: tokens.token0 })
   }, [tokens])
 
+  const uniPair = React.useMemo(() => {
+    if (!!tokens?.token0 && !!tokens?.token1) {
+      const token0 = tokens?.token0
+      const token1 = tokens?.token1
+      const uniToken0 = new Token(ChainId.MAINNET, (token0?.address || token0?.tokenAddress), token0?.decimals, token0?.symbol, token0?.name)
+      const uniToken1 = new Token(ChainId.MAINNET, (token1?.address || token1?.tokenAddress), token1?.decimals, token1?.symbol, token1?.name)
+      return { [token0.symbol]: uniToken0, [token1.symbol]: uniToken1 }
+    }
+  }, [tokens])
+
   return (
     <div>
       <form>
-        <div>{console.log("tokens", tokens)}</div>
+        <div>
+          {console.log("tokens", tokens)}
+          {console.log("uni", uniPair)}
+        </div>
         {tokens?.token0 && (
           <div>
             <div> {tokens.token0?.symbol}</div>
-
           </div>
         )}
         {tokens?.token0 && tokens?.token1 && (
