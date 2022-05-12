@@ -41,6 +41,11 @@ export default function useGnosisTransaction(safeAddress) {
         /* Encode Data */
         const { data } = contractInterface(contract)
 
+        /* last transaction made by bbyDAO */
+        const nonce = await safeService.getNextNonce(safeAddress)
+        // const nonce = 12
+
+
         /*  construct gnosis transaction object  */
         const safeTx = {
           to: ethers.utils.getAddress(to),
