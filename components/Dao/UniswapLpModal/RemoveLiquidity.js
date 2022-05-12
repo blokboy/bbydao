@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { ChainId, Fetcher, Token, TokenAmount } from "@uniswap/sdk"
 import { BigNumber, ethers } from "ethers"
 import { useQueryClient } from "react-query"
@@ -106,7 +106,8 @@ const RemoveLiquidity = ({ token }) => {
           hasAllowance: parseFloat(amount(bbyDaoAllowance, pairToken?.decimals)) > 0,
           pairContract,
           percentageOfPool: `${
-            percentageOfPool * 100 < 0.01 ? "< 0.01" : parseFloat((percentageOfPool * 100).toString()).toFixed(6)
+            // percentageOfPool * 100 < 0.01 ? "< 0.01" : parseFloat((percentageOfPool * 100).toString()).toFixed(6)
+            parseFloat((percentageOfPool * 100).toString()).toFixed(6)
           }%`,
           token0: {
             address: token0.address,
@@ -146,20 +147,20 @@ const RemoveLiquidity = ({ token }) => {
   const handleApprovePair = async contract => {
     try {
       gnosisTransaction(
-          {
-            abi: IUniswapV2Pair["abi"],
-            instance: contract,
-            args: {
-              spender: UniswapV2Router02,
-              value: BigNumber.from(max256),
-            },
-            fn: "approve(address,uint256)",
+        {
+          abi: IUniswapV2Pair["abi"],
+          instance: contract,
+          args: {
+            spender: UniswapV2Router02,
+            value: BigNumber.from(max256),
           },
-          contract?.address,
-          0
+          fn: "approve(address,uint256)",
+        },
+        contract?.address,
+        0
       )
     } catch (err) {
-      console.log('err', err)
+      console.log("err", err)
     }
   }
 
@@ -227,53 +228,60 @@ const RemoveLiquidity = ({ token }) => {
         receive.
       </div>
       <div className="flex flex-col">
-        Remove Amount
-        <div className="text-4xl">{liquidity} %</div>
-        <input
-          name="liquidity"
-          type="range"
-          aria-labelledby="input slider"
-          step="1"
-          min="0"
-          max="100"
-          onChange={breakDown ? handleChange : () => {}}
-          value={liquidity || 0}
-        />
-        <div className="grid grid-cols-2">
-          <button
-            className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
-            onClick={breakDown ? () => setState({ liquidity: 25 }) : () => {}}
-          >
-            25%
-          </button>
-          <button
-            className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
-            onClick={breakDown ? () => setState({ liquidity: 50 }) : () => {}}
-          >
-            50%
-          </button>
-          <button
-            className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
-            onClick={breakDown ? () => setState({ liquidity: 75 }) : () => {}}
-          >
-            75%
-          </button>
-          <button
-            className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
-            onClick={breakDown ? () => setState({ liquidity: 100 }) : () => {}}
-          >
-            MAX
-          </button>
+        <div className="my-2 rounded-3xl bg-gray-400 p-4 dark:bg-slate-800">
+          <div className="w-full">
+            Remove Amount
+            <div className="text-4xl">{liquidity} %</div>
+            <input
+              name="liquidity"
+              type="range"
+              aria-labelledby="input slider"
+              step="1"
+              min="0"
+              max="100"
+              onChange={breakDown ? handleChange : () => {}}
+              value={liquidity || 0}
+              className="w-full"
+            />
+          </div>
+
+          <div className="grid grid-cols-4">
+            <button
+              className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
+              onClick={breakDown ? () => setState({ liquidity: 25 }) : () => {}}
+            >
+              25%
+            </button>
+            <button
+              className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
+              onClick={breakDown ? () => setState({ liquidity: 50 }) : () => {}}
+            >
+              50%
+            </button>
+            <button
+              className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
+              onClick={breakDown ? () => setState({ liquidity: 75 }) : () => {}}
+            >
+              75%
+            </button>
+            <button
+              className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
+              onClick={breakDown ? () => setState({ liquidity: 100 }) : () => {}}
+            >
+              MAX
+            </button>
+          </div>
         </div>
-        <div className="mb-2 rounded border p-4">
-          Amount of Tokens You will Receive back
+
+        <div className="my-2 rounded-3xl bg-gray-400 p-4 dark:bg-slate-800">
+          {/*<div>Amount of Tokens You will Receive back</div>*/}
           {breakDown && (
             <>
-              <div>
+              <div className="flex justify-between py-2">
                 <div>{breakDown?.token0?.symbol}</div>
                 <div>{toReceive?.token0}</div>
               </div>
-              <div>
+              <div className="flex justify-between py-2">
                 <div>{breakDown?.token1?.symbol}</div>
                 <div>{toReceive?.token1}</div>
               </div>
@@ -281,18 +289,27 @@ const RemoveLiquidity = ({ token }) => {
           )}
         </div>
         <div>
-          <div>
+          <div className="my-2 rounded-3xl bg-gray-400 p-4 dark:bg-slate-800">
             <div>Your Position</div>
-            <div>{pairName}</div>
+
+            <div className="flex justify-between">
+              <div>{pairName}</div>
+              <div>{breakDown?.poolTokens}</div>
+            </div>
             {breakDown && (
               <>
-                <div>Your Total Pool Tokens: {breakDown?.poolTokens}</div>
-                <div>Your Pool Share: {breakDown?.percentageOfPool}</div>
-                <div>
-                  {breakDown?.token0?.symbol}: {breakDown?.token0?.amount}
+                <div className="flex justify-between">
+                  <div>Your Pool Share:</div>
+                  <div>{breakDown?.percentageOfPool}</div>
                 </div>
-                <div>
-                  {breakDown?.token1?.symbol}: {breakDown?.token1?.amount}
+
+                <div className="flex justify-between">
+                  <div>{breakDown?.token0?.symbol}: </div>
+                  <div>{breakDown?.token0?.amount}</div>
+                </div>
+                <div className="flex justify-between">
+                  <div>{breakDown?.token1?.symbol}:</div>
+                  <div>{breakDown?.token1?.amount}</div>
                 </div>
               </>
             )}
