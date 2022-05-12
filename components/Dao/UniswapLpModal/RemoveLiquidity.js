@@ -22,7 +22,7 @@ const RemoveLiquidity = ({ token }) => {
   const { state, setState, handleChange } = useForm()
 
   const pairName = token?.token?.name.replace("Uniswap V2", "").replace("Pool", "")
-  const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
+  const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D") //could use uni sdk to get this?
   const { liquidity } = state
   const { tokenAddress, token: pairToken } = token
   const slippage = 0.055
@@ -45,7 +45,7 @@ const RemoveLiquidity = ({ token }) => {
     const reserves = await pairContract?.getReserves()
 
     const percentageOfPool =
-        NumberFromBig(bbyDaoBalance, pairToken?.decimals) / NumberFromBig(totalSupply, pairToken?.decimals)
+      NumberFromBig(bbyDaoBalance, pairToken?.decimals) / NumberFromBig(totalSupply, pairToken?.decimals)
 
     /* Construct Uniswap Token Objects  */
     const token0Contract = new ethers.Contract(
