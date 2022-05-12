@@ -62,91 +62,136 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
 
   /* Propose and Execute uniswapV2Router02 - addLiquidity   */
   const handleSubmit = async (e, liquidityInfo) => {
-    e.preventDefault()
+    try {
+      e.preventDefault()
 
-    const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
-    const pairHasEth = liquidityInfo.transactionInfo.filter(token => token.token.symbol === "ETH")
-    const slippage = 0.055 // default 5.5% slippage
+      const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
+      const pairHasEth = liquidityInfo.transactionInfo.filter(token => token.token.symbol === "ETH")
+      const slippage = 0.055 // default 5.5% slippage
 
-    /* token A */
-    const tokenA = liquidityInfo.transactionInfo[0].token.address
-    const tokenADecimals = liquidityInfo.transactionInfo[0].token.decimals
-    const tokenAAmount = liquidityInfo.transactionInfo[0].amount
-    const amountADesired = amount(tokenAAmount, tokenADecimals) // wondering if this is correct
-    const amountAMin = amount(tokenAAmount - tokenAAmount * slippage, tokenADecimals)
+      /* token A */
+      const tokenA = liquidityInfo.transactionInfo[0].token.address
+      const tokenADecimals = liquidityInfo.transactionInfo[0].token.decimals
+      const tokenAAmount = liquidityInfo.transactionInfo[0].amount
+      const amountADesired = amount(tokenAAmount, tokenADecimals) // wondering if this is correct
+      const amountAMin = amount(tokenAAmount - tokenAAmount * slippage, tokenADecimals)
 
-    /* token B */
-    const tokenB = liquidityInfo.transactionInfo[1].token.address
-    const tokenBDecimals = liquidityInfo.transactionInfo[1].token.decimals
-    const tokenBAmount = liquidityInfo.transactionInfo[1].amount
-    const amountBDesired = amount(tokenBAmount, tokenBDecimals)
-    const amountBMin = amount(tokenBAmount - tokenBAmount * slippage, tokenBDecimals)
+      /* token B */
+      const tokenB = liquidityInfo.transactionInfo[1].token.address
+      const tokenBDecimals = liquidityInfo.transactionInfo[1].token.decimals
+      const tokenBAmount = liquidityInfo.transactionInfo[1].amount
+      const amountBDesired = amount(tokenBAmount, tokenBDecimals)
+      const amountBMin = amount(tokenBAmount - tokenBAmount * slippage, tokenBDecimals)
 
-    /* addLiquidity or addLiquidityEth  */
-    if (pairHasEth.length === 0) {
-      gnosisTransaction(
-        {
-          abi: IUniswapV2Router02["abi"],
-          instance: uniswapV2RouterContract02,
-          fn: "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)",
-          args: {
-            tokenA: ethers.utils.getAddress(tokenA),
-            tokenB: ethers.utils.getAddress(tokenB),
-            amountADesired: BigNumber.from(amountADesired),
-            amountBDesired: BigNumber.from(amountBDesired),
-            amountAMin: BigNumber.from(amountAMin),
-            amountBMin: BigNumber.from(amountBMin),
-            addressTo: ethers.utils.getAddress(safeAddress),
-            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+      /* addLiquidity or addLiquidityEth  */
+      if (pairHasEth.length === 0) {
+        gnosisTransaction(
+          {
+            abi: IUniswapV2Router02["abi"],
+            instance: uniswapV2RouterContract02,
+            fn: "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)",
+            args: {
+              tokenA: ethers.utils.getAddress(tokenA),
+              tokenB: ethers.utils.getAddress(tokenB),
+              amountADesired: BigNumber.from(amountADesired),
+              amountBDesired: BigNumber.from(amountBDesired),
+              amountAMin: BigNumber.from(amountAMin),
+              amountBMin: BigNumber.from(amountBMin),
+              addressTo: ethers.utils.getAddress(safeAddress),
+              deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+            },
           },
-        },
-        UniswapV2Router02,
-        0
-      )
-    } else {
-      const WETH = await uniswapV2RouterContract02?.WETH()
-      gnosisTransaction(
-        {
-          abi: IUniswapV2Router02["abi"],
-          instance: uniswapV2RouterContract02,
-          fn: "addLiquidityETH(address,uint256,uint256,uint256,address,uint256)",
-          args: {
-            token: ethers.utils.getAddress(tokenA === WETH ? tokenB : tokenA),
-            amountTokenDesired: tokenA === WETH ? BigNumber.from(amountBDesired) : BigNumber.from(amountADesired),
-            amountTokenMin: tokenA === WETH ? BigNumber.from(amountBMin) : BigNumber.from(amountAMin),
-            amountETHMin: tokenA === WETH ? BigNumber.from(amountAMin) : BigNumber.from(amountBMin),
-            addressTo: ethers.utils.getAddress(safeAddress),
-            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+          UniswapV2Router02,
+          0
+        )
+      } else {
+        const WETH = await uniswapV2RouterContract02?.WETH()
+        gnosisTransaction(
+          {
+            abi: IUniswapV2Router02["abi"],
+            instance: uniswapV2RouterContract02,
+            fn: "addLiquidityETH(address,uint256,uint256,uint256,address,uint256)",
+            args: {
+              token: ethers.utils.getAddress(tokenA === WETH ? tokenB : tokenA),
+              amountTokenDesired: tokenA === WETH ? BigNumber.from(amountBDesired) : BigNumber.from(amountADesired),
+              amountTokenMin: tokenA === WETH ? BigNumber.from(amountBMin) : BigNumber.from(amountAMin),
+              amountETHMin: tokenA === WETH ? BigNumber.from(amountAMin) : BigNumber.from(amountBMin),
+              addressTo: ethers.utils.getAddress(safeAddress),
+              deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+            },
           },
-        },
-        UniswapV2Router02,
-        tokenA === WETH ? BigNumber.from(amountADesired) : BigNumber.from(amountBDesired)
-      )
+          UniswapV2Router02,
+          tokenA === WETH ? BigNumber.from(amountADesired) : BigNumber.from(amountBDesired)
+        )
+      }
+    } catch (err) {
+      console.log("err", err)
     }
   }
 
   /* Handle setting token values and retrieving liquidity pair information  */
   const handleSetTokenValue = async (e, token, tokenRef) => {
-    const bal = token?.balance
-    const dec = token?.token?.decimals
-    const max = bal / 10 ** dec
-    const token0 = Object.entries(uniswapTokens).filter(item => item[0] === token.token.symbol)[0][1]
-    const token0Input = e?.target?.valueAsNumber
-    const route = new Route([pair], uniswapTokens[token.token.symbol])
-    const midPrice = route.midPrice.toSignificant(6)
-    const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.token.symbol)[0][1]
-    const token1Input = Number(token0Input * midPrice)
-    const pairToken = lpToken0.token.symbol === token.token.symbol ? lpToken1 : lpToken0
+    try {
+      const bal = token?.balance
+      const dec = token?.token?.decimals
+      const max = bal / 10 ** dec
+      const token0 = Object.entries(uniswapTokens).filter(item => item[0] === token.token.symbol)[0][1]
+      const token0Input = e?.target?.valueAsNumber
+      const route = new Route([pair], uniswapTokens[token.token.symbol])
+      const midPrice = route.midPrice.toSignificant(6)
+      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.token.symbol)[0][1]
+      const token1Input = Number(token0Input * midPrice)
+      const pairToken = lpToken0.token.symbol === token.token.symbol ? lpToken1 : lpToken0
 
-    /*  If User attempts to LP more than balance, default to max balance */
-    if (token0Input > max) {
-      handleSetMaxTokenValue(token, tokenRef)
-    } else {
-      setState(state => ({ ...state, [token.token.symbol]: token0Input }))
-      setState(state => ({ ...state, [token1?.symbol]: token1Input }))
-      setMaxError("")
+      /*  If User attempts to LP more than balance, default to max balance */
+      if (token0Input > max) {
+        handleSetMaxTokenValue(token, tokenRef)
+      } else {
+        setState(state => ({ ...state, [token.token.symbol]: token0Input }))
+        setState(state => ({ ...state, [token1?.symbol]: token1Input }))
+        setMaxError("")
 
-      if (!isNaN(token0Input) && !isNaN(token1Input) && token0Input > 0 && token1Input > 0) {
+        if (!isNaN(token0Input) && !isNaN(token1Input) && token0Input > 0 && token1Input > 0) {
+          const liquidityInfo = await getLiquidityPairInfo({
+            pair: pair,
+            token0: token0,
+            token0Input: token0Input,
+            token0ETHConversion: token.ethValue,
+            token1: token1,
+            token1Input: token1Input,
+            token1ETHConversion: pairToken.ethValue,
+            abi: IUniswapV2ERC20.abi,
+          })
+          setLiquidityInfo(liquidityInfo)
+        }
+      }
+    } catch (err) {
+      console.log("err", err)
+    }
+  }
+
+  /* Handle setting max token values and retrieving liquidity pair information  */
+  const handleSetMaxTokenValue = async (token, tokenRef) => {
+    try {
+      const token0 = uniswapTokens[token.token.symbol]
+      const token0Input = tokenRef?.current?.max
+      const pairToken = lpToken0.token.symbol === token.token.symbol ? lpToken1 : lpToken0
+
+      const route = new Route([pair], uniswapTokens[token.token.symbol])
+      const midPrice = route.midPrice.toSignificant(6)
+      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.token.symbol)[0][1]
+      const token1Input = token0Input * midPrice
+
+      if (parseInt(token?.fiatBalance) > parseInt(pairToken?.fiatBalance)) {
+        setMaxError(`Insufficient ${pairToken?.token?.symbol} balance`)
+        setState(state => ({ ...state, [token.token.symbol]: 0 }))
+        setState(state => ({ ...state, [token1.symbol]: 0 }))
+        setLiquidityInfo({})
+      } else {
+        setState(state => ({ ...state, [token.token.symbol]: token0Input }))
+        setState(state => ({ ...state, [token1.symbol]: token1Input }))
+        setMaxError("")
+
         const liquidityInfo = await getLiquidityPairInfo({
           pair: pair,
           token0: token0,
@@ -159,53 +204,24 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
         })
         setLiquidityInfo(liquidityInfo)
       }
-    }
-  }
-
-  /* Handle setting max token values and retrieving liquidity pair information  */
-  const handleSetMaxTokenValue = async (token, tokenRef) => {
-    const token0 = uniswapTokens[token.token.symbol]
-    const token0Input = tokenRef?.current?.max
-    const pairToken = lpToken0.token.symbol === token.token.symbol ? lpToken1 : lpToken0
-
-    const route = new Route([pair], uniswapTokens[token.token.symbol])
-    const midPrice = route.midPrice.toSignificant(6)
-    const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.token.symbol)[0][1]
-    const token1Input = token0Input * midPrice
-
-    if (parseInt(token?.fiatBalance) > parseInt(pairToken?.fiatBalance)) {
-      setMaxError(`Insufficient ${pairToken?.token?.symbol} balance`)
-      setState(state => ({ ...state, [token.token.symbol]: 0 }))
-      setState(state => ({ ...state, [token1.symbol]: 0 }))
-      setLiquidityInfo({})
-    } else {
-      setState(state => ({ ...state, [token.token.symbol]: token0Input }))
-      setState(state => ({ ...state, [token1.symbol]: token1Input }))
-      setMaxError("")
-
-      const liquidityInfo = await getLiquidityPairInfo({
-        pair: pair,
-        token0: token0,
-        token0Input: token0Input,
-        token0ETHConversion: token.ethValue,
-        token1: token1,
-        token1Input: token1Input,
-        token1ETHConversion: pairToken.ethValue,
-        abi: IUniswapV2ERC20.abi,
-      })
-      setLiquidityInfo(liquidityInfo)
+    } catch (err) {
+      console.log("err", err)
     }
   }
 
   /* Initialize state of inputs and initialize Uniswap Pair */
   const init = async () => {
-    setState(state => ({ ...state, [lpToken0.token.symbol]: 0 }))
-    setState(state => ({ ...state, [lpToken1.token.symbol]: 0 }))
-    const uniPair = await Fetcher.fetchPairData(
-      uniswapTokens[lpToken0.token.symbol],
-      uniswapTokens[lpToken1.token.symbol]
-    )
-    await setPair(uniPair)
+    try {
+      setState(state => ({ ...state, [lpToken0.token.symbol]: 0 }))
+      setState(state => ({ ...state, [lpToken1.token.symbol]: 0 }))
+      const uniPair = await Fetcher.fetchPairData(
+        uniswapTokens[lpToken0.token.symbol],
+        uniswapTokens[lpToken1.token.symbol]
+      )
+      await setPair(uniPair)
+    } catch (err) {
+      console.log("err", err)
+    }
   }
   React.useEffect(() => {
     init()
