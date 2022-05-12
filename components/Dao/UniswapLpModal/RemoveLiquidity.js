@@ -30,12 +30,7 @@ const RemoveLiquidity = ({ token }) => {
   /* Contracts */
   const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
   const pairContract = new ethers.Contract(ethers.utils.getAddress(tokenAddress), IUniswapV2Pair["abi"], signer)
-  const pairERC20Contract = new ethers.Contract(
-      ethers.utils.getAddress(tokenAddress),
-      UniswapV2ERC20["abi"],
-      signer
-  )
-
+  const pairERC20Contract = new ethers.Contract(ethers.utils.getAddress(tokenAddress), UniswapV2ERC20["abi"], signer)
 
   React.useMemo(async () => {
     if (!!signer) {
@@ -43,11 +38,11 @@ const RemoveLiquidity = ({ token }) => {
       const totalSupply = await pairContract?.totalSupply()
       const bbyDaoBalance = await pairERC20Contract?.balanceOf(bbyDao)
 
-      const percentageOfPool = NumberFromBig(bbyDaoBalance, pairToken?.decimals) / NumberFromBig(totalSupply, pairToken?.decimals)
+      const percentageOfPool =
+        NumberFromBig(bbyDaoBalance, pairToken?.decimals) / NumberFromBig(totalSupply, pairToken?.decimals)
       const bbyDaoAllowance = await pairERC20Contract?.allowance(bbyDao, UniswapV2Router02)
       const kLast = await pairContract?.kLast()
       const reserves = await pairContract?.getReserves()
-
 
       /* Construct Uniswap Token Objects  */
       const token0Contract = new ethers.Contract(
@@ -95,32 +90,19 @@ const RemoveLiquidity = ({ token }) => {
       const uniTokens = await uniswapTokens()
       const uniPair = await Fetcher.fetchPairData(uniTokens[token0.symbol], uniTokens[token1.symbol])
 
-
       const totalTokenSupplyOfLP = new TokenAmount(uniPair?.liquidityToken, totalSupply)
       const totalBbyDaoLPTokens = new TokenAmount(uniPair?.liquidityToken, bbyDaoBalance)
       const token0Amount = uniPair
-        ?.getLiquidityValue(
-          uniPair.tokenAmounts[0].token,
-          totalTokenSupplyOfLP,
-          totalBbyDaoLPTokens,
-          false,
-          kLast
-        )
+        ?.getLiquidityValue(uniPair.tokenAmounts[0].token, totalTokenSupplyOfLP, totalBbyDaoLPTokens, false, kLast)
         .toFixed(pairToken.decimals)
       const token1Amount = uniPair
-        ?.getLiquidityValue(
-          uniPair.tokenAmounts[1].token,
-          totalTokenSupplyOfLP,
-          totalBbyDaoLPTokens,
-          false,
-          kLast
-        )
+        ?.getLiquidityValue(uniPair.tokenAmounts[1].token, totalTokenSupplyOfLP, totalBbyDaoLPTokens, false, kLast)
         .toFixed(pairToken.decimals)
 
-      setToReceive({
-        token0Amount,
-        token1Amount,
-      })
+      // setToReceive({
+      //   token0Amount,
+      //   token1Amount,
+      // })
 
       setBreakDown({
         WETH,
@@ -150,15 +132,10 @@ const RemoveLiquidity = ({ token }) => {
   }, [tokenAddress, signer, bbyDao, pairToken])
 
   useEffect(() => {
-    console.log('liq', liquidity)
-    console.log('br', breakDown?.token0)
-    if (!!breakDown?.token0?.amount || !!breakDown?.token?.amount) {
-      console.log('hii')
-      setToReceive({
-        token0: breakDown?.token0?.amount * (liquidity / 100),
-        token1: breakDown?.token1?.amount * (liquidity / 100),
-      })
-    }
+    setToReceive({
+      token0: breakDown?.token0?.amount * (liquidity / 100) || 0,
+      token1: breakDown?.token1?.amount * (liquidity / 100) || 0,
+    })
   }, [liquidity])
 
   const init = () => {
@@ -288,36 +265,48 @@ const RemoveLiquidity = ({ token }) => {
         </div>
         <div className="mb-2 rounded border p-4">
           Amount of Tokens You will Receive back
-          <div>
-            <div>{breakDown?.token0?.symbol}</div>
-            <div>{toReceive?.token0}</div>
-          </div>
-          <div>
-            <div>{breakDown?.token1?.symbol}</div>
-            <div>{toReceive?.token1}</div>
-          </div>
+          {breakDown?.token0 && breakDown?.token1 && (
+            <>
+              <div>
+                <div>{breakDown?.token0?.symbol}</div>
+                <div>{toReceive?.token0}</div>
+              </div>
+              <div>
+                <div>{breakDown?.token1?.symbol}</div>
+                <div>{toReceive?.token1}</div>
+              </div>
+            </>
+          )}
         </div>
         <div>
           <div>
             <div>Your Position</div>
             <div>{pairName}</div>
-            <div>Your Total Pool Tokens: {breakDown?.poolTokens}</div>
-            <div>Your Pool Share: {breakDown?.percentageOfPool}</div>
-            <div>
-              {breakDown?.token0?.symbol}: {breakDown?.token0?.amount}
-            </div>
-            <div>
-              {breakDown?.token1?.symbol}: {breakDown?.token1?.amount}
-            </div>
+            {breakDown?.token0 && breakDown?.token1 && (
+              <>
+                <div>Your Total Pool Tokens: {breakDown?.poolTokens}</div>
+                <div>Your Pool Share: {breakDown?.percentageOfPool}</div>
+                <div>
+                  {breakDown?.token0?.symbol}: {breakDown?.token0?.amount}
+                </div>
+                <div>
+                  {breakDown?.token1?.symbol}: {breakDown?.token1?.amount}
+                </div>
+              </>
+            )}
           </div>
           <div>
             <div>Price</div>
-            <div>
-              1 {breakDown?.token0?.symbol} = {breakDown?.token0?.priceInPair} {breakDown?.token1?.symbol}
-            </div>
-            <div>
-              1 {breakDown?.token1?.symbol} = {breakDown?.token1?.priceInPair} {breakDown?.token0?.symbol}
-            </div>
+            {breakDown?.token0 && breakDown?.token1 && (
+              <>
+                <div>
+                  1 {breakDown?.token0?.symbol} = {breakDown?.token0?.priceInPair} {breakDown?.token1?.symbol}
+                </div>
+                <div>
+                  1 {breakDown?.token1?.symbol} = {breakDown?.token1?.priceInPair} {breakDown?.token0?.symbol}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -329,14 +318,15 @@ const RemoveLiquidity = ({ token }) => {
         >
           Approve {pairName} UNI-V2 LP Token
         </div>
-      )) || (
+      ))}
+      {breakDown?.token0 && breakDown?.token1 && breakDown?.hasAllowance === true && (
         <button
           onClick={() => handleRemoveLiquidity()}
           className={`"bg-slate-200" : "bg-[#FC8D4D] dark:hover:bg-[#10172a]" } focus:shadow-outline "border-[#e1793d] dark:border-[#10172a]" }
           mt-4 h-16 w-full appearance-none rounded-full border border py-2 px-3 text-xl leading-tight hover:bg-[#e1793d]
           focus:outline-none dark:bg-slate-800`}
         >
-          Remove
+          Remove Liquidity
         </button>
       )}
     </div>
