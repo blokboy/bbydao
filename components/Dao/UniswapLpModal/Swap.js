@@ -20,7 +20,7 @@ const Swap = ({ token }) => {
           name: "Ether",
           symbol: "ETH",
         },
-        tokenAddress: WETH, // eh -- think for ETH pair need to change this
+        tokenAddress: WETH,
       }
     }
     return token
