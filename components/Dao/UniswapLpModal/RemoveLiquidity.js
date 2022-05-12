@@ -179,7 +179,6 @@ const RemoveLiquidity = ({ token }) => {
       const amountETHMin = amountMins[WETHToken.symbol]
       const percentageOfLiquidityToRemove = ((liquidity / 100) * breakDown?.bbyDaoBalance).toString()
 
-      console.log('a', amountTokenMin, amountETHMin)
       gnosisTransaction(
         {
           abi: IUniswapV2Router02["abi"],

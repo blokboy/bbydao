@@ -10,7 +10,7 @@ import ControlledModal from "components/Layout/Modal/ControlledModal"
 import { amount, getLiquidityPairInfo, readableTokenBalance } from "./helpers"
 import PoolInfo from "./PoolInfo"
 import TokenInput from "./TokenInput"
-import useGnosisTransaction from "../../../hooks/useGnosisTransaction"
+import useGnosisTransaction from "hooks/useGnosisTransaction"
 
 const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
