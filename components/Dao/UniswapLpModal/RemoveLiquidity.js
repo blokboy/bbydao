@@ -17,7 +17,7 @@ const RemoveLiquidity = ({ token }) => {
   const queryClient = useQueryClient()
   const bbyDao = queryClient.getQueryData("expandedDao")
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
-  const [breakDown, setBreakDown] = useState({})
+  const [breakDown, setBreakDown] = useState(undefined)
   const [toReceive, setToReceive] = useState({})
   const { state, setState, handleChange } = useForm()
 
@@ -136,7 +136,7 @@ const RemoveLiquidity = ({ token }) => {
       token0: breakDown?.token0?.amount * (liquidity / 100) || 0,
       token1: breakDown?.token1?.amount * (liquidity / 100) || 0,
     })
-  }, [liquidity])
+  }, [liquidity, breakDown])
 
   const init = () => {
     if (!liquidity) setState({ liquidity: 0 })
@@ -162,7 +162,6 @@ const RemoveLiquidity = ({ token }) => {
   }
 
   const handleRemoveLiquidity = () => {
-    console.log('to', toReceive)
     const amountAMin = ethers.utils.parseUnits((toReceive.token0 - toReceive.token0 * slippage).toString())
     const amountBMin = ethers.utils.parseUnits((toReceive.token1 - toReceive.token1 * slippage).toString())
     const amountMins = {
@@ -235,38 +234,38 @@ const RemoveLiquidity = ({ token }) => {
           step="1"
           min="0"
           max="100"
-          onChange={handleChange}
+          onChange={breakDown ? handleChange : null}
           value={liquidity || 0}
         />
         <div className="grid grid-cols-2">
           <button
             className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
-            onClick={() => setState({ liquidity: 25 })}
+            onClick={breakDown ? () => setState({ liquidity: 25 }) : null}
           >
             25%
           </button>
           <button
             className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
-            onClick={() => setState({ liquidity: 50 })}
+            onClick={breakDown ? () => setState({ liquidity: 50 }) : null}
           >
             50%
           </button>
           <button
             className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
-            onClick={() => setState({ liquidity: 75 })}
+            onClick={breakDown ? () => setState({ liquidity: 75 }) : null}
           >
             75%
           </button>
           <button
             className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
-            onClick={() => setState({ liquidity: 100 })}
+            onClick={breakDown ? () => setState({ liquidity: 100 }) : null}
           >
             MAX
           </button>
         </div>
         <div className="mb-2 rounded border p-4">
           Amount of Tokens You will Receive back
-          {breakDown?.token0 && breakDown?.token1 && (
+          {breakDown && (
             <>
               <div>
                 <div>{breakDown?.token0?.symbol}</div>
@@ -283,7 +282,7 @@ const RemoveLiquidity = ({ token }) => {
           <div>
             <div>Your Position</div>
             <div>{pairName}</div>
-            {breakDown?.token0 && breakDown?.token1 && (
+            {breakDown && (
               <>
                 <div>Your Total Pool Tokens: {breakDown?.poolTokens}</div>
                 <div>Your Pool Share: {breakDown?.percentageOfPool}</div>
@@ -298,7 +297,7 @@ const RemoveLiquidity = ({ token }) => {
           </div>
           <div>
             <div>Price</div>
-            {breakDown?.token0 && breakDown?.token1 && (
+            {breakDown && (
               <>
                 <div>
                   1 {breakDown?.token0?.symbol} = {breakDown?.token0?.priceInPair} {breakDown?.token1?.symbol}
@@ -312,24 +311,30 @@ const RemoveLiquidity = ({ token }) => {
         </div>
       </div>
 
-      {(breakDown.hasAllowance === false && (
-        <div
-          className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
-          onClick={() => handleApprovePair(breakDown?.pairContract)}
-        >
-          Approve {pairName} UNI-V2 LP Token
-        </div>
-      ))}
-      {breakDown?.token0 && breakDown?.token1 && breakDown?.hasAllowance === true && (
-        <button
-          onClick={() => handleRemoveLiquidity()}
-          className={`"bg-slate-200" : "bg-[#FC8D4D] dark:hover:bg-[#10172a]" } focus:shadow-outline "border-[#e1793d] dark:border-[#10172a]" }
-          mt-4 h-16 w-full appearance-none rounded-full border border py-2 px-3 text-xl leading-tight hover:bg-[#e1793d]
-          focus:outline-none dark:bg-slate-800`}
-        >
-          Remove Liquidity
-        </button>
-      )}
+      <div className="flex gap-4">
+        {breakDown && breakDown?.hasAllowance === false && (
+          <button
+            className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full bg-slate-200
+          bg-slate-300 p-4 py-2 px-3 text-xl leading-tight focus:outline-none dark:bg-slate-600 ${
+            breakDown.hasAllowance === true ? `` : " hover:bg-slate-400 dark:hover:bg-slate-700"
+          }`}
+            onClick={breakDown.hasAllowance === false ? () => handleApprovePair(breakDown?.pairContract) : null}
+            disabled={breakDown.hasAllowance === true}
+          >
+            {breakDown.hasAllowance === false ? `Approve ${pairName} UNI-V2 LP Token` : `Approved`}
+          </button>
+        )}
+        {breakDown && breakDown?.hasAllowance === true && liquidity > 0 && (
+          <button
+            onClick={() => handleRemoveLiquidity()}
+            className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full bg-slate-200
+          bg-slate-300 p-4 py-2 px-3 text-xl leading-tight hover:bg-slate-400 focus:outline-none dark:bg-slate-600
+          dark:bg-slate-800 dark:hover:bg-slate-700`}
+          >
+            Remove Liquidity
+          </button>
+        )}
+      </div>
     </div>
   )
 }

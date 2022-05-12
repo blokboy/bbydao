@@ -1,19 +1,21 @@
-
 import { TokenAmount } from "@uniswap/sdk"
 import { BigNumber, ethers } from "ethers"
 import { formatUnits } from "ethers/lib/utils"
 
 /*  decimal integer  */
+//TODO: can probably uses BigNumber for this
 export const amount = (amount, decimals) => Math.round(amount * 10 ** (decimals || 18)).toString()
+
+//TODO: can probably uses BigNumber for this
 
 /* Human Readable Token Balance  */
 export const readableTokenBalance = token => {
-  if(parseInt(token?.fiatBalance) === 0)
-    return 0
+  if (parseInt(token?.fiatBalance) === 0) return 0
 
   return Number((token?.balance / 10 ** token?.token?.decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
 }
 
+//TODO: can probably abstract this into contract interface
 /*  Get Total Pair supply from Uniswap Contract */
 const totalPairSupply = async (pair, abi) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
