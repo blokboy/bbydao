@@ -24,7 +24,6 @@ const TokenCard = ({ token }) => {
   const isETH = (token) =>
       parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null
   const isUniV2 = token?.token?.symbol === 'UNI-V2'
-  console.log('isUniV2', isUniV2)
 
   const setLpToken = () => {
     if (!isActive) {

@@ -20,7 +20,6 @@ const RemoveLiquidity = ({ token }) => {
   const [breakDown, setBreakDown] = React.useState(undefined)
   const [toReceive, setToReceive] = React.useState({})
   const { state, setState, handleChange } = useForm()
-
   const pairName = token?.token?.name.replace("Uniswap V2", "").replace("Pool", "")
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { liquidity } = state
@@ -237,31 +236,31 @@ const RemoveLiquidity = ({ token }) => {
           step="1"
           min="0"
           max="100"
-          onChange={breakDown ? handleChange : null}
+          onChange={breakDown ? handleChange : () => {}}
           value={liquidity || 0}
         />
         <div className="grid grid-cols-2">
           <button
             className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
-            onClick={breakDown ? () => setState({ liquidity: 25 }) : null}
+            onClick={breakDown ? () => setState({ liquidity: 25 }) : () => {}}
           >
             25%
           </button>
           <button
             className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
-            onClick={breakDown ? () => setState({ liquidity: 50 }) : null}
+            onClick={breakDown ? () => setState({ liquidity: 50 }) : () => {}}
           >
             50%
           </button>
           <button
             className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
-            onClick={breakDown ? () => setState({ liquidity: 75 }) : null}
+            onClick={breakDown ? () => setState({ liquidity: 75 }) : () => {}}
           >
             75%
           </button>
           <button
             className={`m-2 rounded bg-slate-300 p-4 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700`}
-            onClick={breakDown ? () => setState({ liquidity: 100 }) : null}
+            onClick={breakDown ? () => setState({ liquidity: 100 }) : () => {}}
           >
             MAX
           </button>
