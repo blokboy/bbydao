@@ -36,14 +36,11 @@ export default function useGnosisTransaction(safeAddress) {
           throw new Error("no signer address or no bbyDao Safe instance or safe SDK")
         }
 
-
         /* Encode Data */
         const { data } = contractInterface(contract)
 
         /* last transaction made by bbyDAO */
         const nonce = await safeService.getNextNonce(safeAddress)
-        // const nonce = 12
-
 
         /*  construct gnosis transaction object  */
         const safeTx = {

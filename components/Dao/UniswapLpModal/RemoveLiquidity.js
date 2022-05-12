@@ -162,6 +162,7 @@ const RemoveLiquidity = ({ token }) => {
   }
 
   const handleRemoveLiquidity = () => {
+    console.log('to', toReceive)
     const amountAMin = ethers.utils.parseUnits((toReceive.token0 - toReceive.token0 * slippage).toString())
     const amountBMin = ethers.utils.parseUnits((toReceive.token1 - toReceive.token1 * slippage).toString())
     const amountMins = {
@@ -178,6 +179,7 @@ const RemoveLiquidity = ({ token }) => {
       const amountETHMin = amountMins[WETHToken.symbol]
       const percentageOfLiquidityToRemove = ((liquidity / 100) * breakDown?.bbyDaoBalance).toString()
 
+      console.log('a', amountTokenMin, amountETHMin)
       gnosisTransaction(
         {
           abi: IUniswapV2Router02["abi"],
