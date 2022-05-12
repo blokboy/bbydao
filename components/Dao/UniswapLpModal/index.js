@@ -269,11 +269,10 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
           )}
           {state[lpToken0?.token?.symbol] > 0 && state[lpToken1?.token?.symbol] > 0 && (
             <button
-              className={`h-16 w-full appearance-none rounded-full border ${
-                supplyDisabled ? "bg-slate-200" : "bg-[#FC8D4D] dark:hover:bg-[#10172a]"
-              } focus:shadow-outline mt-4 border py-2 px-3 text-xl leading-tight focus:outline-none ${
-                supplyDisabled ? "border-slate-300" : "border-[#e1793d] hover:bg-[#e1793d] dark:border-[#10172a]"
-              } dark:bg-slate-800`}
+              className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full 
+              bg-sky-500 py-2 px-3 text-xl leading-tight hover:bg-sky-600 focus:outline-none ${
+                supplyDisabled ? "border-slate-300" : "dark:bg-orange-600 hover:dark:bg-orange-700"
+              }`}
               type="submit"
               disabled={supplyDisabled}
             >

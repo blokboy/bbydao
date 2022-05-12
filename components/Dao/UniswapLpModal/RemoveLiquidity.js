@@ -348,7 +348,7 @@ const RemoveLiquidity = ({ token }) => {
           <button
             onClick={() => handleRemoveLiquidity()}
             className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full
-           bg-sky-500 p-4 py-2 px-3 text-xl leading-tight hover:bg-sky-600 focus:outline-none
+           bg-sky-500 hover:bg-sky-600 p-4 py-2 px-3 text-xl leading-tight focus:outline-none
           dark:bg-orange-600 dark:hover:bg-orange-700`}
           >
             Remove Liquidity
