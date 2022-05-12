@@ -1,10 +1,11 @@
-import { ethers }           from "ethers"
+import { ethers } from "ethers"
 import React, { useEffect } from "react"
-import { FaEthereum }       from "react-icons/fa"
-import { useDaoStore }      from "stores/useDaoStore"
-import { isEmpty }          from "utils/helpers"
-import RemoveLiquidity      from '../../../../../Dao/UniswapLpModal/RemoveLiquidity'
-import Modal      from 'components/Layout/Modal'
+import { FaEthereum } from "react-icons/fa"
+import { useDaoStore } from "stores/useDaoStore"
+import { isEmpty } from "utils/helpers"
+import RemoveLiquidity from "components/Dao/UniswapLpModal/RemoveLiquidity"
+import Modal from "components/Layout/Modal"
+import Swap from "components/Dao/UniswapLpModal/Swap"
 
 const TokenCard = ({ token }) => {
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
@@ -21,9 +22,8 @@ const TokenCard = ({ token }) => {
     lpToken1?.tokenAddress === token?.tokenAddress ||
     (token?.tokenAddress === null && lpToken0?.tokenAddress === WETH) ||
     (token?.tokenAddress === null && lpToken1?.tokenAddress === WETH)
-  const isETH = (token) =>
-      parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null
-  const isUniV2 = token?.token?.symbol === 'UNI-V2'
+  const isETH = token => parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null
+  const isUniV2 = token?.token?.symbol === "UNI-V2"
 
   const setLpToken = () => {
     if (!isActive) {
@@ -69,15 +69,6 @@ const TokenCard = ({ token }) => {
     }
   }
 
-  const setSwapToken = () => {
-    console.log("setSwapToken", token)
-    setUniswapSwapModalOpen(true)
-  }
-
-  const removeLiquidity = () => {
-    setUniswapRemoveLpModalOpen()
-  }
-
   return (
     <div className="flex w-full flex-row justify-between rounded-xl bg-slate-100 p-2 dark:bg-slate-700 xl:flex-col">
       <div className="flex w-full flex-row space-x-2">
@@ -85,9 +76,7 @@ const TokenCard = ({ token }) => {
           {token?.token?.logoUri ? <img src={token?.token?.logoUri} alt={""} /> : <FaEthereum size={30} />}
         </div>
         <div className="flex h-full w-auto flex-col rounded-xl bg-slate-200 p-1 text-xs dark:bg-slate-600">
-          <span>
-            {token.token?.name ? token.token.name : "Ethereum"}
-          </span>
+          <span>{token.token?.name ? token.token.name : "Ethereum"}</span>
           <span>
             {(token?.balance / 10 ** 18).toFixed(3)} {token.token?.symbol ? token.token.symbol : "ETH"}
           </span>
@@ -95,42 +84,53 @@ const TokenCard = ({ token }) => {
         </div>
       </div>
 
-      {(parseInt(token?.fiatBalance) !== 0) && (
-          <>
-            {(!isUniV2 && (
-                <div className="flex flex-row space-x-2 p-1 xl:justify-center">
-                  {isEmpty(lpToken0) && (
-                      <>
-                        <button
-                            className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500"
-                            onClick={() => console.log("hii")}
-                        >
-                          send
-                        </button>
-                        <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setSwapToken}>
-                          swap
-                        </button>
-                      </>
-                  )}
-                  <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setLpToken}>
-                    {isEmpty(lpToken0) && isEmpty(lpToken1) ? "LP" : isActive ? "Selected" : "Pair"}
+      {parseInt(token?.fiatBalance) !== 0 && (
+        <>
+          {(!isUniV2 && (
+            <div className="flex flex-row space-x-2 p-1 xl:justify-center">
+              {isEmpty(lpToken0) && (
+                <>
+                  <button
+                    className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500"
+                    onClick={() => console.log("hii")}
+                  >
+                    send
                   </button>
-                </div>
-            )) || (
-              <div className="flex flex-row space-x-2 p-1 xl:justify-center">
-                <Modal
-                    heading={"Remove Liquidity"}
+                  <Modal
+                    heading={"Swap"}
                     trigger={
-                  <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-slate-500" onClick={() => removeLiquidity()}>
+                      <button
+                        className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500"
+                      >
+                        swap
+                      </button>
+                    }
+                  >
+                    <Swap token={token} />
+                  </Modal>
+                </>
+              )}
+              <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setLpToken}>
+                {isEmpty(lpToken0) && isEmpty(lpToken1) ? "LP" : isActive ? "Selected" : "Pair"}
+              </button>
+            </div>
+          )) || (
+            <div className="flex flex-row space-x-2 p-1 xl:justify-center">
+              <Modal
+                heading={"Remove Liquidity"}
+                trigger={
+                  <button
+                    className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-slate-500"
+                  >
                     Manage
                   </button>
-                }>
-                  <RemoveLiquidity token={token} />
-                </Modal>
+                }
+              >
+                <RemoveLiquidity token={token} />
+              </Modal>
             </div>
-            )}
-          </>
-
+          )}
+        </>
       )}
     </div>
   )

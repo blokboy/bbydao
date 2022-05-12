@@ -21,6 +21,7 @@
     "@metamask/eth-sig-util": "^4.0.0",
     "@types/node": "^17.0.16",
     "@types/react": "^17.0.39",
+    "@uniswap/default-token-list": "^3.2.0",
     "@uniswap/sdk": "^3.0.3",
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
