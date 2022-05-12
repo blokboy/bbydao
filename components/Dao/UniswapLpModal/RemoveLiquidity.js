@@ -230,8 +230,8 @@ const RemoveLiquidity = ({ token }) => {
       <div className="flex flex-col">
         <div className="my-2 rounded-3xl bg-gray-400 p-4 dark:bg-slate-800">
           <div className="w-full">
-            Remove Amount
-            <div className="text-4xl">{liquidity} %</div>
+            <div className="font-light">Remove Amount</div>
+            <div className="text-5xl">{liquidity} %</div>
             <input
               name="liquidity"
               type="range"
@@ -274,25 +274,24 @@ const RemoveLiquidity = ({ token }) => {
         </div>
 
         <div className="my-2 rounded-3xl bg-gray-400 p-4 dark:bg-slate-800">
-          {/*<div>Amount of Tokens You will Receive back</div>*/}
           {breakDown && (
-            <>
+            <div className="text-3xl font-normal">
               <div className="flex justify-between py-2">
-                <div>{breakDown?.token0?.symbol}</div>
                 <div>{toReceive?.token0}</div>
+                <div>{breakDown?.token0?.symbol}</div>
               </div>
               <div className="flex justify-between py-2">
-                <div>{breakDown?.token1?.symbol}</div>
                 <div>{toReceive?.token1}</div>
+                <div>{breakDown?.token1?.symbol}</div>
               </div>
-            </>
+            </div>
           )}
         </div>
         <div>
-          <div className="my-2 rounded-3xl bg-gray-400 p-4 dark:bg-slate-800">
-            <div>Your Position</div>
+          <div className="my-2 rounded-3xl bg-gray-400 p-4 dark:bg-slate-800 font-light">
+            <div className="mb-4">Your Position</div>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between text-xl">
               <div>{pairName}</div>
               <div>{breakDown?.poolTokens}</div>
             </div>
@@ -314,17 +313,17 @@ const RemoveLiquidity = ({ token }) => {
               </>
             )}
           </div>
-          <div>
+          <div className="font-light flex justify-between mt-4">
             <div>Price</div>
             {breakDown && (
-              <>
+              <div>
                 <div>
                   1 {breakDown?.token0?.symbol} = {breakDown?.token0?.priceInPair} {breakDown?.token1?.symbol}
                 </div>
                 <div>
                   1 {breakDown?.token1?.symbol} = {breakDown?.token1?.priceInPair} {breakDown?.token0?.symbol}
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>
@@ -347,8 +346,8 @@ const RemoveLiquidity = ({ token }) => {
           <button
             onClick={() => handleRemoveLiquidity()}
             className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full bg-slate-200
-          bg-slate-300 p-4 py-2 px-3 text-xl leading-tight hover:bg-slate-400 focus:outline-none dark:bg-slate-600
-          dark:bg-slate-800 dark:hover:bg-slate-700`}
+          bg-slate-300 p-4 py-2 px-3 text-xl leading-tight hover:bg-slate-400 focus:outline-none dark:bg-orange-600
+          dark:hover:bg-orange-700 mx-8`}
           >
             Remove Liquidity
           </button>
