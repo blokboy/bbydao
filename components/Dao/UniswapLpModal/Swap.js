@@ -1,11 +1,13 @@
-import { ChainId, Token } from "@uniswap/sdk"
-import defaultTokens from "@uniswap/default-token-list"
-import React from "react"
-import useForm from "hooks/useForm"
+import { ChainId, Token }          from "@uniswap/sdk"
+import defaultTokens               from "@uniswap/default-token-list"
+import {ethers}                    from 'ethers'
+import React                       from "react"
+import useForm                     from "hooks/useForm"
 import { HiOutlineSwitchVertical } from "react-icons/hi"
-import { flatten } from "utils/helpers"
-import TokenInput from "./TokenInput"
+import { flatten }                 from "utils/helpers"
+import TokenInput                  from "./TokenInput"
 const Swap = ({ token }) => {
+  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const { state, handleChange } = useForm()
   const defaultTokenList = defaultTokens?.["tokens"]
   const isEth = React.useMemo(() => {
@@ -18,7 +20,7 @@ const Swap = ({ token }) => {
           name: "Ether",
           symbol: "ETH",
         },
-        tokenAddress: "0x0", // eh
+        tokenAddress: WETH, // eh -- think for ETH pair need to change this
       }
     }
     return token
