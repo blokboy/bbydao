@@ -132,8 +132,8 @@ const RemoveLiquidity = ({ token }) => {
 
   React.useEffect(() => {
     setToReceive({
-      token0: breakDown?.token0?.amount * (liquidity / 100) || 0,
-      token1: breakDown?.token1?.amount * (liquidity / 100) || 0,
+      token0: (breakDown?.token0?.amount * (liquidity / 100)).toFixed(5) || 0,
+      token1: (breakDown?.token1?.amount * (liquidity / 100)).toFixed(5) || 0,
     })
   }, [liquidity, breakDown])
 
@@ -228,7 +228,7 @@ const RemoveLiquidity = ({ token }) => {
         receive.
       </div>
       <div className="flex flex-col">
-        <div className="my-2 rounded-3xl bg-gray-400 p-4 dark:bg-slate-800">
+        <div className="my-2 rounded-3xl bg-gray-100 p-4 dark:bg-slate-800">
           <div className="w-full">
             <div className="font-light">Remove Amount</div>
             <div className="text-5xl">{liquidity} %</div>
@@ -273,7 +273,7 @@ const RemoveLiquidity = ({ token }) => {
           </div>
         </div>
 
-        <div className="my-2 rounded-3xl bg-gray-400 p-4 dark:bg-slate-800">
+        <div className="my-2 rounded-3xl bg-gray-100 p-4 dark:bg-slate-800">
           {breakDown && (
             <div className="text-3xl font-normal">
               <div className="flex justify-between py-2">
@@ -288,7 +288,7 @@ const RemoveLiquidity = ({ token }) => {
           )}
         </div>
         <div>
-          <div className="my-2 rounded-3xl bg-gray-400 p-4 dark:bg-slate-800 font-light">
+          <div className="my-2 rounded-3xl bg-gray-100 p-4 font-light dark:bg-slate-800">
             <div className="mb-4">Your Position</div>
 
             <div className="flex justify-between text-xl">
@@ -304,37 +304,39 @@ const RemoveLiquidity = ({ token }) => {
 
                 <div className="flex justify-between">
                   <div>{breakDown?.token0?.symbol}: </div>
-                  <div>{breakDown?.token0?.amount}</div>
+                  <div>{Number((breakDown?.token0?.amount))?.toFixed(5)}</div>
                 </div>
                 <div className="flex justify-between">
                   <div>{breakDown?.token1?.symbol}:</div>
-                  <div>{breakDown?.token1?.amount}</div>
+                  <div>{Number((breakDown?.token1?.amount))?.toFixed(5)}</div>
                 </div>
               </>
             )}
           </div>
-          <div className="font-light flex justify-between mt-4">
-            <div>Price</div>
+          <div className="mt-4 flex justify-between font-light">
             {breakDown && (
-              <div>
-                <div>
-                  1 {breakDown?.token0?.symbol} = {breakDown?.token0?.priceInPair} {breakDown?.token1?.symbol}
+              <>
+                <div>Price</div>
+                <div className="text-sm text-right">
+                  <div>
+                    1 {breakDown?.token0?.symbol} = {breakDown?.token0?.priceInPair} {breakDown?.token1?.symbol}
+                  </div>
+                  <div>
+                    1 {breakDown?.token1?.symbol} = {breakDown?.token1?.priceInPair} {breakDown?.token0?.symbol}
+                  </div>
                 </div>
-                <div>
-                  1 {breakDown?.token1?.symbol} = {breakDown?.token1?.priceInPair} {breakDown?.token0?.symbol}
-                </div>
-              </div>
+              </>
             )}
           </div>
         </div>
       </div>
 
-      <div className="flex gap-4">
-        {breakDown && breakDown?.hasAllowance === false && (
+      <div className="flex gap-4 my-6">
+        {breakDown && (
           <button
             className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full bg-slate-200
-          bg-slate-300 p-4 py-2 px-3 text-xl leading-tight focus:outline-none dark:bg-slate-600 ${
-            breakDown.hasAllowance === true ? `` : " hover:bg-slate-400 dark:hover:bg-slate-700"
+          bg-slate-300 p-4 py-2 px-3 text-xl leading-tight focus:outline-none ${
+            breakDown.hasAllowance === true ? `dark:bg-slate-800` : "dark:bg-orange-600 dark:hover:bg-orange-700"
           }`}
             onClick={breakDown.hasAllowance === false ? () => handleApprovePair(breakDown?.pairContract) : null}
             disabled={breakDown.hasAllowance === true}
@@ -345,9 +347,9 @@ const RemoveLiquidity = ({ token }) => {
         {breakDown && breakDown?.hasAllowance === true && liquidity > 0 && (
           <button
             onClick={() => handleRemoveLiquidity()}
-            className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full bg-slate-200
-          bg-slate-300 p-4 py-2 px-3 text-xl leading-tight hover:bg-slate-400 focus:outline-none dark:bg-orange-600
-          dark:hover:bg-orange-700 mx-8`}
+            className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full
+           bg-sky-500 p-4 py-2 px-3 text-xl leading-tight hover:bg-sky-600 focus:outline-none
+          dark:bg-orange-600 dark:hover:bg-orange-700`}
           >
             Remove Liquidity
           </button>
