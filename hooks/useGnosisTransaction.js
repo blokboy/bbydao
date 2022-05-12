@@ -32,11 +32,11 @@ export default function useGnosisTransaction(safeAddress) {
   const gnosisTransaction = React.useCallback(
     async (contract, to, value) => {
       try {
+        console.log('s', safeSdk, signerAddress, bbyDaoSafe)
         if (!safeSdk || !signerAddress || !bbyDaoSafe) {
           throw new Error("no signer address or no bbyDao Safe instance or safe SDK")
         }
 
-        const nonce = await safeService.getNextNonce(safeAddress)
 
         /* Encode Data */
         const { data } = contractInterface(contract)

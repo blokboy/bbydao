@@ -15,12 +15,12 @@ import useGnosisTransaction from "hooks/useGnosisTransaction"
 const RemoveLiquidity = ({ token }) => {
   const [{ data: signer }] = useSigner()
   const queryClient = useQueryClient()
+  const bbyDao = queryClient.getQueryData("expandedDao")
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const [breakDown, setBreakDown] = useState({})
   const [toReceive, setToReceive] = useState({})
   const { state, setState, handleChange } = useForm()
 
-  const bbyDao = queryClient.getQueryData("expandedDao")
   const pairName = token?.token?.name.replace("Uniswap V2", "").replace("Pool", "")
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { liquidity } = state
