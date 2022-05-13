@@ -1,6 +1,6 @@
 import React from "react"
 import { ethers } from "ethers"
-import { useOsStore } from "stores/useOsStore"
+import { useCollectionStore } from "stores/useCollectionStore"
 import { walletSnippet } from "../../../utils/helpers"
 
 export default function AssetCard({ asset }) {
@@ -8,9 +8,9 @@ export default function AssetCard({ asset }) {
 
   const [ownerENS, setOwnerENS] = React.useState(null)
 
-  const setOsOfferModalOpen = useOsStore(state => state.setOsOfferModalOpen)
-  const setOsAssetInfo = useOsStore(state => state.setOsAssetInfo)
-  const setOsBuyModalOpen = useOsStore(state => state.setOsBuyModalOpen)
+  const setOsOfferModalOpen = useCollectionStore(state => state.setOsOfferModalOpen)
+  const setOsAssetInfo = useCollectionStore(state => state.setOsAssetInfo)
+  const setOsBuyModalOpen = useCollectionStore(state => state.setOsBuyModalOpen)
 
   const handleENS = React.useCallback(async () => {
     try {

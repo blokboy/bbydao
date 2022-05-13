@@ -1,6 +1,6 @@
 import create from "zustand"
 
-export const useOsStore = create(set => ({
+export const useCollectionStore = create(set => ({
   // os offer modal display
   osOfferModalOpen: false,
   setOsOfferModalOpen: () =>

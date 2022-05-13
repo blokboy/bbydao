@@ -3,9 +3,8 @@ import { createPortal } from "react-dom"
 import ClickAwayListener from "react-click-away-listener"
 import { FiBell } from "react-icons/fi"
 import { useAccount } from "wagmi"
-
 import { useUiStore } from "stores/useUiStore"
-import useNotifications from "../../hooks/useNotifications"
+import useNotifications from "hooks/useNotifications"
 
 export default function MobileNotificationsModal() {
   const [{ data: account }] = useAccount()

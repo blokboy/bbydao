@@ -1,12 +1,12 @@
 import React from "react"
 import axios from "axios"
-import OpenSeaCollection from "components/OpenSeaCollection"
+import Collection from "components/Collection"
 
-const OpenSeaPage = ({ data, slug }) => {
-  return <OpenSeaCollection data={data} slug={slug} />
+const CollectionPage = ({ data, slug }) => {
+  return <Collection data={data} slug={slug} />
 }
 
-export default OpenSeaPage
+export default CollectionPage
 
 export const getServerSideProps = async ({ query }) => {
   const slug = query.slug

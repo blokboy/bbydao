@@ -7,7 +7,7 @@ import AssetList from "./AssetList"
 
 import useERC721Contract from "hooks/useERC721Contract"
 
-const OpenSeaCollection = ({ data, slug }) => {
+const Collection = ({ data, slug }) => {
   const [ticker, setTicker] = React.useState(null)
 
   const collection = React.useMemo(() => {
@@ -83,4 +83,4 @@ const OpenSeaCollection = ({ data, slug }) => {
   )
 }
 
-export default OpenSeaCollection
+export default Collection
