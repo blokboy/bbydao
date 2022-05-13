@@ -34,6 +34,7 @@ const TokenInput = ({
               max={token?.balance / 10 ** token?.decimals}
               ref={tokenInputRef}
               disabled={!pair}
+              autoComplete="off"
           />
           <div className="text-l my-3 flex items-center justify-center rounded-xl bg-slate-200 py-1 px-6 shadow-xl dark:bg-slate-700">
             <img src={logo} className="mr-2 h-8 w-8 min-w-fit rounded-full" />

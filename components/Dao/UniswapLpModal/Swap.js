@@ -1,16 +1,16 @@
-import {ChainId, Fetcher, Route, Token} from "@uniswap/sdk"
-import defaultTokens                    from "@uniswap/default-token-list"
-import { BigNumber, ethers }              from "ethers"
-import React                              from "react"
-import useForm                            from "hooks/useForm"
-import { HiOutlineSwitchVertical }        from "react-icons/hi"
-import { useQueryClient }                 from "react-query"
+import { ChainId, Fetcher, Route, Token } from "@uniswap/sdk"
+import defaultTokens from "@uniswap/default-token-list"
+import { BigNumber, ethers } from "ethers"
+import React from "react"
+import useForm from "hooks/useForm"
+import { HiOutlineSwitchVertical } from "react-icons/hi"
+import { useQueryClient } from "react-query"
 import { flatten, max256, NumberFromBig } from "utils/helpers"
-import { useSigner }                      from "wagmi"
-import { minimalABI }                               from "../../../hooks/useERC20Contract"
-import {getLiquidityPairInfo, readableTokenBalance} from './helpers'
-import TokenInput                                   from "./TokenInput"
-import useGnosisTransaction               from "hooks/useGnosisTransaction"
+import { useSigner } from "wagmi"
+import { minimalABI } from "../../../hooks/useERC20Contract"
+import { getLiquidityPairInfo, readableTokenBalance } from "./helpers"
+import TokenInput from "./TokenInput"
+import useGnosisTransaction from "hooks/useGnosisTransaction"
 
 const Swap = ({ token }) => {
   const [{ data: signer }] = useSigner()
@@ -35,7 +35,7 @@ const Swap = ({ token }) => {
           symbol: "ETH",
         },
         address: WETH,
-        tokenAddress: ''
+        tokenAddress: "",
       }
     }
 
@@ -48,15 +48,16 @@ const Swap = ({ token }) => {
 
   const tokenSymbols = React.useMemo(() => {
     return defaultTokenList?.reduce((acc = [], cv) => {
-      acc.push(cv.symbol)
+      if (acc.filter(item => item.symbol === cv.symbol).length < 1) acc.push({ symbol: cv.symbol, uri: cv.logoURI })
+
       return acc
     }, [])
   }, [defaultTokenList])
 
   const filteredTokensBySymbol = React.useMemo(() => {
     return tokenSymbols.reduce((acc = [], cv) => {
-      if (cv?.toUpperCase().includes(state?.symbol?.toUpperCase()) && !acc?.includes(cv?.toUpperCase())) {
-        acc.push(cv?.toUpperCase())
+      if (cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase())) {
+        acc.push(cv)
       }
 
       return acc
@@ -65,7 +66,7 @@ const Swap = ({ token }) => {
 
   const handlePickToken = React.useCallback(
     picked => {
-      const index = defaultTokenList.findIndex(token => token.symbol === picked)
+      const index = defaultTokenList.findIndex(token => token.symbol === picked.symbol)
 
       //check if user has token in list if so populate obj with gnosis data
       //TODO: component should be aware of token list, react Query thing?
@@ -99,8 +100,8 @@ const Swap = ({ token }) => {
   const uniPair = React.useMemo(async () => {
     if (!!uniswapTokens) {
       const uniPair = await Fetcher.fetchPairData(
-          uniswapTokens[tokens.token0.symbol],
-          uniswapTokens[tokens.token1.symbol]
+        uniswapTokens[tokens.token0.symbol],
+        uniswapTokens[tokens.token1.symbol]
       )
       return uniPair
     }
@@ -180,7 +181,6 @@ const Swap = ({ token }) => {
       console.log("err", err)
     }
   }
-
 
   /* Handle setting token values and retrieving liquidity pair information  */
   const handleSetTokenValue = async (e, token, tokenRef) => {
@@ -264,34 +264,35 @@ const Swap = ({ token }) => {
         <div>{console.log("tokens", tokens)}</div>
 
         {tokens?.token0 && (
-            <TokenInput
-                pair={uniPair}
-                token1InputRef={token0InputRef}
-                lpToken={tokens?.token0}
-                handleSetTokenValue={handleSetTokenValue}
-                handleSetMaxTokenValue={handleSetMaxTokenValue}
-                readableTokenBalance={readableTokenBalance}
-                state={state}
-                logo={tokens?.token0?.logoURI}
-            />
-
+          <TokenInput
+            pair={uniPair}
+            token1InputRef={token0InputRef}
+            lpToken={tokens?.token0}
+            handleSetTokenValue={handleSetTokenValue}
+            handleSetMaxTokenValue={handleSetMaxTokenValue}
+            readableTokenBalance={readableTokenBalance}
+            state={state}
+            logo={tokens?.token0?.logoURI}
+            autoComplete="off"
+          />
         )}
         {tokens?.token0 && tokens?.token1 && (
-          <button type="button" onClick={() => switchTokenPlacement()} className="flex m-auto my-4">
+          <button type="button" onClick={() => switchTokenPlacement()} className="m-auto my-4 flex">
             <HiOutlineSwitchVertical size={26} />
           </button>
         )}
         {tokens?.token1 && (
-            <TokenInput
-                pair={uniPair}
-                token1InputRef={token1InputRef}
-                lpToken={tokens?.token1}
-                handleSetTokenValue={handleSetTokenValue}
-                handleSetMaxTokenValue={handleSetMaxTokenValue}
-                readableTokenBalance={readableTokenBalance}
-                state={state}
-                logo={tokens?.token1?.logoURI}
-            />
+          <TokenInput
+            pair={uniPair}
+            token1InputRef={token1InputRef}
+            lpToken={tokens?.token1}
+            handleSetTokenValue={handleSetTokenValue}
+            handleSetMaxTokenValue={handleSetMaxTokenValue}
+            readableTokenBalance={readableTokenBalance}
+            state={state}
+            logo={tokens?.token1?.logoURI}
+            autoComplete="off"
+          />
         )}
         <input
           id="symbol"
@@ -300,19 +301,24 @@ const Swap = ({ token }) => {
           value={state?.symbol || ""}
           className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-3xl leading-tight focus:outline-none dark:bg-slate-800"
           placeholder={"Type to search"}
+          autoComplete="off"
         />
         <div>
-          {console.log('fiol', filteredTokensBySymbol)}
           {filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
-            <div className="flex max-h-96 flex-col overflow-y-scroll pt-4">
-              {filteredTokensBySymbol.map(token => (
+            <div className="flex max-h-96 flex flex-wrap gap-1 overflow-y-scroll pt-4">
+              {filteredTokensBySymbol.map((token, i) => (
                 <button
-                  key={token}
+                  key={i}
                   type="button"
                   onClick={() => handlePickToken(token)}
-                  className="mb-2 inline-flex self-start rounded-full bg-slate-300 p-2 font-light dark:bg-slate-600 hover:dark:bg-slate-700"
+                  className="mb-2 inline-flex self-start rounded-full bg-slate-300 p-2 px-4 font-light dark:bg-slate-600 hover:dark:bg-slate-700"
                 >
-                  {token?.toUpperCase()}
+                  <div className="flex items-center justify-center">
+                    <div className="mr-2">{token?.symbol?.toUpperCase()}</div>
+                    <div className="flex h-6 w-6 overflow-hidden rounded-full">
+                      <img src={token?.uri} />
+                    </div>
+                  </div>
                 </button>
               ))}
             </div>
