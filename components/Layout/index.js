@@ -4,10 +4,10 @@ const Search = dynamic(() => import('./Search'))
 import { useLayoutStore } from "/stores/useLayoutStore"
 import ConnectModal from "./ConnectModal"
 import CreateThreadModal from "../Messages/CreateThreadModal"
-import OfferModal from "../OpenSeaCollection/OfferModal"
-import BuyModal from "../OpenSeaCollection/BuyModal"
+import OfferModal from "../Collection/OfferModal"
+import BuyModal from "../Collection/BuyModal"
 import NetworkWarning from "./Nav/NetworkWarning"
-import MobileNotificationsModal from "../MobileNotificationsModal"
+import MobileNotificationsModal from "./MobileNotificationsModal"
 
 const Layout = ({ children }) => {
   const searchOpen = useLayoutStore(state => state.searchOpen)
