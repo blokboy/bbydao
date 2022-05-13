@@ -18,6 +18,7 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
     }, "")
     .slice(0, -1)
 
+
   /*
    * Approve Tokens:
    *
@@ -94,6 +95,7 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
         const allowance = await contract.allowance(safeAddress, spender)
         pairAllowanceAmount = await NumberFromBig(allowance._hex, pair.decimals)
       }
+
       return {
         contract,
         allowedToSpend: { pair: pairAllowanceAmount > 0 },
@@ -138,7 +140,7 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
     } catch (err) {
       console.log("err", err)
     }
-  }, [token0, token1])
+  }, [token0, token1, signer])
 
   /*
    *

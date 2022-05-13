@@ -1,23 +1,24 @@
-import { ChainId, Fetcher, Route, Token } from "@uniswap/sdk"
-import IUniswapV2ERC20 from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
-import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
-import { BigNumber, ethers } from "ethers"
-import useForm from "hooks/useForm"
-import React from "react"
-import { useDaoStore } from "stores/useDaoStore"
-import { useSigner } from "wagmi"
-import ControlledModal from "components/Layout/Modal/ControlledModal"
+import { ChainId, Fetcher, Route, Token }                     from "@uniswap/sdk"
+import IUniswapV2ERC20                                        from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
+import IUniswapV2Router02                                     from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
+import { BigNumber, ethers }                                  from "ethers"
+import useForm                                                from "hooks/useForm"
+import React                                                  from "react"
+import { useDaoStore }                                        from "stores/useDaoStore"
+import { useSigner }                                          from "wagmi"
+import ControlledModal                                        from "components/Layout/Modal/ControlledModal"
+import {flatten}                                              from '../../../utils/helpers'
 import { amount, getLiquidityPairInfo, readableTokenBalance } from "./helpers"
-import PoolInfo from "./PoolInfo"
-import TokenInput from "./TokenInput"
-import useGnosisTransaction from "hooks/useGnosisTransaction"
+import PoolInfo                                               from "./PoolInfo"
+import TokenInput                                             from "./TokenInput"
+import useGnosisTransaction                                   from "hooks/useGnosisTransaction"
 
 const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const [{ data: signer }] = useSigner()
   const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
-  const lpToken0 = useDaoStore(state => state.lpToken0)
-  const lpToken1 = useDaoStore(state => state.lpToken1)
+  const lpToken0 = useDaoStore(state => flatten(state.lpToken0))
+  const lpToken1 = useDaoStore(state => flatten(state.lpToken1))
   const setLpToken1 = useDaoStore(state => state.setLpToken1)
   const setLpToken0 = useDaoStore(state => state.setLpToken0)
   const { state, setState } = useForm()
@@ -27,8 +28,8 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const [liquidityInfo, setLiquidityInfo] = React.useState({})
   const [maxError, setMaxError] = React.useState("")
   const [hasAllowance, setHasAllowance] = React.useState()
-  const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0?.token?.symbol)[0]?.uri
-  const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1?.token?.symbol)[0]?.uri
+  const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0?.symbol)[0]?.uri
+  const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1?.symbol)[0]?.uri
   const supplyDisabled =
     !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1 || !hasAllowance?.pair
   const { gnosisTransaction } = useGnosisTransaction(safeAddress)
@@ -44,20 +45,20 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
     const token0 = new Token(
       ChainId.MAINNET,
       lpToken0?.tokenAddress,
-      lpToken0?.token?.decimals,
-      lpToken0?.token?.symbol,
-      lpToken0?.token?.name
+      lpToken0?.decimals,
+      lpToken0?.symbol,
+      lpToken0?.name
     )
 
     const token1 = new Token(
       ChainId.MAINNET,
       lpToken1?.tokenAddress,
-      lpToken1?.token?.decimals,
-      lpToken1?.token?.symbol,
-      lpToken1?.token?.name
+      lpToken1?.decimals,
+      lpToken1?.symbol,
+      lpToken1?.name
     )
 
-    return { [lpToken0?.token?.symbol]: token0, [lpToken1?.token?.symbol]: token1 }
+    return { [lpToken0?.symbol]: token0, [lpToken1?.symbol]: token1 }
   }, [lpToken0, lpToken1])
 
   /* Propose and Execute uniswapV2Router02 - addLiquidity   */
@@ -66,20 +67,23 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
       e.preventDefault()
 
       const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
-      const pairHasEth = liquidityInfo.transactionInfo.filter(token => token.token.symbol === "ETH")
+      const pairHasEth = liquidityInfo.transactionInfo.filter(token => flatten(token)?.symbol === "ETH")
       const slippage = 0.055 // default 5.5% slippage
 
+      const token0 = flatten(liquidityInfo.transactionInfo[0])
+      const token1 = flatten(liquidityInfo.transactionInfo[1])
+
       /* token A */
-      const tokenA = liquidityInfo.transactionInfo[0].token.address
-      const tokenADecimals = liquidityInfo.transactionInfo[0].token.decimals
-      const tokenAAmount = liquidityInfo.transactionInfo[0].amount
+      const tokenA = token0?.address
+      const tokenADecimals = token0?.decimals
+      const tokenAAmount = token0?.amount
       const amountADesired = amount(tokenAAmount, tokenADecimals) // wondering if this is correct
       const amountAMin = amount(tokenAAmount - tokenAAmount * slippage, tokenADecimals)
 
       /* token B */
-      const tokenB = liquidityInfo.transactionInfo[1].token.address
-      const tokenBDecimals = liquidityInfo.transactionInfo[1].token.decimals
-      const tokenBAmount = liquidityInfo.transactionInfo[1].amount
+      const tokenB = token1?.address
+      const tokenBDecimals = token1?.decimals
+      const tokenBAmount = token1?.amount
       const amountBDesired = amount(tokenBAmount, tokenBDecimals)
       const amountBMin = amount(tokenBAmount - tokenBAmount * slippage, tokenBDecimals)
 
@@ -133,21 +137,21 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const handleSetTokenValue = async (e, token, tokenRef) => {
     try {
       const bal = token?.balance
-      const dec = token?.token?.decimals
+      const dec = token?.decimals
       const max = bal / 10 ** dec
-      const token0 = Object.entries(uniswapTokens).filter(item => item[0] === token.token.symbol)[0][1]
+      const token0 = Object.entries(uniswapTokens).filter(item => item[0] === token?.symbol)[0][1]
       const token0Input = e?.target?.valueAsNumber
-      const route = new Route([pair], uniswapTokens[token.token.symbol])
+      const route = new Route([pair], uniswapTokens[token?.symbol])
       const midPrice = route.midPrice.toSignificant(6)
-      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.token.symbol)[0][1]
+      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token?.symbol)[0][1]
       const token1Input = Number(token0Input * midPrice)
-      const pairToken = lpToken0.token.symbol === token.token.symbol ? lpToken1 : lpToken0
+      const pairToken = lpToken0?.symbol === token?.symbol ? lpToken1 : lpToken0
 
       /*  If User attempts to LP more than balance, default to max balance */
       if (token0Input > max) {
         handleSetMaxTokenValue(token, tokenRef)
       } else {
-        setState(state => ({ ...state, [token.token.symbol]: token0Input }))
+        setState(state => ({ ...state, [token?.symbol]: token0Input }))
         setState(state => ({ ...state, [token1?.symbol]: token1Input }))
         setMaxError("")
 
@@ -173,22 +177,21 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   /* Handle setting max token values and retrieving liquidity pair information  */
   const handleSetMaxTokenValue = async (token, tokenRef) => {
     try {
-      const token0 = uniswapTokens[token.token.symbol]
+      const token0 = uniswapTokens[token?.symbol]
       const token0Input = tokenRef?.current?.max
-      const pairToken = lpToken0.token.symbol === token.token.symbol ? lpToken1 : lpToken0
-
-      const route = new Route([pair], uniswapTokens[token.token.symbol])
+      const pairToken = lpToken0?.symbol === token?.symbol ? lpToken1 : lpToken0
+      const route = new Route([pair], uniswapTokens[token?.symbol])
       const midPrice = route.midPrice.toSignificant(6)
-      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.token.symbol)[0][1]
+      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token?.symbol)[0][1]
       const token1Input = token0Input * midPrice
 
       if (parseInt(token?.fiatBalance) > parseInt(pairToken?.fiatBalance)) {
-        setMaxError(`Insufficient ${pairToken?.token?.symbol} balance`)
-        setState(state => ({ ...state, [token.token.symbol]: 0 }))
+        setMaxError(`Insufficient ${pairToken?.symbol} balance`)
+        setState(state => ({ ...state, [token?.symbol]: 0 }))
         setState(state => ({ ...state, [token1.symbol]: 0 }))
         setLiquidityInfo({})
       } else {
-        setState(state => ({ ...state, [token.token.symbol]: token0Input }))
+        setState(state => ({ ...state, [token?.symbol]: token0Input }))
         setState(state => ({ ...state, [token1.symbol]: token1Input }))
         setMaxError("")
 
@@ -212,11 +215,11 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   /* Initialize state of inputs and initialize Uniswap Pair */
   const init = async () => {
     try {
-      setState(state => ({ ...state, [lpToken0.token.symbol]: 0 }))
-      setState(state => ({ ...state, [lpToken1.token.symbol]: 0 }))
+      setState(state => ({ ...state, [lpToken0?.symbol]: 0 }))
+      setState(state => ({ ...state, [lpToken1?.symbol]: 0 }))
       const uniPair = await Fetcher.fetchPairData(
-        uniswapTokens[lpToken0.token.symbol],
-        uniswapTokens[lpToken1.token.symbol]
+        uniswapTokens[lpToken0?.symbol],
+        uniswapTokens[lpToken1?.symbol]
       )
       await setPair(uniPair)
     } catch (err) {
@@ -237,7 +240,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
       <form className="flex w-full flex-col space-y-8 py-4" onSubmit={e => handleSubmit(e, liquidityInfo)}>
         <TokenInput
           pair={pair}
-          token1InputRef={token0InputRef}
+          tokenInputRef={token0InputRef}
           lpToken={lpToken0}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
@@ -247,7 +250,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
         />
         <TokenInput
           pair={pair}
-          token1InputRef={token1InputRef}
+          tokenInputRef={token1InputRef}
           lpToken={lpToken1}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
@@ -267,7 +270,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
               safeAddress={safeAddress}
             />
           )}
-          {state[lpToken0?.token?.symbol] > 0 && state[lpToken1?.token?.symbol] > 0 && (
+          {state[lpToken0?.symbol] > 0 && state[lpToken1?.symbol] > 0 && (
             <button
               className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full 
               bg-sky-500 py-2 px-3 text-xl leading-tight hover:bg-sky-600 focus:outline-none ${

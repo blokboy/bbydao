@@ -12,7 +12,8 @@ export const amount = (amount, decimals) => Math.round(amount * 10 ** (decimals 
 export const readableTokenBalance = token => {
   if (parseInt(token?.fiatBalance) === 0) return 0
 
-  return Number((token?.balance / 10 ** token?.token?.decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
+  //change this flatten in LP
+  return Number((token?.balance / 10 ** (token?.decimals || token?.token?.decimals)).toString().match(/^\d+(?:\.\d{0,3})?/))
 }
 
 //TODO: can probably abstract this into contract interface

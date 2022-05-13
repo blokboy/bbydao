@@ -1,25 +1,28 @@
-import { ChainId, Token } from "@uniswap/sdk"
-import defaultTokens from "@uniswap/default-token-list"
-import { BigNumber, ethers } from "ethers"
-import React from "react"
-import useForm from "hooks/useForm"
-import { HiOutlineSwitchVertical } from "react-icons/hi"
-import { useQueryClient } from "react-query"
+import {ChainId, Fetcher, Route, Token} from "@uniswap/sdk"
+import defaultTokens                    from "@uniswap/default-token-list"
+import { BigNumber, ethers }              from "ethers"
+import React                              from "react"
+import useForm                            from "hooks/useForm"
+import { HiOutlineSwitchVertical }        from "react-icons/hi"
+import { useQueryClient }                 from "react-query"
 import { flatten, max256, NumberFromBig } from "utils/helpers"
-import { useSigner } from "wagmi"
-import { minimalABI } from "../../../hooks/useERC20Contract"
-import TokenInput from "./TokenInput"
-import useGnosisTransaction from "hooks/useGnosisTransaction"
+import { useSigner }                      from "wagmi"
+import { minimalABI }                               from "../../../hooks/useERC20Contract"
+import {getLiquidityPairInfo, readableTokenBalance} from './helpers'
+import TokenInput                                   from "./TokenInput"
+import useGnosisTransaction               from "hooks/useGnosisTransaction"
 
 const Swap = ({ token }) => {
   const [{ data: signer }] = useSigner()
   const queryClient = useQueryClient()
+  const token0InputRef = React.useRef()
+  const token1InputRef = React.useRef()
   const bbyDao = queryClient.getQueryData("expandedDao")
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const [hasAllowance, setHasAllowance] = React.useState()
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
-  const { state, handleChange } = useForm()
+  const { state, setState, handleChange } = useForm()
   const defaultTokenList = defaultTokens?.["tokens"]
   const isEth = React.useMemo(() => {
     if (parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null) {
@@ -27,29 +30,31 @@ const Swap = ({ token }) => {
         ...token,
         token: {
           decimals: 18,
-          logoUri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
+          logoURI: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
           name: "Ether",
           symbol: "ETH",
         },
         address: WETH,
+        tokenAddress: ''
       }
     }
-    return { ...token, address: token?.tokenAddress }
+
+    return { ...token, address: token?.tokenAddress, logoURI: token?.token?.logoUri }
   }, [token])
   const [tokens, setTokens] = React.useState({
     token0: flatten(isEth),
     token1: undefined,
   })
 
-  const tokenNames = React.useMemo(() => {
+  const tokenSymbols = React.useMemo(() => {
     return defaultTokenList?.reduce((acc = [], cv) => {
       acc.push(cv.symbol)
       return acc
     }, [])
   }, [defaultTokenList])
 
-  const tokensBySymbol = React.useMemo(() => {
-    return tokenNames.reduce((acc = [], cv) => {
+  const filteredTokensBySymbol = React.useMemo(() => {
+    return tokenSymbols.reduce((acc = [], cv) => {
       if (cv?.toUpperCase().includes(state?.symbol?.toUpperCase()) && !acc?.includes(cv?.toUpperCase())) {
         acc.push(cv?.toUpperCase())
       }
@@ -81,7 +86,7 @@ const Swap = ({ token }) => {
     setTokens({ token0: tokens.token1, token1: tokens.token0 })
   }, [tokens])
 
-  const uniPair = React.useMemo(() => {
+  const uniswapTokens = React.useMemo(() => {
     if (!!tokens?.token0 && !!tokens?.token1) {
       const token0 = tokens?.token0
       const token1 = tokens?.token1
@@ -91,6 +96,15 @@ const Swap = ({ token }) => {
     }
   }, [tokens])
 
+  const uniPair = React.useMemo(async () => {
+    if (!!uniswapTokens) {
+      const uniPair = await Fetcher.fetchPairData(
+          uniswapTokens[tokens.token0.symbol],
+          uniswapTokens[tokens.token1.symbol]
+      )
+      return uniPair
+    }
+  }, [uniswapTokens])
   /*
    *
    * Allowance Check:
@@ -167,29 +181,117 @@ const Swap = ({ token }) => {
     }
   }
 
+
+  /* Handle setting token values and retrieving liquidity pair information  */
+  const handleSetTokenValue = async (e, token, tokenRef) => {
+    try {
+      const bal = token?.balance
+      const dec = token?.token?.decimals
+      const max = bal / 10 ** dec
+      const token0 = Object.entries(uniswapTokens).filter(item => item[0] === token.token.symbol)[0][1]
+      const token0Input = e?.target?.valueAsNumber
+      const route = new Route([pair], uniswapTokens[token.token.symbol])
+      const midPrice = route.midPrice.toSignificant(6)
+      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.token.symbol)[0][1]
+      const token1Input = Number(token0Input * midPrice)
+      const pairToken = tokens?.token0.symbol === token.token.symbol ? tokens?.token1 : tokens?.token0
+
+      /*  If User attempts to LP more than balance, default to max balance */
+      if (token0Input > max) {
+        handleSetMaxTokenValue(token, tokenRef)
+      } else {
+        setState(state => ({ ...state, [token.token.symbol]: token0Input }))
+        setState(state => ({ ...state, [token1?.symbol]: token1Input }))
+
+        if (!isNaN(token0Input) && !isNaN(token1Input) && token0Input > 0 && token1Input > 0) {
+          // const liquidityInfo = await getLiquidityPairInfo({
+          //   pair: pair,
+          //   token0: token0,
+          //   token0Input: token0Input,
+          //   token0ETHConversion: token.ethValue || 0,
+          //   token1: token1,
+          //   token1Input: token1Input,
+          //   token1ETHConversion: pairToken.ethValue || 0,
+          //   abi: IUniswapV2ERC20.abi,
+          // })
+          // setLiquidityInfo(liquidityInfo)
+        }
+      }
+    } catch (err) {
+      console.log("err", err)
+    }
+  }
+
+  /* Handle setting max token values and retrieving liquidity pair information  */
+  const handleSetMaxTokenValue = async (token, tokenRef) => {
+    try {
+      const token0 = uniswapTokens[token.symbol]
+      const token0Input = tokenRef?.current?.max
+      const pairToken = tokens?.token0.symbol === token.symbol ? tokens?.token1 : tokens?.token0
+
+      const route = new Route([await uniPair], uniswapTokens[token.symbol])
+      const midPrice = route.midPrice.toSignificant(6)
+      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
+      const token1Input = token0Input * midPrice
+
+      if (parseInt(token?.fiatBalance) > parseInt(pairToken?.fiatBalance)) {
+        setState(state => ({ ...state, [token.symbol]: 0 }))
+        setState(state => ({ ...state, [token1.symbol]: 0 }))
+      } else {
+        setState(state => ({ ...state, [token.symbol]: token0Input }))
+        setState(state => ({ ...state, [token1.symbol]: token1Input }))
+
+        // const liquidityInfo = await getLiquidityPairInfo({
+        //   pair: pair,
+        //   token0: token0,
+        //   token0Input: token0Input,
+        //   token0ETHConversion: token.ethValue || 0,
+        //   token1: token1,
+        //   token1Input: token1Input,
+        //   token1ETHConversion: pairToken.ethValue || 0,
+        //   abi: IUniswapV2ERC20.abi,
+        // })
+        // setLiquidityInfo(liquidityInfo)
+      }
+    } catch (err) {
+      console.log("err", err)
+    }
+  }
+
   return (
     <div>
       <form>
-        <div>
-          {console.log("tokens", tokens)}
-          {console.log("uni", uniPair)}
-          {console.log("contracts", tokenContracts)}
-          {console.log("has", hasAllowance)}
-        </div>
+        <div>{console.log("tokens", tokens)}</div>
+
         {tokens?.token0 && (
-          <div>
-            <div> {tokens.token0?.symbol}</div>
-          </div>
+            <TokenInput
+                pair={uniPair}
+                token1InputRef={token0InputRef}
+                lpToken={tokens?.token0}
+                handleSetTokenValue={handleSetTokenValue}
+                handleSetMaxTokenValue={handleSetMaxTokenValue}
+                readableTokenBalance={readableTokenBalance}
+                state={state}
+                logo={tokens?.token0?.logoURI}
+            />
+
         )}
         {tokens?.token0 && tokens?.token1 && (
-          <button type="button" onClick={() => switchTokenPlacement()}>
-            <HiOutlineSwitchVertical size={20} />
+          <button type="button" onClick={() => switchTokenPlacement()} className="flex m-auto my-4">
+            <HiOutlineSwitchVertical size={26} />
           </button>
         )}
         {tokens?.token1 && (
-          <div>
-            <div>{tokens.token1?.symbol}</div>
-          </div>
+            <TokenInput
+                pair={uniPair}
+                token1InputRef={token1InputRef}
+                lpToken={tokens?.token1}
+                handleSetTokenValue={handleSetTokenValue}
+                handleSetMaxTokenValue={handleSetMaxTokenValue}
+                readableTokenBalance={readableTokenBalance}
+                state={state}
+                logo={tokens?.token1?.logoURI}
+            />
         )}
         <input
           id="symbol"
@@ -200,9 +302,10 @@ const Swap = ({ token }) => {
           placeholder={"Type to search"}
         />
         <div>
-          {tokensBySymbol && tokensBySymbol?.length > 0 && (
+          {console.log('fiol', filteredTokensBySymbol)}
+          {filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
             <div className="flex max-h-96 flex-col overflow-y-scroll pt-4">
-              {tokensBySymbol.map(token => (
+              {filteredTokensBySymbol.map(token => (
                 <button
                   key={token}
                   type="button"
