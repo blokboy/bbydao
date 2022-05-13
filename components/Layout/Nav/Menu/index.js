@@ -8,10 +8,9 @@ import MintLink from "./MintLink"
 import MenuThemeToggle from "./MenuThemeToggle"
 import MessagesLink from "./MessagesLink"
 import ExploreLink from "./ExploreLink"
-import FeedLink from "./FeedLink"
 import AboutLink from "./AboutLink"
 import NotificationsLink from "./NotificationsLink"
-import useNotifications from "../../../../hooks/useNotifications"
+import useNotifications from "hooks/useNotifications"
 
 const Menu = ({ address }) => {
   const [menuOpen, setMenuOpen] = React.useState(false)
@@ -46,11 +45,9 @@ const Menu = ({ address }) => {
               <MintLink />
               <MessagesLink />
               <NotificationsLink notifications={notifications} />
-              <FeedLink />
+              <ExploreLink />
             </>
-          ) : (
-            <ExploreLink />
-          )}
+          ) : null}
           <AboutLink />
           <MenuThemeToggle />
         </ul>
