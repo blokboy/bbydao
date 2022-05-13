@@ -11,6 +11,7 @@ import { minimalABI } from "../../../hooks/useERC20Contract"
 import { getLiquidityPairInfo, readableTokenBalance } from "./helpers"
 import TokenInput from "./TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
+import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 
 const Swap = ({ token }) => {
   const [{ data: signer }] = useSigner()
@@ -25,6 +26,7 @@ const Swap = ({ token }) => {
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { state, setState, handleChange } = useForm()
   const defaultTokenList = defaultTokens?.["tokens"]
+  const slippage = 0.055
   const isEth = React.useMemo(() => {
     if (parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null) {
       return {
@@ -257,19 +259,38 @@ const Swap = ({ token }) => {
   }
 
   const handleSwapToken = (token0, token1) => {
+    const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
+
     const inputToken = {
       token: tokens.token0,
-      value: parseFloat(token0.toString())
+      value: parseFloat(token0.toString()),
     }
     const outputToken = {
       token: tokens.token1,
-      value: parseFloat(token1.toString())
+      value: parseFloat(token1.toString()) * slippage,
     }
 
-    console.log('input', inputToken)
-    console.log('output', outputToken)
+    if (inputToken.token.address !== WETH && outputToken.token.address !== WETH) {
+      gnosisTransaction(
+        {
+          abi: IUniswapV2Router02["abi"],
+          instance: uniswapV2RouterContract02,
+          fn: "swapExactTokensForTokens(uint256,uint256,address[],address,uint256)",
+          args: {
+            amountIn: ethers.utils.parseUnits(inputToken.value.toString()),
+            amountOutMin: ethers.utils.parseUnits(outputToken.value.toString()),
+            addresses: [ ethers.utils.getAddress(inputToken.token.address),  ethers.utils.getAddress(outputToken.token.address)],
+            addressTo: ethers.utils.getAddress(bbyDao),
+            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+          },
+        },
+        UniswapV2Router02,
+        0
+      )
+    }
 
-
+    console.log("input", inputToken)
+    console.log("output", outputToken)
   }
 
   return (
@@ -360,7 +381,7 @@ const Swap = ({ token }) => {
           </div>
         )}
       </div>
-      {console.log('STATE', state, state[tokens?.token0?.symbol], state[tokens?.token1?.symbol])}
+      {console.log("STATE", state, state[tokens?.token0?.symbol], state[tokens?.token1?.symbol])}
     </div>
   )
 }
