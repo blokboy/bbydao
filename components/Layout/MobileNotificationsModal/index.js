@@ -7,7 +7,7 @@ import { useUiStore } from "stores/useUiStore"
 import useNotifications from "hooks/useNotifications"
 
 export default function MobileNotificationsModal() {
-  const [{ data: account }] = useAccount()
+  const { data: account } = useAccount()
 
   const notifications = useNotifications(account?.address)
   const isOpen = useUiStore(state => state.mobileNotificationsOpen)

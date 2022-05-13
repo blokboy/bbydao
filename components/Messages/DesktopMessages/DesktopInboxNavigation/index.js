@@ -10,7 +10,7 @@ import DesktopInboxCard from "./DesktopInboxCard"
 import DesktopMainInboxCard from "./DesktopMainInboxCard"
 
 export default function DesktopInboxNavigation() {
-  const [{ data, error, loading }, disconnect] = useAccount()
+  const { data, error, loading, disconnect } = useAccount()
   const setCreateThreadModalOpen = useUiStore(
     state => state.setCreateThreadModalOpen
   )

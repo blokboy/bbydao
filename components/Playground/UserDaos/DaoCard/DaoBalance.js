@@ -2,7 +2,7 @@ import React from "react"
 import { useBalance } from "wagmi"
 
 const DaoBalance = ({ safe }) => {
-  const [{ data, error, loading }, getBalance] = useBalance({
+  const { data, error, loading, getBalance } = useBalance({
     addressOrName: safe,
   })
 

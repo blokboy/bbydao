@@ -421,10 +421,8 @@ const Mint = ({ children }) => {
   const { theme, setTheme } = useTheme()
   const [count, setCount] = useState(1)
 
-  const [{ data, error }, connect] = useConnect()
-  const [{ data: accountData }, disconnect] = useAccount({
-    fetchEns: true,
-  })
+  const { data, error, connect} = useConnect()
+  const { data: accountData, disconnect} = useAccount()
 
   const mintErrorModal = useLayoutStore(state => state.mintErrorModal)
   const setMintErrorModal = useLayoutStore(state => state.setMintErrorModal)

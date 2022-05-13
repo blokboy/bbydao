@@ -8,7 +8,7 @@ import { FaEthereum } from "react-icons/fa"
 
 const ConnectButton = () => {
   const [isDropdownOpen, setDropdownOpen] = React.useState(false)
-  const [{ data, error }, connect] = useConnect()
+  const { data, error, connect } = useConnect()
 
   const handleClickAway = React.useCallback(() => {
     if (isDropdownOpen) {

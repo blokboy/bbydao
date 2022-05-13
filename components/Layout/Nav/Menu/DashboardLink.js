@@ -4,7 +4,7 @@ import { BsPersonCircle } from "react-icons/bs"
 import { useAccount } from "wagmi"
 
 const DashboardLink = () => {
-  const [{ data, error, loading }, disconnect] = useAccount()
+  const { data, error, loading, disconnect } = useAccount()
 
   return (
     <li className="w-full">

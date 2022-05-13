@@ -17,7 +17,7 @@ const OfferModal = () => {
   const setOsAssetInfo = useCollectionStore(state => state.setOsAssetInfo)
   const [txWaiting, setTxWaiting] = React.useState(false)
 
-  const [{ data, error, loading }, disconnect] = useAccount()
+  const { data, error, loading, disconnect } = useAccount()
 
   const {
     data: storedTxData,

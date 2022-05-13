@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import { useSigner } from "wagmi"
 
 export default function useSafeSdk(safeAddress) {
-  const [{ data: signer, loading }] = useSigner()
+  const { data: signer, loading } = useSigner()
   const [sdkInstance, setSdkInstance] = useState(null)
 
   const handleSdkInstance = React.useCallback(async () => {

@@ -1,6 +1,6 @@
-import React, { useMemo }           from "react"
-import {useMutation, useQuery}      from "react-query"
-import { useAccount, useEnsLookup } from "wagmi"
+import React, { useMemo } from "react"
+import { useMutation, useQuery } from "react-query"
+import { useAccount, useEnsName } from "wagmi"
 import * as api from "query"
 import Feed from "./Feed"
 import UserDaos from "./UserDaos"
@@ -10,8 +10,8 @@ const Playground = ({ address, data }) => {
   // data is the res from querying gnosis for the user's daos
   // address is the address of the profile being viewed
   // data: userData is the data of the signed-in user
-  const [{ data: userData, error: userErr, loading: userLoading }] = useAccount()
-  const [{ data: ensData, error: ensError, loading: ensLoading }] = useEnsLookup({ address: address })
+  const { data: userData, error: userErr, loading: userLoading } = useAccount()
+  const { data: ensData, isError: ensError, isloading: ensLoading } = useEnsName({ address: address })
 
   // getUser sends a POST req to our api with the address of the profile being viewed
   // if that address does not exist in our backend, it creates a new user record
@@ -41,7 +41,6 @@ const Playground = ({ address, data }) => {
       },
     })
   }, [ensLoading])
-
 
   /*  Set currently viewed profile in React Query cache -- accessible with queryKey "targetAddress" */
   useQuery("targetAddress", () => api.getUser({ address }), {

@@ -7,10 +7,11 @@ import { ReactQueryDevtools } from "react-query/devtools"
 import { ThemeProvider } from "next-themes"
 import Layout from "../components/Layout"
 import Loading from "../components/Layout/Loading"
-import { Provider, chain, defaultChains } from "wagmi"
-import { InjectedConnector } from "wagmi/connectors/injected"
-import { WalletConnectConnector } from "wagmi/connectors/walletConnect"
-import { WalletLinkConnector } from "wagmi/connectors/walletLink"
+
+import { Provider, chain, defaultChains, createWagmiClient } from 'wagmi'
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
 function MyApp({ Component, pageProps, ...appProps }) {
   const [queryClient] = React.useState(() => new QueryClient())
@@ -20,28 +21,57 @@ function MyApp({ Component, pageProps, ...appProps }) {
 
   // Chains for connectors to support
   const chains = defaultChains
+  const defaultChain = chain.mainnet
 
   // Set up connectors
-  const connectors = ({ chainId }) => {
-    const rpcUrl =
-      chains.find(x => x.id === chainId)?.rpcUrls?.[0] ??
-      chain.mainnet.rpcUrls[0]
-    return [
-      new InjectedConnector({ chains }),
-      new WalletConnectConnector({
-        options: {
-          infuraId,
-          qrcode: true,
-        },
-      }),
-      new WalletLinkConnector({
-        options: {
-          appName: "baby dao",
-          jsonRpcUrl: `${rpcUrl}/${infuraId}`,
-        },
-      }),
-    ]
-  }
+  // const connectors = ({ chainId }) => {
+  //   const rpcUrl =
+  //     chains.find(x => x.id === chainId)?.rpcUrls?.[0] ??
+  //     chain.mainnet.rpcUrls[0]
+  //   return [
+  //     new InjectedConnector({ chains }),
+  //     new WalletConnectConnector({
+  //       options: {
+  //         infuraId,
+  //         qrcode: true,
+  //       },
+  //     }),
+  //     new WalletLinkConnector({
+  //       options: {
+  //         appName: "baby dao",
+  //         jsonRpcUrl: `${rpcUrl}/${infuraId}`,
+  //       },
+  //     }),
+  //   ]
+  // }
+
+  const wagmiClient = createWagmiClient({
+    autoConnect: true,
+    connectors({ chainId }) {
+      const chain = chains.find((x) => x.id === chainId) ?? defaultChain
+      const rpcUrl = chain.rpcUrls.infura
+        ? `${chain.rpcUrls.infura}/${infuraId}`
+        : chain.rpcUrls.default
+      return [
+        new InjectedConnector(),
+        new CoinbaseWalletConnector({
+          options: {
+            appName: 'wagmi',
+            chainId: chain.id,
+            jsonRpcUrl: rpcUrl,
+          },
+        }),
+        new WalletConnectConnector({
+          options: {
+            qrcode: true,
+            rpc: {
+              [chain.id]: rpcUrl,
+            },
+          },
+        }),
+      ]
+    },
+  })
 
   const [loading, setLoading] = React.useState(false)
 
@@ -55,7 +85,7 @@ function MyApp({ Component, pageProps, ...appProps }) {
 
   return (
     <ThemeProvider attribute="class">
-      <Provider autoConnect connectors={connectors}>
+      <Provider autoConnect client={wagmiClient}>
         <QueryClientProvider client={queryClient}>
           <Layout>
             {loading ? (

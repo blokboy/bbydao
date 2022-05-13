@@ -4,10 +4,8 @@ import Explore from "components/Explore"
 import { useConnect, useAccount } from "wagmi"
 
 const Home = () => {
-  const [{ data, error }, connect] = useConnect()
-  const [{ data: accountData }, disconnect] = useAccount({
-    fetchEns: true,
-  })
+  const { data, error, connect } = useConnect()
+  const { data: accountData, disconnect } = useAccount()
 
   const [mounted, setMounted] = React.useState(false)
 

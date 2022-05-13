@@ -8,8 +8,8 @@ const ConnectModal = () => {
   const router = useRouter()
   const {pathname} = router
   const isLanding = pathname === '/'
-  const [{ data, error }, connect] = useConnect()
-  const [{ data: accountData }, disconnect] = useAccount({
+  const { connect, connectors, error, isConnecting, pendingConnector } = useConnect()
+  const { data: accountData , disconnect } = useAccount({
     fetchEns: true,
   })
 
@@ -28,21 +28,23 @@ const ConnectModal = () => {
       <div className="flex w-full flex-col items-center justify-center">
         <h1 className="mb-3 text-3xl sm:text-5xl">Welcome to babydao</h1>
         <p className="mb-3">Get started by connecting your wallet </p>
-        {data.connectors.map(connector =>
+        {connectors.map(connector =>
           connector.ready ? (
             <button
               className="mb-4 w-3/4 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow hover:bg-gradient-to-l"
               key={connector.id}
-              onClick={async () => {
-                const connected = await connect(connector)
-                if(connected?.data?.account.length > 0 && isLanding) {
-                    router.push(`/playground/${connected?.data.account}`)
-                }
-              }}
+              // onClick={async () => {
+              //   const connected = await connect(connector)
+              //   if(connected?.data?.account.length > 0 && isLanding) {
+              //       router.push(`/playground/${connected?.data.account}`)
+              //   }
+              // }}
+              onClick={() => connect(connector)}
             >
               <span className="block rounded-full bg-slate-200 px-8 py-3 font-medium text-black hover:bg-opacity-50 dark:bg-slate-900 dark:text-white dark:hover:bg-opacity-75">
                 {connector.name}
                 {!connector.ready && " (unsupported)"}
+                {isConnecting && connector.id === pendingConnector?.id && " (connecting)"}
               </span>
             </button>
           ) : (
@@ -52,6 +54,7 @@ const ConnectModal = () => {
             >
               {connector.name}
               {!connector.ready && " (unsupported)"}
+              {isConnecting && connector.id === pendingConnector?.id && " (connecting)"}
             </button>
           )
         )}
@@ -59,9 +62,9 @@ const ConnectModal = () => {
         {error && <div>{error?.message ?? "Failed to connect"}</div>}
       </div>
     )
-  }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
+  }, []) /* eslint-disable-line react-hooks/exhaustive-deps */
 
-  if (!connectModalOpen || accountData) return <></>
+  if (!connectModalOpen) return <></>
 
   return (
     <div

@@ -21,7 +21,7 @@ const Input = ({ name }) => {
 }
 
 const DaoForm = () => {
-  const [{ data: signer }] = useSigner()
+  const { data: signer } = useSigner()
   const address = React.useMemo(() => {
     if (!signer) {
       return null

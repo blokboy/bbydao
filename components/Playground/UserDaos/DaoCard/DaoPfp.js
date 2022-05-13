@@ -6,10 +6,10 @@ import { useRouter } from "next/router"
 import { useMutation, useQueryClient } from "react-query"
 
 import * as api from "query"
-import useCollectibles from "../../../../hooks/useCollectibles"
+import useCollectibles from "hooks/useCollectibles"
 
 const DaoPfp = ({ address, imgUri, members, daoId }) => {
-  const [{ data: account }] = useAccount()
+  const { data: account } = useAccount()
   const router = useRouter()
 
   const [{ data: collectibles }, getCollectibles] = useCollectibles(address, { skip: true })

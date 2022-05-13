@@ -12,7 +12,7 @@ import useSafeSdk    from "./useSafeSdk"
 
 export default function useGnosisTransaction(safeAddress) {
   const safeSdk = useSafeSdk(safeAddress)
-  const [{ data: signer }] = useSigner()
+  const { data: signer } = useSigner()
   const bbyDaoSafe = React.useMemo(() => {
     return safeAddress && signer ? new ethers.Contract(safeAddress, GnosisSafeSol.abi, signer) : null
   }, [signer, safeAddress])

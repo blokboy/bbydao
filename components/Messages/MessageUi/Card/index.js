@@ -5,7 +5,7 @@ import React, { useState }     from "react"
 import { isMobile }            from "react-device-detect"
 import { useMutation }         from "react-query"
 import { walletSnippet }       from "utils/helpers"
-import { useAccount, useEnsLookup }          from "wagmi"
+import { useAccount, useEnsName }          from "wagmi"
 import EmojiButton             from "./EmojiButton"
 import MobileEmojiPickerButton from "./MobileEmojiPickerButton"
 import ReactionBar             from "./ReactionBar"
@@ -16,8 +16,8 @@ const MessageCard = ({ message }) => {
   const [isPickerActive, setIsPickerActive] = useState(false)
   const [reactions, setReactions] = useState(message.reactions)
   const { theme } = useTheme()
-  const [{ data: accountData }] = useAccount()
-  const [{ data: ensData, error: ensError, loading: ensLoading }, lookupAddress] = useEnsLookup({
+  const { data: accountData } = useAccount()
+  const { data: ensData, isError: ensError, isLoading: ensLoading } = useEnsName({
     address: message?.sender,
   })
 

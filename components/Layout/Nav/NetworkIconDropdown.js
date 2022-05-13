@@ -6,17 +6,17 @@ import Networks from "./Networks"
 import NetworkDropdown from "./NetworkDropdown"
 
 export default function NetworkIconDropdown() {
-  const [{ data }] = useNetwork()
+  const { activeChain } = useNetwork()
   const [isDropdownOpen, setDropdownOpen] = React.useState(false)
 
   const network = React.useMemo(() => {
-    if (!data) {
+    if (!activeChain) {
       return null
     }
 
-    const match = Networks.find(network => network.id === data.chain.id)
+    const match = Networks.find(network => network.id === activeChain?.id)
     return match || null
-  }, [data])
+  }, [activeChain])
 
   const handleClickAway = React.useCallback(() => {
     if (isDropdownOpen) {
