@@ -31,7 +31,7 @@ const TokenInput = ({
           step={0.000001}
           placeholder="0.0"
           required
-          max={token?.balance / 10 ** token?.decimals}
+          max={token?.balance / 10 ** token?.decimals || ''}
           ref={tokenInputRef}
           disabled={!pair || !token}
           autoComplete="off"
@@ -51,7 +51,7 @@ const TokenInput = ({
         <div className="text-sm text-slate-600">Balance:</div>
         <div className="text-sm text-slate-600">{readableTokenBalance(token)}</div>
 
-        {parseInt(token?.fiatBalance) > 0 && (
+        {parseFloat(token?.fiatBalance) > 0 && (
           <div
             className={`flex cursor-pointer justify-end rounded-lg bg-[#eda67e24] py-0.5 px-2 text-[.8rem] text-[#FC8D4D] hover:bg-[#f98c4e57] ${
               !pair ? "pointer-events-none" : ""

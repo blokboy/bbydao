@@ -7,8 +7,8 @@ const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 const CALL = 0
 
 import { useSigner } from "wagmi"
-import { amount } from "../components/Dao/UniswapLpModal/helpers"
-import useSafeSdk from "./useSafeSdk"
+import { amount }    from "../components/Dao/Uniswap/helpers"
+import useSafeSdk    from "./useSafeSdk"
 
 export default function useGnosisTransaction(safeAddress) {
   const safeSdk = useSafeSdk(safeAddress)

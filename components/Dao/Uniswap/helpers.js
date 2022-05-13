@@ -10,7 +10,7 @@ export const amount = (amount, decimals) => Math.round(amount * 10 ** (decimals 
 
 /* Human Readable Token Balance  */
 export const readableTokenBalance = token => {
-  if (parseInt(token?.fiatBalance) === 0) return 0
+  if (parseFloat(token?.fiatBalance) === 0) return 0
 
   //change this flatten in LP
   return Number((token?.balance / 10 ** (token?.decimals || token?.token?.decimals)).toString().match(/^\d+(?:\.\d{0,3})?/))

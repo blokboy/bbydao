@@ -185,7 +185,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token?.symbol)[0][1]
       const token1Input = token0Input * midPrice
 
-      if (parseInt(token?.fiatBalance) > parseInt(pairToken?.fiatBalance)) {
+      if (parseFloat(token?.fiatBalance) > parseFloat(pairToken?.fiatBalance)) {
         setMaxError(`Insufficient ${pairToken?.symbol} balance`)
         setState(state => ({ ...state, [token?.symbol]: 0 }))
         setState(state => ({ ...state, [token1.symbol]: 0 }))

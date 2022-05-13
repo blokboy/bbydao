@@ -2,10 +2,10 @@ import { ethers } from "ethers"
 import React, { useEffect } from "react"
 import { FaEthereum } from "react-icons/fa"
 import { useDaoStore } from "stores/useDaoStore"
-import { isEmpty } from "utils/helpers"
-import RemoveLiquidity from "components/Dao/UniswapLpModal/RemoveLiquidity"
-import Modal from "components/Layout/Modal"
-import Swap from "components/Dao/UniswapLpModal/Swap"
+import { isEmpty }     from "utils/helpers"
+import RemoveLiquidity from "components/Dao/Uniswap/RemoveLiquidity"
+import Modal           from "components/Layout/Modal"
+import Swap            from "components/Dao/Uniswap/Swap"
 
 const TokenCard = ({ token }) => {
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
@@ -84,7 +84,7 @@ const TokenCard = ({ token }) => {
         </div>
       </div>
 
-      {parseInt(token?.fiatBalance) !== 0 && (
+      {parseFloat(token?.fiatBalance) !== 0 && (
         <>
           {(!isUniV2 && (
             <div className="flex flex-row space-x-2 p-1 xl:justify-center">

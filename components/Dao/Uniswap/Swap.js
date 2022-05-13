@@ -256,6 +256,22 @@ const Swap = ({ token }) => {
     }
   }
 
+  const handleSwapToken = (token0, token1) => {
+    const inputToken = {
+      token: tokens.token0,
+      value: parseFloat(token0.toString())
+    }
+    const outputToken = {
+      token: tokens.token1,
+      value: parseFloat(token1.toString())
+    }
+
+    console.log('input', inputToken)
+    console.log('output', outputToken)
+
+
+  }
+
   return (
     <div>
       <form>
@@ -335,15 +351,16 @@ const Swap = ({ token }) => {
           </div>
         )}
         {/*Only need allowance for input token*/}
-        {/*{!hasAllowance?.token1 && tokens?.token0 && tokens?.token1 && (*/}
-        {/*  <div*/}
-        {/*    className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"*/}
-        {/*    onClick={() => handleApproveToken(tokenContracts, 1)}*/}
-        {/*  >*/}
-        {/*    Approve {tokens?.token1?.symbol}*/}
-        {/*  </div>*/}
-        {/*)}*/}
+        {!!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
+          <div
+            className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+            onClick={() => handleSwapToken(state[tokens?.token0?.symbol], state[tokens?.token1?.symbol])}
+          >
+            Swap {tokens?.token0?.symbol} for {tokens?.token1?.symbol}
+          </div>
+        )}
       </div>
+      {console.log('STATE', state, state[tokens?.token0?.symbol], state[tokens?.token1?.symbol])}
     </div>
   )
 }
