@@ -18,8 +18,6 @@ const TokenInput = ({
     }
   }, [lpToken])
 
-  console.log("token", token)
-
   return (
     <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
       <div className="flex flex-row">
@@ -35,7 +33,7 @@ const TokenInput = ({
           required
           max={token?.balance / 10 ** token?.decimals}
           ref={tokenInputRef}
-          disabled={!pair}
+          disabled={!pair || !token}
           autoComplete="off"
         />
         <button
@@ -52,14 +50,17 @@ const TokenInput = ({
       <div className="flex w-full flex-row items-end justify-end space-x-2 font-light">
         <div className="text-sm text-slate-600">Balance:</div>
         <div className="text-sm text-slate-600">{readableTokenBalance(token)}</div>
-        <div
-          className={`flex cursor-pointer justify-end rounded-lg bg-[#eda67e24] py-0.5 px-2 text-[.8rem] text-[#FC8D4D] hover:bg-[#f98c4e57] ${
-            !pair ? "pointer-events-none" : ""
-          }`}
-          onClick={() => handleSetMaxTokenValue(token, tokenInputRef)}
-        >
-          MAX
-        </div>
+
+        {parseInt(token?.fiatBalance) > 0 && (
+          <div
+            className={`flex cursor-pointer justify-end rounded-lg bg-[#eda67e24] py-0.5 px-2 text-[.8rem] text-[#FC8D4D] hover:bg-[#f98c4e57] ${
+              !pair ? "pointer-events-none" : ""
+            }`}
+            onClick={!!pair ? () => handleSetMaxTokenValue(token, tokenInputRef) : () => {}}
+          >
+            MAX
+          </div>
+        )}
       </div>
     </div>
   )

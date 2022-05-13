@@ -188,21 +188,21 @@ const Swap = ({ token }) => {
   const handleSetTokenValue = async (e, token, tokenRef) => {
     try {
       const bal = token?.balance
-      const dec = token?.token?.decimals
+      const dec = token?.decimals
       const max = bal / 10 ** dec
-      const token0 = Object.entries(uniswapTokens).filter(item => item[0] === token.token.symbol)[0][1]
+      const token0 = Object.entries(uniswapTokens).filter(item => item[0] === token.symbol)[0][1]
       const token0Input = e?.target?.valueAsNumber
-      const route = new Route([pair], uniswapTokens[token.token.symbol])
+      const route = new Route([await uniPair], uniswapTokens[token.symbol])
       const midPrice = route.midPrice.toSignificant(6)
-      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.token.symbol)[0][1]
+      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
       const token1Input = Number(token0Input * midPrice)
-      const pairToken = tokens?.token0.symbol === token.token.symbol ? tokens?.token1 : tokens?.token0
+      const pairToken = tokens?.token0.symbol === token.symbol ? tokens?.token1 : tokens?.token0
 
       /*  If User attempts to LP more than balance, default to max balance */
       if (token0Input > max) {
         handleSetMaxTokenValue(token, tokenRef)
       } else {
-        setState(state => ({ ...state, [token.token.symbol]: token0Input }))
+        setState(state => ({ ...state, [token.symbol]: token0Input }))
         setState(state => ({ ...state, [token1?.symbol]: token1Input }))
 
         if (!isNaN(token0Input) && !isNaN(token1Input) && token0Input > 0 && token1Input > 0) {
@@ -226,6 +226,7 @@ const Swap = ({ token }) => {
 
   /* Handle setting max token values and retrieving liquidity pair information  */
   const handleSetMaxTokenValue = async (token, tokenRef) => {
+    console.log("in", uniswapTokens)
     try {
       const token0 = uniswapTokens[token.symbol]
       const token0Input = tokenRef?.current?.max
@@ -236,25 +237,20 @@ const Swap = ({ token }) => {
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
       const token1Input = token0Input * midPrice
 
-      if (parseInt(token?.fiatBalance) > parseInt(pairToken?.fiatBalance)) {
-        setState(state => ({ ...state, [token.symbol]: 0 }))
-        setState(state => ({ ...state, [token1.symbol]: 0 }))
-      } else {
-        setState(state => ({ ...state, [token.symbol]: token0Input }))
-        setState(state => ({ ...state, [token1.symbol]: token1Input }))
+      setState(state => ({ ...state, [token?.symbol]: token0Input }))
+      setState(state => ({ ...state, [token1.symbol]: token1Input }))
 
-        // const liquidityInfo = await getLiquidityPairInfo({
-        //   pair: pair,
-        //   token0: token0,
-        //   token0Input: token0Input,
-        //   token0ETHConversion: token.ethValue || 0,
-        //   token1: token1,
-        //   token1Input: token1Input,
-        //   token1ETHConversion: pairToken.ethValue || 0,
-        //   abi: IUniswapV2ERC20.abi,
-        // })
-        // setLiquidityInfo(liquidityInfo)
-      }
+      // const liquidityInfo = await getLiquidityPairInfo({
+      //   pair: pair,
+      //   token0: token0,
+      //   token0Input: token0Input,
+      //   token0ETHConversion: token.ethValue || 0,
+      //   token1: token1,
+      //   token1Input: token1Input,
+      //   token1ETHConversion: pairToken.ethValue || 0,
+      //   abi: IUniswapV2ERC20.abi,
+      // })
+      // setLiquidityInfo(liquidityInfo)
     } catch (err) {
       console.log("err", err)
     }
@@ -263,12 +259,10 @@ const Swap = ({ token }) => {
   return (
     <div>
       <form>
-        <div>{console.log("tokens", tokens)}</div>
-
         {tokens?.token0 && (
           <TokenInput
             pair={uniPair}
-            token1InputRef={token0InputRef}
+            tokenInputRef={token0InputRef}
             lpToken={tokens?.token0}
             handleSetTokenValue={handleSetTokenValue}
             handleSetMaxTokenValue={handleSetMaxTokenValue}
@@ -288,7 +282,7 @@ const Swap = ({ token }) => {
         </button>
         <TokenInput
           pair={uniPair}
-          token1InputRef={token1InputRef}
+          tokenInputRef={token1InputRef}
           lpToken={tokens?.token1}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
@@ -307,11 +301,12 @@ const Swap = ({ token }) => {
             className="mt-8 h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-3xl leading-tight focus:outline-none dark:bg-slate-800"
             placeholder={"Type to search"}
             autoComplete="off"
+            autoFocus={true}
           />
         )}
 
         {openSearch && filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
-          <div className="flex mt-4 max-h-96 flex-wrap gap-1 overflow-y-scroll pt-4">
+          <div className="mt-4 flex max-h-96 flex-wrap gap-1 overflow-y-scroll pt-4">
             {filteredTokensBySymbol.map((token, i) => (
               <button
                 key={i}
@@ -331,7 +326,7 @@ const Swap = ({ token }) => {
         )}
       </form>
       <div className="my-4 flex w-full justify-center gap-4">
-        {!hasAllowance?.token0 && tokens?.token0 && tokens?.token1 && (
+        {hasAllowance?.token0 === false && tokens?.token0 && tokens?.token1 && (
           <div
             className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
             onClick={() => handleApproveToken(tokenContracts, 0)}
