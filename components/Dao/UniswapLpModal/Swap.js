@@ -17,6 +17,7 @@ const Swap = ({ token }) => {
   const queryClient = useQueryClient()
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()
+  const [openSearch, setOpenSearch] = React.useState(false)
   const bbyDao = queryClient.getQueryData("expandedDao")
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const [hasAllowance, setHasAllowance] = React.useState()
@@ -79,6 +80,7 @@ const Swap = ({ token }) => {
         fiatCode: "USD",
       }
       setTokens({ ...tokens, token1 })
+      setOpenSearch(false)
     },
     [tokens]
   )
@@ -274,56 +276,59 @@ const Swap = ({ token }) => {
             state={state}
             logo={tokens?.token0?.logoURI}
             autoComplete="off"
+            setOpenSearch={setOpenSearch}
           />
         )}
-        {tokens?.token0 && tokens?.token1 && (
-          <button type="button" onClick={() => switchTokenPlacement()} className="m-auto my-4 flex">
-            <HiOutlineSwitchVertical size={26} />
-          </button>
-        )}
-        {tokens?.token1 && (
-          <TokenInput
-            pair={uniPair}
-            token1InputRef={token1InputRef}
-            lpToken={tokens?.token1}
-            handleSetTokenValue={handleSetTokenValue}
-            handleSetMaxTokenValue={handleSetMaxTokenValue}
-            readableTokenBalance={readableTokenBalance}
-            state={state}
-            logo={tokens?.token1?.logoURI}
+        <button
+          type="button"
+          onClick={() => (tokens?.token0 && tokens?.token1 ? switchTokenPlacement() : () => {})}
+          className="m-auto my-4 flex"
+        >
+          <HiOutlineSwitchVertical size={26} />
+        </button>
+        <TokenInput
+          pair={uniPair}
+          token1InputRef={token1InputRef}
+          lpToken={tokens?.token1}
+          handleSetTokenValue={handleSetTokenValue}
+          handleSetMaxTokenValue={handleSetMaxTokenValue}
+          readableTokenBalance={readableTokenBalance}
+          state={state}
+          logo={tokens?.token1?.logoURI}
+          autoComplete="off"
+          setOpenSearch={setOpenSearch}
+        />
+        {openSearch && (
+          <input
+            id="symbol"
+            name="symbol"
+            onChange={handleChange}
+            value={state?.symbol || ""}
+            className="mt-8 h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-3xl leading-tight focus:outline-none dark:bg-slate-800"
+            placeholder={"Type to search"}
             autoComplete="off"
           />
         )}
-        <input
-          id="symbol"
-          name="symbol"
-          onChange={handleChange}
-          value={state?.symbol || ""}
-          className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-3xl leading-tight focus:outline-none dark:bg-slate-800"
-          placeholder={"Type to search"}
-          autoComplete="off"
-        />
-        <div>
-          {filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
-            <div className="flex max-h-96 flex flex-wrap gap-1 overflow-y-scroll pt-4">
-              {filteredTokensBySymbol.map((token, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => handlePickToken(token)}
-                  className="mb-2 inline-flex self-start rounded-full bg-slate-300 p-2 px-4 font-light dark:bg-slate-600 hover:dark:bg-slate-700"
-                >
-                  <div className="flex items-center justify-center">
-                    <div className="mr-2">{token?.symbol?.toUpperCase()}</div>
-                    <div className="flex h-6 w-6 overflow-hidden rounded-full">
-                      <img src={token?.uri} />
-                    </div>
+
+        {openSearch && filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
+          <div className="flex mt-4 max-h-96 flex-wrap gap-1 overflow-y-scroll pt-4">
+            {filteredTokensBySymbol.map((token, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => handlePickToken(token)}
+                className="mb-2 inline-flex self-start rounded-full bg-slate-300 p-2 px-4 font-light dark:bg-slate-600 hover:dark:bg-slate-700"
+              >
+                <div className="flex items-center justify-center">
+                  <div className="mr-2">{token?.symbol?.toUpperCase()}</div>
+                  <div className="flex h-6 w-6 overflow-hidden rounded-full">
+                    <img src={token?.uri} />
                   </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </form>
       <div className="my-4 flex w-full justify-center gap-4">
         {!hasAllowance?.token0 && tokens?.token0 && tokens?.token1 && (
