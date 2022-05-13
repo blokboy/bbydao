@@ -2,10 +2,11 @@ import React from "react"
 import { ethers, BigNumber } from "ethers"
 import { minimalABI } from "hooks/useERC20Contract"
 import { eToNumber, isEmpty, max256, NumberFromBig } from "utils/helpers"
-import { handleGnosisTransaction } from "./helpers"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
+import useGnosisTransaction from "hooks/useGnosisTransaction"
 
 const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, safeAddress }) => {
+  const { gnosisTransaction } = useGnosisTransaction(safeAddress)
   const token0 = info?.transactionInfo?.[0].token
   const token1 = info?.transactionInfo?.[1].token
   const prettyPercentage = decimal => (decimal * 100 < 0.01 ? "< .01%" : `${(decimal * 100).toFixed(2)}%`)
@@ -17,6 +18,7 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
     }, "")
     .slice(0, -1)
 
+
   /*
    * Approve Tokens:
    *
@@ -25,24 +27,25 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
    *
    * */
   const handleApproveToken = async (tokenContracts, index) => {
-    const contracts = await tokenContracts
-    const contract = await contracts.contracts[index]
-
-    handleGnosisTransaction({
-      contract: {
-        abi: minimalABI,
-        instance: contract,
-        fn: "approve(address,uint256)",
-        args: {
-          spender,
-          value: BigNumber.from(max256),
+    try {
+      const contracts = await tokenContracts
+      const contract = await contracts.contracts[index]
+      gnosisTransaction(
+        {
+          abi: minimalABI,
+          instance: contract,
+          fn: "approve(address,uint256)",
+          args: {
+            spender,
+            value: BigNumber.from(max256),
+          },
         },
-      },
-      signer,
-      safeAddress,
-      to: contract?.address,
-      value: 0,
-    })
+        contract?.address,
+        0
+      )
+    } catch (err) {
+      console.log("err", err)
+    }
   }
 
   /*
@@ -54,24 +57,25 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
    * */
 
   const handleApprovePair = async pairContract => {
-    const pair = await pairContract
-    const contract = await pair.contract
-
-    handleGnosisTransaction({
-      contract: {
-        abi: IUniswapV2Pair["abi"],
-        instance: contract,
-        args: {
-          spender,
-          value: BigNumber.from(max256),
+    try {
+      const pair = await pairContract
+      const contract = await pair.contract
+      gnosisTransaction(
+        {
+          abi: IUniswapV2Pair["abi"],
+          instance: contract,
+          args: {
+            spender,
+            value: BigNumber.from(max256),
+          },
+          fn: "approve(address,uint256)",
         },
-        fn: "approve(address,uint256)",
-      },
-      signer,
-      safeAddress,
-      to: contract?.address,
-      value: 0,
-    })
+        contract?.address,
+        0
+      )
+    } catch (err) {
+      console.log("err", err)
+    }
   }
 
   /*
@@ -84,15 +88,20 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
    * */
 
   const pairContract = React.useMemo(async () => {
-    let contract, pairAllowanceAmount
-    if (!!signer && !!pair) {
-      contract = new ethers.Contract(pair?.address, IUniswapV2Pair["abi"], signer)
-      const allowance = await contract.allowance(safeAddress, spender)
-      pairAllowanceAmount = await NumberFromBig(allowance._hex, pair.decimals)
-    }
-    return {
-      contract,
-      allowedToSpend: { pair: pairAllowanceAmount > 0 },
+    try {
+      let contract, pairAllowanceAmount
+      if (!!signer && !!pair) {
+        contract = new ethers.Contract(pair?.address, IUniswapV2Pair["abi"], signer)
+        const allowance = await contract.allowance(safeAddress, spender)
+        pairAllowanceAmount = await NumberFromBig(allowance._hex, pair.decimals)
+      }
+
+      return {
+        contract,
+        allowedToSpend: { pair: pairAllowanceAmount > 0 },
+      }
+    } catch (err) {
+      console.log("err", err)
     }
   }, [pair])
 
@@ -107,27 +116,31 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
    * */
 
   const tokenContracts = React.useMemo(async () => {
-    let token0Contract, token1Contract, token0AllowanceAmount, token1AllowanceAmount
+    try {
+      let token0Contract, token1Contract, token0AllowanceAmount, token1AllowanceAmount
 
-    if (!!signer) {
-      if (!!token0) {
-        token0Contract = new ethers.Contract(token0?.address, minimalABI, signer)
-        const allowance = await token0Contract.allowance(safeAddress, spender)
-        token0AllowanceAmount = await NumberFromBig(allowance?._hex, token0.decimals)
+      if (!!signer) {
+        if (!!token0) {
+          token0Contract = new ethers.Contract(token0?.address, minimalABI, signer)
+          const allowance = await token0Contract.allowance(safeAddress, spender)
+          token0AllowanceAmount = await NumberFromBig(allowance?._hex, token0.decimals)
+        }
+
+        if (!!token1) {
+          token1Contract = new ethers.Contract(token1?.address, minimalABI, signer)
+          const allowance = await token1Contract.allowance(safeAddress, spender)
+          token1AllowanceAmount = await NumberFromBig(allowance?._hex, token1.decimals)
+        }
       }
 
-      if (!!token1) {
-        token1Contract = new ethers.Contract(token1?.address, minimalABI, signer)
-        const allowance = await token1Contract.allowance(safeAddress, spender)
-        token1AllowanceAmount = await NumberFromBig(allowance?._hex, token1.decimals)
+      return {
+        contracts: [token0Contract, token1Contract],
+        allowedToSpend: { token0: token0AllowanceAmount > 0, token1: token1AllowanceAmount > 0 },
       }
+    } catch (err) {
+      console.log("err", err)
     }
-
-    return {
-      contracts: [token0Contract, token1Contract],
-      allowedToSpend: { token0: token0AllowanceAmount > 0, token1: token1AllowanceAmount > 0 },
-    }
-  }, [token0, token1])
+  }, [token0, token1, signer])
 
   /*
    *
@@ -141,13 +154,21 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
    * */
 
   React.useMemo(async () => {
-    const allowed = await tokenContracts
-    setHasAllowance({ ...hasAllowance, ...allowed.allowedToSpend })
+    try {
+      const allowed = await tokenContracts
+      setHasAllowance({ ...hasAllowance, ...allowed.allowedToSpend })
+    } catch (err) {
+      console.log("err", err)
+    }
   }, [tokenContracts])
 
   React.useMemo(async () => {
-    const allowed = await pairContract
-    setHasAllowance({ ...hasAllowance, ...allowed.allowedToSpend })
+    try {
+      const allowed = await pairContract
+      setHasAllowance({ ...hasAllowance, ...allowed.allowedToSpend })
+    } catch (err) {
+      console.log("err", err)
+    }
   }, [pairContract])
 
   return (

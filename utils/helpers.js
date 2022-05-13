@@ -37,6 +37,10 @@ export const isEmpty = object => {
 }
 
 
+export const round = num => Math.round( num * 100 + Number.EPSILON ) / 100
+
+
+
 /**
  * Converts HexString to Bytes
  *
@@ -57,6 +61,27 @@ export const hexToBytes = hexString => {
 }
 
 
+/**
+ * Flattens Nested Object
+ *
+ * @params object
+ * @returns object
+ */
+
+export const flatten = (object) => {
+  return Object.assign(
+      {},
+      ...function _flatten(o) {
+        return [].concat(...Object.keys(o)
+            .map(k =>
+                typeof o[k] === 'object' ?
+                    _flatten(o[k]) :
+                    ({[k]: o[k]})
+            )
+        );
+      }(object)
+  )
+}
 
 
 /**

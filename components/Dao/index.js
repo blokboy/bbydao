@@ -15,8 +15,8 @@ import FollowModal from "./SidePanel/FollowModal"
 import TokensNfts from "./TokensNfts"
 import SellModal from "./TokensNfts/SellModal"
 import TransactionModal from "./TransactionModal"
-import TxHistory from "./TxHistory"
-import UniswapLpModal from "./UniswapLpModal"
+import TxHistory        from "./TxHistory"
+import UniswapLpModal   from "./Uniswap"
 import UniswapSwapModal from "./UniswapSwapModal"
 
 const Dao = ({ data }) => {
