@@ -1,6 +1,6 @@
 import React from "react"
 import ClickAwayListener from "react-click-away-listener"
-import { useAccount, useEnsLookup } from "wagmi"
+import { useAccount, useDisconnect, useEnsName } from "wagmi"
 import { IoCopySharp } from "react-icons/io5"
 import { HiOutlineLogout } from "react-icons/hi"
 import { walletSnippet } from "../../../utils/helpers"
@@ -8,7 +8,9 @@ import * as api from "query"
 import { useQuery } from "react-query"
 
 const AccountDisplay = () => {
-  const [{ data, error, loading }, disconnect] = useAccount()
+  const { data, error, loading } = useAccount()
+  const { disconnect } = useDisconnect()
+  
   const {
     data: getUserData,
     status: getUserStatus,
@@ -20,7 +22,7 @@ const AccountDisplay = () => {
     staleTime: Infinity,
   })
 
-  const [{ data: ensData, error: ensError, loading: ensLoading }, lookupAddress] = useEnsLookup({
+  const { data: ensData, iserror: ensError, isloading: ensLoading } = useEnsName({
     address: data?.address,
   })
 

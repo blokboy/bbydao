@@ -22,8 +22,7 @@ const MobileMessageInput = () => {
     },
   })
 
-  const [{ data: accountData, error: accountError, loading: accountLoading }] =
-    useAccount()
+  const { data: accountData, error: accountError, loading: accountLoading } = useAccount()
 
   const handleSubmit = e => {
     e.preventDefault()

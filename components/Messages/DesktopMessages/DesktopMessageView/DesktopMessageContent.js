@@ -14,7 +14,7 @@ const DesktopMessageContent = () => {
       enabled: !!threadChannel,
       // retry: false,
       // retryOnMount: false,
-      refetchOnWindowFocus: true,
+      refetchOnWindowFocus: false,
       // staleTime: Infinity,
     }
   )

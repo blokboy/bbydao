@@ -3,7 +3,7 @@ import { useMessageStore } from "stores/useMessageStore"
 import { useAccount } from "wagmi"
 
 const MainInboxCard = ({ clickAway }) => {
-  const [{ data, error, loading }, disconnect] = useAccount()
+  const { data, error, loading, disconnect } = useAccount()
   const setChannelAddress = useMessageStore(set => set.setChannelAddress)
   const setThreadChannel = useMessageStore(set => set.setThreadChannel)
   const channelAddress = useMessageStore(state => state.channelAddress)

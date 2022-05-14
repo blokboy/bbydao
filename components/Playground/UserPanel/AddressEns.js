@@ -1,9 +1,9 @@
 import React from "react"
 import { BiCopy } from "react-icons/bi"
-import { useEnsLookup } from "wagmi"
+import { useEnsName } from "wagmi"
 
 const AddressEns = ({ address }) => {
-  const [{ data: ensData, error: ensError, loading: ensLoading }, lookupAddress] = useEnsLookup({
+  const { data: ensData, isError: ensError, isLoading: ensLoading } = useEnsName({
     address: address,
   })
 

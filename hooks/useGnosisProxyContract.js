@@ -12,7 +12,7 @@ const minimalABI = [
 ]
 
 export default function useGnosisProxyContract(address, gnosis) {
-  const [{ data: signer }] = useSigner()
+  const { data: signer } = useSigner()
   console.log('signer', signer)
   console.log('gn', address)
 

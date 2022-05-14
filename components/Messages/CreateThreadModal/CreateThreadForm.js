@@ -1,19 +1,19 @@
-import React                     from "react"
-import { useRouter }             from "next/router"
-import Select                    from "react-select"
-import { walletSnippet }         from "../../../utils/helpers"
-import { customStyles }          from "./customStyles"
-import useForm                   from "hooks/useForm"
-import * as api                  from "query"
+import React from "react"
+import { useRouter } from "next/router"
+import Select from "react-select"
+import { walletSnippet } from "../../../utils/helpers"
+import { customStyles } from "./customStyles"
+import useForm from "hooks/useForm"
+import * as api from "query"
 import { useQuery, useMutation } from "react-query"
-import { useAccount }            from "wagmi"
-import { useMessageStore }       from "stores/useMessageStore"
+import { useAccount } from "wagmi"
+import { useMessageStore } from "stores/useMessageStore"
 
 const CreateThreadForm = ({ closeModal }) => {
   const router = useRouter()
   const { state, setState, handleChange } = useForm()
   const [selectedOptions, setSelectedOptions] = React.useState([])
-  const [{ data: accountData }] = useAccount()
+  const { data: accountData } = useAccount()
   const setThreadChannel = useMessageStore(state => state.setThreadChannel)
   const channelAddress = useMessageStore(state => state.channelAddress)
 
@@ -35,14 +35,8 @@ const CreateThreadForm = ({ closeModal }) => {
 
   const friends = friendData?.map(friend => {
     return {
-      value:
-        friend.initiator === accountData?.address
-          ? friend.target
-          : friend.initiator,
-      label:
-        friend.initiator === accountData?.address
-          ? friend.targetEns || friend.target
-          : friend.initiatorEns,
+      value: friend.initiator === accountData?.address ? friend.target : friend.initiator,
+      label: friend.initiator === accountData?.address ? friend.targetEns || friend.target : friend.initiatorEns,
       status: friend.status,
     }
   })
@@ -80,9 +74,7 @@ const CreateThreadForm = ({ closeModal }) => {
 
   return (
     <form className="flex flex-col" onSubmit={handleSubmit}>
-      <div className="mb-8 w-full text-center text-xl font-bold">
-        start message thread
-      </div>
+      <div className="mb-8 w-full text-center text-xl font-bold">start message thread</div>
 
       {channelAddress !== accountData?.address && (
         <span className="pb-3 text-sm text-green-500">

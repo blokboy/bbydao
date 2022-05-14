@@ -8,7 +8,7 @@ import ClickAwayListener from "react-click-away-listener"
 import { HiOutlinePlusCircle, HiChevronDown } from "react-icons/hi"
 
 const MobileInboxNavigation = () => {
-  const [{ data, error, loading }, disconnect] = useAccount()
+  const { data, error, loading, disconnect } = useAccount()
   const setCreateThreadModalOpen = useUiStore(
     state => state.setCreateThreadModalOpen
   )

@@ -8,7 +8,7 @@ import MobileThreadCard from "./MobileThreadCard"
 const MobileThreadList = () => {
   const setChannelAddress = useMessageStore(set => set.setChannelAddress)
   const { channelAddress } = useMessageStore()
-  const [{ data, error, loading }, disconnect] = useAccount()
+  const { data, error, loading, disconnect } = useAccount()
 
   React.useEffect(() => {
     if (!data?.address || channelAddress) return
@@ -21,9 +21,9 @@ const MobileThreadList = () => {
     {
       staleTime: 180000,
       enabled: !!channelAddress,
+      refetchOnWindowFocus: false,
       // retry: false,
       // retryOnMount: false,
-      // refetchOnWindowFocus: false,
       // staleTime: Infinity,
     }
   )

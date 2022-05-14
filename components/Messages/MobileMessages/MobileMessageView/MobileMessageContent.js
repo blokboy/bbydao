@@ -13,7 +13,7 @@ const MobileMessageContent = () => {
       enabled: !!threadChannel,
       // retry: false,
       // retryOnMount: false,
-      // refetchOnWindowFocus: false,
+      refetchOnWindowFocus: false,
       // staleTime: Infinity,
     }
   )

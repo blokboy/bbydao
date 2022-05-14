@@ -11,7 +11,7 @@ import MobileThreadCard from "./MobileMessages/MobileThreadList/MobileThreadCard
 export default function ThreadList() {
   const setChannelAddress = useMessageStore(set => set.setChannelAddress)
   const { channelAddress } = useMessageStore()
-  const [{ data, error, loading }, disconnect] = useAccount()
+  const { data, error, loading, disconnect } = useAccount()
 
   React.useEffect(() => {
     if (!data?.address || channelAddress) return
@@ -26,7 +26,7 @@ export default function ThreadList() {
       enabled: !!channelAddress,
       // retry: false,
       // retryOnMount: false,
-      // refetchOnWindowFocus: false,
+      refetchOnWindowFocus: false,
       // staleTime: Infinity,
     }
   )

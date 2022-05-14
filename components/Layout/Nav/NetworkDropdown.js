@@ -7,6 +7,7 @@ export default function NetworkDropdown({ onClick, isOpen, className }) {
   const setConnectModalOpen = useUiStore(state => state.setConnectModalOpen)
 
   const handleConnect = React.useCallback(() => {
+    console.log("handleConnect")
     onClick()
     setConnectModalOpen()
   })

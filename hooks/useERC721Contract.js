@@ -49,7 +49,7 @@ const minimalABI = [
 ]
 
 export default function useERC721Contract(address) {
-  const [{ data: signer }] = useSigner()
+  const { data: signer } = useSigner()
 
   const contract = React.useMemo(() => {
     return address && signer ? new Contract(address, minimalABI, signer) : null

@@ -12,7 +12,7 @@ const MessagesIcon = ({ address }) => {
   const setMessagesCount = useUiStore(state => state.setMessagesCount)
   const [count, setCount] = React.useState(count ? count : 0)
 
-  const { data } = useQuery(["threads", address], () => api.getUserThreads({ address }), { staleTime: 180000 })
+  const { data } = useQuery(["threads", address], () => api.getUserThreads({ address }), { staleTime: 180000, refetchOnWindowFocus: false, })
 
   const threads = React.useMemo(() => {
     return data ? Object.entries(data).map(([key, value]) => ({ title: key, data: value })) : []

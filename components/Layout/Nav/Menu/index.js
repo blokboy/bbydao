@@ -1,21 +1,19 @@
 import React from "react"
 import ClickAwayListener from "react-click-away-listener"
 import { HiDotsHorizontal } from "react-icons/hi"
-import { useConnect } from "wagmi"
+import { useAccount } from "wagmi"
 
 import DashboardLink from "./DashboardLink"
 import MintLink from "./MintLink"
 import MenuThemeToggle from "./MenuThemeToggle"
 import MessagesLink from "./MessagesLink"
-import ExploreLink from "./ExploreLink"
-import FeedLink from "./FeedLink"
 import AboutLink from "./AboutLink"
 import NotificationsLink from "./NotificationsLink"
-import useNotifications from "../../../../hooks/useNotifications"
+import useNotifications from "hooks/useNotifications"
 
 const Menu = ({ address }) => {
   const [menuOpen, setMenuOpen] = React.useState(false)
-  const [{ data }, connect] = useConnect()
+  const { data: accountData } = useAccount()
   const notifications = useNotifications(address)
 
   const clickAway = React.useCallback(() => {
@@ -40,23 +38,20 @@ const Menu = ({ address }) => {
     return menuOpen ? (
       <div className="absolute top-0 right-0 z-50 h-auto w-1/2 origin-top-right translate-y-20 -translate-x-4 rounded-xl border bg-slate-200 px-2 py-2 text-slate-800 shadow dark:bg-slate-900 dark:text-white md:-mt-2 md:w-48 md:-translate-x-16">
         <ul className="py-1" onClick={clickAway}>
-          {data.connected ? (
+          {accountData ? (
             <>
               <DashboardLink />
               <MintLink />
               <MessagesLink />
               <NotificationsLink notifications={notifications} />
-              <FeedLink />
             </>
-          ) : (
-            <ExploreLink />
-          )}
+          ) : null}
           <AboutLink />
           <MenuThemeToggle />
         </ul>
       </div>
     ) : null
-  }, [menuOpen, clickAway, data.connected])
+  }, [menuOpen, clickAway, accountData])
 
   return (
     <ClickAwayListener onClickAway={clickAway}>

@@ -1,11 +1,11 @@
 import React from "react"
 import Link from "next/link"
-import { useAccount, useEnsLookup } from "wagmi"
+import { useAccount, useEnsName } from "wagmi"
 import Router from "next/router"
 
 const DaoMemberBtn = ({ member }) => {
-  const [{ data, error, loading }] = useAccount()
-  const [{ data: ensData, error: ensError, loading: ensLoading }, lookupAddress] = useEnsLookup({
+  const { data, error, loading } = useAccount()
+  const { data: ensData, isError: ensError, isLoading: ensLoading } = useEnsName({
     address: member,
   })
 
