@@ -15,7 +15,7 @@ import useGnosisTransaction                                   from "hooks/useGno
 
 const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
-  const [{ data: signer }] = useSigner()
+  const { data: signer } = useSigner()
   const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
   const lpToken0 = useDaoStore(state => flatten(state.lpToken0))
   const lpToken1 = useDaoStore(state => flatten(state.lpToken1))

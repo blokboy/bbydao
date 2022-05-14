@@ -24,7 +24,7 @@ const UniswapSwapModal = ({ safeAddress }) => {
     setUniswapSwapModalOpen(false)
   }
 
-  const [{ data: signer, loading }] = useSigner()
+  const { data: signer, isLoading } = useSigner()
   const [gnosisProvider, setGnosisProvider] = React.useState(null)
 
   const getContract = async () => {
@@ -56,10 +56,10 @@ const UniswapSwapModal = ({ safeAddress }) => {
   }
 
   React.useEffect(() => {
-    if (!loading && signer) {
+    if (!isLoading && signer) {
       getContract()
     }
-  }, [loading])
+  }, [isLoading])
 
   const chainId = ChainId.MAINNET
   const infuraId = process.env.INFURA_ID

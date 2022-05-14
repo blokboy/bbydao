@@ -14,7 +14,7 @@ import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 
 const Swap = ({ token }) => {
-  const [{ data: signer }] = useSigner()
+  const { data: signer } = useSigner()
   const queryClient = useQueryClient()
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()
