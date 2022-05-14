@@ -20,6 +20,7 @@ const Swap = ({ token }) => {
   const token1InputRef = React.useRef()
   const [openSearch, setOpenSearch] = React.useState(false)
   const bbyDao = queryClient.getQueryData("expandedDao")
+  const bbyDaoTokens = queryClient.getQueryData(["daoTokens", bbyDao])
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const [hasAllowance, setHasAllowance] = React.useState()
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
@@ -71,21 +72,22 @@ const Swap = ({ token }) => {
     picked => {
       const index = defaultTokenList.findIndex(token => token.symbol === picked.symbol)
 
-      //check if user has token in list if so populate obj with gnosis data
-      //TODO: component should be aware of token list, react Query thing?
+      const hasTokenIndex = bbyDaoTokens.findIndex(token => token.tokenAddress === defaultTokenList[index]?.address)
+      let existingToken = undefined
+      if(hasTokenIndex >= 0) {
+        existingToken = bbyDaoTokens[hasTokenIndex]
+      }
 
       const token1 = {
         ...defaultTokenList[index],
-        balance: 0,
-        ethValue: 0,
-        fiatBalance: 0,
-        fiatCode: "USD",
+        balance: !!existingToken ? existingToken?.balance : 0,
+        ethValue: !!existingToken ? existingToken?.ethValue : 0,
+        fiatBalance: !!existingToken ? existingToken?.fiatBalance : 0,
+        fiatCode: !!existingToken ? existingToken?.fiatCode : "USD",
       }
       setTokens({ ...tokens, token1 })
       setOpenSearch(false)
-    },
-    [tokens]
-  )
+    }, [tokens])
 
   const switchTokenPlacement = React.useCallback(() => {
     setTokens({ token0: tokens.token1, token1: tokens.token0 })
@@ -293,6 +295,9 @@ const Swap = ({ token }) => {
     console.log("output", outputToken)
   }
 
+  console.log('bbyDaoTok', bbyDaoTokens)
+
+
   return (
     <div>
       <form>
@@ -343,7 +348,7 @@ const Swap = ({ token }) => {
         )}
 
         {openSearch && filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
-          <div className="mt-4 flex max-h-96 flex-wrap gap-1 overflow-y-scroll pt-4">
+          <div className="mt-4 flex max-h-96 flex-wrap gap-1 overflow-y-scroll pt-4 bg-slate-100 p-4 rounded-lg shadow-xl dark:bg-slate-800">
             {filteredTokensBySymbol.map((token, i) => (
               <button
                 key={i}
