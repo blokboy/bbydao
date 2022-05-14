@@ -24,7 +24,7 @@ const CanvasPfp = props => {
     draw(ctx)
   }, [draw])
 
-  return <canvas ref={canvasRef} {...props} width={160} height={160} />
+  return <canvas className="rounded-full" ref={canvasRef} {...props} width={160} height={160} />
 }
 
 export default CanvasPfp
