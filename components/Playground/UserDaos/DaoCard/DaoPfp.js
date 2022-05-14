@@ -132,7 +132,7 @@ const DaoPfp = ({ address, imgUri, members, daoId }) => {
 
   const imgDisplay = React.useMemo(() => {
     return imgUri ? (
-      <img src={imgUri} alt="" className="h-auto w-full" />
+      <img src={imgUri} alt="" className="h-auto w-full rounded-full" />
     ) : (
       <CanvasPfp />
     )
