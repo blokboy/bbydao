@@ -15,7 +15,7 @@ const Playground = ({ address, data }) => {
 
   // getUser sends a POST req to our api with the address of the profile being viewed
   // if that address does not exist in our backend, it creates a new user record
-  const { mutateAsync: updateUser } = useMutation(api.updateUser)
+  const { mutateAsync: updateUser } = useMutation(api.updateUser, { refetchOnWindowFocus: false })
   const {
     data: getAddressData,
     status: getAddressStatus,
@@ -23,6 +23,8 @@ const Playground = ({ address, data }) => {
   } = useMutation(api.getUser, {
     // working out how to access this, how we can treat it the same as the data from a useQuery
     mutationKey: ["address data", address],
+    // staleTime: 180000,
+    // refetchOnWindowFocus: false,
   })
 
   // this useEffect is intended to fire when ensLoading from wagmi is false (to see if an ens lookup was successful)
@@ -46,7 +48,7 @@ const Playground = ({ address, data }) => {
   useQuery("targetAddress", () => api.getUser({ address }), {
     enabled: !!address,
     retryOnMount: true,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
     // staleTime: Infinity,
   })
 
