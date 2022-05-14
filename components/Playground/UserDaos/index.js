@@ -52,7 +52,7 @@ const UserDaos = ({ user, address, data }) => {
   // if expandedDao is set, show expanded dao and remove other daos from view
   if (expandedDao) {
     return (
-      <div className="flex w-full flex-col lg:w-2/5 space-y-6 pb-10">
+      <div className="flex w-full flex-col lg:w-2/5 space-y-6 lg:pb-10">
         <div className="flex flex-row space-x-1 h-10 items-center w-full px-2">
           <div className="text-3xl h-10 px-3 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text font-semibold text-transparent">{expandedDao?.substring(0, 6) + "..." + expandedDao.substring(expandedDao.length - 4)}</div>
         <button
@@ -72,7 +72,7 @@ const UserDaos = ({ user, address, data }) => {
   // might want to paginate this (infinite scroll)
   if (userSafes.length && !expandedDao) {
     return (
-      <div className="flex w-full flex-col lg:w-2/5 space-y-6 pb-10">
+      <div className="flex w-full flex-col lg:w-2/5 space-y-6 lg:pb-10">
         <div className="text-3xl h-10 px-3 bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] bg-clip-text font-semibold text-transparent">bbyDAOs</div>
         {userSafes?.map((safe, index) => (
           <DaoCard key={safe} user={user} address={address} safe={safe} />
