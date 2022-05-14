@@ -1,17 +1,17 @@
-import { ChainId, Fetcher, Route, Token }                     from "@uniswap/sdk"
-import IUniswapV2ERC20                                        from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
-import IUniswapV2Router02                                     from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
-import { BigNumber, ethers }                                  from "ethers"
-import useForm                                                from "hooks/useForm"
-import React                                                  from "react"
-import { useDaoStore }                                        from "stores/useDaoStore"
-import { useSigner }                                          from "wagmi"
-import ControlledModal                                        from "components/Layout/Modal/ControlledModal"
-import {flatten}                                              from '../../../utils/helpers'
+import { ChainId, Fetcher, Route, Token } from "@uniswap/sdk"
+import IUniswapV2ERC20 from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
+import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
+import { BigNumber, ethers } from "ethers"
+import useForm from "hooks/useForm"
+import React from "react"
+import { useDaoStore } from "stores/useDaoStore"
+import { useSigner } from "wagmi"
+import ControlledModal from "components/Layout/Modal/ControlledModal"
+import { flatten } from "../../../utils/helpers"
 import { amount, getLiquidityPairInfo, readableTokenBalance } from "./helpers"
-import PoolInfo                                               from "./PoolInfo"
-import TokenInput                                             from "./TokenInput"
-import useGnosisTransaction                                   from "hooks/useGnosisTransaction"
+import PoolInfo from "./PoolInfo"
+import TokenInput from "./TokenInput"
+import useGnosisTransaction from "hooks/useGnosisTransaction"
 
 const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
@@ -217,10 +217,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
     try {
       setState(state => ({ ...state, [lpToken0?.symbol]: 0 }))
       setState(state => ({ ...state, [lpToken1?.symbol]: 0 }))
-      const uniPair = await Fetcher.fetchPairData(
-        uniswapTokens[lpToken0?.symbol],
-        uniswapTokens[lpToken1?.symbol]
-      )
+      const uniPair = await Fetcher.fetchPairData(uniswapTokens[lpToken0?.symbol], uniswapTokens[lpToken1?.symbol])
       await setPair(uniPair)
     } catch (err) {
       console.log("err", err)
@@ -239,6 +236,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
       </div>
       <form className="flex w-full flex-col space-y-8 py-4" onSubmit={e => handleSubmit(e, liquidityInfo)}>
         <TokenInput
+          tokens={{ token0: lpToken0, token1: lpToken1 }}
           pair={pair}
           tokenInputRef={token0InputRef}
           lpToken={lpToken0}
@@ -249,6 +247,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
           logo={token0Logo}
         />
         <TokenInput
+          tokens={{ token0: lpToken0, token1: lpToken1 }}
           pair={pair}
           tokenInputRef={token1InputRef}
           lpToken={lpToken1}

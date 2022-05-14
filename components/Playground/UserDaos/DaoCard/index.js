@@ -92,7 +92,6 @@ const DaoCard = ({ user, safe, address }) => {
   const isMember = daoMembersData?.includes(user)
 
   const daoExpanded = usePlaygroundStore(state => state.daoExpanded)
-  console.log('dao', daoTokensData)
 
   const imgUri = React.useMemo(() => {
     return daoData ? daoData.imgUri : null
