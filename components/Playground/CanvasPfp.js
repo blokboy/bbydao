@@ -5,15 +5,9 @@ const CanvasPfp = props => {
 
   const draw = ctx => {
     const gradient = ctx.createLinearGradient(0, 0, ctx.canvas.width, ctx.canvas.height)
-    const randomColor = () => {
-      const r = Math.floor(Math.random() * 255)
-      const g = Math.floor(Math.random() * 255)
-      const b = Math.floor(Math.random() * 255)
-      const a = Math.random()
-      return `rgba(${r}, ${g}, ${b}, ${a})`
-    }
-    gradient.addColorStop(0, `${randomColor()}`)
-    gradient.addColorStop(1, `${randomColor()}`)
+    gradient.addColorStop(0, "#0DB2AC")
+    gradient.addColorStop(0.6, "#FC8D4D")
+    gradient.addColorStop(1, "#FABA32")
     ctx.fillStyle = gradient
     ctx.fillRect(0, 0, 160, 160)
   }
@@ -24,7 +18,7 @@ const CanvasPfp = props => {
     draw(ctx)
   }, [draw])
 
-  return <canvas ref={canvasRef} {...props} width={160} height={160} />
+  return <canvas className="rounded-full" ref={canvasRef} {...props} width={160} height={160} />
 }
 
 export default CanvasPfp

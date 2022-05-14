@@ -62,7 +62,7 @@ const DaoCard = ({ user, safe, address }) => {
     isLoading: daoTokensLoading,
   } = useQuery(["daoTokens", safe], () => gnosisApi.daoBalance(safe), {
     staleTime: 200000,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
   })
 
   const {

@@ -9,9 +9,7 @@ const ConnectModal = () => {
   const {pathname} = router
   const isLanding = pathname === '/'
   const { connect, connectors, error, isConnecting, pendingConnector } = useConnect()
-  const { data: accountData , disconnect } = useAccount({
-    fetchEns: true,
-  })
+  const { data: accountData } = useAccount()
 
   const connectModalOpen = useUiStore(state => state.connectModalOpen)
   const setConnectModalOpen = useUiStore(state => state.setConnectModalOpen)
@@ -33,12 +31,6 @@ const ConnectModal = () => {
             <button
               className="mb-4 w-3/4 rounded-full bg-gradient-to-r from-[#0DB2AC] via-[#FC8D4D] to-[#FABA32] p-0.5 shadow hover:bg-gradient-to-l"
               key={connector.id}
-              // onClick={async () => {
-              //   const connected = await connect(connector)
-              //   if(connected?.data?.account.length > 0 && isLanding) {
-              //       router.push(`/playground/${connected?.data.account}`)
-              //   }
-              // }}
               onClick={() => connect(connector)}
             >
               <span className="block rounded-full bg-slate-200 px-8 py-3 font-medium text-black hover:bg-opacity-50 dark:bg-slate-900 dark:text-white dark:hover:bg-opacity-75">
@@ -64,7 +56,7 @@ const ConnectModal = () => {
     )
   }, []) /* eslint-disable-line react-hooks/exhaustive-deps */
 
-  if (!connectModalOpen) return <></>
+  if (!connectModalOpen || accountData) return <></>
 
   return (
     <div
