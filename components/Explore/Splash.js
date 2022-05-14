@@ -8,7 +8,7 @@ const Splash = () => {
   const { isConnected } = useConnect()
 
   return (
-    <div className="hidden h-80 w-screen flex-col items-center justify-center md:flex">
+    <div className="w-screen flex-col items-center justify-center flex">
       <p>welcome to</p>
       <h1 className="m-4 text-5xl">bbyDAO</h1>
       {!isConnected ? <ConnectButton /> : <></>}

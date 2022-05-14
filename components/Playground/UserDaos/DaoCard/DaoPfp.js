@@ -1,6 +1,6 @@
 import React from "react"
 import { createPortal } from "react-dom"
-import Davatar from "@davatar/react"
+import CanvasPfp from '../../CanvasPfp'
 import { useAccount } from "wagmi"
 import { useRouter } from "next/router"
 import { useMutation, useQueryClient } from "react-query"
@@ -134,7 +134,7 @@ const DaoPfp = ({ address, imgUri, members, daoId }) => {
     return imgUri ? (
       <img src={imgUri} alt="" className="h-auto w-full" />
     ) : (
-      <Davatar size={144} address={address} generatedAvatarType="blockies" />
+      <CanvasPfp />
     )
   }, [imgUri])
 

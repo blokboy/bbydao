@@ -21,9 +21,9 @@ const MobileThreadList = () => {
     {
       staleTime: 180000,
       enabled: !!channelAddress,
+      refetchOnWindowFocus: false,
       // retry: false,
       // retryOnMount: false,
-      // refetchOnWindowFocus: false,
       // staleTime: Infinity,
     }
   )

@@ -26,7 +26,7 @@ export default function ThreadList() {
       enabled: !!channelAddress,
       // retry: false,
       // retryOnMount: false,
-      // refetchOnWindowFocus: false,
+      refetchOnWindowFocus: false,
       // staleTime: Infinity,
     }
   )
