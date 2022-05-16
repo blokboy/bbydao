@@ -11,6 +11,7 @@ import { minimalABI } from "hooks/useERC20Contract"
 import { readableTokenBalance } from "./helpers"
 import TokenInput from "./TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
+// import IUniswapV2Router02 from "@uniswap/swap-router-contracts/artifacts/contracts/SwapRouter02.sol/SwapRouter02.json"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 
 const Swap = ({ token }) => {
@@ -147,7 +148,7 @@ const Swap = ({ token }) => {
       // const WETHOutput = new Pair(new TokenAmount(WETHToken, '2000000000000000000'), new TokenAmount(token1, '1000000000000000000'))
       // const route = new Route([HOT_NOT], NOT)
 
-      console.log("Pair doesnt exist need to use a route through ETH or DAI")
+      console.log("Pair doesnt exist need to use a route through WETH")
       console.log("err", err)
     }
   }, [uniswapTokens])
@@ -288,8 +289,9 @@ const Swap = ({ token }) => {
           args: {
             amountIn: ethers.utils.parseUnits(inputToken.value.toString()),
             amountOutMin: ethers.utils.parseUnits(outputToken.value.toString()),
-            addresses: [
+            path: [
               ethers.utils.getAddress(inputToken.token.address),
+                WETH,
               ethers.utils.getAddress(outputToken.token.address),
             ],
             addressTo: ethers.utils.getAddress(bbyDao),
@@ -300,6 +302,56 @@ const Swap = ({ token }) => {
         0
       )
     }
+
+    if(inputToken.token.symbol === 'ETH') {
+      gnosisTransaction(
+          {
+            abi: IUniswapV2Router02["abi"],
+            instance: uniswapV2RouterContract02,
+            fn: "swapExactETHForTokens(uint256,address[],address,uint256)",
+            args: {
+              amountOutMin: ethers.utils.parseUnits(outputToken.value.toString()),
+              path: [
+                WETH,
+                ethers.utils.getAddress(outputToken.token.address),
+              ],
+              addressTo: ethers.utils.getAddress(bbyDao),
+              deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+            },
+          },
+          UniswapV2Router02,
+          ethers.utils.parseUnits(inputToken.value.toString())
+      )
+    }
+
+    if(outputToken.token.symbol === 'ETH') {
+      console.log('swapTokensForEth')
+      gnosisTransaction(
+          {
+            abi: IUniswapV2Router02["abi"],
+            instance: uniswapV2RouterContract02,
+            fn: "swapExactTokensForETH(uint256,uint256,address[],address,uint256)",
+            args: {
+              amountIn: ethers.utils.parseUnits(inputToken.value.toString()),
+              amountOutMin: ethers.utils.parseUnits(outputToken.value.toString()),
+              path: [
+                ethers.utils.getAddress(inputToken.token.address),
+                WETH,
+              ],
+              addressTo: ethers.utils.getAddress(bbyDao),
+              deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+            },
+          },
+          UniswapV2Router02,
+          0
+      )
+    }
+
+
+
+    console.log('in', inputToken, outputToken)
+
+
   }
 
   return (

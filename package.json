@@ -22,6 +22,8 @@
     "@types/react": "^17.0.39",
     "@uniswap/default-token-list": "^3.2.0",
     "@uniswap/sdk": "^3.0.3",
+    "@uniswap/smart-order-router": "^2.5.30",
+    "@uniswap/swap-router-contracts": "^1.2.0",
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
     "@uniswap/widgets": "^1.0.0",
