@@ -295,6 +295,12 @@ const Swap = ({ token }) => {
         Array.isArray(await uniPair) ? await uniPair : [await uniPair],
         uniswapTokens[token.symbol]
       )
+      setRoutePathAsSymbols(
+          route.path.reduce((acc = [], cv) => {
+            acc.push(cv.symbol)
+            return acc
+          }, [])
+      )
       const midPrice = route.midPrice.toSignificant(6)
 
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
@@ -382,8 +388,6 @@ const Swap = ({ token }) => {
         0
       )
     }
-
-    console.log("in", inputToken, outputToken)
   }
 
   return (
