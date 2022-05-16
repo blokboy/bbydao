@@ -117,13 +117,18 @@ const Swap = ({ token }) => {
     setTokens({ token0: tokens.token1, token1: tokens.token0 })
   }, [tokens])
 
+  const WETHToken = React.useMemo(() => {
+    return new Token(ChainId.MAINNET, WETH, 18, 'WETH', 'Wrapped Ether')
+
+  }, [WETH, ChainId, Token])
+
   const uniswapTokens = React.useMemo(() => {
     if (!!tokens?.token0 && !!tokens?.token1) {
       const token0 = tokens?.token0
       const token1 = tokens?.token1
       const uniToken0 = new Token(ChainId.MAINNET, token0?.address, token0?.decimals, token0?.symbol, token0?.name)
       const uniToken1 = new Token(ChainId.MAINNET, token1?.address, token1?.decimals, token1?.symbol, token1?.name)
-      return { [token0.symbol]: uniToken0, [token1.symbol]: uniToken1 }
+      return { [token0.symbol]: uniToken0, [token1.symbol]: uniToken1}
     }
   }, [tokens])
 
@@ -137,18 +142,13 @@ const Swap = ({ token }) => {
         return uniPair
       }
     } catch (err) {
-      // make two pairs -- input weth, weth output
-      // construct route
-      // const token0 = uniswapTokens[tokens.token0.symbol]
-      // const token1 = uniswapTokens[tokens.token1.symbol]
-      // const WETHToken = new Token(ChainId.MAINNET, WETH, 18, 'WETH', 'Wrapped Ether')
-      // console.log('toke', token0, token1, WETHToken)
-      //
-      // const InputWETH = new Pair(new TokenAmount(token0, '2000000000000000000'), new TokenAmount(WETHToken, '1000000000000000000'))
-      // const WETHOutput = new Pair(new TokenAmount(WETHToken, '2000000000000000000'), new TokenAmount(token1, '1000000000000000000'))
-      // const route = new Route([HOT_NOT], NOT)
+      if (!!uniswapTokens) {
+        const Token0WETH = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], WETHToken)
+        const WETHToken1 = await Fetcher.fetchPairData(WETHToken, uniswapTokens[tokens.token1.symbol])
 
-      console.log("Pair doesnt exist need to use a route through WETH")
+        return [Token0WETH, WETHToken1]
+      }
+
       console.log("err", err)
     }
   }, [uniswapTokens])
@@ -235,8 +235,13 @@ const Swap = ({ token }) => {
       const dec = token?.decimals
       const max = bal / 10 ** dec
       const token0Input = e?.target?.valueAsNumber
-      const route = new Route([await uniPair], uniswapTokens[token.symbol])
+
+      const route = new Route(Array.isArray(await uniPair) ? await uniPair : [await uniPair], uniswapTokens[token.symbol])
+      console.log('route', route)
       const midPrice = route.midPrice.toSignificant(6)
+
+
+
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
       const token1Input = Number(token0Input * midPrice)
 
@@ -255,8 +260,12 @@ const Swap = ({ token }) => {
   const handleSetMaxTokenValue = async (token, tokenRef) => {
     try {
       const token0Input = tokenRef?.current?.max
-      const route = new Route([await uniPair], uniswapTokens[token.symbol])
+
+
+      const route = new Route(Array.isArray(await uniPair) ? await uniPair : [await uniPair], uniswapTokens[token.symbol])
       const midPrice = route.midPrice.toSignificant(6)
+
+
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
       const token1Input = token0Input * midPrice
 
