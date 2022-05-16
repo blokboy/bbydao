@@ -279,7 +279,7 @@ const Swap = ({ token }) => {
       value: parseFloat(token1.toString()) - parseFloat(token1.toString()) * slippage,
     }
 
-    if (inputToken.token.address !== WETH && outputToken.token.address !== WETH) {
+    if (inputToken.token.symbol !== 'ETH' && outputToken.token.symbol !== 'ETH') {
       gnosisTransaction(
         {
           abi: IUniswapV2Router02["abi"],
@@ -290,7 +290,6 @@ const Swap = ({ token }) => {
             amountOutMin: ethers.utils.parseUnits(outputToken.value.toString()),
             path: [
               ethers.utils.getAddress(inputToken.token.address),
-              WETH,
               ethers.utils.getAddress(outputToken.token.address),
             ],
             addressTo: ethers.utils.getAddress(bbyDao),
@@ -338,6 +337,8 @@ const Swap = ({ token }) => {
         0
       )
     }
+
+    console.log('in', inputToken, outputToken)
   }
 
   return (
