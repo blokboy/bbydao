@@ -1,7 +1,7 @@
-import { WETH, ChainId, Fetcher, Pair, Route, Token, TokenAmount } from "@uniswap/sdk"
+import { WETH, ChainId, Fetcher, Pair, Percent, Route, Token, TokenAmount, Trade, TradeType } from "@uniswap/sdk"
 import defaultTokens from "@uniswap/default-token-list"
 import { BigNumber, ethers } from "ethers"
-import React from "react"
+import React, { useMemo, useState } from "react"
 import useForm from "hooks/useForm"
 import { HiOutlineSwitchVertical, HiArrowSmDown } from "react-icons/hi"
 import { useQueryClient } from "react-query"
@@ -38,6 +38,8 @@ const Swap = ({ token }) => {
   const defaultTokenList = [...defaultTokens?.["tokens"], defaultEth]
 
   const slippage = 0.055
+  const slippageTolerance = new Percent("50", "10000") // 50 bips, or 0.50%
+
   const token0 = React.useMemo(() => {
     if (parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null) {
       return {
@@ -86,6 +88,7 @@ const Swap = ({ token }) => {
       if (hasTokenIndex >= 0) {
         existingToken = bbyDaoTokens[hasTokenIndex]
       }
+      setRoutePathAsSymbols([])
 
       if (picked?.symbol === "ETH") {
         const hasTokenIndex = bbyDaoTokens.findIndex(
@@ -227,6 +230,21 @@ const Swap = ({ token }) => {
     }
   }
 
+  const [routePathAsSymbols, setRoutePathAsSymbols] = useState([])
+
+  const routePathString = React.useMemo(() => {
+    let path = ""
+    if (routePathAsSymbols.length > 0) {
+      for (const symbol of routePathAsSymbols) {
+        path += `${symbol} > `
+      }
+
+      return path.slice(0, -2)
+    } else {
+      return ""
+    }
+  }, [routePathAsSymbols])
+
   /* Handle setting token values and retrieving liquidity pair information  */
   const handleSetTokenValue = async (e, token, tokenRef) => {
     try {
@@ -239,8 +257,20 @@ const Swap = ({ token }) => {
         Array.isArray(await uniPair) ? await uniPair : [await uniPair],
         uniswapTokens[token.symbol]
       )
-      console.log("route", route)
+      setRoutePathAsSymbols(
+        route.path.reduce((acc = [], cv) => {
+          acc.push(cv.symbol)
+          return acc
+        }, [])
+      )
       const midPrice = route.midPrice.toSignificant(6)
+
+      // const trade = new Trade(
+      //   route,
+      //   new TokenAmount(uniswapTokens[token.symbol], ethers.utils.parseUnits(token0Input.toString()).toBigInt()),
+      //   TradeType.EXACT_INPUT
+      // )
+      //
 
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
       const token1Input = Number(token0Input * midPrice)
@@ -306,7 +336,7 @@ const Swap = ({ token }) => {
           args: {
             amountIn: ethers.utils.parseUnits(inputToken.value.toString()),
             amountOutMin: ethers.utils.parseUnits(outputToken.value.toString()),
-            path: path,
+            path,
             addressTo: ethers.utils.getAddress(bbyDao),
             deadline: Math.floor(Date.now() / 1000) + 60 * 20,
           },
@@ -433,6 +463,7 @@ const Swap = ({ token }) => {
           </div>
         )}
       </form>
+      {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
       <div className="my-4 flex w-full justify-center gap-4">
         {hasAllowance?.token0 === false && tokens?.token0 && tokens?.token1 && (
           <div
