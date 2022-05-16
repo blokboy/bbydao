@@ -118,8 +118,7 @@ const Swap = ({ token }) => {
   }, [tokens])
 
   const WETHToken = React.useMemo(() => {
-    return new Token(ChainId.MAINNET, WETH, 18, 'WETH', 'Wrapped Ether')
-
+    return new Token(ChainId.MAINNET, WETH, 18, "WETH", "Wrapped Ether")
   }, [WETH, ChainId, Token])
 
   const uniswapTokens = React.useMemo(() => {
@@ -128,10 +127,11 @@ const Swap = ({ token }) => {
       const token1 = tokens?.token1
       const uniToken0 = new Token(ChainId.MAINNET, token0?.address, token0?.decimals, token0?.symbol, token0?.name)
       const uniToken1 = new Token(ChainId.MAINNET, token1?.address, token1?.decimals, token1?.symbol, token1?.name)
-      return { [token0.symbol]: uniToken0, [token1.symbol]: uniToken1}
+      return { [token0.symbol]: uniToken0, [token1.symbol]: uniToken1 }
     }
   }, [tokens])
 
+  const [poolExists, setPoolExists] = React.useState(true)
   const uniPair = React.useMemo(async () => {
     try {
       if (!!uniswapTokens) {
@@ -139,17 +139,16 @@ const Swap = ({ token }) => {
           uniswapTokens[tokens.token0.symbol],
           uniswapTokens[tokens.token1.symbol]
         )
+        setPoolExists(true)
         return uniPair
       }
     } catch (err) {
       if (!!uniswapTokens) {
         const Token0WETH = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], WETHToken)
         const WETHToken1 = await Fetcher.fetchPairData(WETHToken, uniswapTokens[tokens.token1.symbol])
-
+        setPoolExists(false)
         return [Token0WETH, WETHToken1]
       }
-
-      console.log("err", err)
     }
   }, [uniswapTokens])
   /*
@@ -236,11 +235,12 @@ const Swap = ({ token }) => {
       const max = bal / 10 ** dec
       const token0Input = e?.target?.valueAsNumber
 
-      const route = new Route(Array.isArray(await uniPair) ? await uniPair : [await uniPair], uniswapTokens[token.symbol])
-      console.log('route', route)
+      const route = new Route(
+        Array.isArray(await uniPair) ? await uniPair : [await uniPair],
+        uniswapTokens[token.symbol]
+      )
+      console.log("route", route)
       const midPrice = route.midPrice.toSignificant(6)
-
-
 
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
       const token1Input = Number(token0Input * midPrice)
@@ -261,10 +261,11 @@ const Swap = ({ token }) => {
     try {
       const token0Input = tokenRef?.current?.max
 
-
-      const route = new Route(Array.isArray(await uniPair) ? await uniPair : [await uniPair], uniswapTokens[token.symbol])
+      const route = new Route(
+        Array.isArray(await uniPair) ? await uniPair : [await uniPair],
+        uniswapTokens[token.symbol]
+      )
       const midPrice = route.midPrice.toSignificant(6)
-
 
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
       const token1Input = token0Input * midPrice
@@ -288,7 +289,15 @@ const Swap = ({ token }) => {
       value: parseFloat(token1.toString()) - parseFloat(token1.toString()) * slippage,
     }
 
-    if (inputToken.token.symbol !== 'ETH' && outputToken.token.symbol !== 'ETH') {
+    if (inputToken.token.symbol !== "ETH" && outputToken.token.symbol !== "ETH") {
+      const path = [
+        ethers.utils.getAddress(inputToken.token.address),
+        ethers.utils.getAddress(outputToken.token.address),
+      ]
+
+      path.splice(1, 0, poolExists ? null : WETH)
+      path.filter(n => n)
+
       gnosisTransaction(
         {
           abi: IUniswapV2Router02["abi"],
@@ -297,10 +306,7 @@ const Swap = ({ token }) => {
           args: {
             amountIn: ethers.utils.parseUnits(inputToken.value.toString()),
             amountOutMin: ethers.utils.parseUnits(outputToken.value.toString()),
-            path: [
-              ethers.utils.getAddress(inputToken.token.address),
-              ethers.utils.getAddress(outputToken.token.address),
-            ],
+            path: path,
             addressTo: ethers.utils.getAddress(bbyDao),
             deadline: Math.floor(Date.now() / 1000) + 60 * 20,
           },
@@ -347,7 +353,7 @@ const Swap = ({ token }) => {
       )
     }
 
-    console.log('in', inputToken, outputToken)
+    console.log("in", inputToken, outputToken)
   }
 
   return (
