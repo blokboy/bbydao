@@ -40,8 +40,7 @@ export default function useGnosisTransaction(safeAddress) {
         const { data } = contractInterface(contract)
 
         /* last transaction made by bbyDAO */
-        // const nonce = await safeService.getNextNonce(safeAddress)
-        const nonce = 26
+        const nonce = await safeService.getNextNonce(safeAddress)
 
         /*  construct gnosis transaction object  */
         const safeTx = {

@@ -174,7 +174,6 @@ const Swap = ({ token }) => {
         )
 
         const totalSupply0 = await pair0Contract?.totalSupply()
-
         const hasLiquidity0 =
           parseInt((totalSupply0.toString() / 10 ** Token0WETH?.liquidityToken?.decimals).toFixed()) > 0
 
@@ -367,12 +366,10 @@ const Swap = ({ token }) => {
       } else {
         path = [
           ethers.utils.getAddress(inputToken.token.address),
-            WETH,
+          WETH,
           ethers.utils.getAddress(outputToken.token.address),
         ]
       }
-
-      console.log('path', path)
 
       gnosisTransaction(
         {
