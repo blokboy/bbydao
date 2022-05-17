@@ -1,5 +1,5 @@
-import { isAddress } from "ethers/lib/utils"
-import React from "react"
+import {isAddress} from "ethers/lib/utils"
+import React       from "react"
 
 /**
  * Create snippet of wallet address or
@@ -35,9 +35,6 @@ export const isEmpty = object => {
   }
   return true
 }
-
-
-export const round = num => Math.round( num * 100 + Number.EPSILON ) / 100
 
 
 

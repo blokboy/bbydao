@@ -98,14 +98,12 @@ const TokenInput = ({
         </button>
       </div>
       <div className="flex w-full flex-row items-end justify-end space-x-2 font-light">
-        {token?.balance && (
+        {token?.balance ? (
             <>
               <div className="text-sm text-slate-600">Balance:</div>
               <div className="text-sm text-slate-600">{ethers.utils.formatUnits(token?.balance, token?.decimals).match(/^\d+(?:\.\d{0,5})?/)}</div>
             </>
-        )}
-
-
+        ) : null}
         {showMax && (
           <div
             className={`flex cursor-pointer justify-end rounded-lg bg-[#eda67e24] py-0.5 px-2 text-[.8rem] text-[#FC8D4D] hover:bg-[#f98c4e57] ${
