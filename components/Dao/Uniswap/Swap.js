@@ -8,7 +8,6 @@ import { useQueryClient } from "react-query"
 import { flatten, max256, NumberFromBig } from "utils/helpers"
 import { useSigner } from "wagmi"
 import { minimalABI } from "hooks/useERC20Contract"
-import { readableTokenBalance } from "./helpers"
 import TokenInput from "./TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
@@ -158,7 +157,6 @@ const Swap = ({ token }) => {
       }
     } catch (err) {
       if (!!uniswapTokens) {
-
         // if (
         //   uniswapTokens[tokens.token0.symbol]?.symbol === "ETH" ||
         //   uniswapTokens[tokens.token1.symbol]?.symbol === "ETH"
@@ -277,7 +275,7 @@ const Swap = ({ token }) => {
         contract?.address,
         0
       )
-      console.log('tx', tx)
+      console.log("tx", tx)
     } catch (err) {
       console.log("err", err)
     }
@@ -402,7 +400,7 @@ const Swap = ({ token }) => {
         UniswapV2Router02,
         0
       )
-      console.log('tx', tx)
+      console.log("tx", tx)
     }
 
     if (inputToken.token.symbol === "ETH") {
@@ -421,7 +419,7 @@ const Swap = ({ token }) => {
         UniswapV2Router02,
         ethers.utils.parseUnits(inputToken.value.toString())
       )
-      console.log('tx', tx)
+      console.log("tx", tx)
     }
 
     if (outputToken.token.symbol === "ETH") {
@@ -431,7 +429,7 @@ const Swap = ({ token }) => {
           instance: uniswapV2RouterContract02,
           fn: "swapExactTokensForETH(uint256,uint256,address[],address,uint256)",
           args: {
-            amountIn: ethers.utils.parseUnits(inputToken.value.toString(),  inputToken?.token?.decimals),
+            amountIn: ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals),
             amountOutMin: ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals),
             path: [ethers.utils.getAddress(inputToken.token.address), WETH],
             addressTo: ethers.utils.getAddress(bbyDao),
@@ -441,7 +439,7 @@ const Swap = ({ token }) => {
         UniswapV2Router02,
         0
       )
-      console.log('tx', tx)
+      console.log("tx", tx)
     }
   }
 
@@ -456,7 +454,6 @@ const Swap = ({ token }) => {
             lpToken={tokens?.token0}
             handleSetTokenValue={handleSetTokenValue}
             handleSetMaxTokenValue={handleSetMaxTokenValue}
-            readableTokenBalance={readableTokenBalance}
             state={state}
             logo={tokens?.token0?.logoURI}
             autoComplete="off"
@@ -482,7 +479,6 @@ const Swap = ({ token }) => {
           lpToken={tokens?.token1}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
-          readableTokenBalance={readableTokenBalance}
           state={state}
           logo={tokens?.token1?.logoURI}
           autoComplete="off"
@@ -524,14 +520,19 @@ const Swap = ({ token }) => {
       </form>
       {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
       <div className="my-4 flex w-full justify-center gap-4">
-        {!hasNoLiquidity && hasAllowance?.token0 === false && tokens?.token0 && tokens?.token1 && (
-          <div
-            className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
-            onClick={() => handleApproveToken(tokenContracts, 0)}
-          >
-            Approve {tokens?.token0?.symbol}
-          </div>
-        )}
+        {console.log("tokens", tokens)}
+        {hasNoLiquidity === false &&
+          hasAllowance?.token0 === false &&
+          tokens?.token0 &&
+          tokens?.token0.symbol !== "ETH" &&
+          tokens?.token1 && (
+            <div
+              className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+              onClick={() => handleApproveToken(tokenContracts, 0)}
+            >
+              Approve {tokens?.token0?.symbol}
+            </div>
+          )}
         {!!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
           <button
             type="button"
