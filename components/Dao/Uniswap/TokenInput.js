@@ -59,6 +59,7 @@ const TokenInput = ({
   return (
     <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
       <div className="flex flex-row">
+
         <input
           value={state?.[token?.symbol]}
           onChange={e => handleSetTokenValue(e, token, tokenInputRef)}
@@ -66,10 +67,10 @@ const TokenInput = ({
           id="name"
           name={token?.symbol}
           type="number"
-          step={0.000001}
+          step={0.00001}
           placeholder="0.0"
           required
-          max={token?.balance / 10 ** token?.decimals || ""}
+          max={ (token?.balance / 10 ** token?.decimals).toFixed(5) || ""}
           ref={tokenInputRef}
           disabled={!pair || !tokens?.token0 || !tokens?.token1}
           autoComplete="off"
