@@ -60,7 +60,7 @@ const TokenInput = ({
     <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
       <div className="flex flex-row">
         <input
-          value={state?.[token?.symbol] || (readableTokenBalance(token) < 0.1 ? 0 : "")}
+          value={state?.[token?.symbol]}
           onChange={e => handleSetTokenValue(e, token, tokenInputRef)}
           className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-4xl leading-tight focus:outline-none dark:bg-slate-800"
           id="name"
@@ -71,7 +71,7 @@ const TokenInput = ({
           required
           max={token?.balance / 10 ** token?.decimals || ""}
           ref={tokenInputRef}
-          disabled={!pair || !token}
+          disabled={!pair || !tokens?.token0 || !tokens?.token1}
           autoComplete="off"
         />
         <button
