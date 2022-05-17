@@ -7,8 +7,8 @@ const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 const CALL = 0
 
 import { useSigner } from "wagmi"
-import { amount }    from "../components/Dao/Uniswap/helpers"
-import useSafeSdk    from "./useSafeSdk"
+import { amount } from "../components/Dao/Uniswap/helpers"
+import useSafeSdk from "./useSafeSdk"
 
 export default function useGnosisTransaction(safeAddress) {
   const safeSdk = useSafeSdk(safeAddress)
@@ -24,8 +24,12 @@ export default function useGnosisTransaction(safeAddress) {
   const contractInterface = useCallback(contract => {
     const fragments = contract.instance.interface.functions
     let abi = new ethers.utils.Interface(contract.abi)
-    const data = abi.encodeFunctionData(fragments[contract.fn], Object.values(contract.args))
-
+    let data
+    if (!!contract.args) {
+      data = abi.encodeFunctionData(fragments[contract.fn], Object.values(contract.args))
+    } else {
+      data = abi.encodeFunctionData(fragments[contract.fn])
+    }
     return { data }
   }, [])
 
@@ -75,7 +79,10 @@ export default function useGnosisTransaction(safeAddress) {
         const sig = await safeSdk.signTransactionHash(hash)
         await safeService.confirmTransaction(hash, sig?.data)
         const executeTxResponse = await safeSdk.executeTransaction(safeTransaction)
-        console.log('ex', executeTxResponse?.transactionResponse &&  await executeTxResponse.transactionResponse.wait())
+        console.log(
+          "ex",
+          executeTxResponse?.transactionResponse && (await executeTxResponse.transactionResponse.wait())
+        )
 
         return executeTxResponse?.transactionResponse && (await executeTxResponse.transactionResponse.wait())
       } catch (err) {

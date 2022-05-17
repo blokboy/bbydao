@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import React from "react"
 import { ChainId, Fetcher, Token, TokenAmount } from "@uniswap/sdk"
 import { BigNumber, ethers } from "ethers"
 import { useQueryClient } from "react-query"
