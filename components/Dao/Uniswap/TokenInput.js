@@ -90,7 +90,12 @@ const TokenInput = ({
         >
           {(token && (
             <>
-              {logo && <img alt={`${token?.symbol} icon`} src={logo} className="mr-2 h-8 w-8 min-w-fit rounded-full" />}
+              {logo && (
+                  <div className="flex mr-2  h-8 w-8 overflow-hidden rounded-full">
+                    <img alt={`${token?.symbol} icon`} src={logo} />
+                  </div>
+              )
+              }
             </>
           )) || <div className="flex h-8 w-8 min-w-fit items-center">Select</div>}
           {token?.symbol ? token?.symbol : ""}
