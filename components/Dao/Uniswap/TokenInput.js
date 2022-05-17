@@ -1,3 +1,4 @@
+import { BigNumber, ethers } from "ethers"
 import React from "react"
 import { flatten } from "utils/helpers"
 
@@ -7,7 +8,6 @@ const TokenInput = ({
   tokenInputRef,
   handleSetTokenValue,
   handleSetMaxTokenValue,
-  readableTokenBalance,
   state,
   logo,
   setOpenSearch,
@@ -56,6 +56,12 @@ const TokenInput = ({
     return isTokenWithLessValue
   }, [isSwap, isToken0, isTokenWithLessValue, token])
 
+  const max = React.useMemo(() => {
+    if (!!token) {
+      return ethers.utils.formatUnits(BigNumber.from(token?.balance), token?.decimals)
+    }
+  }, [token])
+
   return (
     <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
       <div className="flex flex-row">
@@ -66,10 +72,10 @@ const TokenInput = ({
           id="name"
           name={token?.symbol}
           type="number"
-          step={0.000001}
+          step={0.00001}
           placeholder="0.0"
           required
-          max={token?.balance / 10 ** token?.decimals || ""}
+          max={max || ""}
           ref={tokenInputRef}
           disabled={!pair || !tokens?.token0 || !tokens?.token1}
           autoComplete="off"
@@ -81,15 +87,24 @@ const TokenInput = ({
         >
           {(token && (
             <>
-              {logo && <img alt={`${token?.symbol} icon`} src={logo} className="mr-2 h-8 w-8 min-w-fit rounded-full" />}
+              {logo && (
+                <div className="mr-2 flex  h-8 w-8 overflow-hidden rounded-full">
+                  <img alt={`${token?.symbol} icon`} src={logo} />
+                </div>
+              )}
             </>
           )) || <div className="flex h-8 w-8 min-w-fit items-center">Select</div>}
           {token?.symbol ? token?.symbol : ""}
         </button>
       </div>
       <div className="flex w-full flex-row items-end justify-end space-x-2 font-light">
-        <div className="text-sm text-slate-600">Balance:</div>
-        <div className="text-sm text-slate-600">{readableTokenBalance(token)}</div>
+        {token?.balance && (
+            <>
+              <div className="text-sm text-slate-600">Balance:</div>
+              <div className="text-sm text-slate-600">{ethers.utils.formatUnits(token?.balance, token?.decimals).match(/^\d+(?:\.\d{0,5})?/)}</div>
+            </>
+        )}
+
 
         {showMax && (
           <div

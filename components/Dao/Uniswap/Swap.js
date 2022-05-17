@@ -1,17 +1,15 @@
-import { WETH, ChainId, Fetcher, Pair, Percent, Route, Token, TokenAmount, Trade, TradeType } from "@uniswap/sdk"
+import { ChainId, Fetcher, Percent, Route, Token } from "@uniswap/sdk"
 import defaultTokens from "@uniswap/default-token-list"
 import { BigNumber, ethers } from "ethers"
-import React, { useMemo, useState } from "react"
+import React from "react"
 import useForm from "hooks/useForm"
 import { HiOutlineSwitchVertical, HiArrowSmDown } from "react-icons/hi"
 import { useQueryClient } from "react-query"
 import { flatten, max256, NumberFromBig } from "utils/helpers"
 import { useSigner } from "wagmi"
 import { minimalABI } from "hooks/useERC20Contract"
-import { readableTokenBalance } from "./helpers"
 import TokenInput from "./TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
-// import IUniswapV2Router02 from "@uniswap/swap-router-contracts/artifacts/contracts/SwapRouter02.sol/SwapRouter02.json"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 
@@ -159,6 +157,26 @@ const Swap = ({ token }) => {
       }
     } catch (err) {
       if (!!uniswapTokens) {
+        // if (
+        //   uniswapTokens[tokens.token0.symbol]?.symbol === "ETH" ||
+        //   uniswapTokens[tokens.token1.symbol]?.symbol === "ETH"
+        // ) {
+        //   const token = new ethers.Contract(ethers.utils.getAddress(WETH), minimalABI, signer)
+        //
+        //   if (uniswapTokens[tokens.token0.symbol]?.symbol === "ETH") {
+        //     console.log("u", token)
+        //     //unwrap
+        //
+        //   } else {
+        //     console.log("u", token)
+        //     //wrap
+        //
+        //
+        //   }
+        //
+        //   return
+        // }
+
         const Token0WETH = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], WETHToken)
         const WETHToken1 = await Fetcher.fetchPairData(WETHToken, uniswapTokens[tokens.token1.symbol])
 
@@ -244,7 +262,7 @@ const Swap = ({ token }) => {
     try {
       const contracts = await tokenContracts
       const contract = await contracts.contracts[index]
-      gnosisTransaction(
+      const tx = gnosisTransaction(
         {
           abi: minimalABI,
           instance: contract,
@@ -257,11 +275,11 @@ const Swap = ({ token }) => {
         contract?.address,
         0
       )
+      console.log("tx", tx)
     } catch (err) {
       console.log("err", err)
     }
   }
-
 
   /*
    * Format Routes:
@@ -269,7 +287,7 @@ const Swap = ({ token }) => {
    * Display Route taken for swap
    *
    * */
-  const [routePathAsSymbols, setRoutePathAsSymbols] = useState([])
+  const [routePathAsSymbols, setRoutePathAsSymbols] = React.useState([])
   const routePathString = React.useMemo(() => {
     let path = ""
     if (routePathAsSymbols.length > 0) {
@@ -290,7 +308,6 @@ const Swap = ({ token }) => {
       const dec = token?.decimals
       const max = bal / 10 ** dec
       const token0Input = e?.target?.valueAsNumber
-
       const route = new Route(
         Array.isArray(await uniPair) ? await uniPair : [await uniPair],
         uniswapTokens[token.symbol]
@@ -357,11 +374,8 @@ const Swap = ({ token }) => {
 
     if (inputToken.token.symbol !== "ETH" && outputToken.token.symbol !== "ETH") {
       let path
-      if(poolExists) {
-        path = [
-          ethers.utils.getAddress(inputToken.token.address),
-          ethers.utils.getAddress(outputToken.token.address),
-        ]
+      if (poolExists) {
+        path = [ethers.utils.getAddress(inputToken.token.address), ethers.utils.getAddress(outputToken.token.address)]
       } else {
         path = [
           ethers.utils.getAddress(inputToken.token.address),
@@ -370,14 +384,14 @@ const Swap = ({ token }) => {
         ]
       }
 
-      gnosisTransaction(
+      const tx = gnosisTransaction(
         {
           abi: IUniswapV2Router02["abi"],
           instance: uniswapV2RouterContract02,
           fn: "swapExactTokensForTokens(uint256,uint256,address[],address,uint256)",
           args: {
-            amountIn: ethers.utils.parseUnits(inputToken.value.toString()),
-            amountOutMin: ethers.utils.parseUnits(outputToken.value.toString()),
+            amountIn: ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals),
+            amountOutMin: ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals),
             path,
             addressTo: ethers.utils.getAddress(bbyDao),
             deadline: Math.floor(Date.now() / 1000) + 60 * 20,
@@ -386,16 +400,17 @@ const Swap = ({ token }) => {
         UniswapV2Router02,
         0
       )
+      console.log("tx", tx)
     }
 
     if (inputToken.token.symbol === "ETH") {
-      gnosisTransaction(
+      const tx = gnosisTransaction(
         {
           abi: IUniswapV2Router02["abi"],
           instance: uniswapV2RouterContract02,
           fn: "swapExactETHForTokens(uint256,address[],address,uint256)",
           args: {
-            amountOutMin: ethers.utils.parseUnits(outputToken.value.toString()),
+            amountOutMin: ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals),
             path: [WETH, ethers.utils.getAddress(outputToken.token.address)],
             addressTo: ethers.utils.getAddress(bbyDao),
             deadline: Math.floor(Date.now() / 1000) + 60 * 20,
@@ -404,17 +419,18 @@ const Swap = ({ token }) => {
         UniswapV2Router02,
         ethers.utils.parseUnits(inputToken.value.toString())
       )
+      console.log("tx", tx)
     }
 
     if (outputToken.token.symbol === "ETH") {
-      gnosisTransaction(
+      const tx = gnosisTransaction(
         {
           abi: IUniswapV2Router02["abi"],
           instance: uniswapV2RouterContract02,
           fn: "swapExactTokensForETH(uint256,uint256,address[],address,uint256)",
           args: {
-            amountIn: ethers.utils.parseUnits(inputToken.value.toString()),
-            amountOutMin: ethers.utils.parseUnits(outputToken.value.toString()),
+            amountIn: ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals),
+            amountOutMin: ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals),
             path: [ethers.utils.getAddress(inputToken.token.address), WETH],
             addressTo: ethers.utils.getAddress(bbyDao),
             deadline: Math.floor(Date.now() / 1000) + 60 * 20,
@@ -423,6 +439,7 @@ const Swap = ({ token }) => {
         UniswapV2Router02,
         0
       )
+      console.log("tx", tx)
     }
   }
 
@@ -437,7 +454,6 @@ const Swap = ({ token }) => {
             lpToken={tokens?.token0}
             handleSetTokenValue={handleSetTokenValue}
             handleSetMaxTokenValue={handleSetMaxTokenValue}
-            readableTokenBalance={readableTokenBalance}
             state={state}
             logo={tokens?.token0?.logoURI}
             autoComplete="off"
@@ -463,7 +479,6 @@ const Swap = ({ token }) => {
           lpToken={tokens?.token1}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
-          readableTokenBalance={readableTokenBalance}
           state={state}
           logo={tokens?.token1?.logoURI}
           autoComplete="off"
@@ -505,14 +520,18 @@ const Swap = ({ token }) => {
       </form>
       {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
       <div className="my-4 flex w-full justify-center gap-4">
-        {hasAllowance?.token0 === false && tokens?.token0 && tokens?.token1 && (
-          <div
-            className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
-            onClick={() => handleApproveToken(tokenContracts, 0)}
-          >
-            Approve {tokens?.token0?.symbol}
-          </div>
-        )}
+        {hasNoLiquidity === false &&
+          hasAllowance?.token0 === false &&
+          tokens?.token0 &&
+          tokens?.token0.symbol !== "ETH" &&
+          tokens?.token1 && (
+            <div
+              className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+              onClick={() => handleApproveToken(tokenContracts, 0)}
+            >
+              Approve {tokens?.token0?.symbol}
+            </div>
+          )}
         {!!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
           <button
             type="button"
