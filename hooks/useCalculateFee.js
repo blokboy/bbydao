@@ -15,7 +15,6 @@ export default function useCalculateFee() {
             let totalFee = 0
             for(const t of tokens) {
                 const {token, value} = t
-                console.log('t', token, value)
                 const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
                 const percentage = 0.01
                 let fee
@@ -40,8 +39,6 @@ export default function useCalculateFee() {
                 const bigNumberPriceOfWETHInToken = ethers.utils.parseUnits((priceOfWETHInToken.toString()), token1.decimals)
                 const valueInEth =  (parseFloat(ethers.utils.formatEther(value)) / parseFloat(ethers.utils.formatEther(bigNumberPriceOfWETHInToken)))
                 fee = valueInEth * percentage
-                console.log('fee', fee)
-                // console.log('fee', ethers.utils.parseEther(fee.toString()))
                 totalFee += fee
             }
             return ethers.utils.parseEther(totalFee.toString())
