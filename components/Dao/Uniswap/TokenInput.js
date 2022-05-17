@@ -1,4 +1,5 @@
-import React from "react"
+import {BigNumber, ethers} from 'ethers'
+import React               from "react"
 import { flatten } from "utils/helpers"
 
 const TokenInput = ({
@@ -56,10 +57,17 @@ const TokenInput = ({
     return isTokenWithLessValue
   }, [isSwap, isToken0, isTokenWithLessValue, token])
 
+  const max = React.useMemo(() => {
+    if(!!token) {
+     return ethers.utils.formatUnits(BigNumber.from(token?.balance), token?.decimals)
+    }
+
+  }, [token])
+
+
   return (
     <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
       <div className="flex flex-row">
-
         <input
           value={state?.[token?.symbol]}
           onChange={e => handleSetTokenValue(e, token, tokenInputRef)}
@@ -70,7 +78,7 @@ const TokenInput = ({
           step={0.00001}
           placeholder="0.0"
           required
-          max={ (token?.balance / 10 ** token?.decimals).toFixed(5) || ""}
+          max={max || ""}
           ref={tokenInputRef}
           disabled={!pair || !tokens?.token0 || !tokens?.token1}
           autoComplete="off"
