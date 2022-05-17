@@ -12,6 +12,8 @@ import TokenInput from "./TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
+import WETHABI from "ABIs/WETH.json"
+
 
 const Swap = ({ token }) => {
   const { data: signer } = useSigner()
@@ -21,6 +23,7 @@ const Swap = ({ token }) => {
   const [openSearch, setOpenSearch] = React.useState(false)
   const [poolExists, setPoolExists] = React.useState(true)
   const [hasNoLiquidity, setHasNoLiquidity] = React.useState(false)
+  const [isEthOnEth, setIsEthOnEth] = React.useState(false)
   const bbyDao = queryClient.getQueryData("expandedDao")
   const bbyDaoTokens = queryClient.getQueryData(["daoTokens", bbyDao])
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
@@ -157,25 +160,16 @@ const Swap = ({ token }) => {
       }
     } catch (err) {
       if (!!uniswapTokens) {
-        // if (
-        //   uniswapTokens[tokens.token0.symbol]?.symbol === "ETH" ||
-        //   uniswapTokens[tokens.token1.symbol]?.symbol === "ETH"
-        // ) {
-        //   const token = new ethers.Contract(ethers.utils.getAddress(WETH), minimalABI, signer)
-        //
-        //   if (uniswapTokens[tokens.token0.symbol]?.symbol === "ETH") {
-        //     console.log("u", token)
-        //     //unwrap
-        //
-        //   } else {
-        //     console.log("u", token)
-        //     //wrap
-        //
-        //
-        //   }
-        //
-        //   return
-        // }
+        const isETHtoWETH =
+          uniswapTokens[tokens.token0.symbol]?.symbol === "ETH" && uniswapTokens[tokens.token1.symbol]?.address === WETH
+        const isWETHtoETH =
+          uniswapTokens[tokens.token1.symbol]?.symbol === "ETH" && uniswapTokens[tokens.token0.symbol]?.address === WETH
+
+        if (isETHtoWETH || isWETHtoETH) {
+          setIsEthOnEth(true)
+
+          return
+        }
 
         const Token0WETH = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], WETHToken)
         const WETHToken1 = await Fetcher.fetchPairData(WETHToken, uniswapTokens[tokens.token1.symbol])
@@ -308,6 +302,18 @@ const Swap = ({ token }) => {
       const dec = token?.decimals
       const max = bal / 10 ** dec
       const token0Input = e?.target?.valueAsNumber
+      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
+
+      if(isEthOnEth) {
+        if (token0Input > max) {
+          handleSetMaxTokenValue(token, tokenRef)
+        } else {
+          setState(state => ({ ...state, [token.symbol]: token0Input }))
+          setState(state => ({ ...state, [token1?.symbol]: token0Input }))
+        }
+        return
+      }
+
       const route = new Route(
         Array.isArray(await uniPair) ? await uniPair : [await uniPair],
         uniswapTokens[token.symbol]
@@ -319,7 +325,6 @@ const Swap = ({ token }) => {
         }, [])
       )
       const midPrice = route.midPrice.toSignificant(6)
-      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
       const token1Input = Number(token0Input * midPrice)
 
       if (token0Input > max) {
@@ -328,6 +333,8 @@ const Swap = ({ token }) => {
         setState(state => ({ ...state, [token.symbol]: token0Input }))
         setState(state => ({ ...state, [token1?.symbol]: token1Input }))
       }
+
+
     } catch (err) {
       console.log("err", err)
     }
@@ -337,6 +344,13 @@ const Swap = ({ token }) => {
   const handleSetMaxTokenValue = async (token, tokenRef) => {
     try {
       const token0Input = tokenRef?.current?.max
+      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
+
+      if(isEthOnEth) {
+        setState(state => ({ ...state, [token?.symbol]: token0Input }))
+        setState(state => ({ ...state, [token1?.symbol]: token0Input }))
+        return
+      }
 
       const route = new Route(
         Array.isArray(await uniPair) ? await uniPair : [await uniPair],
@@ -349,8 +363,6 @@ const Swap = ({ token }) => {
         }, [])
       )
       const midPrice = route.midPrice.toSignificant(6)
-
-      const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
       const token1Input = token0Input * midPrice
 
       setState(state => ({ ...state, [token?.symbol]: token0Input }))
@@ -372,7 +384,41 @@ const Swap = ({ token }) => {
       value: (parseFloat(token1.toString()) - parseFloat(token1.toString()) * slippage).toFixed(tokens.token1.decimals),
     }
 
-    if (inputToken.token.symbol !== "ETH" && outputToken.token.symbol !== "ETH") {
+    const swapExactTokensForTokens = inputToken.token.symbol !== "ETH" && outputToken.token.symbol !== "ETH"
+    const swapExactETHForTokens = !isEthOnEth && inputToken.token.symbol === "ETH"
+    const swapExactTokensForETH = !isEthOnEth && outputToken.token.symbol === "ETH"
+
+    if(isEthOnEth) {
+      const WETHContract = new ethers.Contract(WETH, WETHABI, signer)
+      if(inputToken.token.symbol === 'WETH') {
+        const tx = gnosisTransaction(
+            {
+              abi: WETHABI,
+              instance: WETHContract,
+              fn: "withdraw(uint256)",
+              args: {
+                wad: ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals),
+              },
+            },
+            WETH,
+            0
+        )
+        console.log('tx', tx)
+      } else {
+        const tx = gnosisTransaction(
+            {
+              abi: WETHABI,
+              instance: WETHContract,
+              fn: "deposit()"
+            },
+            WETH,
+            ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals)
+        )
+        console.log('tx', tx)
+      }
+    }
+
+    if (swapExactTokensForTokens) {
       let path
       if (poolExists) {
         path = [ethers.utils.getAddress(inputToken.token.address), ethers.utils.getAddress(outputToken.token.address)]
@@ -403,7 +449,7 @@ const Swap = ({ token }) => {
       console.log("tx", tx)
     }
 
-    if (inputToken.token.symbol === "ETH") {
+    if (swapExactETHForTokens) {
       const tx = gnosisTransaction(
         {
           abi: IUniswapV2Router02["abi"],
@@ -422,7 +468,7 @@ const Swap = ({ token }) => {
       console.log("tx", tx)
     }
 
-    if (outputToken.token.symbol === "ETH") {
+    if (swapExactTokensForETH) {
       const tx = gnosisTransaction(
         {
           abi: IUniswapV2Router02["abi"],
