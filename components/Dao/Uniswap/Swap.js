@@ -371,7 +371,7 @@ const Swap = ({ token }) => {
     }
     const outputToken = {
       token: tokens.token1,
-      value: (parseFloat(token1.toString()) - parseFloat(token1.toString()) * slippage),
+      value: (parseFloat(token1.toString()) - parseFloat(token1.toString()) * slippage).toFixed(tokens.token1.decimals),
     }
 
     if (inputToken.token.symbol !== "ETH" && outputToken.token.symbol !== "ETH") {
