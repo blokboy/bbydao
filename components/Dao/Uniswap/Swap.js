@@ -262,6 +262,13 @@ const Swap = ({ token }) => {
     }
   }
 
+
+  /*
+   * Format Routes:
+   *
+   * Display Route taken for swap
+   *
+   * */
   const [routePathAsSymbols, setRoutePathAsSymbols] = useState([])
   const routePathString = React.useMemo(() => {
     let path = ""
@@ -295,14 +302,6 @@ const Swap = ({ token }) => {
         }, [])
       )
       const midPrice = route.midPrice.toSignificant(6)
-
-      // const trade = new Trade(
-      //   route,
-      //   new TokenAmount(uniswapTokens[token.symbol], ethers.utils.parseUnits(token0Input.toString()).toBigInt()),
-      //   TradeType.EXACT_INPUT
-      // )
-      //
-
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
       const token1Input = Number(token0Input * midPrice)
 
