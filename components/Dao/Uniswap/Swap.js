@@ -13,6 +13,7 @@ import TokenInput from "./TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 // import IUniswapV2Router02 from "@uniswap/swap-router-contracts/artifacts/contracts/SwapRouter02.sol/SwapRouter02.json"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
+import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 
 const Swap = ({ token }) => {
   const { data: signer } = useSigner()
@@ -20,6 +21,8 @@ const Swap = ({ token }) => {
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()
   const [openSearch, setOpenSearch] = React.useState(false)
+  const [poolExists, setPoolExists] = React.useState(true)
+  const [hasNoLiquidity, setHasNoLiquidity] = React.useState(false)
   const bbyDao = queryClient.getQueryData("expandedDao")
   const bbyDaoTokens = queryClient.getQueryData(["daoTokens", bbyDao])
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
@@ -94,6 +97,7 @@ const Swap = ({ token }) => {
         const hasTokenIndex = bbyDaoTokens.findIndex(
           token => token.tokenAddress === null && parseInt(token.ethValue) === 1
         )
+
         existingToken = {
           ...bbyDaoTokens[hasTokenIndex],
           decimals: 18,
@@ -134,7 +138,6 @@ const Swap = ({ token }) => {
     }
   }, [tokens])
 
-  const [poolExists, setPoolExists] = React.useState(true)
   const uniPair = React.useMemo(async () => {
     try {
       if (!!uniswapTokens) {
@@ -142,6 +145,15 @@ const Swap = ({ token }) => {
           uniswapTokens[tokens.token0.symbol],
           uniswapTokens[tokens.token1.symbol]
         )
+        const pairContract = new ethers.Contract(
+          ethers.utils.getAddress(uniPair?.liquidityToken.address),
+          IUniswapV2Pair["abi"],
+          signer
+        )
+        const totalSupply = await pairContract?.totalSupply()
+        const hasLiquidity = parseInt((totalSupply.toString() / 10 ** uniPair?.liquidityToken?.decimals).toFixed()) > 0
+
+        setHasNoLiquidity(!hasLiquidity)
         setPoolExists(true)
         return uniPair
       }
@@ -149,6 +161,26 @@ const Swap = ({ token }) => {
       if (!!uniswapTokens) {
         const Token0WETH = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], WETHToken)
         const WETHToken1 = await Fetcher.fetchPairData(WETHToken, uniswapTokens[tokens.token1.symbol])
+
+        const pair0Contract = new ethers.Contract(
+          ethers.utils.getAddress(Token0WETH?.liquidityToken?.address),
+          IUniswapV2Pair["abi"],
+          signer
+        )
+        const pair1Contract = new ethers.Contract(
+          ethers.utils.getAddress(WETHToken1?.liquidityToken?.address),
+          IUniswapV2Pair["abi"],
+          signer
+        )
+
+        const totalSupply0 = await pair0Contract?.totalSupply()
+        const hasLiquidity0 =
+          parseInt((totalSupply0.toString() / 10 ** Token0WETH?.liquidityToken?.decimals).toFixed()) > 0
+
+        const totalSupply1 = await pair1Contract?.totalSupply()
+        const hasLiquidity1 = parseInt((totalSupply1 / 10 ** Token0WETH?.liquidityToken?.decimals).toFixed()) > 0
+
+        setHasNoLiquidity(!hasLiquidity0 || !hasLiquidity1)
         setPoolExists(false)
         return [Token0WETH, WETHToken1]
       }
@@ -230,8 +262,14 @@ const Swap = ({ token }) => {
     }
   }
 
-  const [routePathAsSymbols, setRoutePathAsSymbols] = useState([])
 
+  /*
+   * Format Routes:
+   *
+   * Display Route taken for swap
+   *
+   * */
+  const [routePathAsSymbols, setRoutePathAsSymbols] = useState([])
   const routePathString = React.useMemo(() => {
     let path = ""
     if (routePathAsSymbols.length > 0) {
@@ -264,14 +302,6 @@ const Swap = ({ token }) => {
         }, [])
       )
       const midPrice = route.midPrice.toSignificant(6)
-
-      // const trade = new Trade(
-      //   route,
-      //   new TokenAmount(uniswapTokens[token.symbol], ethers.utils.parseUnits(token0Input.toString()).toBigInt()),
-      //   TradeType.EXACT_INPUT
-      // )
-      //
-
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
       const token1Input = Number(token0Input * midPrice)
 
@@ -296,10 +326,10 @@ const Swap = ({ token }) => {
         uniswapTokens[token.symbol]
       )
       setRoutePathAsSymbols(
-          route.path.reduce((acc = [], cv) => {
-            acc.push(cv.symbol)
-            return acc
-          }, [])
+        route.path.reduce((acc = [], cv) => {
+          acc.push(cv.symbol)
+          return acc
+        }, [])
       )
       const midPrice = route.midPrice.toSignificant(6)
 
@@ -322,17 +352,23 @@ const Swap = ({ token }) => {
     }
     const outputToken = {
       token: tokens.token1,
-      value: parseFloat(token1.toString()) - parseFloat(token1.toString()) * slippage,
+      value: (parseFloat(token1.toString()) - parseFloat(token1.toString()) * slippage).toFixed(tokens.token1.decimals),
     }
 
     if (inputToken.token.symbol !== "ETH" && outputToken.token.symbol !== "ETH") {
-      const path = [
-        ethers.utils.getAddress(inputToken.token.address),
-        ethers.utils.getAddress(outputToken.token.address),
-      ]
-
-      path.splice(1, 0, poolExists ? null : WETH)
-      path.filter(n => n)
+      let path
+      if(poolExists) {
+        path = [
+          ethers.utils.getAddress(inputToken.token.address),
+          ethers.utils.getAddress(outputToken.token.address),
+        ]
+      } else {
+        path = [
+          ethers.utils.getAddress(inputToken.token.address),
+          WETH,
+          ethers.utils.getAddress(outputToken.token.address),
+        ]
+      }
 
       gnosisTransaction(
         {
@@ -478,12 +514,20 @@ const Swap = ({ token }) => {
           </div>
         )}
         {!!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
-          <div
-            className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
-            onClick={() => handleSwapToken(state[tokens?.token0?.symbol], state[tokens?.token1?.symbol])}
+          <button
+            type="button"
+            disabled={hasNoLiquidity}
+            className={`flex items-center justify-center rounded-3xl p-4 font-normal text-white ${
+              !hasNoLiquidity ? "bg-[#FC8D4D] hover:bg-[#d57239]" : ""
+            }`}
+            onClick={
+              !hasNoLiquidity
+                ? () => handleSwapToken(state[tokens?.token0?.symbol], state[tokens?.token1?.symbol])
+                : () => {}
+            }
           >
-            Swap {tokens?.token0?.symbol} for {tokens?.token1?.symbol}
-          </div>
+            {hasNoLiquidity ? `No Liquidity` : `Swap ${tokens?.token0?.symbol} for ${tokens?.token1?.symbol}`}
+          </button>
         )}
       </div>
     </div>
