@@ -45,7 +45,7 @@ export default function useGnosisTransaction(safeAddress) {
         /*  construct gnosis transaction object  */
         const safeTx = {
           to: ethers.utils.getAddress(to),
-          value: amount(parseFloat(ethers.utils.formatEther(value))),
+          value: amount(parseFloat(ethers.utils.formatEther(value))), //
           data,
           operation: CALL,
           safeTxGas: 0,
