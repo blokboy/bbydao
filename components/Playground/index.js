@@ -10,8 +10,8 @@ const Playground = ({ address, data }) => {
   // data is the res from querying gnosis for the user's daos
   // address is the address of the profile being viewed
   // data: userData is the data of the signed-in user
-  const { data: accountData, error: userErr, loading: userLoading } = useAccount()
-  const { data: ensName, isError: ensError, isLoading: ensLoading } = useEnsName({ address: address })
+  const { data: accountData, isError: accountErr, isLoading: accountLoading } = useAccount()
+  const { data: ensName, isError: ensErr, isLoading: ensLoading } = useEnsName({ address: address })
   
   // getUser sends a POST req to our api with the address of the profile being viewed
   // if that address does not exist in our backend, it creates a new user record
