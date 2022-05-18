@@ -54,14 +54,14 @@ const TokenInput = ({
     }
 
     return isTokenWithLessValue
-  }, [isSwap, isToken0, isTokenWithLessValue, token])
+  }, [isSwap, isToken0, isTokenWithLessValue, token, tokens])
 
   const max = React.useMemo(() => {
     if (!!token) {
       if (token.symbol === "ETH") {
         const max = ethers.utils.formatUnits(BigNumber.from(token?.balance), token?.decimals)
         const uniFee = parseFloat(max) * 0.01 * 0.3
-        const gasForSwap = 0.0099 // should use API for this value
+        const gasForSwap = 0.0099 // should use API for this value -- i.e for LP ETH this value is likely too small
         return (parseFloat(max) - uniFee - gasForSwap).toFixed(6).toString()
       }
 
