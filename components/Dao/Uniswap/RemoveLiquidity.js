@@ -11,12 +11,14 @@ import { max256, NumberFromBig } from "utils/helpers"
 import { minimalABI } from "hooks/useERC20Contract"
 import { amount } from "./helpers"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
+import useCalculateFee from "hooks/useCalculateFee"
 
 const RemoveLiquidity = ({ token }) => {
-  const [{ data: signer }] = useSigner()
+  const { data: signer } = useSigner()
   const queryClient = useQueryClient()
   const bbyDao = queryClient.getQueryData("expandedDao")
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
+  const { calculateFee } = useCalculateFee()
   const [breakDown, setBreakDown] = React.useState(undefined)
   const [toReceive, setToReceive] = React.useState({})
   const { state, setState, handleChange } = useForm()
@@ -113,6 +115,7 @@ const RemoveLiquidity = ({ token }) => {
             address: token0.address,
             name: token0.name,
             symbol: token0.symbol,
+            decimals: token0.decimals,
             priceInPair: priceOfToken0InToken1,
             amount: token0Amount,
           },
@@ -120,6 +123,7 @@ const RemoveLiquidity = ({ token }) => {
             address: token1.address,
             name: token1.name,
             symbol: token1.symbol,
+            decimals: token1.decimals,
             priceInPair: priceOfToken1InToken0,
             amount: token1Amount,
           },
@@ -164,22 +168,31 @@ const RemoveLiquidity = ({ token }) => {
     }
   }
 
-  const handleRemoveLiquidity = () => {
-    const amountAMin = ethers.utils.parseUnits((toReceive.token0 - toReceive.token0 * slippage).toString())
-    const amountBMin = ethers.utils.parseUnits((toReceive.token1 - toReceive.token1 * slippage).toString())
+  const handleRemoveLiquidity = async () => {
+    //undeflow issue because of slippage calculation, toFixed(6) feels a bit arbitrary, can find better solution
+    const amountAMin = ethers.utils.parseUnits(
+      (toReceive.token0 - toReceive.token0 * slippage).toFixed(6).toString(),
+      toReceive?.token0?.decimals
+    )
+    const amountBMin = ethers.utils.parseUnits(
+      (toReceive.token1 - toReceive.token1 * slippage).toFixed(6).toString(),
+      toReceive?.token1?.decimals
+    )
     const amountMins = {
       [breakDown.token0.symbol]: amountAMin,
       [breakDown.token1.symbol]: amountBMin,
     }
     const addresses = [breakDown.token0, breakDown.token1]
     const hasWETH = addresses.filter(item => item.address === breakDown.WETH).length > 0
-    const percentageOfLiquidityToRemove = ((liquidity / 100) * breakDown?.bbyDaoBalance).toString()
+    const percentageOfLiquidityToRemove =
+      liquidity === 100 ? breakDown?.bbyDaoBalance : ((liquidity / 100) * breakDown?.bbyDaoBalance).toString()
 
     if (hasWETH) {
       const WETHToken = addresses?.filter(item => item.address === breakDown.WETH)?.[0]
       const pairToken = addresses?.filter(item => item.address !== breakDown.WETH)?.[0]
       const amountTokenMin = amountMins[pairToken.symbol]
       const amountETHMin = amountMins[WETHToken.symbol]
+      const fee = await calculateFee([{ value: amountTokenMin, token: pairToken }, { value: amountETHMin }])
 
       gnosisTransaction(
         {
@@ -196,9 +209,14 @@ const RemoveLiquidity = ({ token }) => {
           },
         },
         UniswapV2Router02,
-        0
+        0,
+        fee
       )
     } else {
+      const fee = await calculateFee([
+        { value: amountAMin, token: breakDown.token0 },
+        { value: amountBMin, token: breakDown.token1 },
+      ])
       gnosisTransaction(
         {
           abi: IUniswapV2Router02["abi"],
@@ -215,7 +233,8 @@ const RemoveLiquidity = ({ token }) => {
           },
         },
         UniswapV2Router02,
-        0
+        0,
+        fee
       )
     }
   }
@@ -304,11 +323,11 @@ const RemoveLiquidity = ({ token }) => {
 
                 <div className="flex justify-between">
                   <div>{breakDown?.token0?.symbol}: </div>
-                  <div>{Number((breakDown?.token0?.amount))?.toFixed(5)}</div>
+                  <div>{Number(breakDown?.token0?.amount)?.toFixed(5)}</div>
                 </div>
                 <div className="flex justify-between">
                   <div>{breakDown?.token1?.symbol}:</div>
-                  <div>{Number((breakDown?.token1?.amount))?.toFixed(5)}</div>
+                  <div>{Number(breakDown?.token1?.amount)?.toFixed(5)}</div>
                 </div>
               </>
             )}
@@ -317,7 +336,7 @@ const RemoveLiquidity = ({ token }) => {
             {breakDown && (
               <>
                 <div>Price</div>
-                <div className="text-sm text-right">
+                <div className="text-right text-sm">
                   <div>
                     1 {breakDown?.token0?.symbol} = {breakDown?.token0?.priceInPair} {breakDown?.token1?.symbol}
                   </div>
@@ -331,7 +350,7 @@ const RemoveLiquidity = ({ token }) => {
         </div>
       </div>
 
-      <div className="flex gap-4 my-6">
+      <div className="my-6 flex gap-4">
         {breakDown && (
           <button
             className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full bg-slate-200
@@ -348,7 +367,7 @@ const RemoveLiquidity = ({ token }) => {
           <button
             onClick={() => handleRemoveLiquidity()}
             className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full
-           bg-sky-500 hover:bg-sky-600 p-4 py-2 px-3 text-xl leading-tight focus:outline-none
+           bg-sky-500 p-4 py-2 px-3 text-xl leading-tight hover:bg-sky-600 focus:outline-none
           dark:bg-orange-600 dark:hover:bg-orange-700`}
           >
             Remove Liquidity

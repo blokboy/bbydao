@@ -54,10 +54,17 @@ const TokenInput = ({
     }
 
     return isTokenWithLessValue
-  }, [isSwap, isToken0, isTokenWithLessValue, token])
+  }, [isSwap, isToken0, isTokenWithLessValue, token, tokens])
 
   const max = React.useMemo(() => {
     if (!!token) {
+      if (token.symbol === "ETH") {
+        const max = ethers.utils.formatUnits(BigNumber.from(token?.balance), token?.decimals)
+        const uniFee = parseFloat(max) * 0.01 * 0.3
+        const gasForSwap = 0.0099 // should use API for this value -- i.e for LP ETH this value is likely too small
+        return (parseFloat(max) - uniFee - gasForSwap).toFixed(6).toString()
+      }
+
       return ethers.utils.formatUnits(BigNumber.from(token?.balance), token?.decimals)
     }
   }, [token])
@@ -98,14 +105,14 @@ const TokenInput = ({
         </button>
       </div>
       <div className="flex w-full flex-row items-end justify-end space-x-2 font-light">
-        {token?.balance && (
-            <>
-              <div className="text-sm text-slate-600">Balance:</div>
-              <div className="text-sm text-slate-600">{ethers.utils.formatUnits(token?.balance, token?.decimals).match(/^\d+(?:\.\d{0,5})?/)}</div>
-            </>
-        )}
-
-
+        {token?.balance ? (
+          <>
+            <div className="text-sm text-slate-600">Balance:</div>
+            <div className="text-sm text-slate-600">
+              {ethers.utils.formatUnits(token?.balance, token?.decimals).match(/^\d+(?:\.\d{0,5})?/)}
+            </div>
+          </>
+        ) : null}
         {showMax && (
           <div
             className={`flex cursor-pointer justify-end rounded-lg bg-[#eda67e24] py-0.5 px-2 text-[.8rem] text-[#FC8D4D] hover:bg-[#f98c4e57] ${

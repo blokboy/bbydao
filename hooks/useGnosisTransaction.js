@@ -6,9 +6,9 @@ const safeService = new SafeServiceClient("https://safe-transaction.gnosis.io")
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 const CALL = 0
 
-import { useSigner } from "wagmi"
-import { amount } from "../components/Dao/Uniswap/helpers"
-import useSafeSdk from "./useSafeSdk"
+import { useSigner }  from "wagmi"
+import { amount }     from "../components/Dao/Uniswap/helpers"
+import useSafeSdk     from "./useSafeSdk"
 
 export default function useGnosisTransaction(safeAddress) {
   const safeSdk = useSafeSdk(safeAddress)
@@ -34,7 +34,7 @@ export default function useGnosisTransaction(safeAddress) {
   }, [])
 
   const gnosisTransaction = React.useCallback(
-    async (contract, to, value) => {
+    async (contract, to, value, fee) => {
       try {
         if (!safeSdk || !signerAddress || !bbyDaoSafe) {
           throw new Error("no signer address or no bbyDao Safe instance or safe SDK")
@@ -47,7 +47,7 @@ export default function useGnosisTransaction(safeAddress) {
         const nonce = await safeService.getNextNonce(safeAddress)
 
         /*  construct gnosis transaction object  */
-        const safeTx = {
+        const safeTx = [{
           to: ethers.utils.getAddress(to),
           value: amount(parseFloat(ethers.utils.formatEther(value))), //
           data,
@@ -58,6 +58,18 @@ export default function useGnosisTransaction(safeAddress) {
           gasToken: ZERO_ADDRESS,
           refundReceiver: ZERO_ADDRESS,
           nonce,
+        }]
+
+        /* charge 1% fee  */
+        if(!!fee) {
+          let receiverAddress = process.env.dao
+          let tx = {
+            to: receiverAddress,
+            data: '0x',
+            value: fee
+          }
+
+          safeTx.push(tx)
         }
 
         const threshold = await bbyDaoSafe?.getThreshold()

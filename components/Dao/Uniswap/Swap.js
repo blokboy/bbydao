@@ -1,19 +1,19 @@
 import { ChainId, Fetcher, Percent, Route, Token } from "@uniswap/sdk"
 import defaultTokens from "@uniswap/default-token-list"
 import { BigNumber, ethers } from "ethers"
-import React from "react"
+import React, { useCallback } from "react"
 import useForm from "hooks/useForm"
 import { HiOutlineSwitchVertical, HiArrowSmDown } from "react-icons/hi"
 import { useQueryClient } from "react-query"
 import { flatten, max256, NumberFromBig } from "utils/helpers"
 import { useSigner } from "wagmi"
 import { minimalABI } from "hooks/useERC20Contract"
+import useCalculateFee from "hooks/useCalculateFee"
 import TokenInput from "./TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import WETHABI from "ABIs/WETH.json"
-
 
 const Swap = ({ token }) => {
   const { data: signer } = useSigner()
@@ -31,6 +31,8 @@ const Swap = ({ token }) => {
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { state, setState, handleChange } = useForm()
+  const { calculateFee } = useCalculateFee()
+
   const defaultEth = {
     address: WETH,
     chainId: ChainId.MAINNET,
@@ -40,10 +42,7 @@ const Swap = ({ token }) => {
     symbol: "ETH",
   }
   const defaultTokenList = [...defaultTokens?.["tokens"], defaultEth]
-
   const slippage = 0.055
-  const slippageTolerance = new Percent("50", "10000") // 50 bips, or 0.50%
-
   const token0 = React.useMemo(() => {
     if (parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null) {
       return {
@@ -65,7 +64,6 @@ const Swap = ({ token }) => {
     token0: flatten(token0),
     token1: undefined,
   })
-
   const tokenSymbols = React.useMemo(() => {
     return defaultTokenList?.reduce((acc = [], cv) => {
       if (acc.filter(item => item.symbol === cv.symbol).length < 1) acc.push({ symbol: cv.symbol, uri: cv.logoURI })
@@ -73,7 +71,6 @@ const Swap = ({ token }) => {
       return acc
     }, [])
   }, [defaultTokenList])
-
   const filteredTokensBySymbol = React.useMemo(() => {
     return tokenSymbols.reduce((acc = [], cv) => {
       if (cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) && cv.symbol !== flatten(token0)?.symbol) {
@@ -83,7 +80,6 @@ const Swap = ({ token }) => {
       return acc
     }, [])
   }, [state.symbol])
-
   const handlePickToken = React.useCallback(
     picked => {
       const index = defaultTokenList.findIndex(token => token.symbol === picked.symbol)
@@ -120,15 +116,13 @@ const Swap = ({ token }) => {
     },
     [tokens]
   )
-
   const switchTokenPlacement = React.useCallback(() => {
+    setState(state => ({ ...state, [tokens.token0?.symbol]: NaN, [tokens.token1?.symbol]: NaN }))
     setTokens({ token0: tokens.token1, token1: tokens.token0 })
   }, [tokens])
-
   const WETHToken = React.useMemo(() => {
     return new Token(ChainId.MAINNET, WETH, 18, "WETH", "Wrapped Ether")
   }, [WETH, ChainId, Token])
-
   const uniswapTokens = React.useMemo(() => {
     if (!!tokens?.token0 && !!tokens?.token1) {
       const token0 = tokens?.token0
@@ -138,7 +132,6 @@ const Swap = ({ token }) => {
       return { [token0.symbol]: uniToken0, [token1.symbol]: uniToken1 }
     }
   }, [tokens])
-
   const uniPair = React.useMemo(async () => {
     try {
       if (!!uniswapTokens) {
@@ -295,7 +288,6 @@ const Swap = ({ token }) => {
     }
   }, [routePathAsSymbols])
 
-  /* Handle setting token values and retrieving liquidity pair information  */
   const handleSetTokenValue = async (e, token, tokenRef) => {
     try {
       const bal = token?.balance
@@ -304,7 +296,7 @@ const Swap = ({ token }) => {
       const token0Input = e?.target?.valueAsNumber
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
 
-      if(isEthOnEth) {
+      if (isEthOnEth) {
         if (token0Input > max) {
           handleSetMaxTokenValue(token, tokenRef)
         } else {
@@ -333,20 +325,17 @@ const Swap = ({ token }) => {
         setState(state => ({ ...state, [token.symbol]: token0Input }))
         setState(state => ({ ...state, [token1?.symbol]: token1Input }))
       }
-
-
     } catch (err) {
       console.log("err", err)
     }
   }
 
-  /* Handle setting max token values and retrieving liquidity pair information  */
   const handleSetMaxTokenValue = async (token, tokenRef) => {
     try {
       const token0Input = tokenRef?.current?.max
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token.symbol)[0][1]
 
-      if(isEthOnEth) {
+      if (isEthOnEth) {
         setState(state => ({ ...state, [token?.symbol]: token0Input }))
         setState(state => ({ ...state, [token1?.symbol]: token0Input }))
         return
@@ -372,120 +361,136 @@ const Swap = ({ token }) => {
     }
   }
 
-  const handleSwapToken = (token0, token1) => {
-    const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
+  const handleSwapToken = async (token0, token1) => {
+    try {
+      const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
+      const inputToken = {
+        token: tokens.token0,
+        value: parseFloat(token0.toString()),
+      }
+      const outputToken = {
+        token: tokens.token1,
+        value: parseFloat(token1.toString()) - parseFloat(token1.toString()) * slippage,
+      }
+      const swapExactTokensForTokens = inputToken.token.symbol !== "ETH" && outputToken.token.symbol !== "ETH"
+      const swapExactETHForTokens = !isEthOnEth && inputToken.token.symbol === "ETH"
+      const swapExactTokensForETH = !isEthOnEth && outputToken.token.symbol === "ETH"
 
-    const inputToken = {
-      token: tokens.token0,
-      value: parseFloat(token0.toString()),
-    }
-    const outputToken = {
-      token: tokens.token1,
-      value: (parseFloat(token1.toString()) - parseFloat(token1.toString()) * slippage).toFixed(tokens.token1.decimals),
-    }
-
-    const swapExactTokensForTokens = inputToken.token.symbol !== "ETH" && outputToken.token.symbol !== "ETH"
-    const swapExactETHForTokens = !isEthOnEth && inputToken.token.symbol === "ETH"
-    const swapExactTokensForETH = !isEthOnEth && outputToken.token.symbol === "ETH"
-
-    if(isEthOnEth) {
-      const WETHContract = new ethers.Contract(WETH, WETHABI, signer)
-      if(inputToken.token.symbol === 'WETH') {
-        const tx = gnosisTransaction(
+      if (isEthOnEth) {
+        const WETHContract = new ethers.Contract(WETH, WETHABI, signer)
+        const wad = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
+        if (inputToken.token.symbol === "WETH") {
+          const tx = gnosisTransaction(
             {
               abi: WETHABI,
               instance: WETHContract,
               fn: "withdraw(uint256)",
               args: {
-                wad: ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals),
+                wad,
               },
             },
             WETH,
-            0
-        )
-        console.log('tx', tx)
-      } else {
-        const tx = gnosisTransaction(
+            0,
+            await calculateFee([{ value: wad }])
+          )
+          console.log("tx", tx)
+        } else {
+          const tx = gnosisTransaction(
             {
               abi: WETHABI,
               instance: WETHContract,
-              fn: "deposit()"
+              fn: "deposit()",
             },
             WETH,
-            ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals)
+            wad,
+            await calculateFee([{ value: wad }])
+          )
+          console.log("tx", tx)
+        }
+      }
+
+      if (swapExactTokensForTokens) {
+        const amountIn = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
+        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toFixed(6).toString(), outputToken?.token?.decimals)
+        let path
+        if (poolExists) {
+          path = [ethers.utils.getAddress(inputToken.token.address), ethers.utils.getAddress(outputToken.token.address)]
+        } else {
+          path = [
+            ethers.utils.getAddress(inputToken.token.address),
+            WETH,
+            ethers.utils.getAddress(outputToken.token.address),
+          ]
+        }
+
+        const tx = gnosisTransaction(
+          {
+            abi: IUniswapV2Router02["abi"],
+            instance: uniswapV2RouterContract02,
+            fn: "swapExactTokensForTokens(uint256,uint256,address[],address,uint256)",
+            args: {
+              amountIn,
+              amountOutMin,
+              path,
+              addressTo: ethers.utils.getAddress(bbyDao),
+              deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+            },
+          },
+          UniswapV2Router02,
+          0,
+          await calculateFee([
+            { value: amountIn, token: inputToken.token },
+          ])
         )
-        console.log('tx', tx)
-      }
-    }
-
-    if (swapExactTokensForTokens) {
-      let path
-      if (poolExists) {
-        path = [ethers.utils.getAddress(inputToken.token.address), ethers.utils.getAddress(outputToken.token.address)]
-      } else {
-        path = [
-          ethers.utils.getAddress(inputToken.token.address),
-          WETH,
-          ethers.utils.getAddress(outputToken.token.address),
-        ]
+        console.log("tx", tx)
       }
 
-      const tx = gnosisTransaction(
-        {
-          abi: IUniswapV2Router02["abi"],
-          instance: uniswapV2RouterContract02,
-          fn: "swapExactTokensForTokens(uint256,uint256,address[],address,uint256)",
-          args: {
-            amountIn: ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals),
-            amountOutMin: ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals),
-            path,
-            addressTo: ethers.utils.getAddress(bbyDao),
-            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+      if (swapExactETHForTokens) {
+        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toFixed(6).toString(), outputToken?.token?.decimals)
+        const value = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString())
+        const tx = gnosisTransaction(
+          {
+            abi: IUniswapV2Router02["abi"],
+            instance: uniswapV2RouterContract02,
+            fn: "swapExactETHForTokens(uint256,address[],address,uint256)",
+            args: {
+              amountOutMin,
+              path: [WETH, ethers.utils.getAddress(outputToken.token.address)],
+              addressTo: ethers.utils.getAddress(bbyDao),
+              deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+            },
           },
-        },
-        UniswapV2Router02,
-        0
-      )
-      console.log("tx", tx)
-    }
+          UniswapV2Router02,
+          value,
+          await calculateFee([{ value }])
+        )
+        console.log("tx", tx)
+      }
 
-    if (swapExactETHForTokens) {
-      const tx = gnosisTransaction(
-        {
-          abi: IUniswapV2Router02["abi"],
-          instance: uniswapV2RouterContract02,
-          fn: "swapExactETHForTokens(uint256,address[],address,uint256)",
-          args: {
-            amountOutMin: ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals),
-            path: [WETH, ethers.utils.getAddress(outputToken.token.address)],
-            addressTo: ethers.utils.getAddress(bbyDao),
-            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+      if (swapExactTokensForETH) {
+        const amountIn = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
+        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toFixed(6).toString(), outputToken?.token?.decimals)
+        const tx = gnosisTransaction(
+          {
+            abi: IUniswapV2Router02["abi"],
+            instance: uniswapV2RouterContract02,
+            fn: "swapExactTokensForETH(uint256,uint256,address[],address,uint256)",
+            args: {
+              amountIn,
+              amountOutMin,
+              path: [ethers.utils.getAddress(inputToken.token.address), WETH],
+              addressTo: ethers.utils.getAddress(bbyDao),
+              deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+            },
           },
-        },
-        UniswapV2Router02,
-        ethers.utils.parseUnits(inputToken.value.toString())
-      )
-      console.log("tx", tx)
-    }
-
-    if (swapExactTokensForETH) {
-      const tx = gnosisTransaction(
-        {
-          abi: IUniswapV2Router02["abi"],
-          instance: uniswapV2RouterContract02,
-          fn: "swapExactTokensForETH(uint256,uint256,address[],address,uint256)",
-          args: {
-            amountIn: ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals),
-            amountOutMin: ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals),
-            path: [ethers.utils.getAddress(inputToken.token.address), WETH],
-            addressTo: ethers.utils.getAddress(bbyDao),
-            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-          },
-        },
-        UniswapV2Router02,
-        0
-      )
-      console.log("tx", tx)
+          UniswapV2Router02,
+          0,
+          await calculateFee([{ value: amountIn, token: inputToken.token }])
+        )
+        console.log("tx", tx)
+      }
+    } catch (err) {
+      console.log("err", err)
     }
   }
 
@@ -543,7 +548,6 @@ const Swap = ({ token }) => {
             autoFocus={true}
           />
         )}
-
         {openSearch && filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
           <div className="mt-4 flex max-h-96 flex-wrap gap-1 overflow-y-scroll rounded-lg bg-slate-100 p-4 pt-4 shadow-xl dark:bg-slate-800">
             {filteredTokensBySymbol.map((token, i) => (
