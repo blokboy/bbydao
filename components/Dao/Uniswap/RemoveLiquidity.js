@@ -184,7 +184,8 @@ const RemoveLiquidity = ({ token }) => {
     }
     const addresses = [breakDown.token0, breakDown.token1]
     const hasWETH = addresses.filter(item => item.address === breakDown.WETH).length > 0
-    const percentageOfLiquidityToRemove = ((liquidity / 100) * breakDown?.bbyDaoBalance).toString()
+    const percentageOfLiquidityToRemove =
+      liquidity === 100 ? breakDown?.bbyDaoBalance : ((liquidity / 100) * breakDown?.bbyDaoBalance).toString()
 
     if (hasWETH) {
       const WETHToken = addresses?.filter(item => item.address === breakDown.WETH)?.[0]
@@ -208,7 +209,8 @@ const RemoveLiquidity = ({ token }) => {
           },
         },
         UniswapV2Router02,
-        0
+        0,
+        fee
       )
     } else {
       const fee = await calculateFee([
@@ -231,7 +233,8 @@ const RemoveLiquidity = ({ token }) => {
           },
         },
         UniswapV2Router02,
-        0
+        0,
+        fee
       )
     }
   }
