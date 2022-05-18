@@ -191,6 +191,7 @@ const RemoveLiquidity = ({ token }) => {
       const pairToken = addresses?.filter(item => item.address !== breakDown.WETH)?.[0]
       const amountTokenMin = amountMins[pairToken.symbol]
       const amountETHMin = amountMins[WETHToken.symbol]
+      const fee = await calculateFee([{ value: amountTokenMin, token: pairToken }, { value: amountETHMin }])
 
       gnosisTransaction(
         {
@@ -207,10 +208,13 @@ const RemoveLiquidity = ({ token }) => {
           },
         },
         UniswapV2Router02,
-        0,
-        await calculateFee([{ value: amountTokenMin, token: pairToken }, { value: amountETHMin }])
+        0
       )
     } else {
+      const fee = await calculateFee([
+        { value: amountAMin, token: breakDown.token0 },
+        { value: amountBMin, token: breakDown.token1 },
+      ])
       gnosisTransaction(
         {
           abi: IUniswapV2Router02["abi"],
@@ -227,11 +231,7 @@ const RemoveLiquidity = ({ token }) => {
           },
         },
         UniswapV2Router02,
-        0,
-        await calculateFee([
-          { value: amountAMin, token: breakDown.token0 },
-          { value: amountBMin, token: breakDown.token1 },
-        ])
+        0
       )
     }
   }
