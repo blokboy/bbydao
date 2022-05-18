@@ -84,7 +84,6 @@ const TokenCard = ({ token }) => {
         </div>
       </div>
 
-      {parseFloat(token?.fiatBalance) !== 0 && (
         <>
           {(!isUniV2 && (
             <div className="flex flex-row space-x-2 p-1 xl:justify-center">
@@ -126,12 +125,12 @@ const TokenCard = ({ token }) => {
                   </button>
                 }
               >
+                {console.log('token', token)}
                 <RemoveLiquidity token={token} />
               </Modal>
             </div>
           )}
         </>
-      )}
     </div>
   )
 }

@@ -13,7 +13,7 @@ import { amount } from "./helpers"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 
 const RemoveLiquidity = ({ token }) => {
-  const [{ data: signer }] = useSigner()
+  const { data: signer } = useSigner()
   const queryClient = useQueryClient()
   const bbyDao = queryClient.getQueryData("expandedDao")
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
