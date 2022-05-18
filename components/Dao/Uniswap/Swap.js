@@ -411,7 +411,10 @@ const Swap = ({ token }) => {
 
       if (swapExactTokensForTokens) {
         const amountIn = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
-        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toFixed(6).toString(), outputToken?.token?.decimals)
+        const amountOutMin = ethers.utils.parseUnits(
+          outputToken.value.toFixed(6).toString(),
+          outputToken?.token?.decimals
+        )
         let path
         if (poolExists) {
           path = [ethers.utils.getAddress(inputToken.token.address), ethers.utils.getAddress(outputToken.token.address)]
@@ -438,15 +441,16 @@ const Swap = ({ token }) => {
           },
           UniswapV2Router02,
           0,
-          await calculateFee([
-            { value: amountIn, token: inputToken.token },
-          ])
+          await calculateFee([{ value: amountIn, token: inputToken.token }])
         )
         console.log("tx", tx)
       }
 
       if (swapExactETHForTokens) {
-        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toFixed(6).toString(), outputToken?.token?.decimals)
+        const amountOutMin = ethers.utils.parseUnits(
+          outputToken.value.toFixed(6).toString(),
+          outputToken?.token?.decimals
+        )
         const value = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString())
         const tx = gnosisTransaction(
           {
@@ -469,7 +473,10 @@ const Swap = ({ token }) => {
 
       if (swapExactTokensForETH) {
         const amountIn = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
-        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toFixed(6).toString(), outputToken?.token?.decimals)
+        const amountOutMin = ethers.utils.parseUnits(
+          outputToken.value.toFixed(6).toString(),
+          outputToken?.token?.decimals
+        )
         const tx = gnosisTransaction(
           {
             abi: IUniswapV2Router02["abi"],
@@ -493,6 +500,19 @@ const Swap = ({ token }) => {
       console.log("err", err)
     }
   }
+
+  const showApprove = React.useMemo(() => {
+    if(!hasNoLiquidity || !tokens || !hasAllowance) {
+      return false
+    }
+    return (
+      hasNoLiquidity === false &&
+      hasAllowance?.token0 === false &&
+      !!tokens?.token0 &&
+      tokens?.token0.symbol !== "ETH" &&
+      !!tokens?.token1
+    )
+  }, [hasNoLiquidity, hasAllowance, tokens])
 
   return (
     <div>
@@ -570,11 +590,7 @@ const Swap = ({ token }) => {
       </form>
       {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
       <div className="my-4 flex w-full justify-center gap-4">
-        {hasNoLiquidity === false &&
-          hasAllowance?.token0 === false &&
-          tokens?.token0 &&
-          tokens?.token0.symbol !== "ETH" &&
-          tokens?.token1 && (
+        {showApprove && (
             <div
               className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
               onClick={() => handleApproveToken(tokenContracts, 0)}
