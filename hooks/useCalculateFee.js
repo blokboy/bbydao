@@ -42,15 +42,19 @@ export default function useCalculateFee() {
               signer
             )
             const reserves = await pairContract?.getReserves()
+            const WETHReserve = uniPair?.tokenAmounts[0]?.token?.symbol === 'WETH' ? reserves[0] : reserves[1]
+            const PairReserve =  uniPair?.tokenAmounts[0]?.token?.symbol !== 'WETH' ? reserves[0] : reserves[1]
             const priceOfWETHInToken = (
-              parseFloat(ethers.utils.formatEther(reserves[0])) / parseFloat(ethers.utils.formatUnits(reserves[1], token1?.decimals))
+              parseFloat(ethers.utils.formatUnits(PairReserve, token1?.decimals)) / parseFloat(ethers.utils.formatEther(WETHReserve))
             ).toFixed(6) //to prevent underflow, feels arbitrary can find better fix that toFixed(6)
 
             const valueInEth = parseFloat(ethers.utils.formatEther(value)) / priceOfWETHInToken
+
             fee = valueInEth * percentage
             totalFee += parseFloat(fee.toString())
           }
         }
+
         return ethers.utils.parseEther(totalFee.toFixed(18))
       } catch (err) {
         console.log("err", err)
