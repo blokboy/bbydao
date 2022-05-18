@@ -440,7 +440,6 @@ const Swap = ({ token }) => {
           0,
           await calculateFee([
             { value: amountIn, token: inputToken.token },
-            { value: amountOutMin, token: outputToken.token },
           ])
         )
         console.log("tx", tx)
@@ -463,7 +462,7 @@ const Swap = ({ token }) => {
           },
           UniswapV2Router02,
           value,
-          await calculateFee([{ value }, { value: amountOutMin, token: outputToken.token }])
+          await calculateFee([{ value }])
         )
         console.log("tx", tx)
       }
@@ -486,7 +485,7 @@ const Swap = ({ token }) => {
           },
           UniswapV2Router02,
           0,
-          await calculateFee([{ value: amountIn, token: inputToken.token }, { value: amountOutMin }])
+          await calculateFee([{ value: amountIn, token: inputToken.token }])
         )
         console.log("tx", tx)
       }

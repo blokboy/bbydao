@@ -1,18 +1,19 @@
-import {ChainId, Fetcher, Route, Token, TokenAmount} from "@uniswap/sdk"
-import IUniswapV2ERC20                               from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
-import IUniswapV2Router02                            from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
-import { BigNumber, ethers }                         from "ethers"
-import {formatUnits}                                 from 'ethers/lib/utils'
-import useForm                                       from "hooks/useForm"
-import React                                         from "react"
-import { useDaoStore }                               from "stores/useDaoStore"
-import { useSigner }                                 from "wagmi"
-import ControlledModal                               from "components/Layout/Modal/ControlledModal"
-import { flatten }                                   from "../../../utils/helpers"
-import { amount, getLiquidityPairInfo }              from "./helpers"
-import PoolInfo                                      from "./PoolInfo"
-import TokenInput                                    from "./TokenInput"
-import useGnosisTransaction                          from "hooks/useGnosisTransaction"
+import { ChainId, Fetcher, Route, Token, TokenAmount } from "@uniswap/sdk"
+import IUniswapV2ERC20 from "@uniswap/v2-core/build/IUniswapV2ERC20.json"
+import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
+import { BigNumber, ethers } from "ethers"
+import { formatUnits } from "ethers/lib/utils"
+import useForm from "hooks/useForm"
+import React from "react"
+import { useDaoStore } from "stores/useDaoStore"
+import { useSigner } from "wagmi"
+import ControlledModal from "components/Layout/Modal/ControlledModal"
+import { flatten } from "utils/helpers"
+import { amount } from "./helpers"
+import PoolInfo from "./PoolInfo"
+import TokenInput from "./TokenInput"
+import useGnosisTransaction from "hooks/useGnosisTransaction"
+import useCalculateFee from "hooks/useCalculateFee"
 
 const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
@@ -34,6 +35,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   const supplyDisabled =
     !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1 || !hasAllowance?.pair
   const { gnosisTransaction } = useGnosisTransaction(safeAddress)
+  const { calculateFee } = useCalculateFee()
   const closeUniswapLpModal = () => {
     setLpToken0({})
     setLpToken1({})
@@ -62,31 +64,30 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
     return { [lpToken0?.symbol]: token0, [lpToken1?.symbol]: token1 }
   }, [lpToken0, lpToken1])
 
-
   /* Handle interaction with Uniswap to get LP information  */
- const getLiquidityPairInfo = async ({
-                                               pair,
-                                               token0,
-                                               token0Input,
-                                               token0ETHConversion,
-                                               token1,
-                                               token1Input,
-                                               token1ETHConversion,
-                                               abi,
-                                             }) => {
+  const getLiquidityPairInfo = async ({
+    pair,
+    token0,
+    token0Input,
+    token0ETHConversion,
+    token1,
+    token1Input,
+    token1ETHConversion,
+    abi,
+  }) => {
     try {
       if (!!pair) {
         /* Get Total Supply of LP pair on-chain  */
         const contract = new ethers.Contract(pair.liquidityToken.address, abi, signer)
-        const total = await  contract.totalSupply()
+        const total = await contract.totalSupply()
         const totalTokenAmount = await new TokenAmount(pair.liquidityToken, total)
         const token0Amount = await new TokenAmount(token0, amount(token0Input, token0?.decimals))
         const token0AmountInEth = (token0Input * token0ETHConversion).toFixed(token0?.decimals).toString()
         const token1Amount = await new TokenAmount(token1, amount(token1Input, token1?.decimals))
         const token1AmountInEth = (token1Input * token1ETHConversion).toFixed(token1?.decimals).toString()
         const uniswapTokensMinted = pair
-            ?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount)
-            .toFixed(pair.liquidityToken.decimals)
+          ?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount)
+          .toFixed(pair.liquidityToken.decimals)
         const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(pair.liquidityToken.decimals)
         const uniswapPairURI = `https://v2.info.uniswap.org/pair/${pair.liquidityToken.address}`
         const etherscanURI = `https://etherscan.io/address/${pair.liquidityToken.address}`
@@ -164,7 +165,11 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
             },
           },
           UniswapV2Router02,
-          0
+          0,
+          await calculateFee([
+            { value: BigNumber.from(amountADesired), token: token0 },
+            { value: BigNumber.from(amountBDesired), token: token1 },
+          ])
         )
       } else {
         const WETH = await uniswapV2RouterContract02?.WETH()
@@ -183,16 +188,17 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
             },
           },
           UniswapV2Router02,
-          tokenA === WETH ? BigNumber.from(amountADesired) : BigNumber.from(amountBDesired)
+          tokenA === WETH ? BigNumber.from(amountADesired) : BigNumber.from(amountBDesired),
+            await calculateFee([
+              { value: BigNumber.from(amountADesired), token: token0 },
+              { value: BigNumber.from(amountBDesired), token: token1 },
+            ])
         )
       }
     } catch (err) {
       console.log("err", err)
     }
   }
-
-
-
 
   /* Handle setting token values and retrieving liquidity pair information  */
   const handleSetTokenValue = async (e, token, tokenRef) => {

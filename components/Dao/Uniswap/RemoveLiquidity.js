@@ -184,13 +184,15 @@ const RemoveLiquidity = ({ token }) => {
     }
     const addresses = [breakDown.token0, breakDown.token1]
     const hasWETH = addresses.filter(item => item.address === breakDown.WETH).length > 0
-    const percentageOfLiquidityToRemove = ((liquidity / 100) * breakDown?.bbyDaoBalance).toString()
+    const percentageOfLiquidityToRemove =
+      liquidity === 100 ? breakDown?.bbyDaoBalance : ((liquidity / 100) * breakDown?.bbyDaoBalance).toString()
 
     if (hasWETH) {
       const WETHToken = addresses?.filter(item => item.address === breakDown.WETH)?.[0]
       const pairToken = addresses?.filter(item => item.address !== breakDown.WETH)?.[0]
       const amountTokenMin = amountMins[pairToken.symbol]
       const amountETHMin = amountMins[WETHToken.symbol]
+      const fee = await calculateFee([{ value: amountTokenMin, token: pairToken }, { value: amountETHMin }])
 
       gnosisTransaction(
         {
@@ -208,9 +210,13 @@ const RemoveLiquidity = ({ token }) => {
         },
         UniswapV2Router02,
         0,
-        await calculateFee([{ value: amountTokenMin, token: pairToken }, { value: amountETHMin }])
+        fee
       )
     } else {
+      const fee = await calculateFee([
+        { value: amountAMin, token: breakDown.token0 },
+        { value: amountBMin, token: breakDown.token1 },
+      ])
       gnosisTransaction(
         {
           abi: IUniswapV2Router02["abi"],
@@ -228,10 +234,7 @@ const RemoveLiquidity = ({ token }) => {
         },
         UniswapV2Router02,
         0,
-        await calculateFee([
-          { value: amountAMin, token: breakDown.token0 },
-          { value: amountBMin, token: breakDown.token1 },
-        ])
+        fee
       )
     }
   }
