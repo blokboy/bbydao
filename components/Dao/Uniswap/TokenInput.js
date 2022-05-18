@@ -58,6 +58,13 @@ const TokenInput = ({
 
   const max = React.useMemo(() => {
     if (!!token) {
+      if (token.symbol === "ETH") {
+        const max = ethers.utils.formatUnits(BigNumber.from(token?.balance), token?.decimals)
+        const uniFee = parseFloat(max) * 0.01 * 0.3
+        const gasForSwap = 0.0099 // should use API for this value
+        return (parseFloat(max) - uniFee - gasForSwap).toFixed(6).toString()
+      }
+
       return ethers.utils.formatUnits(BigNumber.from(token?.balance), token?.decimals)
     }
   }, [token])
@@ -99,10 +106,12 @@ const TokenInput = ({
       </div>
       <div className="flex w-full flex-row items-end justify-end space-x-2 font-light">
         {token?.balance ? (
-            <>
-              <div className="text-sm text-slate-600">Balance:</div>
-              <div className="text-sm text-slate-600">{ethers.utils.formatUnits(token?.balance, token?.decimals).match(/^\d+(?:\.\d{0,5})?/)}</div>
-            </>
+          <>
+            <div className="text-sm text-slate-600">Balance:</div>
+            <div className="text-sm text-slate-600">
+              {ethers.utils.formatUnits(token?.balance, token?.decimals).match(/^\d+(?:\.\d{0,5})?/)}
+            </div>
+          </>
         ) : null}
         {showMax && (
           <div
