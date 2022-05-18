@@ -125,7 +125,6 @@ const TokenCard = ({ token }) => {
                   </button>
                 }
               >
-                {console.log('token', token)}
                 <RemoveLiquidity token={token} />
               </Modal>
             </div>
