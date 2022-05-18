@@ -18,7 +18,6 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
     }, "")
     .slice(0, -1)
 
-
   /*
    * Approve Tokens:
    *
@@ -171,6 +170,35 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
     }
   }, [pairContract])
 
+  const showToken0Approval = React.useMemo(() => {
+    if (!hasAllowance || !token0) {
+      return false
+    }
+    return !hasAllowance.token0 && token0
+  }, [hasAllowance, token0])
+
+  const showToken1Approval = React.useMemo(() => {
+    if (!hasAllowance || !token1) {
+      return false
+    }
+    return !hasAllowance.token1 && token1
+  }, [hasAllowance, token1])
+
+  const showPairTokenApproval = React.useMemo(() => {
+    if (!hasAllowance || !token0 || !token1 || !pair) {
+      return false
+    }
+
+    return (
+      hasAllowance.token0 === false &&
+      !!token0 &&
+      hasAllowance.token1 === false &&
+      !!token1 &&
+      hasAllowance.pair === false &&
+      !!pair
+    )
+  }, [hasAllowance, token0, token1, pair])
+
   return (
     <>
       {!isEmpty(info) && (
@@ -214,7 +242,7 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
             </div>
           )}
           <div className="my-4 flex w-full justify-center gap-4">
-            {!hasAllowance.token0 && token0 && (
+            {showToken0Approval && (
               <div
                 className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
                 onClick={() => handleApproveToken(tokenContracts, 0)}
@@ -222,7 +250,7 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
                 Approve {token0?.symbol}
               </div>
             )}
-            {!hasAllowance.token1 && token1 && (
+            {showToken1Approval && (
               <div
                 className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
                 onClick={() => handleApproveToken(tokenContracts, 1)}
@@ -230,7 +258,7 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
                 Approve {token1?.symbol}
               </div>
             )}
-            {hasAllowance.token0 && token0 && hasAllowance.token1 && token1 && !hasAllowance.pair && pair && (
+            {showPairTokenApproval && (
               <div
                 className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
                 onClick={() => handleApprovePair(pairContract)}
