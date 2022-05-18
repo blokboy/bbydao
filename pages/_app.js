@@ -23,28 +23,6 @@ function MyApp({ Component, pageProps, ...appProps }) {
   const chains = defaultChains
   const defaultChain = chain.mainnet
 
-  // Set up connectors
-  // const connectors = ({ chainId }) => {
-  //   const rpcUrl =
-  //     chains.find(x => x.id === chainId)?.rpcUrls?.[0] ??
-  //     chain.mainnet.rpcUrls[0]
-  //   return [
-  //     new InjectedConnector({ chains }),
-  //     new WalletConnectConnector({
-  //       options: {
-  //         infuraId,
-  //         qrcode: true,
-  //       },
-  //     }),
-  //     new WalletLinkConnector({
-  //       options: {
-  //         appName: "baby dao",
-  //         jsonRpcUrl: `${rpcUrl}/${infuraId}`,
-  //       },
-  //     }),
-  //   ]
-  // }
-
   const wagmiClient = createWagmiClient({
     autoConnect: true,
     connectors({ chainId }) {
