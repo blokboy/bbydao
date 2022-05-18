@@ -61,7 +61,7 @@ const TokenInput = ({
       if (token.symbol === "ETH") {
         const max = ethers.utils.formatUnits(BigNumber.from(token?.balance), token?.decimals)
         const uniFee = parseFloat(max) * 0.01 * 0.3
-        const gasForSwap = 0.01 // should use API for this value
+        const gasForSwap = 0.0099 // should use API for this value
         return (parseFloat(max) - uniFee - gasForSwap).toFixed(6).toString()
       }
 
