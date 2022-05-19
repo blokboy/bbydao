@@ -8,7 +8,7 @@ const DaoTokensTab = ({ tokens }) => {
 
     const filteredTokens = React.useMemo(() => {
     return tokens?.reduce((acc = [], cv) => {
-      if (Number(cv.fiatBalance) > 0) {
+      if (Number(cv.fiatBalance) >= 0) {
         acc.push(cv)
       }
 

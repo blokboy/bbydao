@@ -125,10 +125,10 @@ const TokenCard = ({ token }) => {
                   }
                   trigger={
                     <button
-                        type="button"
-                        className={`mb-2 w-full rounded-lg bg-slate-300 p-2 text-sm text-white hover:bg-blue-600 hover:bg-blue-500 dark:bg-slate-700 hover:dark:bg-slate-800 ${
-                            isActive ? `bg-blue-400 dark:bg-blue-400` : ""
-                        }`}
+                      type="button"
+                      className={`mb-2 w-full rounded-lg bg-slate-300 p-2 text-sm text-white hover:bg-blue-600 hover:bg-blue-500 dark:bg-slate-700 hover:dark:bg-slate-800 ${
+                        isActive ? `bg-blue-400 dark:bg-blue-400` : ""
+                      }`}
                     >
                       Swap
                     </button>
@@ -146,7 +146,19 @@ const TokenCard = ({ token }) => {
           </div>
         )) || (
           <div className="flex flex-row p-1 xl:justify-center">
-            <Modal heading={"Remove Liquidity"} trigger={<Button name={"Manage"} />}>
+            <Modal
+              heading={"Remove Liquidity"}
+              trigger={
+                <button
+                  type="button"
+                  className={`mb-2 w-full rounded-lg bg-slate-300 p-2 text-sm text-white hover:bg-blue-600 hover:bg-blue-500 dark:bg-slate-700 hover:dark:bg-slate-800 ${
+                    isActive ? `bg-blue-400 dark:bg-blue-400` : ""
+                  }`}
+                >
+                  Manage
+                </button>
+              }
+            >
               <RemoveLiquidity token={token} />
             </Modal>
           </div>
