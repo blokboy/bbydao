@@ -11,7 +11,12 @@ import Swap from "components/Dao/Uniswap/Swap"
 const TokenCard = ({ token }) => {
   const queryClient = useQueryClient()
   const signer = queryClient.getQueryData("signer")
-  const isMember = queryClient.getQueryData(["isMember", signer])
+
+  const isMember = React.useMemo(() => {
+    return queryClient.getQueryData(["isMember", signer])
+
+  }, [signer])
+
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
   const lpToken0 = useDaoStore(state => state.lpToken0)
