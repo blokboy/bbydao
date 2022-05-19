@@ -28,6 +28,7 @@
     "@uniswap/widgets": "^1.0.0",
     "@walletconnect/client": "^1.6.6",
     "axios": "^0.22.0",
+    "bnc-notify": "^1.9.5",
     "carbon-components": "^10.52.0",
     "classnames": "^2.3.1",
     "contract-proxy-kit": "^3.0.0",
