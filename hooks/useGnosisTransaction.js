@@ -90,6 +90,7 @@ export default function useGnosisTransaction(safeAddress) {
         const hash = transaction?.safeTxHash
         const sig = await safeSdk.signTransactionHash(hash)
         await safeService.confirmTransaction(hash, sig?.data)
+        console.log('tran', transaction)
         const executeTxResponse = await safeSdk.executeTransaction(safeTransaction)
         console.log(
           "ex",

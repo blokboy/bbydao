@@ -96,7 +96,14 @@ const TokenCard = ({ token }) => {
                     send
                   </button>
                   <Modal
-                    heading={"Swap"}
+                    heading={
+                      <div className="flex items-center">
+                        <div className="h-8 w-8 overflow-hidden rounded-full" title="Uniswap V2 Swap">
+                          <img src='https://upload.wikimedia.org/wikipedia/commons/e/e7/Uniswap_Logo.svg' />
+                        </div>
+                        <div className="font-normal text-xl flex items-center">Swap <span className="ml-2 pt-[.1rem] text-xs">Uniswap (V2)</span></div>
+                      </div>
+                    }
                     trigger={
                       <button
                         className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500"
