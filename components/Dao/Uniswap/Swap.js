@@ -1,7 +1,7 @@
 import { ChainId, Fetcher, Percent, Route, Token } from "@uniswap/sdk"
 import defaultTokens from "@uniswap/default-token-list"
 import { BigNumber, ethers } from "ethers"
-import React, { useCallback } from "react"
+import React from "react"
 import useForm from "hooks/useForm"
 import { HiOutlineSwitchVertical, HiArrowSmDown } from "react-icons/hi"
 import { useQueryClient } from "react-query"
@@ -191,6 +191,19 @@ const Swap = ({ token }) => {
       }
     }
   }, [uniswapTokens])
+  const showApprove = React.useMemo(() => {
+    if (!hasNoLiquidity || !tokens || !hasAllowance) {
+      return false
+    }
+    return (
+      hasNoLiquidity === false &&
+      hasAllowance?.token0 === false &&
+      !!tokens?.token0 &&
+      tokens?.token0.symbol !== "ETH" &&
+      !!tokens?.token1
+    )
+  }, [hasNoLiquidity, hasAllowance, tokens])
+
   /*
    *
    * Allowance Check:
@@ -200,7 +213,6 @@ const Swap = ({ token }) => {
    * on behalf of the owner (bbyDao).
    *
    * */
-
   const tokenContracts = React.useMemo(async () => {
     const { token0, token1 } = tokens
     try {
@@ -228,7 +240,6 @@ const Swap = ({ token }) => {
       console.log("err", err)
     }
   }, [tokens])
-
   React.useMemo(async () => {
     try {
       const allowed = await tokenContracts
@@ -288,6 +299,12 @@ const Swap = ({ token }) => {
     }
   }, [routePathAsSymbols])
 
+  /*
+   * Handle Value Input:
+   *
+   * Logic for setting token amounts
+   *
+   * */
   const handleSetTokenValue = async (e, token, tokenRef) => {
     try {
       const bal = token?.balance
@@ -329,7 +346,6 @@ const Swap = ({ token }) => {
       console.log("err", err)
     }
   }
-
   const handleSetMaxTokenValue = async (token, tokenRef) => {
     try {
       const token0Input = tokenRef?.current?.max
@@ -360,7 +376,6 @@ const Swap = ({ token }) => {
       console.log("err", err)
     }
   }
-
   const handleSwapToken = async (token0, token1) => {
     try {
       const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
@@ -411,7 +426,10 @@ const Swap = ({ token }) => {
 
       if (swapExactTokensForTokens) {
         const amountIn = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
-        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toFixed(6).toString(), outputToken?.token?.decimals)
+        const amountOutMin = ethers.utils.parseUnits(
+          outputToken.value.toFixed(6).toString(),
+          outputToken?.token?.decimals
+        )
         let path
         if (poolExists) {
           path = [ethers.utils.getAddress(inputToken.token.address), ethers.utils.getAddress(outputToken.token.address)]
@@ -438,15 +456,16 @@ const Swap = ({ token }) => {
           },
           UniswapV2Router02,
           0,
-          await calculateFee([
-            { value: amountIn, token: inputToken.token },
-          ])
+          await calculateFee([{ value: amountIn, token: inputToken.token }])
         )
         console.log("tx", tx)
       }
 
       if (swapExactETHForTokens) {
-        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toFixed(6).toString(), outputToken?.token?.decimals)
+        const amountOutMin = ethers.utils.parseUnits(
+          outputToken.value.toFixed(6).toString(),
+          outputToken?.token?.decimals
+        )
         const value = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString())
         const tx = gnosisTransaction(
           {
@@ -469,7 +488,10 @@ const Swap = ({ token }) => {
 
       if (swapExactTokensForETH) {
         const amountIn = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
-        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toFixed(6).toString(), outputToken?.token?.decimals)
+        const amountOutMin = ethers.utils.parseUnits(
+          outputToken.value.toFixed(6).toString(),
+          outputToken?.token?.decimals
+        )
         const tx = gnosisTransaction(
           {
             abi: IUniswapV2Router02["abi"],
@@ -570,23 +592,19 @@ const Swap = ({ token }) => {
       </form>
       {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
       <div className="my-4 flex w-full justify-center gap-4">
-        {hasNoLiquidity === false &&
-          hasAllowance?.token0 === false &&
-          tokens?.token0 &&
-          tokens?.token0.symbol !== "ETH" &&
-          tokens?.token1 && (
-            <div
-              className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
-              onClick={() => handleApproveToken(tokenContracts, 0)}
-            >
-              Approve {tokens?.token0?.symbol}
-            </div>
-          )}
+        {showApprove && (
+          <div
+            className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+            onClick={() => handleApproveToken(tokenContracts, 0)}
+          >
+            Approve {tokens?.token0?.symbol}
+          </div>
+        )}
         {!!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
           <button
             type="button"
             disabled={hasNoLiquidity}
-            className={`flex items-center justify-center rounded-3xl p-4 font-normal text-white ${
+            className={`flex w-full items-center justify-center rounded-3xl p-4 font-normal text-white ${
               !hasNoLiquidity ? "bg-[#FC8D4D] hover:bg-[#d57239]" : ""
             }`}
             onClick={
