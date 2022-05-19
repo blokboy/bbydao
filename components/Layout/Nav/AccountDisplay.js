@@ -10,7 +10,7 @@ import { useQuery } from "react-query"
 const AccountDisplay = () => {
   const { data, error, loading } = useAccount()
   const { disconnect } = useDisconnect()
-  
+
   const {
     data: getUserData,
     status: getUserStatus,
@@ -21,6 +21,8 @@ const AccountDisplay = () => {
     refetchOnWindowFocus: false,
     staleTime: Infinity,
   })
+  useQuery('signer', () => data?.address)
+
 
   const { data: ensData, iserror: ensError, isloading: ensLoading } = useEnsName({
     address: data?.address,

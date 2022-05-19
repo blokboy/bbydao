@@ -3,9 +3,6 @@ import {useQueryClient} from 'react-query'
 import TokenCard        from "./TokenCard"
 
 const DaoTokensTab = ({ tokens }) => {
-    const queryClient = useQueryClient()
-    const bbyDao = queryClient.getQueryData("expandedDao")
-
     const filteredTokens = React.useMemo(() => {
     return tokens?.reduce((acc = [], cv) => {
       if (Number(cv.fiatBalance) > 0) {

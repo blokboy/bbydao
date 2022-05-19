@@ -1,6 +1,6 @@
-import React                  from "react"
-import {useQuery}             from 'react-query'
-import DaoCardNav             from "./DaoCardNav"
+import React                      from "react"
+import {useQuery, useQueryClient} from 'react-query'
+import DaoCardNav                 from "./DaoCardNav"
 import DaoTokensTab           from "./DaoTokensTab"
 import DaoNFTsTab             from "./DaoNFTsTab"
 import DaoInfoTab             from "./DaoInfoTab"
@@ -8,7 +8,15 @@ import { usePlaygroundStore } from "/stores/usePlaygroundStore"
 
 const DaoCardExpanded = ({ isMember, safe, tokens }) => {
   const expandedPanel = usePlaygroundStore(state => state.expandedPanel)
+
   useQuery('expandedDao', () => safe)
+
+  // const queryClient = useQueryClient()
+  // const daoMembers = queryClient.getQueryData(["daoMembers", safe])
+  // const isMember = daoMembers?.includes(bbyDao)
+  //
+  // console.log(daoMembers, isMember)
+
 
   const panel = React.useMemo(() => {
     if (expandedPanel === "tokens") {

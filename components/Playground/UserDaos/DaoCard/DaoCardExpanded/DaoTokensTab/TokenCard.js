@@ -1,6 +1,7 @@
 import { ethers } from "ethers"
-import React, { useEffect } from "react"
+import React from "react"
 import { FaEthereum } from "react-icons/fa"
+import { useQueryClient } from "react-query"
 import { useDaoStore } from "stores/useDaoStore"
 import { isEmpty } from "utils/helpers"
 import RemoveLiquidity from "components/Dao/Uniswap/RemoveLiquidity"
@@ -8,9 +9,11 @@ import Modal from "components/Layout/Modal"
 import Swap from "components/Dao/Uniswap/Swap"
 
 const TokenCard = ({ token }) => {
+  const queryClient = useQueryClient()
+  const signer = queryClient.getQueryData("signer")
+  const isMember = queryClient.getQueryData(["isMember", signer])
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
-
   const lpToken0 = useDaoStore(state => state.lpToken0)
   const setLpToken0 = useDaoStore(state => state.setLpToken0)
   const lpToken1 = useDaoStore(state => state.lpToken1)
@@ -106,64 +109,66 @@ const TokenCard = ({ token }) => {
         </div>
       </div>
 
-      <>
-        {(!isUniV2 && (
-          <div className="flex flex-wrap p-1 xl:justify-center">
-            {isEmpty(lpToken0) && (
-              <>
-                <Button name={"Send"} />
-                <Modal
-                  heading={
-                    <div className="flex items-center">
-                      <div className="h-8 w-8 overflow-hidden rounded-full" title="Uniswap V2 Swap">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Uniswap_Logo.svg" />
+      {isMember && (
+        <>
+          {(!isUniV2 && (
+            <div className="flex flex-wrap p-1 xl:justify-center">
+              {isEmpty(lpToken0) && (
+                <>
+                  <Button name={"Send"} />
+                  <Modal
+                    heading={
+                      <div className="flex items-center">
+                        <div className="h-8 w-8 overflow-hidden rounded-full" title="Uniswap V2 Swap">
+                          <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Uniswap_Logo.svg" />
+                        </div>
+                        <div className="flex items-center text-xl font-normal">
+                          Swap <span className="ml-2 pt-[.1rem] text-xs">Uniswap (V2)</span>
+                        </div>
                       </div>
-                      <div className="flex items-center text-xl font-normal">
-                        Swap <span className="ml-2 pt-[.1rem] text-xs">Uniswap (V2)</span>
-                      </div>
-                    </div>
-                  }
-                  trigger={
-                    <button
-                      type="button"
-                      className={`mb-2 w-full rounded-lg bg-slate-300 p-2 text-sm text-white hover:bg-blue-600 hover:bg-blue-500 dark:bg-slate-700 hover:dark:bg-slate-800 ${
-                        isActive ? `bg-blue-400 dark:bg-blue-400` : ""
-                      }`}
-                    >
-                      Swap
-                    </button>
-                  }
-                >
-                  <Swap token={token} />
-                </Modal>
-              </>
-            )}
-            <Button
-              name={isEmpty(lpToken0) && isEmpty(lpToken1) ? "LP" : isActive ? "Selected" : "Pair"}
-              click={setLpToken}
-              isActive={isActive}
-            />
-          </div>
-        )) || (
-          <div className="flex flex-row p-1 xl:justify-center">
-            <Modal
-              heading={"Remove Liquidity"}
-              trigger={
-                <button
-                  type="button"
-                  className={`mb-2 w-full rounded-lg bg-slate-300 p-2 text-sm text-white hover:bg-blue-600 hover:bg-blue-500 dark:bg-slate-700 hover:dark:bg-slate-800 ${
-                    isActive ? `bg-blue-400 dark:bg-blue-400` : ""
-                  }`}
-                >
-                  Manage
-                </button>
-              }
-            >
-              <RemoveLiquidity token={token} />
-            </Modal>
-          </div>
-        )}
-      </>
+                    }
+                    trigger={
+                      <button
+                        type="button"
+                        className={`mb-2 w-full rounded-lg bg-slate-300 p-2 text-sm text-white hover:bg-blue-600 hover:bg-blue-500 dark:bg-slate-700 hover:dark:bg-slate-800 ${
+                          isActive ? `bg-blue-400 dark:bg-blue-400` : ""
+                        }`}
+                      >
+                        Swap
+                      </button>
+                    }
+                  >
+                    <Swap token={token} />
+                  </Modal>
+                </>
+              )}
+              <Button
+                name={isEmpty(lpToken0) && isEmpty(lpToken1) ? "LP" : isActive ? "Selected" : "Pair"}
+                click={setLpToken}
+                isActive={isActive}
+              />
+            </div>
+          )) || (
+            <div className="flex flex-row p-1 xl:justify-center">
+              <Modal
+                heading={"Remove Liquidity"}
+                trigger={
+                  <button
+                    type="button"
+                    className={`mb-2 w-full rounded-lg bg-slate-300 p-2 text-sm text-white hover:bg-blue-600 hover:bg-blue-500 dark:bg-slate-700 hover:dark:bg-slate-800 ${
+                      isActive ? `bg-blue-400 dark:bg-blue-400` : ""
+                    }`}
+                  >
+                    Manage
+                  </button>
+                }
+              >
+                <RemoveLiquidity token={token} />
+              </Modal>
+            </div>
+          )}
+        </>
+      )}
     </div>
   )
 }

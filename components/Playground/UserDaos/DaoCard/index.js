@@ -90,6 +90,8 @@ const DaoCard = ({ user, safe, address }) => {
 
   // check if user is in daoMembersData
   const isMember = daoMembersData?.includes(user)
+  useQuery(['isMember', user], () => isMember)
+
 
   const daoExpanded = usePlaygroundStore(state => state.daoExpanded)
 
