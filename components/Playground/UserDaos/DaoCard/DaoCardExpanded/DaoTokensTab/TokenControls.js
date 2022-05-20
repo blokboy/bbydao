@@ -10,7 +10,9 @@ const TokenControls = ({ liquidityPair, token, isUniV2, treasury }) => {
 
   /* Check if user has enough tokens to LP  */
   const hasTokensToLp = React.useMemo(() => {
-    return treasury?.filter(token => parseFloat(token?.fiatBalance) > 0 && token?.token?.symbol !== "UNI-V2")?.length >= 2
+    return (
+      treasury?.filter(token => parseFloat(token?.fiatBalance) > 0 && token?.token?.symbol !== "UNI-V2")?.length >= 2
+    )
   }, [treasury])
 
   return (
@@ -57,7 +59,16 @@ const TokenControls = ({ liquidityPair, token, isUniV2, treasury }) => {
             </Modal>
             {hasTokensToLp && (
               <Modal
-                heading={"Add Liquidity"}
+                heading={
+                  <div className="flex items-center">
+                    <div className="h-8 w-8 overflow-hidden rounded-full" title="Uniswap V2 Swap">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Uniswap_Logo.svg" />
+                    </div>
+                    <div className="flex items-center text-xl font-normal">
+                      Add Liquidity <span className="ml-2 pt-[.1rem] text-xs">Uniswap (V2)</span>
+                    </div>
+                  </div>
+                }
                 trigger={
                   <button
                     type="button"
@@ -74,7 +85,16 @@ const TokenControls = ({ liquidityPair, token, isUniV2, treasury }) => {
         )) || (
           <div className="flex flex-wrap p-1 xl:justify-center">
             <Modal
-              heading={"Remove Liquidity"}
+              heading={
+                  <div className="flex items-center">
+                      <div className="h-8 w-8 overflow-hidden rounded-full" title="Uniswap V2 Swap">
+                          <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Uniswap_Logo.svg" />
+                      </div>
+                      <div className="flex items-center text-xl font-normal">
+                          Remove Liquidity <span className="ml-2 pt-[.1rem] text-xs">Uniswap (V2)</span>
+                      </div>
+                  </div>
+              }
               trigger={
                 <button
                   type="button"

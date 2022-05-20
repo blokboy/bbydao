@@ -52,9 +52,9 @@ const TokenCard = ({ token, isMember }) => {
     name: "Ether",
     symbol: "ETH",
   }
-  const [liquidityPair, setLiquidityPair] = React.useState()
 
   /* If bbyDao has LP, check to see if they have both pair tokens in their treasury  */
+  const [liquidityPair, setLiquidityPair] = React.useState()
   React.useMemo(async () => {
     if (_token.symbol === "UNI-V2" && !!signer) {
       const pairContract = new ethers.Contract(
@@ -94,7 +94,6 @@ const TokenCard = ({ token, isMember }) => {
       }
     }
   }, [_token, signer, treasury])
-
 
   return (
     <div className="flex w-full flex-col rounded-xl bg-slate-100 p-2 shadow-xl dark:bg-slate-900">
