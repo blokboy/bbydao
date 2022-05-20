@@ -22,9 +22,14 @@ export default function useGnosisTransaction(safeAddress) {
   }, [signer])
 
   const contractInterface = useCallback(contract => {
-    const fragments = contract.instance.interface.functions
-    let abi = new ethers.utils.Interface(contract.abi)
     let data
+    if(contract.fn === 'sendEth') {
+      data = '0x'
+      return {data}
+    }
+
+    const fragments = contract?.instance?.interface?.functions
+    let abi = new ethers.utils.Interface(contract?.abi)
     if (!!contract.args) {
       data = abi.encodeFunctionData(fragments[contract.fn], Object.values(contract.args))
     } else {
@@ -72,9 +77,6 @@ export default function useGnosisTransaction(safeAddress) {
 
           safeTx.push(tx)
         }
-
-        console.log('safe', safeTx)
-
 
         const threshold = await bbyDaoSafe?.getThreshold()
         if (threshold.toNumber() > 1) {

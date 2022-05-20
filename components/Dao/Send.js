@@ -108,7 +108,13 @@ const Send = ({ token }) => {
     const { recipient } = args
 
     if(token.symbol === 'ETH') {
-
+      const tx = gnosisTransaction(
+          {
+            fn: "sendEth",
+          },
+          recipient,
+          value,
+      )
     } else {
       const tx = gnosisTransaction(
           {
