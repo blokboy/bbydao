@@ -4,10 +4,9 @@ import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.j
 import { BigNumber, ethers } from "ethers"
 import { formatUnits } from "ethers/lib/utils"
 import useForm from "hooks/useForm"
-import React from "react"
-import { useDaoStore } from "stores/useDaoStore"
+import React, { useState } from "react"
+import { useQueryClient } from "react-query"
 import { useSigner } from "wagmi"
-import ControlledModal from "components/Layout/Modal/ControlledModal"
 import { flatten } from "utils/helpers"
 import { amount } from "./helpers"
 import PoolInfo from "./PoolInfo"
@@ -15,36 +14,129 @@ import TokenInput from "./TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import useCalculateFee from "hooks/useCalculateFee"
 
-const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
+const UniswapLpModal = ({ lpToken0 }) => {
+  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { data: signer } = useSigner()
-  const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
-  const lpToken0 = useDaoStore(state => flatten(state.lpToken0))
-  const lpToken1 = useDaoStore(state => flatten(state.lpToken1))
-  const setLpToken1 = useDaoStore(state => state.setLpToken1)
-  const setLpToken0 = useDaoStore(state => state.setLpToken0)
-  const { state, setState } = useForm()
+  const { state, setState, handleChange } = useForm()
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()
   const [pair, setPair] = React.useState()
   const [liquidityInfo, setLiquidityInfo] = React.useState({})
   const [maxError, setMaxError] = React.useState("")
   const [hasAllowance, setHasAllowance] = React.useState()
-  const token0Logo = tokenLogos.filter(logo => logo.symbol === lpToken0?.symbol)[0]?.uri
-  const token1Logo = tokenLogos.filter(logo => logo.symbol === lpToken1?.symbol)[0]?.uri
+  const [openSearch, setOpenSearch] = React.useState(false)
+  const queryClient = useQueryClient()
+  const safeAddress = React.useMemo(() => {
+    return queryClient.getQueryData("expandedDao")
+  }, [queryClient])
+  const treasury = React.useMemo(() => {
+    if (!safeAddress) {
+      return
+    }
+
+    return queryClient.getQueryData(["daoTokens", safeAddress])
+  }, [safeAddress])
+  const [lpToken1, setLpToken1] = useState()
+
+
+  const tokenLogos = React.useMemo(() => {
+    if (!treasury) {
+      return
+    }
+
+    return treasury?.reduce((acc = [], cv) => {
+      const uri = cv?.token?.logoUri
+      const symbol = cv?.token?.symbol
+      const isETH = parseInt(cv?.ethValue) === 1 && cv?.token === null && cv?.tokenAddress === null
+      uri && symbol
+        ? acc.push({ uri, symbol })
+        : isETH
+        ? acc.push({ uri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png", symbol: "ETH" })
+        : null
+      return acc
+    }, [])
+  }, [treasury])
+  const token0Logo = React.useMemo(() => {
+    if (!!tokenLogos) {
+      return tokenLogos.filter(logo => logo.symbol === lpToken0.symbol)[0]?.uri
+    }
+  }, [tokenLogos, lpToken0])
+  const token1Logo = React.useMemo(() => {
+    if (!!tokenLogos) {
+      return tokenLogos.filter(logo => logo.symbol === lpToken1?.symbol)[0]?.uri
+    }
+  }, [tokenLogos, lpToken1])
+
+  const tokenSymbols = React.useMemo(() => {
+    if (!treasury) {
+      return
+    }
+
+    return treasury?.reduce((acc = [], cv) => {
+      if (parseFloat(cv?.ethValue) === 1 && cv?.token === null && cv?.tokenAddress === null) {
+        const eth = {
+          ...cv,
+          token: {
+            decimals: 18,
+            logoUri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
+            name: "Ether",
+            symbol: "ETH",
+          },
+          address: WETH,
+          tokenAddress: WETH,
+        }
+        if (acc.filter(item => item.symbol === flatten(eth).symbol).length < 1)
+          acc.push({
+            symbol: flatten(eth).symbol,
+            uri: flatten(eth).logoUri,
+            decimals: flatten(eth).decimals,
+            name: flatten(eth).name,
+            balance: flatten(eth).balance,
+            ...flatten(eth)
+          })
+      } else {
+        if (acc.filter(item => item.symbol === cv.symbol).length < 1) {
+          acc.push({
+            symbol: flatten(cv).symbol,
+            uri: flatten(cv).logoUri,
+            decimals: flatten(cv).decimals,
+            name: flatten(cv).name,
+            balance: flatten(cv).balance,
+            ...flatten(cv)
+          })
+        }
+      }
+
+      return acc
+    }, [])
+  }, [treasury])
+
+  const filteredTokensBySymbol = React.useMemo(() => {
+    if (!tokenSymbols) {
+      return
+    }
+
+    return tokenSymbols?.reduce((acc = [], cv) => {
+      if (cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) && cv.symbol !== lpToken0?.symbol) {
+        acc.push(cv)
+      }
+
+      return acc
+    }, [])
+  }, [state.symbol])
+
   const supplyDisabled =
     !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1 || !hasAllowance?.pair
   const { gnosisTransaction } = useGnosisTransaction(safeAddress)
   const { calculateFee } = useCalculateFee()
-  const closeUniswapLpModal = () => {
-    setLpToken0({})
-    setLpToken1({})
-    setUniswapLpModalOpen()
-    setMaxError("")
-  }
 
   /*  Construct object of selected tokens represented as Uniswap Token Objects */
   const uniswapTokens = React.useMemo(() => {
+    if (!lpToken0 || !lpToken1 || !ChainId) {
+      return
+    }
+
     const token0 = new Token(
       ChainId.MAINNET,
       lpToken0?.tokenAddress,
@@ -55,14 +147,14 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
 
     const token1 = new Token(
       ChainId.MAINNET,
-      lpToken1?.tokenAddress,
-      lpToken1?.decimals,
-      lpToken1?.symbol,
-      lpToken1?.name
+      flatten(lpToken1)?.tokenAddress,
+      flatten(lpToken1)?.decimals,
+      flatten(lpToken1)?.symbol,
+      flatten(lpToken1)?.name
     )
 
     return { [lpToken0?.symbol]: token0, [lpToken1?.symbol]: token1 }
-  }, [lpToken0, lpToken1])
+  }, [lpToken0, lpToken1, ChainId])
 
   /* Handle interaction with Uniswap to get LP information  */
   const getLiquidityPairInfo = async ({
@@ -76,7 +168,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
     abi,
   }) => {
     try {
-      if (!!pair) {
+      if (!!pair && !!signer) {
         /* Get Total Supply of LP pair on-chain  */
         const contract = new ethers.Contract(pair.liquidityToken.address, abi, signer)
         const total = await contract.totalSupply()
@@ -189,10 +281,10 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
           },
           UniswapV2Router02,
           tokenA === WETH ? BigNumber.from(amountADesired) : BigNumber.from(amountBDesired),
-            await calculateFee([
-              { value: BigNumber.from(amountADesired), token: token0 },
-              { value: BigNumber.from(amountBDesired), token: token1 },
-            ])
+          await calculateFee([
+            { value: BigNumber.from(amountADesired), token: token0 },
+            { value: BigNumber.from(amountBDesired), token: token1 },
+          ])
         )
       }
     } catch (err) {
@@ -279,13 +371,27 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
     }
   }
 
+  React.useMemo(async () => {
+    try {
+      if (!!lpToken0 && !!lpToken1 && !!uniswapTokens) {
+        setState(state => ({ ...state, [lpToken1?.symbol]: 0 }))
+        const uniPair = await Fetcher.fetchPairData(uniswapTokens[flatten(lpToken0)?.symbol], uniswapTokens[lpToken1?.symbol])
+        await setPair(uniPair)
+      }
+    } catch (err) {
+      console.log("err", err)
+    }
+  }, [uniswapTokens, lpToken0, lpToken1])
+
+  const handlePickToken = React.useCallback(token => {
+    setLpToken1(token)
+    setOpenSearch(false)
+  }, [])
+
   /* Initialize state of inputs and initialize Uniswap Pair */
   const init = async () => {
     try {
       setState(state => ({ ...state, [lpToken0?.symbol]: 0 }))
-      setState(state => ({ ...state, [lpToken1?.symbol]: 0 }))
-      const uniPair = await Fetcher.fetchPairData(uniswapTokens[lpToken0?.symbol], uniswapTokens[lpToken1?.symbol])
-      await setPair(uniPair)
     } catch (err) {
       console.log("err", err)
     }
@@ -295,7 +401,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
   }, [])
 
   return (
-    <ControlledModal close={closeUniswapLpModal} heading={"Add Liquidity"}>
+    <>
       <div className="mt-2 rounded-xl bg-[#eda67e24] p-4 font-thin text-[#FC8D4D]">
         <span className="font-bold">Tip:</span> When you add liquidity, you will receive pool tokens representing your
         position. These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at
@@ -321,7 +427,39 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
           handleSetMaxTokenValue={handleSetMaxTokenValue}
           state={state}
           logo={token1Logo}
+          setOpenSearch={setOpenSearch}
         />
+        {openSearch && (
+          <input
+            id="symbol"
+            name="symbol"
+            onChange={handleChange}
+            value={state?.symbol || ""}
+            className="mt-8 h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-3xl leading-tight focus:outline-none dark:bg-slate-800"
+            placeholder={"Type to search"}
+            autoComplete="off"
+            autoFocus={true}
+          />
+        )}
+        {openSearch && filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
+          <div className="mt-4 flex max-h-96 flex-wrap gap-1 overflow-y-scroll rounded-lg bg-slate-100 p-4 pt-4 shadow-xl dark:bg-slate-800">
+            {filteredTokensBySymbol.map((token, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => handlePickToken(token)}
+                className="mb-2 inline-flex self-start rounded-full bg-slate-300 p-2 px-4 font-light dark:bg-slate-600 hover:dark:bg-slate-700"
+              >
+                <div className="flex items-center justify-center">
+                  <div className="mr-2">{token?.symbol?.toUpperCase()}</div>
+                  <div className="flex h-6 w-6 overflow-hidden rounded-full">
+                    <img src={token?.uri} />
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
         <div className="mb-8 w-full">
           {liquidityInfo && (
             <PoolInfo
@@ -334,7 +472,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
               safeAddress={safeAddress}
             />
           )}
-          {state[lpToken0?.symbol] > 0 && state[lpToken1?.symbol] > 0 && (
+          {parseFloat(state[lpToken0?.symbol]) > 0 && parseFloat(state[lpToken1?.symbol]) > 0 && (
             <button
               className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full 
               bg-sky-500 py-2 px-3 text-xl leading-tight hover:bg-sky-600 focus:outline-none ${
@@ -350,7 +488,7 @@ const UniswapLpModal = ({ safeAddress, tokenLogos }) => {
           )}
         </div>
       </form>
-    </ControlledModal>
+    </>
   )
 }
 

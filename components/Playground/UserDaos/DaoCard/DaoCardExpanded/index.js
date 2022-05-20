@@ -8,19 +8,11 @@ import { usePlaygroundStore } from "/stores/usePlaygroundStore"
 
 const DaoCardExpanded = ({ isMember, safe, tokens }) => {
   const expandedPanel = usePlaygroundStore(state => state.expandedPanel)
-
   useQuery('expandedDao', () => safe)
-
-  // const queryClient = useQueryClient()
-  // const daoMembers = queryClient.getQueryData(["daoMembers", safe])
-  // const isMember = daoMembers?.includes(bbyDao)
-  //
-  // console.log(daoMembers, isMember)
-
 
   const panel = React.useMemo(() => {
     if (expandedPanel === "tokens") {
-      return <DaoTokensTab tokens={tokens} />
+      return <DaoTokensTab tokens={tokens} isMember={isMember} />
     }
 
     if (expandedPanel === "nfts") {
@@ -31,7 +23,7 @@ const DaoCardExpanded = ({ isMember, safe, tokens }) => {
       return <DaoInfoTab safe={safe} />
     }
 
-    return <DaoTokensTab safe={safe} />
+    return <DaoTokensTab safe={safe} isMember={isMember} />
   }, [expandedPanel, safe])
 
   return (

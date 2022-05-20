@@ -30,15 +30,15 @@ const TokenInput = ({
     if (
       !tokens?.token0 ||
       !tokens?.token1 ||
-      (parseInt(tokens?.token0?.fiatBalance) === 0 && parseInt(tokens?.token1?.fiatBalance) === 0)
+      (parseFloat(tokens?.token0?.fiatBalance) === 0 && parseFloat(tokens?.token1?.fiatBalance) === 0)
     ) {
       return undefined
     }
 
-    if (parseInt(tokens?.token0?.fiatBalance) < parseInt(tokens?.token1?.fiatBalance)) {
-      return tokens?.token0?.symbol
+    if (parseFloat(tokens?.token0?.fiatBalance) < parseFloat(tokens?.token1?.fiatBalance)) {
+      return flatten(tokens?.token0)?.symbol
     } else {
-      return tokens?.token1?.symbol
+      return flatten(tokens?.token1)?.symbol
     }
   }, [tokens])
 

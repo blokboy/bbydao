@@ -43,25 +43,8 @@ const Swap = ({ token }) => {
   }
   const defaultTokenList = [...defaultTokens?.["tokens"], defaultEth]
   const slippage = 0.055
-  const token0 = React.useMemo(() => {
-    if (parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null) {
-      return {
-        ...token,
-        token: {
-          decimals: 18,
-          logoURI: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
-          name: "Ether",
-          symbol: "ETH",
-        },
-        address: WETH,
-        tokenAddress: "",
-      }
-    }
-
-    return { ...token, address: token?.tokenAddress, logoURI: token?.token?.logoUri }
-  }, [token])
   const [tokens, setTokens] = React.useState({
-    token0: flatten(token0),
+    token0: token,
     token1: undefined,
   })
   const tokenSymbols = React.useMemo(() => {
@@ -73,7 +56,7 @@ const Swap = ({ token }) => {
   }, [defaultTokenList])
   const filteredTokensBySymbol = React.useMemo(() => {
     return tokenSymbols.reduce((acc = [], cv) => {
-      if (cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) && cv.symbol !== flatten(token0)?.symbol) {
+      if (cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) && cv.symbol !== token?.symbol) {
         acc.push(cv)
       }
 
