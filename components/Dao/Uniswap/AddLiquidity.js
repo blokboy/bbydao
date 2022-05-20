@@ -397,6 +397,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
     }
   }, [uniswapTokens, lpToken0, lpToken1])
 
+  /* set pair token and close search  */
   const handlePickToken = React.useCallback(token => {
     setLpToken1(token)
     setOpenSearch(false)
@@ -455,7 +456,6 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
             autoFocus={true}
           />
         )}
-        {console.log("f", filteredTokensBySymbol)}
         {openSearch && filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
           <div className="mt-4 flex max-h-96 flex-wrap gap-1 overflow-y-scroll rounded-lg bg-slate-100 p-4 pt-4 shadow-xl dark:bg-slate-800">
             {filteredTokensBySymbol.map((token, i) => (
