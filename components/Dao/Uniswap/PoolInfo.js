@@ -190,11 +190,11 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
     }
 
     return (
-      hasAllowance.token0 === false &&
+      (hasAllowance.token0 === true) &&
       !!token0 &&
-      hasAllowance.token1 === false &&
+      (hasAllowance.token1 === true) &&
       !!token1 &&
-      hasAllowance.pair === false &&
+      (hasAllowance.pair === false) &&
       !!pair
     )
   }, [hasAllowance, token0, token1, pair])
