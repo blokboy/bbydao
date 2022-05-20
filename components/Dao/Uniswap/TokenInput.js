@@ -63,6 +63,11 @@ const TokenInput = ({
 
   const max = React.useMemo(() => {
     if (!!token) {
+      /*
+      even though we are using signers wallet for ETH, gnosis is still approximating the costs as if
+      the gas would be coming from the bbydao -- this is why we get err Error: Not enough Ether funds,
+      if we don't account for gas
+      */
       if (token.symbol === "ETH") {
         const max = ethers.utils.formatUnits(BigNumber.from(token?.balance), token?.decimals)
         const uniFee = parseFloat(max) * 0.01 * 0.3
