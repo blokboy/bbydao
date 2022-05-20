@@ -10,7 +10,7 @@ const TokenControls = ({ liquidityPair, token, isUniV2, treasury }) => {
 
   /* Check if user has enough tokens to LP  */
   const hasTokensToLp = React.useMemo(() => {
-    return treasury.filter(token => parseFloat(token?.fiatBalance) > 0 && token?.token?.symbol !== "UNI-V2")?.length >= 2
+    return treasury?.filter(token => parseFloat(token?.fiatBalance) > 0 && token?.token?.symbol !== "UNI-V2")?.length >= 2
   }, [treasury])
 
   return (

@@ -38,8 +38,6 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
     return queryClient.getQueryData(["daoTokens", safeAddress])
   }, [safeAddress])
   const [lpToken1, setLpToken1] = useState(token1)
-
-
   const tokenLogos = React.useMemo(() => {
     if (!treasury) {
       return
@@ -67,7 +65,6 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
       return tokenLogos.filter(logo => logo.symbol === lpToken1?.symbol)[0]?.uri
     }
   }, [tokenLogos, lpToken1])
-
   const tokenSymbols = React.useMemo(() => {
     if (!treasury) {
       return
@@ -93,7 +90,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
             decimals: flatten(eth).decimals,
             name: flatten(eth).name,
             balance: flatten(eth).balance,
-            ...flatten(eth)
+            ...flatten(eth),
           })
       } else {
         if (acc.filter(item => item.symbol === cv.symbol).length < 1) {
@@ -103,7 +100,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
             decimals: flatten(cv).decimals,
             name: flatten(cv).name,
             balance: flatten(cv).balance,
-            ...flatten(cv)
+            ...flatten(cv),
           })
         }
       }
@@ -111,23 +108,28 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
       return acc
     }, [])
   }, [treasury])
-
   const filteredTokensBySymbol = React.useMemo(() => {
     if (!tokenSymbols) {
       return
     }
 
     return tokenSymbols?.reduce((acc = [], cv) => {
-      if (cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) && cv.symbol !== lpToken0?.symbol) {
-        acc.push(cv)
+      if (!state?.symbol) {
+        if (acc.filter(item => item.symbol === cv.symbol).length === 0) {
+          acc.push(cv)
+        }
+      } else {
+        if (cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) && cv.symbol !== lpToken0?.symbol) {
+          acc.push(cv)
+        }
       }
-
       return acc
     }, [])
   }, [state.symbol])
+  const supplyDisabled = React.useMemo(() => {
+    return !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1 || !hasAllowance?.pair
+  }, [signer, maxError, hasAllowance])
 
-  const supplyDisabled =
-    !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1 || !hasAllowance?.pair
   const { gnosisTransaction } = useGnosisTransaction(safeAddress)
   const { calculateFee } = useCalculateFee()
 
@@ -371,11 +373,15 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
     }
   }
 
+  /* Once both LP tokens are set and uniswap Token objects have been created, get pairData  */
   React.useMemo(async () => {
     try {
       if (!!lpToken0 && !!lpToken1 && !!uniswapTokens) {
         setState(state => ({ ...state, [lpToken1?.symbol]: 0 }))
-        const uniPair = await Fetcher.fetchPairData(uniswapTokens[flatten(lpToken0)?.symbol], uniswapTokens[lpToken1?.symbol])
+        const uniPair = await Fetcher.fetchPairData(
+          uniswapTokens[flatten(lpToken0)?.symbol],
+          uniswapTokens[lpToken1?.symbol]
+        )
         await setPair(uniPair)
       }
     } catch (err) {
@@ -441,6 +447,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
             autoFocus={true}
           />
         )}
+        {console.log("f", filteredTokensBySymbol)}
         {openSearch && filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
           <div className="mt-4 flex max-h-96 flex-wrap gap-1 overflow-y-scroll rounded-lg bg-slate-100 p-4 pt-4 shadow-xl dark:bg-slate-800">
             {filteredTokensBySymbol.map((token, i) => (
