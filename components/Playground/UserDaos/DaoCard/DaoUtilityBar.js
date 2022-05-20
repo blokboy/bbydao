@@ -92,7 +92,7 @@ const DaoUtilityBar = ({ user, safe, isMember }) => {
         trigger={
           <button
             className="-transform-y-6 flex h-6 w-6 items-center justify-center rounded-full border border-slate-400 bg-slate-200 p-1 shadow hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-600"
-            title="Follow bbyDAO as a bbyDAO"
+            title="bbyDao2bbyDao follow"
           >
             <RiUserFollowLine />
           </button>
