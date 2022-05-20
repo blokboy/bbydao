@@ -138,8 +138,6 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
     return !signer || maxError.length > 0 || !hasAllowance?.token0 || !hasAllowance?.token1 || !hasAllowance?.pair
   }, [signer, maxError, hasAllowance])
 
-  console.log('s', hasAllowance)
-
   const { gnosisTransaction } = useGnosisTransaction(safeAddress)
   const { calculateFee } = useCalculateFee()
 
