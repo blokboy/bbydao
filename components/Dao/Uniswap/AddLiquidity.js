@@ -149,7 +149,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
 
     const tokenA = new Token(
       ChainId.MAINNET,
-      lpToken0?.tokenAddress,
+      lpToken0?.tokenAddress || lpToken0?.address, //clean this up
       lpToken0?.decimals,
       lpToken0?.symbol,
       lpToken0?.name

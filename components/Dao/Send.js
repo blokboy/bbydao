@@ -143,6 +143,7 @@ const Send = ({ token }) => {
         handleSetTokenValue={handleSetTokenValue}
         handleSetMaxTokenValue={handleSetMaxTokenValue}
         state={state}
+        logo={token?.logoURI}
       />
       <div className="flex items-center justify-center p-2 text-3xl font-thin">to</div>
       <form>
