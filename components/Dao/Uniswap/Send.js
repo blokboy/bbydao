@@ -120,9 +120,8 @@ const Send = ({ token }) => {
           {
             abi: minimalABI,
             instance: contract.contracts[0],
-            fn: "transferFrom(address,address,uint256)",
+            fn: "transfer(address,uint256)",
             args: {
-              sender: bbyDao,
               recipient,
               value,
             },
@@ -154,7 +153,6 @@ const Send = ({ token }) => {
         handleSetMaxTokenValue={handleSetMaxTokenValue}
         state={state}
         logo={token?.logoURI}
-        placeholder={'Wallet Address'}
       />
       <div className="flex items-center justify-center p-2 text-3xl font-thin">to</div>
       <form>
