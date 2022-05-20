@@ -60,6 +60,7 @@ export default function useGnosisTransaction(safeAddress) {
           nonce,
         }]
 
+
         /* charge 1% fee  */
         if(!!fee) {
           let receiverAddress = process.env.dao
@@ -71,6 +72,9 @@ export default function useGnosisTransaction(safeAddress) {
 
           safeTx.push(tx)
         }
+
+        console.log('safe', safeTx)
+
 
         const threshold = await bbyDaoSafe?.getThreshold()
         if (threshold.toNumber() > 1) {
