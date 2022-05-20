@@ -23,7 +23,7 @@ export const DaoCard = ({ address, targetDao, isFollowing }) => {
     },
   })
 
-  const { mutateAsync: unfollow } = useMutation(api.deleteRelationship, {
+  const { mutateAsync: unfollowDao } = useMutation(api.deleteRelationship, {
     onSuccess: async () => {
       await queryClient.invalidateQueries(["friends", targetDao], {
         refetchActive: true,
@@ -33,25 +33,31 @@ export const DaoCard = ({ address, targetDao, isFollowing }) => {
 
   const handleFollow = () => {
     if (isFollowing) {
-      unfollow({ initiator: address, target: targetDao })
+      unfollowDao({ initiator: address, target: targetDao })
     } else {
       followDao({ initiator: address, target: targetDao, status: 4 })
     }
   }
 
-  return (
-    <button
-      className={"w-full rounded-lg bg-slate-100 p-2 dark:bg-slate-800" + (isFollowing ? " text-green-500" : "")}
-      onClick={handleFollow}
-    >
-      {daoData?.name || "yoo"}
-    </button>
-  )
+  const btn = React.useMemo(() => {
+    return (
+      <button
+        className={"w-full rounded-lg bg-slate-100 p-2 dark:bg-slate-800" + (isFollowing ? " text-green-500" : "")}
+        onClick={handleFollow}
+      >
+        {daoData?.name || "yoo"}
+      </button>
+    )
+  }, [isFollowing])
+
+  return btn
 }
 
 const DaoToDaoFollowModal = ({ user, targetDao }) => {
   const [friendData] = useFriendData(targetDao)
   const currentRelationships = friendData?.map(friend => friend.initiator)
+  // const currentRelationships = friendData?.filter(friend => friend.status === 5).map(friend => friend.initiator)
+  console.log(currentRelationships)
 
   const { data: userDaos, isLoading: userDaosLoading } = useQuery(
     ["userDaos", user],
@@ -75,7 +81,7 @@ const DaoToDaoFollowModal = ({ user, targetDao }) => {
         )
       })
     }
-  }, [userDaos, friendData])
+  }, [userDaos, currentRelationships])
 
   return (
     <div className="flex w-full flex-col space-y-2">

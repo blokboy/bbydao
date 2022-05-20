@@ -23,6 +23,7 @@ export default function useFriendData(address) {
       isFriend: false,
       isFollowing: false,
       isRequested: false,
+      isDao2Dao: false
     }
 
     if (!data || !friendData) {
@@ -48,6 +49,7 @@ export default function useFriendData(address) {
       isFriend: status === 1,
       isFollowing: status === 4,
       isRequested: status === 3,
+      isDao2Dao: status === 5
     }
   }, [data, friendData])
 

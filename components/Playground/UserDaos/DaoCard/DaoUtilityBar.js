@@ -12,8 +12,6 @@ const Modal = dynamic(() => import("components/Layout/Modal"), { ssr: false })
 import DaoToDaoFollowModal from "./DaoToDaoFollowModal"
 
 const DaoUtilityBar = ({ user, safe, isMember }) => {
-  // user-to-dao follow logic
-  //
   const [friendData, { friendStatus }] = useFriendData(safe)
   const isFollowing = friendStatus?.isFollowing
 
@@ -44,7 +42,6 @@ const DaoUtilityBar = ({ user, safe, isMember }) => {
           target: safe,
         }
         unfollowDao(req)
-        console.log("unfollowDao called", req)
         return
       } catch (error) {
         console.log("unfollowDao Error:", error)
@@ -58,7 +55,6 @@ const DaoUtilityBar = ({ user, safe, isMember }) => {
           status: 4,
         }
         followDao(req)
-        console.log("followDao called", req)
         return
       } catch (error) {
         console.log("followDao Error:", error)
