@@ -120,7 +120,6 @@ const Send = ({ token }) => {
       },
       contract.contracts[0]?.address,
       0,
-      await calculateFee([{ value, token }])
     )
   }
 
