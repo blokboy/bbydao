@@ -1,22 +1,10 @@
-import create from "zustand"
 import React from "react"
 import * as api from "/query"
 import * as gnosisApi from "query/gnosisQuery"
-import { useQuery } from "react-query"
+import { useQuery, useMutation, useQueryClient } from "react-query"
+import useFriendData from "hooks/useFriendData"
 
-const useStore = create(set => ({
-  initiators: [],
-  addInitiator: initiator =>
-    set(state => ({
-      initiators: [...state.initiators, initiator],
-    })),
-  removeInitiator: initiator =>
-    set(state => ({
-      initiators: state.initiators.filter(i => i !== initiator),
-    })),
-}))
-
-export const DaoCard = ({ address }) => {
+export const DaoCard = ({ address, targetDao, isFollowing }) => {
   const { data: daoData, isLoading: daoIsLoading } = useQuery(
     ["dao", address],
     () => api.getDao({ address: address }),
@@ -26,30 +14,45 @@ export const DaoCard = ({ address }) => {
     }
   )
 
-  const initiators = useStore(state => state.initiators)
-  const addInitiator = useStore(state => state.addInitiator)
-  const removeInitiator = useStore(state => state.removeInitiator)
-  const handleSetInitiators = () => {
-    if (initiators?.includes(address)) {
-      removeInitiator(address)
+  const queryClient = useQueryClient()
+  const { status, mutateAsync: followDao } = useMutation(api.reqRelationship, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(["friends", targetDao], {
+        refetchActive: true,
+      })
+    },
+  })
+
+  const { mutateAsync: unfollow } = useMutation(api.deleteRelationship, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(["friends", targetDao], {
+        refetchActive: true,
+      })
+    },
+  })
+
+  const handleFollow = () => {
+    if (isFollowing) {
+      unfollow({ initiator: address, target: targetDao })
     } else {
-      addInitiator(address)
+      followDao({ initiator: address, target: targetDao, status: 4 })
     }
   }
 
   return (
-    <div
-      className={
-        "w-full rounded-lg bg-slate-100 p-2 dark:bg-slate-800" + (initiators?.includes(address) ? " text-sky-500" : "")
-      }
-      onClick={handleSetInitiators}
+    <button
+      className={"w-full rounded-lg bg-slate-100 p-2 dark:bg-slate-800" + (isFollowing ? " text-green-500" : "")}
+      onClick={handleFollow}
     >
       {daoData?.name || "yoo"}
-    </div>
+    </button>
   )
 }
 
 const DaoToDaoFollowModal = ({ user, targetDao }) => {
+  const [friendData] = useFriendData(targetDao)
+  const currentRelationships = friendData?.map(friend => friend.initiator)
+
   const { data: userDaos, isLoading: userDaosLoading } = useQuery(
     ["userDaos", user],
     () => gnosisApi.safesByOwner(user),
@@ -59,23 +62,24 @@ const DaoToDaoFollowModal = ({ user, targetDao }) => {
     }
   )
 
-  const initiators = useStore(state => state.initiators)
-  const handleLog = () => {
-    console.log(initiators)
-  }
-
   const DaoCards = React.useMemo(() => {
     if (userDaos?.safes) {
       return userDaos.safes.map(address => {
-        return <DaoCard key={address} address={address} />
+        return (
+          <DaoCard
+            key={address}
+            address={address}
+            targetDao={targetDao}
+            isFollowing={currentRelationships?.includes(address)}
+          />
+        )
       })
     }
-  }, [userDaos])
+  }, [userDaos, friendData])
 
   return (
     <div className="flex w-full flex-col space-y-2">
       <div className="flex flex-col space-y-2">{DaoCards}</div>
-      <button onClick={handleLog}>log</button>
     </div>
   )
 }
