@@ -11,6 +11,7 @@ import { flatten }        from "utils/helpers"
 import IUniswapV2Pair     from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import { useSigner }      from "wagmi"
 import TokenControls      from './TokenControls'
+import TokenImg           from './TokenImg'
 
 const TokenCard = ({ token, isMember }) => {
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
@@ -97,14 +98,10 @@ const TokenCard = ({ token, isMember }) => {
   }, [token0, signer, treasury])
 
   return (
-    <div className="flex w-full flex-row rounded-xl bg-slate-100 p-2 shadow-xl dark:bg-slate-900 xl:flex-col">
+    <div className="flex w-full flex-col rounded-xl bg-slate-100 p-2 shadow-xl dark:bg-slate-900">
       <div className="mb-2 flex w-full flex-col">
         <div className="flex items-center">
-          <div className="mr-3 flex h-12 w-12 items-center justify-center overflow-hidden rounded-full">
-            {(isUniV2 && (
-              <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Uniswap_Logo.svg" alt="Uniswap Logo" />
-            )) || <>{token0.logoUri ? <img src={token0.logoUri} alt={""} /> : <FaEthereum size={30} />}</>}
-          </div>
+          <TokenImg token={token0} isUniV2={isUniV2} />
           <span className="text-xl font-normal">
             {(isUniV2 && <>{token0.name.replace("Uniswap V2", "").replace("Pool", "LP")}</>) || (
               <>{token0.name ? token0.name : "Ethereum"}</>
