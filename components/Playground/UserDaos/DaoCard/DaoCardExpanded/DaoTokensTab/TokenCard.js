@@ -55,7 +55,6 @@ const TokenCard = ({ token, isMember }) => {
     return flatten({ ...token, address: token?.tokenAddress, logoURI: token?.token?.logoUri })
   }, [token])
   const isUniV2 = token0?.symbol === "UNI-V2"
-
   const defaultEth = {
     address: WETH,
     tokenAddress: WETH,
@@ -65,7 +64,6 @@ const TokenCard = ({ token, isMember }) => {
     name: "Ether",
     symbol: "ETH",
   }
-
   const [liquidityPair, setLiquidityPair] = React.useState()
   React.useMemo(async () => {
     if (token0.symbol === "UNI-V2" && !!signer) {

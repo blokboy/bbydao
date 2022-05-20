@@ -100,7 +100,7 @@ const Swap = ({ token }) => {
     [tokens]
   )
   const switchTokenPlacement = React.useCallback(() => {
-    setState(state => ({ ...state, [tokens.token0?.symbol]: NaN, [tokens.token1?.symbol]: NaN }))
+    setState(state => ({ ...state, [tokens.token0?.symbol]: '', [tokens.token1?.symbol]: '' }))
     setTokens({ token0: tokens.token1, token1: tokens.token0 })
   }, [tokens])
   const WETHToken = React.useMemo(() => {
