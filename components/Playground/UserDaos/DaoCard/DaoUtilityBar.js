@@ -101,7 +101,7 @@ const DaoUtilityBar = ({ user, safe, isMember }) => {
         <DaoToDaoFollowModal user={user} targetDao={safe} />
       </Modal>
     )
-  }, [])
+  }, [user])
 
   return (
     <div className="flex h-0 w-full flex-row items-end justify-end space-x-1">

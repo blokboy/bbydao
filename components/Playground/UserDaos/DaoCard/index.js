@@ -28,7 +28,6 @@ const DaoCard = ({ user, safe, address }) => {
   const { data: daoData, isLoading: daoIsLoading } = useQuery(["dao", safe], () => api.getDao({ address: safe }), {
     staleTime: 180000,
     refetchOnWindowFocus: false,
-    // onError:
   })
 
   // create dao if dao does not exist in our backend
@@ -61,15 +60,6 @@ const DaoCard = ({ user, safe, address }) => {
     error: daoTokensErr,
     isLoading: daoTokensLoading,
   } = useQuery(["daoTokens", safe], () => gnosisApi.daoBalance(safe), {
-    staleTime: 200000,
-    refetchOnWindowFocus: false,
-  })
-
-  const {
-    data: daoTokenssData,
-    error: daoTokenssErr,
-    isLoading: daoTokenssLoading,
-  } = useQuery(["daoTokenList", safe], () => gnosisApi.daoNFTs(safe), {
     staleTime: 200000,
     refetchOnWindowFocus: false,
   })
