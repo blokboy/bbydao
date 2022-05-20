@@ -43,7 +43,6 @@ const Send = ({ token }) => {
         contract?.address,
         0
       )
-      console.log("tx", tx)
     } catch (err) {
       console.log("err", err)
     }
@@ -107,7 +106,6 @@ const Send = ({ token }) => {
     const contract = await tokenContract
     const value = ethers.utils.parseUnits(args.value.toFixed(6).toString(), token?.decimals)
     const { recipient } = args
-    console.log('tokesn', token)
 
     const tx = gnosisTransaction(
       {
@@ -122,9 +120,8 @@ const Send = ({ token }) => {
       },
       contract.contracts[0]?.address,
       0,
-     await calculateFee([{ value, token }])
+      await calculateFee([{ value, token }])
     )
-    console.log("tx", await calculateFee([{ value, token }]))
   }
 
   const prepare = React.useMemo(() => {
@@ -148,7 +145,7 @@ const Send = ({ token }) => {
         handleSetMaxTokenValue={handleSetMaxTokenValue}
         state={state}
       />
-      <div className="flex justify-center font-thin text-3xl items-center p-2">to</div>
+      <div className="flex items-center justify-center p-2 text-3xl font-thin">to</div>
       <form>
         <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
           <div className="flex flex-row">
