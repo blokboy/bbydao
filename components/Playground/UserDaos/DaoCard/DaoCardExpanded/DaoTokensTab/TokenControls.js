@@ -4,7 +4,7 @@ import RemoveLiquidity                from "components/Dao/Uniswap/RemoveLiquidi
 import Swap                           from "components/Dao/Uniswap/Swap"
 import Modal                          from "components/Layout/Modal"
 import { HiChevronDown, HiChevronUp } from "react-icons/hi"
-import Send                           from '../../../../../Dao/Send'
+import Send                           from '../../../../../Dao/Uniswap/Send'
 
 const TokenControls = ({ liquidityPair, token, isUniV2, treasury }) => {
   const [toggleControls, setToggleControls] = React.useState(false)

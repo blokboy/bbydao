@@ -1,13 +1,13 @@
 import { BigNumber, ethers } from "ethers"
 import React from "react"
 import { useQueryClient } from "react-query"
-import { useSigner } from "wagmi"
-import { minimalABI } from "hooks/useERC20Contract"
+import { useSigner }             from "wagmi"
+import { minimalABI }            from "hooks/useERC20Contract"
 import { max256, NumberFromBig } from "utils/helpers"
-import useCalculateFee from "hooks/useCalculateFee"
-import useForm from "hooks/useForm"
-import useGnosisTransaction from "hooks/useGnosisTransaction"
-import TokenInput from "./Uniswap/TokenInput"
+import useCalculateFee           from "hooks/useCalculateFee"
+import useForm                   from "hooks/useForm"
+import useGnosisTransaction      from "hooks/useGnosisTransaction"
+import TokenInput                from "./TokenInput"
 
 const Send = ({ token }) => {
   const { data: signer } = useSigner()
@@ -154,6 +154,7 @@ const Send = ({ token }) => {
         handleSetMaxTokenValue={handleSetMaxTokenValue}
         state={state}
         logo={token?.logoURI}
+        placeholder={'Wallet Address'}
       />
       <div className="flex items-center justify-center p-2 text-3xl font-thin">to</div>
       <form>
@@ -165,6 +166,7 @@ const Send = ({ token }) => {
               name="recipient"
               value={state?.recipient || ""}
               className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-4xl leading-tight focus:outline-none dark:bg-slate-800"
+              placeholder={'Recipient Address'}
             />
           </div>
         </div>
