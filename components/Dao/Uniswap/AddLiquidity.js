@@ -115,11 +115,19 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
 
     return tokenSymbols?.reduce((acc = [], cv) => {
       if (!state?.symbol) {
-        if (acc.filter(item => item.symbol === cv.symbol).length === 0) {
+        if (
+          acc.filter(item => item.symbol === cv.symbol).length === 0 &&
+          cv.symbol !== lpToken0?.symbol &&
+          cv.symbol !== "UNI-V2"
+        ) {
           acc.push(cv)
         }
       } else {
-        if (cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) && cv.symbol !== lpToken0?.symbol) {
+        if (
+          cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) &&
+          cv.symbol !== lpToken0?.symbol &&
+          cv.symbol !== "UNI-V2"
+        ) {
           acc.push(cv)
         }
       }
