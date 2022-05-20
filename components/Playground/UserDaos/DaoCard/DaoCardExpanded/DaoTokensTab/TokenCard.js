@@ -1,23 +1,16 @@
 import { ChainId } from "@uniswap/sdk"
-import { ethers }         from "ethers"
-import React              from "react"
-import { FaEthereum }     from "react-icons/fa"
-import RemoveLiquidity    from "components/Dao/Uniswap/RemoveLiquidity"
-import Modal              from "components/Layout/Modal"
-import Swap               from "components/Dao/Uniswap/Swap"
-import AddLiquidity       from "components/Dao/Uniswap/AddLiquidity"
+import { ethers } from "ethers"
+import React from "react"
 import { useQueryClient } from "react-query"
-import { flatten }        from "utils/helpers"
-import IUniswapV2Pair     from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
-import { useSigner }      from "wagmi"
-import TokenControls      from './TokenControls'
-import TokenImg           from './TokenImg'
+import { flatten } from "utils/helpers"
+import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
+import { useSigner } from "wagmi"
+import TokenBalance from "./TokenBalance"
+import TokenControls from "./TokenControls"
+import TokenImg from "./TokenImg"
+import TokenName from "./TokenName"
 
 const TokenCard = ({ token, isMember }) => {
-  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
-  const isEth = React.useMemo(() => {
-    return parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null
-  }, [token])
   const { data: signer } = useSigner()
   const queryClient = useQueryClient()
   const bbyDao = queryClient.getQueryData("expandedDao")
@@ -28,8 +21,11 @@ const TokenCard = ({ token, isMember }) => {
 
     return queryClient.getQueryData(["daoTokens", bbyDao])
   }, [bbyDao])
-
-  const token0 = React.useMemo(() => {
+  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
+  const isEth = React.useMemo(() => {
+    return parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null
+  }, [token])
+  const _token = React.useMemo(() => {
     if (isEth) {
       return flatten({
         ...token,
@@ -46,7 +42,7 @@ const TokenCard = ({ token, isMember }) => {
 
     return flatten({ ...token, address: token?.tokenAddress, logoURI: token?.token?.logoUri })
   }, [token])
-  const isUniV2 = token0?.symbol === "UNI-V2"
+  const isUniV2 = _token?.symbol === "UNI-V2"
   const defaultEth = {
     address: WETH,
     tokenAddress: WETH,
@@ -57,10 +53,12 @@ const TokenCard = ({ token, isMember }) => {
     symbol: "ETH",
   }
   const [liquidityPair, setLiquidityPair] = React.useState()
+
+  /* If bbyDao has LP, check to see if they have both pair tokens in their treasury  */
   React.useMemo(async () => {
-    if (token0.symbol === "UNI-V2" && !!signer) {
+    if (_token.symbol === "UNI-V2" && !!signer) {
       const pairContract = new ethers.Contract(
-        ethers.utils.getAddress(token0?.tokenAddress),
+        ethers.utils.getAddress(_token?.tokenAddress),
         IUniswapV2Pair["abi"],
         signer
       )
@@ -95,36 +93,20 @@ const TokenCard = ({ token, isMember }) => {
         setLiquidityPair({ lpToken0: flatten(lpToken0), lpToken1: flatten(lpToken1) })
       }
     }
-  }, [token0, signer, treasury])
+  }, [_token, signer, treasury])
+
 
   return (
     <div className="flex w-full flex-col rounded-xl bg-slate-100 p-2 shadow-xl dark:bg-slate-900">
       <div className="mb-2 flex w-full flex-col">
         <div className="flex items-center">
-          <TokenImg token={token0} isUniV2={isUniV2} />
-          <span className="text-xl font-normal">
-            {(isUniV2 && <>{token0.name.replace("Uniswap V2", "").replace("Pool", "LP")}</>) || (
-              <>{token0.name ? token0.name : "Ethereum"}</>
-            )}
-          </span>
+          <TokenImg token={_token} isUniV2={isUniV2} />
+          <TokenName token={_token} isUniV2={isUniV2} />
         </div>
-        <div className="flex h-full w-auto flex-col p-2">
-          <span className="text-sm font-thin">
-            {(token0?.balance / 10 ** 18).toFixed(3)} {token0.symbol}
-          </span>
-          <span className="text-xs font-thin text-teal-600 dark:text-teal-400">
-            ${Number(token0?.fiatBalance).toFixed(2)}
-          </span>
-        </div>
+        <TokenBalance token={_token} />
       </div>
 
-      {isMember && (
-          <TokenControls
-              liquidityPair={liquidityPair}
-              token={token0}
-              isUniV2={isUniV2}
-          />
-      )}
+      {isMember && <TokenControls liquidityPair={liquidityPair} token={_token} isUniV2={isUniV2} treasury={treasury} />}
     </div>
   )
 }
