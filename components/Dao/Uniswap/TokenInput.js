@@ -10,9 +10,10 @@ const TokenInput = ({
   handleSetMaxTokenValue,
   state,
   logo,
-  setOpenSearch,
+  setOpenSearch = () => {},
   tokens,
   isSwap,
+  isSend,
 }) => {
   const token = React.useMemo(() => {
     if (!!lpToken) {
@@ -53,6 +54,10 @@ const TokenInput = ({
       return isToken0 && parseFloat(token?.fiatBalance) > 0 && tokens.token0 && tokens.token1
     }
 
+    if (isSend) {
+      return true
+    }
+
     return isTokenWithLessValue
   }, [isSwap, isToken0, isTokenWithLessValue, token, tokens])
 
@@ -73,7 +78,7 @@ const TokenInput = ({
     <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
       <div className="flex flex-row">
         <input
-          value={state?.[token?.symbol] || ''}
+          value={state?.[token?.symbol] || ""}
           onChange={e => handleSetTokenValue(e, token, tokenInputRef)}
           className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-4xl leading-tight focus:outline-none dark:bg-slate-800"
           id="name"
@@ -84,7 +89,7 @@ const TokenInput = ({
           required
           max={max || ""}
           ref={tokenInputRef}
-          disabled={!pair || !tokens?.token0 || !tokens?.token1}
+          disabled={!isSend && (!pair || !tokens?.token0 || !tokens?.token1)}
           autoComplete="off"
         />
         <button
@@ -116,9 +121,9 @@ const TokenInput = ({
         {showMax && (
           <div
             className={`flex cursor-pointer justify-end rounded-lg bg-[#eda67e24] py-0.5 px-2 text-[.8rem] text-[#FC8D4D] hover:bg-[#f98c4e57] ${
-              !pair ? "pointer-events-none" : ""
+              !pair && !isSend ? "pointer-events-none" : ""
             }`}
-            onClick={!!pair ? () => handleSetMaxTokenValue(token, tokenInputRef) : () => {}}
+            onClick={!!pair || isSend ? () => handleSetMaxTokenValue(token, tokenInputRef) : () => {}}
           >
             MAX
           </div>
