@@ -107,20 +107,24 @@ const Send = ({ token }) => {
     const value = ethers.utils.parseUnits(args.value.toFixed(6).toString(), token?.decimals)
     const { recipient } = args
 
-    const tx = gnosisTransaction(
-      {
-        abi: minimalABI,
-        instance: contract.contracts[0],
-        fn: "transferFrom(address,address,uint256)",
-        args: {
-          sender: bbyDao,
-          recipient,
-          value,
-        },
-      },
-      contract.contracts[0]?.address,
-      0,
-    )
+    if(token.symbol === 'ETH') {
+
+    } else {
+      const tx = gnosisTransaction(
+          {
+            abi: minimalABI,
+            instance: contract.contracts[0],
+            fn: "transferFrom(address,address,uint256)",
+            args: {
+              sender: bbyDao,
+              recipient,
+              value,
+            },
+          },
+          contract.contracts[0]?.address,
+          0,
+      )
+    }
   }
 
   const prepare = React.useMemo(() => {
