@@ -14,7 +14,7 @@ import TokenInput from "./TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import useCalculateFee from "hooks/useCalculateFee"
 
-const UniswapLpModal = ({ lpToken0 }) => {
+const UniswapLpModal = ({ lpToken0, token1 = null }) => {
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { data: signer } = useSigner()
@@ -37,7 +37,7 @@ const UniswapLpModal = ({ lpToken0 }) => {
 
     return queryClient.getQueryData(["daoTokens", safeAddress])
   }, [safeAddress])
-  const [lpToken1, setLpToken1] = useState()
+  const [lpToken1, setLpToken1] = useState(token1)
 
 
   const tokenLogos = React.useMemo(() => {
@@ -137,7 +137,7 @@ const UniswapLpModal = ({ lpToken0 }) => {
       return
     }
 
-    const token0 = new Token(
+    const tokenA = new Token(
       ChainId.MAINNET,
       lpToken0?.tokenAddress,
       lpToken0?.decimals,
@@ -145,7 +145,7 @@ const UniswapLpModal = ({ lpToken0 }) => {
       lpToken0?.name
     )
 
-    const token1 = new Token(
+    const tokenB = new Token(
       ChainId.MAINNET,
       flatten(lpToken1)?.tokenAddress,
       flatten(lpToken1)?.decimals,
@@ -153,7 +153,7 @@ const UniswapLpModal = ({ lpToken0 }) => {
       flatten(lpToken1)?.name
     )
 
-    return { [lpToken0?.symbol]: token0, [lpToken1?.symbol]: token1 }
+    return { [lpToken0?.symbol]: tokenA, [lpToken1?.symbol]: tokenB }
   }, [lpToken0, lpToken1, ChainId])
 
   /* Handle interaction with Uniswap to get LP information  */
