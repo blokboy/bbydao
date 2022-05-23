@@ -1,6 +1,7 @@
-import React from "react"
+import React, { useMemo } from "react"
 import Link from "next/link"
 import { useAccount } from "wagmi"
+import { useLayoutStore } from "../../../stores/useLayoutStore"
 
 import NotificationsIcon from "./NotificationsIcon"
 import SearchIcon from "./SearchIcon"
@@ -14,6 +15,13 @@ import NetworkIconDropdown from "./NetworkIconDropdown"
 
 const Nav = () => {
   const { data: accountData } = useAccount()
+  const signer = useLayoutStore(state => state.signer)
+  const s = React.useMemo(() => {
+    console.log('saa', signer)
+    if (!!signer) return signer
+  }, [signer])
+  console.log("s", s)
+
 
   const memoizedNav = React.useMemo(() => {
     return (

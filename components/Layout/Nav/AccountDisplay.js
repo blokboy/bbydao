@@ -1,12 +1,12 @@
-import React                                     from "react"
-import ClickAwayListener                         from "react-click-away-listener"
+import React from "react"
+import ClickAwayListener from "react-click-away-listener"
 import { useAccount, useDisconnect, useEnsName } from "wagmi"
-import { IoCopySharp }                           from "react-icons/io5"
-import { HiOutlineLogout }                       from "react-icons/hi"
-import {useLayoutStore}                          from '../../../stores/useLayoutStore'
-import { walletSnippet }                         from "../../../utils/helpers"
-import * as api                                  from "query"
-import { useQuery }                              from "react-query"
+import { IoCopySharp } from "react-icons/io5"
+import { HiOutlineLogout } from "react-icons/hi"
+import { useLayoutStore } from "../../../stores/useLayoutStore"
+import { walletSnippet } from "../../../utils/helpers"
+import * as api from "query"
+import { useQuery } from "react-query"
 
 const AccountDisplay = () => {
   const { data, error, loading } = useAccount()
@@ -24,8 +24,11 @@ const AccountDisplay = () => {
     staleTime: Infinity,
   })
 
-
-  const { data: ensData, iserror: ensError, isloading: ensLoading } = useEnsName({
+  const {
+    data: ensData,
+    iserror: ensError,
+    isloading: ensLoading,
+  } = useEnsName({
     address: data?.address,
   })
 
@@ -53,10 +56,10 @@ const AccountDisplay = () => {
   }, [data, isCopied])
 
   const handleDisconnect = React.useCallback(() => {
+    console.log("hi")
     disconnect()
     setSigner(null)
-
-  }, [disconnect, setSigner()])
+  }, [disconnect, setSigner])
 
   const dropdown = React.useMemo(() => {
     return isDropdownOpen ? (

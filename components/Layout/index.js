@@ -22,7 +22,8 @@ const Layout = ({ children }) => {
   }, [isLoading, isError, data])
 
   React.useEffect(() => {
-    setSigner(signer)
+    console.log("signeeeeer", signer)
+    if (!!signer) setSigner(signer)
   }, [signer])
 
   return (
