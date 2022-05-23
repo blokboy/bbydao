@@ -1,7 +1,5 @@
 import React from "react"
-import { useQuery } from "react-query"
 import { useSigner } from "wagmi"
-import { useDaoStore } from "../../stores/useDaoStore"
 import Nav from "./Nav"
 import dynamic from "next/dynamic"
 const Search = dynamic(() => import("./Search"))
@@ -22,7 +20,6 @@ const Layout = ({ children }) => {
   }, [isLoading, isError, data])
 
   React.useEffect(() => {
-    console.log("signeeeeer", signer)
     if (!!signer) setSigner(signer)
   }, [signer])
 

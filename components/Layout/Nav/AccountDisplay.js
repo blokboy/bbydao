@@ -56,7 +56,6 @@ const AccountDisplay = () => {
   }, [data, isCopied])
 
   const handleDisconnect = React.useCallback(() => {
-    console.log("hi")
     disconnect()
     setSigner(null)
   }, [disconnect, setSigner])
