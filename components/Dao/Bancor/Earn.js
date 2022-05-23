@@ -1,14 +1,10 @@
-import {bnToHex}            from 'ethereumjs-util'
 import { ethers }           from "ethers"
 import React                from "react"
 import { useQueryClient }   from "react-query"
 import { useSigner }        from "wagmi"
-import WETHABI              from "../../../ABIs/WETH.json"
-import useCalculateFee      from "../../../hooks/useCalculateFee"
-import { minimalABI }       from "../../../hooks/useERC20Contract"
-import useForm              from "../../../hooks/useForm"
-import useGnosisTransaction from "../../../hooks/useGnosisTransaction"
-import { NumberFromBig }    from "../../../utils/helpers"
+import useCalculateFee      from "hooks/useCalculateFee"
+import useForm              from "hooks/useForm"
+import useGnosisTransaction from "hooks/useGnosisTransaction"
 import BancorStandardRewards from "ABIs/bancorStandardRewards.json"
 import BancorPoolToken from "ABIs/bancorPoolToken.json"
 
@@ -34,14 +30,12 @@ const Earn = ({ token }) => {
     }
   }, [])
 
-  console.log("re", rewardContract)
-
   const bnETH = React.useMemo(async () => {
     try {
       let ids = await rewardContract?.programIds()
       let programs = await rewardContract?.programs(ids)
       const bnETH = programs?.[5]
-      console.log("pr", bnETH)
+
       return {
         bnETH,
         poolToken: bnETH?.poolToken,
@@ -153,7 +147,7 @@ const Earn = ({ token }) => {
       {state[token?.symbol] && (
           <button
               type="button"
-              className={`flex w-full items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]`}
+              className={`flex w-full items-center justify-center rounded-3xl mt-4 bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]`}
               onClick={() => handleDepositAndJoin(state[token?.symbol])}
           >
             Deposit
