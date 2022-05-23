@@ -1,19 +1,19 @@
-import { BigNumber, ethers } from "ethers"
-import React from "react"
-import { useQueryClient } from "react-query"
-import { useSigner }             from "wagmi"
+import { BigNumber, ethers }     from "ethers"
+import React                     from "react"
+import { useQueryClient }        from "react-query"
 import { minimalABI }            from "hooks/useERC20Contract"
 import { max256, NumberFromBig } from "utils/helpers"
 import useCalculateFee           from "hooks/useCalculateFee"
 import useForm                   from "hooks/useForm"
 import useGnosisTransaction      from "hooks/useGnosisTransaction"
+import {useLayoutStore}          from 'stores/useLayoutStore'
 import TokenInput                from "./TokenInput"
 
 const Send = ({ token }) => {
-  const { data: signer } = useSigner()
   const [hasAllowance, setHasAllowance] = React.useState()
   const queryClient = useQueryClient()
   const bbyDao = queryClient.getQueryData("expandedDao")
+  const signer = useLayoutStore(state => state.signer)
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const ref = React.useRef()
   const { state, setState, handleChange } = useForm()

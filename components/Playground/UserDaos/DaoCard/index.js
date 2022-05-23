@@ -19,9 +19,6 @@ import * as gnosisApi from "/query/gnosisQuery"
 import { useMutation, useQuery } from "react-query"
 
 const DaoCard = ({ user, safe, address }) => {
-  const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
-  const uniswapRemoveLpModalOpen = useDaoStore(state => state.uniswapRemoveLpModalOpen)
-
   const { mutateAsync: createDao } = useMutation(api.createDao)
 
   // dao data from our backend

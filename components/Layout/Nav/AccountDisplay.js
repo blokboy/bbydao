@@ -1,15 +1,17 @@
-import React from "react"
-import ClickAwayListener from "react-click-away-listener"
+import React                                     from "react"
+import ClickAwayListener                         from "react-click-away-listener"
 import { useAccount, useDisconnect, useEnsName } from "wagmi"
-import { IoCopySharp } from "react-icons/io5"
-import { HiOutlineLogout } from "react-icons/hi"
-import { walletSnippet } from "../../../utils/helpers"
-import * as api from "query"
-import { useQuery } from "react-query"
+import { IoCopySharp }                           from "react-icons/io5"
+import { HiOutlineLogout }                       from "react-icons/hi"
+import {useLayoutStore}                          from '../../../stores/useLayoutStore'
+import { walletSnippet }                         from "../../../utils/helpers"
+import * as api                                  from "query"
+import { useQuery }                              from "react-query"
 
 const AccountDisplay = () => {
   const { data, error, loading } = useAccount()
   const { disconnect } = useDisconnect()
+  const setSigner = useLayoutStore(state => state.setSigner)
 
   const {
     data: getUserData,
@@ -21,7 +23,6 @@ const AccountDisplay = () => {
     refetchOnWindowFocus: false,
     staleTime: Infinity,
   })
-  useQuery('signer', () => data?.address)
 
 
   const { data: ensData, iserror: ensError, isloading: ensLoading } = useEnsName({
@@ -51,6 +52,12 @@ const AccountDisplay = () => {
     setTimeout(() => setCopied(false), 5000)
   }, [data, isCopied])
 
+  const handleDisconnect = React.useCallback(() => {
+    disconnect()
+    setSigner(null)
+
+  }, [disconnect, setSigner()])
+
   const dropdown = React.useMemo(() => {
     return isDropdownOpen ? (
       <div className="absolute left-0 top-0 right-0 z-50 w-40 translate-y-16 -translate-x-1 rounded-xl border bg-slate-200 px-2 py-2 text-slate-800 shadow dark:bg-slate-900 dark:text-white">
@@ -64,7 +71,7 @@ const AccountDisplay = () => {
             </button>
           </li>
           <li className="menu-link">
-            <button type="button" className="flex font-bold" onClick={disconnect}>
+            <button type="button" className="flex font-bold" onClick={handleDisconnect}>
               <span className="mr-3 self-center">
                 <HiOutlineLogout />
               </span>

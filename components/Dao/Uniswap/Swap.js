@@ -1,29 +1,21 @@
 import { ChainId, Fetcher, Percent, Route, Token } from "@uniswap/sdk"
-import defaultTokens from "@uniswap/default-token-list"
-import { BigNumber, ethers } from "ethers"
-import React from "react"
-import useForm from "hooks/useForm"
-import { HiOutlineSwitchVertical, HiArrowSmDown } from "react-icons/hi"
-import { useQueryClient } from "react-query"
-import { max256, NumberFromBig } from "utils/helpers"
-import { useSigner } from "wagmi"
-import { minimalABI } from "hooks/useERC20Contract"
-import useCalculateFee from "hooks/useCalculateFee"
-import TokenInput from "./TokenInput"
-import useGnosisTransaction from "hooks/useGnosisTransaction"
-import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
-import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
-import WETHABI from "ABIs/WETH.json"
+import defaultTokens                               from "@uniswap/default-token-list"
+import { BigNumber, ethers }                       from "ethers"
+import React                                       from "react"
+import useForm                                     from "hooks/useForm"
+import { HiOutlineSwitchVertical, HiArrowSmDown }  from "react-icons/hi"
+import { useQueryClient }                          from "react-query"
+import { max256, NumberFromBig }                   from "utils/helpers"
+import { minimalABI }                              from "hooks/useERC20Contract"
+import useCalculateFee                             from "hooks/useCalculateFee"
+import {useLayoutStore}                            from '../../../stores/useLayoutStore'
+import TokenInput                                  from "./TokenInput"
+import useGnosisTransaction                        from "hooks/useGnosisTransaction"
+import IUniswapV2Router02                          from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
+import IUniswapV2Pair                              from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
+import WETHABI                                     from "ABIs/WETH.json"
 
 const Swap = ({ token }) => {
-  const { data: signer } = useSigner({
-    onSettled(data, error) {
-      console.log('Settled', data, error)
-    },
-    onError(error) {
-      console.log('Error', error)
-    }
-  })
   const queryClient = useQueryClient()
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()
@@ -32,6 +24,7 @@ const Swap = ({ token }) => {
   const [hasNoLiquidity, setHasNoLiquidity] = React.useState(false)
   const [isEthOnEth, setIsEthOnEth] = React.useState(false)
   const bbyDao = queryClient.getQueryData("expandedDao")
+  const signer = useLayoutStore(state => state.signer)
   const bbyDaoTokens = queryClient.getQueryData(["daoTokens", bbyDao])
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const [hasAllowance, setHasAllowance] = React.useState()
@@ -39,8 +32,6 @@ const Swap = ({ token }) => {
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { state, setState, handleChange } = useForm()
   const { calculateFee } = useCalculateFee()
-
-  console.log('signer', signer)
 
   const defaultEth = {
     address: WETH,
