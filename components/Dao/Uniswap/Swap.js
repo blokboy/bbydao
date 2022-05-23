@@ -106,6 +106,38 @@ const Swap = ({ token }) => {
   const WETHToken = React.useMemo(() => {
     return new Token(ChainId.MAINNET, WETH, 18, "WETH", "Wrapped Ether")
   }, [WETH, ChainId, Token])
+
+  const routeThroughWETH = async (uniswapTokens) => {
+    try {
+      const Token0WETH = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], WETHToken)
+      const WETHToken1 = await Fetcher.fetchPairData(WETHToken, uniswapTokens[tokens.token1.symbol])
+
+      const pair0Contract = new ethers.Contract(
+          ethers.utils.getAddress(Token0WETH?.liquidityToken?.address),
+          IUniswapV2Pair["abi"],
+          signer
+      )
+      const pair1Contract = new ethers.Contract(
+          ethers.utils.getAddress(WETHToken1?.liquidityToken?.address),
+          IUniswapV2Pair["abi"],
+          signer
+      )
+
+      const totalSupply0 = await pair0Contract?.totalSupply()
+      const hasLiquidity0 =
+          parseInt((totalSupply0.toString() / 10 ** Token0WETH?.liquidityToken?.decimals).toFixed()) > 0
+
+      const totalSupply1 = await pair1Contract?.totalSupply()
+      const hasLiquidity1 = parseInt((totalSupply1 / 10 ** Token0WETH?.liquidityToken?.decimals).toFixed()) > 0
+
+      setHasNoLiquidity(!hasLiquidity0 || !hasLiquidity1)
+      setPoolExists(false)
+      return [Token0WETH, WETHToken1]
+    } catch(err) {
+      console.log('err', err)
+    }
+  }
+
   const uniswapTokens = React.useMemo(() => {
     if (!!tokens?.token0 && !!tokens?.token1) {
       const token0 = tokens?.token0
@@ -130,6 +162,10 @@ const Swap = ({ token }) => {
         const totalSupply = await pairContract?.totalSupply()
         const hasLiquidity = parseInt((totalSupply.toString() / 10 ** uniPair?.liquidityToken?.decimals).toFixed()) > 0
 
+        if(!hasLiquidity) {
+          return await routeThroughWETH(uniswapTokens)
+        }
+
         setHasNoLiquidity(!hasLiquidity)
         setPoolExists(true)
         return uniPair
@@ -146,31 +182,7 @@ const Swap = ({ token }) => {
 
           return
         }
-
-        const Token0WETH = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], WETHToken)
-        const WETHToken1 = await Fetcher.fetchPairData(WETHToken, uniswapTokens[tokens.token1.symbol])
-
-        const pair0Contract = new ethers.Contract(
-          ethers.utils.getAddress(Token0WETH?.liquidityToken?.address),
-          IUniswapV2Pair["abi"],
-          signer
-        )
-        const pair1Contract = new ethers.Contract(
-          ethers.utils.getAddress(WETHToken1?.liquidityToken?.address),
-          IUniswapV2Pair["abi"],
-          signer
-        )
-
-        const totalSupply0 = await pair0Contract?.totalSupply()
-        const hasLiquidity0 =
-          parseInt((totalSupply0.toString() / 10 ** Token0WETH?.liquidityToken?.decimals).toFixed()) > 0
-
-        const totalSupply1 = await pair1Contract?.totalSupply()
-        const hasLiquidity1 = parseInt((totalSupply1 / 10 ** Token0WETH?.liquidityToken?.decimals).toFixed()) > 0
-
-        setHasNoLiquidity(!hasLiquidity0 || !hasLiquidity1)
-        setPoolExists(false)
-        return [Token0WETH, WETHToken1]
+        return await routeThroughWETH(uniswapTokens)
       }
     }
   }, [uniswapTokens])
