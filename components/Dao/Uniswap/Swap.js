@@ -33,6 +33,8 @@ const Swap = ({ token }) => {
   const { state, setState, handleChange } = useForm()
   const { calculateFee } = useCalculateFee()
 
+  console.log('signer', signer)
+
   const defaultEth = {
     address: WETH,
     chainId: ChainId.MAINNET,
@@ -209,8 +211,6 @@ const Swap = ({ token }) => {
     const { token0, token1 } = tokens
     try {
       let token0Contract, token1Contract, token0AllowanceAmount, token1AllowanceAmount
-
-      alert(`hii i have ${signer}`)
 
       if (!!signer) {
         if (!!token0) {
