@@ -156,20 +156,20 @@ const Send = ({ token }) => {
       />
       <div className="flex items-center justify-center p-2 text-3xl font-thin">to</div>
       <form>
-        <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
+        <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 mb-8 hover:border-[#FC8D4D] dark:bg-slate-800">
           <div className="flex flex-row">
             <input
               onChange={handleChange}
               id="name"
               name="recipient"
               value={state?.recipient || ""}
-              className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-4xl leading-tight focus:outline-none dark:bg-slate-800"
+              className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-sm leading-tight focus:outline-none dark:bg-slate-800"
               placeholder={'Recipient Address'}
             />
           </div>
         </div>
       </form>
-      {prepare?.show === true && !!prepare?.args && (
+      {hasAllowance?.token0 === true && prepare?.show === true && !!prepare?.args && (
         <button
           type="button"
           className={`mt-8 flex w-full items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]`}
