@@ -14,6 +14,7 @@ const TokenInput = ({
   tokens,
   isSwap,
   isSend,
+    isEarn
 }) => {
   const token = React.useMemo(() => {
     if (!!lpToken) {
@@ -54,7 +55,7 @@ const TokenInput = ({
       return isToken0 && parseFloat(token?.fiatBalance) > 0 && tokens.token0 && tokens.token1
     }
 
-    if (isSend) {
+    if (isSend || isEarn) {
       return true
     }
 
@@ -94,7 +95,7 @@ const TokenInput = ({
           required
           max={max || ""}
           ref={tokenInputRef}
-          disabled={!isSend && (!pair || !tokens?.token0 || !tokens?.token1)}
+          disabled={!isSend && !isEarn && (!pair || !tokens?.token0 || !tokens?.token1)}
           autoComplete="off"
         />
         <button
@@ -126,9 +127,9 @@ const TokenInput = ({
         {showMax && (
           <div
             className={`flex cursor-pointer justify-end rounded-lg bg-[#eda67e24] py-0.5 px-2 text-[.8rem] text-[#FC8D4D] hover:bg-[#f98c4e57] ${
-              !pair && !isSend ? "pointer-events-none" : ""
+              !pair && !isSend && !isEarn ? "pointer-events-none" : ""
             }`}
-            onClick={!!pair || isSend ? () => handleSetMaxTokenValue(token, tokenInputRef) : () => {}}
+            onClick={!!pair || isSend || isEarn ? () => handleSetMaxTokenValue(token, tokenInputRef) : () => {}}
           >
             MAX
           </div>

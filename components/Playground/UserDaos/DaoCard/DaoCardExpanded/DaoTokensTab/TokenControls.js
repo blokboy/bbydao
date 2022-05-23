@@ -1,10 +1,11 @@
-import React                          from "react"
-import AddLiquidity                   from "components/Dao/Uniswap/AddLiquidity"
-import RemoveLiquidity                from "components/Dao/Uniswap/RemoveLiquidity"
-import Swap                           from "components/Dao/Uniswap/Swap"
-import Modal                          from "components/Layout/Modal"
+import React from "react"
+import AddLiquidity from "components/Dao/Uniswap/AddLiquidity"
+import RemoveLiquidity from "components/Dao/Uniswap/RemoveLiquidity"
+import Swap from "components/Dao/Uniswap/Swap"
+import Modal from "components/Layout/Modal"
 import { HiChevronDown, HiChevronUp } from "react-icons/hi"
-import Send                           from '../../../../../Dao/Uniswap/Send'
+import Earn                           from "components/Dao/Bancor/Earn"
+import Send                           from "components/Dao/Uniswap/Send"
 
 const TokenControls = ({ liquidityPair, token, isUniV2, treasury }) => {
   const [toggleControls, setToggleControls] = React.useState(false)
@@ -16,7 +17,7 @@ const TokenControls = ({ liquidityPair, token, isUniV2, treasury }) => {
     )
   }, [treasury])
 
-  const ToggleButton = ({icon}) => (
+  const ToggleButton = ({ icon }) => (
     <button
       type="button"
       className="flex justify-center rounded bg-slate-200 shadow-xl dark:bg-slate-800"
@@ -32,25 +33,50 @@ const TokenControls = ({ liquidityPair, token, isUniV2, treasury }) => {
       <div className={`${!toggleControls ? "h-0" : "h-auto"} overflow-hidden transition-all`}>
         {(!isUniV2 && (
           <div className="flex flex-wrap p-1 xl:justify-center">
-            <Modal
+            {token?.symbol === "ETH" && (
+              <Modal
                 heading={
                   <div className="flex items-center">
+                    <div className="mr-4 h-8 w-8 overflow-hidden rounded-full" title="Bancor Earn">
+                      <img src="https://130351921-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FC9gDtGR2KNhur3c7qIJR%2Fuploads%2FZvrb3aQws7FtDYKTJaLp%2FBNT%20Token.png?alt=media&token=ada4053a-d1a7-4e79-a071-38985420d463" />
+                    </div>
                     <div className="flex items-center text-xl font-normal">
-                      Send {token?.symbol}
-                      <div className="h-6 w-6 overflow-hidden rounded-full">
-                        <img src={token?.logoURI || token?.logoURI} />
-                      </div>
+                      Deposit & Earn <span className="ml-2 pt-[.1rem] text-xs">Bancor (V3)</span>
                     </div>
                   </div>
                 }
                 trigger={
                   <button
-                      type="button"
-                      className={`mb-2 w-full rounded-lg bg-slate-300 p-2 text-sm text-white hover:bg-blue-600 hover:bg-blue-500 dark:bg-slate-700 hover:dark:bg-slate-800`}
+                    type="button"
+                    className={`mb-2 w-full rounded-lg bg-slate-300 p-2 text-sm text-white hover:bg-blue-600 hover:bg-blue-500 dark:bg-slate-700 hover:dark:bg-slate-800`}
                   >
-                    Send
+                    Earn
                   </button>
                 }
+              >
+                <Earn token={token} />
+              </Modal>
+            )}
+
+            <Modal
+              heading={
+                <div className="flex items-center">
+                  <div className="flex items-center text-xl font-normal">
+                    Send {token?.symbol}
+                    <div className="h-6 w-6 overflow-hidden rounded-full">
+                      <img src={token?.logoURI || token?.logoURI} />
+                    </div>
+                  </div>
+                </div>
+              }
+              trigger={
+                <button
+                  type="button"
+                  className={`mb-2 w-full rounded-lg bg-slate-300 p-2 text-sm text-white hover:bg-blue-600 hover:bg-blue-500 dark:bg-slate-700 hover:dark:bg-slate-800`}
+                >
+                  Send
+                </button>
+              }
             >
               <Send token={token} />
             </Modal>
