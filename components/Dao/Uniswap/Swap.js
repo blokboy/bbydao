@@ -210,6 +210,8 @@ const Swap = ({ token }) => {
     try {
       let token0Contract, token1Contract, token0AllowanceAmount, token1AllowanceAmount
 
+      alert(`hii i have ${signer}`)
+
       if (!!signer) {
         if (!!token0) {
           token0Contract = new ethers.Contract(token0?.address, minimalABI, signer)
@@ -235,6 +237,7 @@ const Swap = ({ token }) => {
   React.useMemo(async () => {
     try {
       const allowed = await tokenContracts
+
       setHasAllowance({ ...hasAllowance, ...allowed?.allowedToSpend })
     } catch (err) {
       console.log("err", err)
