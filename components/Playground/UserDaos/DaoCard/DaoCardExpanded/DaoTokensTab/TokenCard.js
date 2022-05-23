@@ -1,17 +1,17 @@
-import { ChainId } from "@uniswap/sdk"
-import { ethers } from "ethers"
-import React from "react"
+import { ChainId }        from "@uniswap/sdk"
+import { ethers }         from "ethers"
+import React              from "react"
 import { useQueryClient } from "react-query"
-import { flatten } from "utils/helpers"
-import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
-import { useSigner } from "wagmi"
-import TokenBalance from "./TokenBalance"
-import TokenControls from "./TokenControls"
-import TokenImg from "./TokenImg"
-import TokenName from "./TokenName"
+import { flatten }        from "utils/helpers"
+import IUniswapV2Pair     from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
+import {useLayoutStore}   from "stores/useLayoutStore"
+import TokenBalance       from "./TokenBalance"
+import TokenControls      from "./TokenControls"
+import TokenImg           from "./TokenImg"
+import TokenName          from "./TokenName"
 
 const TokenCard = ({ token, isMember }) => {
-  const { data: signer } = useSigner()
+  const signer = useLayoutStore(state => state.signer)
   const queryClient = useQueryClient()
   const bbyDao = queryClient.getQueryData("expandedDao")
   const treasury = React.useMemo(() => {
