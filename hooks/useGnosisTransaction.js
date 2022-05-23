@@ -17,6 +17,7 @@ export default function useGnosisTransaction(safeAddress) {
   }, [signer, safeAddress])
 
   const signerAddress = React.useMemo(() => {
+    console.log('si', signer)
     return signer ? signer._address : null
   }, [signer])
 
@@ -40,6 +41,7 @@ export default function useGnosisTransaction(safeAddress) {
   const gnosisTransaction = React.useCallback(
     async (contract, to, value, fee) => {
       try {
+        console.log(safeSdk, signerAddress, bbyDaoSafe)
         if (!safeSdk || !signerAddress || !bbyDaoSafe) {
           throw new Error("no signer address or no bbyDao Safe instance or safe SDK")
         }
