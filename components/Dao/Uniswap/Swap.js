@@ -175,9 +175,6 @@ const Swap = ({ token }) => {
     }
   }, [uniswapTokens])
   const showApprove = React.useMemo(() => {
-    if (!hasNoLiquidity || !tokens || !hasAllowance) {
-      return false
-    }
     return (
       hasNoLiquidity === false &&
       hasAllowance?.token0 === false &&
@@ -584,7 +581,7 @@ const Swap = ({ token }) => {
             Approve {tokens?.token0?.symbol}
           </div>
         )}
-        {!!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
+        {!showApprove && !!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
           <button
             type="button"
             disabled={hasNoLiquidity}
