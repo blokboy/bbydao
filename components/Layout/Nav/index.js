@@ -1,6 +1,6 @@
 import React from "react"
-import Link from "next/link"
-import { useAccount } from "wagmi"
+import Link                    from "next/link"
+import {useAccount, useSigner} from "wagmi"
 
 import NotificationsIcon from "./NotificationsIcon"
 import SearchIcon from "./SearchIcon"
@@ -14,8 +14,10 @@ import NetworkIconDropdown from "./NetworkIconDropdown"
 
 const Nav = () => {
   const { data: accountData } = useAccount()
+    const { data: signer } = useSigner()
 
-  const memoizedNav = React.useMemo(() => {
+
+    const memoizedNav = React.useMemo(() => {
   return (
     <nav className="z-50 flex h-16 w-full items-center justify-between bg-slate-300 p-2 md:p-3 dark:bg-slate-900 sticky top-0">
       <div className="flex md:w-full">
@@ -31,6 +33,7 @@ const Nav = () => {
           <SearchIcon />
         </div>
       </div>
+        {console.log('s', signer)}
       <div className="flex space-x-2">
         {accountData ? (
           <>
@@ -46,7 +49,7 @@ const Nav = () => {
       <ThemeToggle />
     </nav>
   )
-  }, [accountData])
+  }, [accountData, signer])
 
   return memoizedNav
 }

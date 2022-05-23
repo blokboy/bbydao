@@ -16,7 +16,14 @@ import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import WETHABI from "ABIs/WETH.json"
 
 const Swap = ({ token }) => {
-  const { data: signer } = useSigner()
+  const { data: signer } = useSigner({
+    onSettled(data, error) {
+      console.log('Settled', data, error)
+    },
+    onError(error) {
+      console.log('Error', error)
+    }
+  })
   const queryClient = useQueryClient()
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()

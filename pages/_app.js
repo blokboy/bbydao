@@ -8,7 +8,7 @@ import { ThemeProvider } from "next-themes"
 import Layout from "../components/Layout"
 import Loading from "../components/Layout/Loading"
 
-import { Provider, chain, defaultChains, createWagmiClient} from 'wagmi'
+import { Provider, chain, defaultChains, createWagmiClient } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
