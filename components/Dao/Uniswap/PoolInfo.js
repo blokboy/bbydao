@@ -47,8 +47,6 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
     }
   }
 
-  console.log('token0', token0, token1)
-
   /*
    * Approve Pair:
    *
