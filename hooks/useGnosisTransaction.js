@@ -5,14 +5,13 @@ import GnosisSafeSol from "@gnosis.pm/safe-contracts/build/artifacts/contracts/G
 const safeService = new SafeServiceClient("https://safe-transaction.gnosis.io")
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 const CALL = 0
-
-import { useSigner }  from "wagmi"
-import { amount }     from "../components/Dao/Uniswap/helpers"
-import useSafeSdk     from "./useSafeSdk"
+import { amount } from "components/Dao/Uniswap/helpers"
+import { useLayoutStore } from "stores/useLayoutStore"
+import useSafeSdk from "./useSafeSdk"
 
 export default function useGnosisTransaction(safeAddress) {
   const safeSdk = useSafeSdk(safeAddress)
-  const { data: signer } = useSigner()
+  const signer = useLayoutStore(state => state.signer)
   const bbyDaoSafe = React.useMemo(() => {
     return safeAddress && signer ? new ethers.Contract(safeAddress, GnosisSafeSol.abi, signer) : null
   }, [signer, safeAddress])
@@ -22,9 +21,14 @@ export default function useGnosisTransaction(safeAddress) {
   }, [signer])
 
   const contractInterface = useCallback(contract => {
-    const fragments = contract.instance.interface.functions
-    let abi = new ethers.utils.Interface(contract.abi)
     let data
+    if (contract.fn === "sendEth") {
+      data = "0x"
+      return { data }
+    }
+
+    const fragments = contract?.instance?.interface?.functions
+    let abi = new ethers.utils.Interface(contract?.abi)
     if (!!contract.args) {
       data = abi.encodeFunctionData(fragments[contract.fn], Object.values(contract.args))
     } else {
@@ -47,26 +51,28 @@ export default function useGnosisTransaction(safeAddress) {
         const nonce = await safeService.getNextNonce(safeAddress)
 
         /*  construct gnosis transaction object  */
-        const safeTx = [{
-          to: ethers.utils.getAddress(to),
-          value: amount(parseFloat(ethers.utils.formatEther(value))), //
-          data,
-          operation: CALL,
-          safeTxGas: 0,
-          baseGas: 0,
-          gasPrice: 0,
-          gasToken: ZERO_ADDRESS,
-          refundReceiver: ZERO_ADDRESS,
-          nonce,
-        }]
+        const safeTx = [
+          {
+            to: ethers.utils.getAddress(to),
+            value: amount(parseFloat(ethers.utils.formatEther(value))), //
+            data,
+            operation: CALL,
+            safeTxGas: 0,
+            baseGas: 0,
+            gasPrice: 0,
+            gasToken: ZERO_ADDRESS,
+            refundReceiver: ZERO_ADDRESS,
+            nonce,
+          },
+        ]
 
         /* charge 1% fee  */
-        if(!!fee) {
+        if (!!fee) {
           let receiverAddress = process.env.dao
           let tx = {
             to: receiverAddress,
-            data: '0x',
-            value: fee
+            data: "0x",
+            value: fee,
           }
 
           safeTx.push(tx)

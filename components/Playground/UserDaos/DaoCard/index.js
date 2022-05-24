@@ -19,9 +19,6 @@ import * as gnosisApi from "/query/gnosisQuery"
 import { useMutation, useQuery } from "react-query"
 
 const DaoCard = ({ user, safe, address }) => {
-  const uniswapLpModalOpen = useDaoStore(state => state.uniswapLpModalOpen)
-  const uniswapRemoveLpModalOpen = useDaoStore(state => state.uniswapRemoveLpModalOpen)
-
   const { mutateAsync: createDao } = useMutation(api.createDao)
 
   // dao data from our backend
@@ -54,6 +51,11 @@ const DaoCard = ({ user, safe, address }) => {
     staleTime: 200000,
     refetchOnWindowFocus: false,
   })
+  // check if user is in daoMembersData
+  const isMember = daoMembersData?.includes(user)
+  useQuery(['isMember', user], () => isMember)
+
+
 
   // daoBalance data from gnosisApi
   const {
@@ -65,31 +67,6 @@ const DaoCard = ({ user, safe, address }) => {
     refetchOnWindowFocus: false,
   })
 
-  const {
-    data: daoTokenssData,
-    error: daoTokenssErr,
-    isLoading: daoTokenssLoading,
-  } = useQuery(["daoTokenList", safe], () => gnosisApi.daoNFTs(safe), {
-    staleTime: 200000,
-    refetchOnWindowFocus: false,
-  })
-
-  const tokenLogos = React.useMemo(() => {
-    return daoTokensData?.reduce((acc = [], cv) => {
-      const uri = cv?.token?.logoUri
-      const symbol = cv?.token?.symbol
-      const isETH = parseInt(cv?.ethValue) === 1 && cv?.token === null && cv?.tokenAddress === null
-      uri && symbol
-        ? acc.push({ uri, symbol })
-        : isETH
-        ? acc.push({ uri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png", symbol: "ETH" })
-        : null
-      return acc
-    }, [])
-  }, [daoTokensData])
-
-  // check if user is in daoMembersData
-  const isMember = daoMembersData?.includes(user)
 
   const daoExpanded = usePlaygroundStore(state => state.daoExpanded)
 
@@ -124,7 +101,7 @@ const DaoCard = ({ user, safe, address }) => {
 
       {/* Dao Card Expanded */}
       {daoExpanded ? <DaoCardExpanded isMember={isMember} safe={safe} tokens={daoTokensData} /> : null}
-      {uniswapLpModalOpen && <UniswapLpModal safeAddress={safe} tokenLogos={tokenLogos} />}
+      {/*{uniswapLpModalOpen && <UniswapLpModal safeAddress={safe} tokenLogos={tokenLogos} />}*/}
     </div>
   )
 }
