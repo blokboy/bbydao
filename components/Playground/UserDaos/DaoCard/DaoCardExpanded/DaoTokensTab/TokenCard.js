@@ -15,11 +15,9 @@ const TokenCard = ({ token, isMember }) => {
   const queryClient = useQueryClient()
   const bbyDao = queryClient.getQueryData("expandedDao")
   const treasury = React.useMemo(() => {
-    if (!bbyDao) {
-      return
+    if (!!bbyDao) {
+      return queryClient.getQueryData(["daoTokens", bbyDao])
     }
-
-    return queryClient.getQueryData(["daoTokens", bbyDao])
   }, [bbyDao])
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const isEth = React.useMemo(() => {
