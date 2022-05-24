@@ -394,7 +394,7 @@ const Swap = ({ token }) => {
 
       if (isEthOnEth) {
         const WETHContract = new ethers.Contract(WETH, WETHABI, signer)
-        const wad = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
+        const wad = ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals)
         if (inputToken.token.symbol === "WETH") {
           const tx = gnosisTransaction(
             {
@@ -426,12 +426,13 @@ const Swap = ({ token }) => {
       }
 
       if (swapExactTokensForTokens) {
-        const amountIn = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
+        const amountIn = ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals)
         const amountOutMin = ethers.utils.parseUnits(
-          outputToken.value.toFixed(6).toString(),
+          outputToken.value.toString(),
           outputToken?.token?.decimals
         )
         let path
+
         if (poolExists) {
           path = [ethers.utils.getAddress(inputToken.token.address), ethers.utils.getAddress(outputToken.token.address)]
         } else {
@@ -464,10 +465,10 @@ const Swap = ({ token }) => {
 
       if (swapExactETHForTokens) {
         const amountOutMin = ethers.utils.parseUnits(
-          outputToken.value.toFixed(6).toString(),
+          outputToken.value.toString(),
           outputToken?.token?.decimals
         )
-        const value = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString())
+        const value = ethers.utils.parseUnits(inputToken.value.toString())
         const tx = gnosisTransaction(
           {
             abi: IUniswapV2Router02["abi"],
@@ -488,11 +489,12 @@ const Swap = ({ token }) => {
       }
 
       if (swapExactTokensForETH) {
-        const amountIn = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
+        const amountIn = ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals)
         const amountOutMin = ethers.utils.parseUnits(
-          outputToken.value.toFixed(6).toString(),
+          outputToken.value.toString(),
           outputToken?.token?.decimals
         )
+
         const tx = gnosisTransaction(
           {
             abi: IUniswapV2Router02["abi"],
