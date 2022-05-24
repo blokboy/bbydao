@@ -6,8 +6,9 @@ import { formatUnits } from "ethers/lib/utils"
 import useForm from "hooks/useForm"
 import React, { useState } from "react"
 import { useQueryClient } from "react-query"
-import { useSigner } from "wagmi"
 import { flatten } from "utils/helpers"
+import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
 import { amount } from "./helpers"
 import PoolInfo from "./PoolInfo"
 import TokenInput from "./TokenInput"
@@ -17,7 +18,6 @@ import useCalculateFee from "hooks/useCalculateFee"
 const UniswapLpModal = ({ lpToken0, token1 = null }) => {
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
-  const { data: signer } = useSigner()
   const { state, setState, handleChange } = useForm()
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()
@@ -27,9 +27,9 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
   const [hasAllowance, setHasAllowance] = React.useState()
   const [openSearch, setOpenSearch] = React.useState(false)
   const queryClient = useQueryClient()
-  const safeAddress = React.useMemo(() => {
-    return queryClient.getQueryData("expandedDao")
-  }, [queryClient])
+  const safeAddress = usePlaygroundStore(state => state.expandedDao)
+  const signer = useLayoutStore(state => state.signer)
+
   const treasury = React.useMemo(() => {
     if (!safeAddress) {
       return
@@ -118,7 +118,8 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
         if (
           acc.filter(item => item.symbol === cv.symbol).length === 0 &&
           cv.symbol !== lpToken0?.symbol &&
-          cv.symbol !== "UNI-V2"
+          cv.symbol !== "UNI-V2" &&
+          parseFloat(cv.fiatBalance) > 0
         ) {
           acc.push(cv)
         }
@@ -126,7 +127,8 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
         if (
           cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) &&
           cv.symbol !== lpToken0?.symbol &&
-          cv.symbol !== "UNI-V2"
+          cv.symbol !== "UNI-V2" &&
+          parseFloat(cv.fiatBalance) > 0
         ) {
           acc.push(cv)
         }
@@ -427,7 +429,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
           tokens={{ token0: lpToken0, token1: lpToken1 }}
           pair={pair}
           tokenInputRef={token0InputRef}
-          lpToken={lpToken0}
+          token={lpToken0}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
           state={state}
@@ -437,7 +439,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
           tokens={{ token0: lpToken0, token1: lpToken1 }}
           pair={pair}
           tokenInputRef={token1InputRef}
-          lpToken={lpToken1}
+          token={lpToken1}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
           state={state}

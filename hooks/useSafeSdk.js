@@ -1,10 +1,10 @@
 import Safe, { EthersAdapter } from "@gnosis.pm/safe-core-sdk"
 import { ethers } from "ethers"
-import React, { useEffect, useState } from "react"
-import { useSigner } from "wagmi"
+import React, { useState } from "react"
+import { useLayoutStore } from "../stores/useLayoutStore"
 
 export default function useSafeSdk(safeAddress) {
-  const { data: signer, loading } = useSigner()
+  const signer = useLayoutStore(state => state.signer)
   const [sdkInstance, setSdkInstance] = useState(null)
 
   const handleSdkInstance = React.useCallback(async () => {

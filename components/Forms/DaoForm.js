@@ -2,11 +2,11 @@ import React from "react"
 import * as api from "query"
 import { useMutation, useQuery } from "react-query"
 import { EthersAdapter, SafeFactory } from "@gnosis.pm/safe-core-sdk"
-import { useSigner } from "wagmi"
 import { ethers } from "ethers"
 import { Field, Form, Formik } from "formik"
 import * as Yup from "yup"
 import Select from "react-select"
+import { useLayoutStore } from "stores/useLayoutStore"
 import { customStyles } from "./customStyles"
 
 const Input = ({ name }) => {
@@ -21,7 +21,7 @@ const Input = ({ name }) => {
 }
 
 const DaoForm = () => {
-  const { data: signer } = useSigner()
+  const signer = useLayoutStore(state => state.signer)
   const address = React.useMemo(() => {
     if (!signer) {
       return null
@@ -57,7 +57,7 @@ const DaoForm = () => {
       label: friend.initiator === address ? friend.targetEns || friend.target : friend.initiatorEns,
     }
   })
-  
+
   const { status, mutateAsync: createDao } = useMutation(api.createDao)
   const [txWaiting, setTxWaiting] = React.useState(false)
 
@@ -142,7 +142,7 @@ const DaoForm = () => {
           <Form className="flex flex-col p-4">
             <div className="w-full">
               {errors.invites ? <div className="p-2">{errors.invites}</div> : null}
-              <label className="p-2 block text-sm font-bold" htmlFor="invites">
+              <label className="block p-2 text-sm font-bold" htmlFor="invites">
                 invite friends
               </label>
               <p className="p-2 text-xs">select from your friends</p>

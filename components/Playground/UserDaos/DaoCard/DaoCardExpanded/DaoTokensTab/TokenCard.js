@@ -4,22 +4,21 @@ import React from "react"
 import { useQueryClient } from "react-query"
 import { flatten } from "utils/helpers"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
-import { useSigner } from "wagmi"
+import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
 import TokenBalance from "./TokenBalance"
 import TokenControls from "./TokenControls"
 import TokenImg from "./TokenImg"
 import TokenName from "./TokenName"
 
 const TokenCard = ({ token, isMember }) => {
-  const { data: signer } = useSigner()
+  const signer = useLayoutStore(state => state.signer)
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
   const queryClient = useQueryClient()
-  const bbyDao = queryClient.getQueryData("expandedDao")
   const treasury = React.useMemo(() => {
-    if (!bbyDao) {
-      return
+    if (!!bbyDao) {
+      return queryClient.getQueryData(["daoTokens", bbyDao])
     }
-
-    return queryClient.getQueryData(["daoTokens", bbyDao])
   }, [bbyDao])
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const isEth = React.useMemo(() => {
