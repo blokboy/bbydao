@@ -14,7 +14,7 @@ const TokenInput = ({
   tokens,
   isSwap,
   isSend,
-    isEarn
+  isEarn,
 }) => {
   const _token = React.useMemo(() => {
     if (!!token) {
@@ -129,7 +129,7 @@ const TokenInput = ({
             className={`flex cursor-pointer justify-end rounded-lg bg-[#eda67e24] py-0.5 px-2 text-[.8rem] text-[#FC8D4D] hover:bg-[#f98c4e57] ${
               !pair && !isSend && !isEarn ? "pointer-events-none" : ""
             }`}
-            onClick={!!pair || isSend ? () => handleSetMaxTokenValue(_token, tokenInputRef) : () => {}}
+            onClick={!!pair || isSend || isEarn ? () => handleSetMaxTokenValue(_token, tokenInputRef) : () => {}}
           >
             MAX
           </div>

@@ -1,14 +1,14 @@
 import { BigNumber, ethers } from "ethers"
 import React from "react"
-import { useQueryClient } from "react-query"
-import { minimalABI } from "hooks/useERC20Contract"
+import { useQueryClient }        from "react-query"
+import { minimalABI }            from "hooks/useERC20Contract"
 import { max256, NumberFromBig } from "utils/helpers"
-import useCalculateFee from "hooks/useCalculateFee"
-import useForm from "hooks/useForm"
-import useGnosisTransaction from "hooks/useGnosisTransaction"
-import { useLayoutStore } from "stores/useLayoutStore"
-import { usePlaygroundStore } from "stores/usePlaygroundStore"
-import TokenInput from "./TokenInput"
+import useCalculateFee           from "hooks/useCalculateFee"
+import useForm                   from "hooks/useForm"
+import useGnosisTransaction      from "hooks/useGnosisTransaction"
+import { useLayoutStore }        from "stores/useLayoutStore"
+import { usePlaygroundStore }    from "stores/usePlaygroundStore"
+import TokenInput                from "./TokenInput"
 
 const Send = ({ token }) => {
   const [hasAllowance, setHasAllowance] = React.useState()

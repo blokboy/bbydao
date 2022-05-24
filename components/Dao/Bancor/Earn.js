@@ -1,19 +1,20 @@
-import { ethers }           from "ethers"
-import React                from "react"
-import { useQueryClient }   from "react-query"
-import { useSigner }        from "wagmi"
-import useCalculateFee      from "hooks/useCalculateFee"
-import useForm              from "hooks/useForm"
+import { ethers } from "ethers"
+import React from "react"
+import { useQueryClient } from "react-query"
+import { useSigner } from "wagmi"
+import useCalculateFee from "hooks/useCalculateFee"
+import useForm from "hooks/useForm"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import BancorStandardRewards from "ABIs/bancorStandardRewards.json"
 import BancorPoolToken from "ABIs/bancorPoolToken.json"
+import { useLayoutStore } from "../../../stores/useLayoutStore"
+import { usePlaygroundStore } from "../../../stores/usePlaygroundStore"
 
-import TokenInput from "../Uniswap/TokenInput"
+import TokenInput from "../TokenInput"
 
-const Earn = ({ token }) => {
-  const { data: signer } = useSigner()
-  const queryClient = useQueryClient()
-  const bbyDao = queryClient.getQueryData("expandedDao")
+const Earn = ({ ethToken }) => {
+  const signer = useLayoutStore(state => state.signer)
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const { calculateFee } = useCalculateFee()
   const BancorStandardRewardsAddress = ethers.utils.getAddress("0xb0B958398ABB0b5DB4ce4d7598Fb868f5A00f372")
@@ -78,10 +79,10 @@ const Earn = ({ token }) => {
   // }, [token, bbyDao, signer, bnETH])
 
   const handleDepositAndJoin = async value => {
-    console.log('v', value)
+    console.log("v", value)
     let programId = 6
     let tokenAmount = parseFloat(value?.toString()) - parseFloat(value.toString()) * slippage
-    tokenAmount = ethers.utils.parseUnits(tokenAmount.toFixed(6).toString(), token?.decimals)
+    tokenAmount = ethers.utils.parseUnits(tokenAmount.toFixed(6).toString(), ethToken?.decimals)
 
     const tx = gnosisTransaction(
       {
@@ -97,7 +98,7 @@ const Earn = ({ token }) => {
       tokenAmount,
       await calculateFee([{ value: tokenAmount }])
     )
-    console.log('tx', tx)
+    console.log("tx", tx)
   }
 
   const handleSetTokenValue = async (e, token, tokenRef) => {
@@ -136,23 +137,23 @@ const Earn = ({ token }) => {
         </a>
       </div>
       <TokenInput
-        lpToken={token}
-        logo={token?.logoURI}
+        token={ethToken}
+        logo={ethToken?.logoURI}
         handleSetTokenValue={handleSetTokenValue}
         handleSetMaxTokenValue={handleSetMaxTokenValue}
         state={state}
         tokenInputRef={tokenInputRef}
         isEarn={true}
       />
-      {state[token?.symbol] && (
-          <button
-              type="button"
-              className={`flex w-full items-center justify-center rounded-3xl mt-4 bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]`}
-              onClick={() => handleDepositAndJoin(state[token?.symbol])}
-          >
-            Deposit
-          </button>
-      )}
+      {state[ethToken?.symbol] ? (
+        <button
+          type="button"
+          className={`mt-4 flex w-full items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]`}
+          onClick={() => handleDepositAndJoin(state[ethToken?.symbol])}
+        >
+          Deposit
+        </button>
+      ) : null}
     </div>
   )
 }
