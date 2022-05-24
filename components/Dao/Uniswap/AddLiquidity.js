@@ -431,7 +431,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
           tokens={{ token0: lpToken0, token1: lpToken1 }}
           pair={pair}
           tokenInputRef={token0InputRef}
-          lpToken={lpToken0}
+          token={lpToken0}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
           state={state}
@@ -441,7 +441,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
           tokens={{ token0: lpToken0, token1: lpToken1 }}
           pair={pair}
           tokenInputRef={token1InputRef}
-          lpToken={lpToken1}
+          token={lpToken1}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
           state={state}

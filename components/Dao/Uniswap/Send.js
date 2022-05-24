@@ -146,7 +146,7 @@ const Send = ({ token }) => {
   return (
     <div>
       <TokenInput
-        lpToken={token}
+        token={token}
         isSend={true}
         tokenInputRef={ref}
         handleSetTokenValue={handleSetTokenValue}

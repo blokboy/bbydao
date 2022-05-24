@@ -524,7 +524,7 @@ const Swap = ({ token }) => {
             tokens={tokens}
             pair={uniPair}
             tokenInputRef={token0InputRef}
-            lpToken={tokens?.token0}
+            token={tokens?.token0}
             handleSetTokenValue={handleSetTokenValue}
             handleSetMaxTokenValue={handleSetMaxTokenValue}
             state={state}
@@ -549,7 +549,7 @@ const Swap = ({ token }) => {
           tokens={tokens}
           pair={uniPair}
           tokenInputRef={token1InputRef}
-          lpToken={tokens?.token1}
+          token={tokens?.token1}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
           state={state}
