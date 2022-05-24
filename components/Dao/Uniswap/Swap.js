@@ -9,6 +9,7 @@ import { max256, NumberFromBig } from "utils/helpers"
 import { minimalABI } from "hooks/useERC20Contract"
 import useCalculateFee from "hooks/useCalculateFee"
 import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
 import TokenInput from "./TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
@@ -23,7 +24,7 @@ const Swap = ({ token }) => {
   const [poolExists, setPoolExists] = React.useState(true)
   const [hasNoLiquidity, setHasNoLiquidity] = React.useState(false)
   const [isEthOnEth, setIsEthOnEth] = React.useState(false)
-  const bbyDao = queryClient.getQueryData("expandedDao")
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
   const signer = useLayoutStore(state => state.signer)
   const bbyDaoTokens = queryClient.getQueryData(["daoTokens", bbyDao])
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)

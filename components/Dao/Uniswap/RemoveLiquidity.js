@@ -1,21 +1,20 @@
-import React                                    from "react"
+import React from "react"
 import { ChainId, Fetcher, Token, TokenAmount } from "@uniswap/sdk"
-import { BigNumber, ethers }                    from "ethers"
-import { useQueryClient }                       from "react-query"
-import useForm                                  from "hooks/useForm"
-import IUniswapV2Pair                           from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
-import UniswapV2ERC20                           from "@uniswap/v2-core/build/UniswapV2ERC20.json"
-import IUniswapV2Router02                       from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
-import { max256, NumberFromBig }                from "utils/helpers"
-import { minimalABI }                           from "hooks/useERC20Contract"
-import {useLayoutStore}                         from "stores/useLayoutStore"
-import { amount }                               from "./helpers"
-import useGnosisTransaction                     from "hooks/useGnosisTransaction"
-import useCalculateFee                          from "hooks/useCalculateFee"
+import { BigNumber, ethers } from "ethers"
+import useForm from "hooks/useForm"
+import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
+import UniswapV2ERC20 from "@uniswap/v2-core/build/UniswapV2ERC20.json"
+import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
+import { max256, NumberFromBig } from "utils/helpers"
+import { minimalABI } from "hooks/useERC20Contract"
+import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
+import { amount } from "./helpers"
+import useGnosisTransaction from "hooks/useGnosisTransaction"
+import useCalculateFee from "hooks/useCalculateFee"
 
 const RemoveLiquidity = ({ token }) => {
-  const queryClient = useQueryClient()
-  const bbyDao = queryClient.getQueryData("expandedDao")
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
   const signer = useLayoutStore(state => state.signer)
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const { calculateFee } = useCalculateFee()

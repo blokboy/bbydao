@@ -1,19 +1,20 @@
-import { ChainId }        from "@uniswap/sdk"
-import { ethers }         from "ethers"
-import React              from "react"
+import { ChainId } from "@uniswap/sdk"
+import { ethers } from "ethers"
+import React from "react"
 import { useQueryClient } from "react-query"
-import { flatten }        from "utils/helpers"
-import IUniswapV2Pair     from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
-import {useLayoutStore}   from "stores/useLayoutStore"
-import TokenBalance       from "./TokenBalance"
-import TokenControls      from "./TokenControls"
-import TokenImg           from "./TokenImg"
-import TokenName          from "./TokenName"
+import { flatten } from "utils/helpers"
+import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
+import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
+import TokenBalance from "./TokenBalance"
+import TokenControls from "./TokenControls"
+import TokenImg from "./TokenImg"
+import TokenName from "./TokenName"
 
 const TokenCard = ({ token, isMember }) => {
   const signer = useLayoutStore(state => state.signer)
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
   const queryClient = useQueryClient()
-  const bbyDao = queryClient.getQueryData("expandedDao")
   const treasury = React.useMemo(() => {
     if (!!bbyDao) {
       return queryClient.getQueryData(["daoTokens", bbyDao])

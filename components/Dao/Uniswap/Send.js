@@ -1,18 +1,18 @@
-import { BigNumber, ethers }     from "ethers"
-import React                     from "react"
-import { useQueryClient }        from "react-query"
-import { minimalABI }            from "hooks/useERC20Contract"
+import { BigNumber, ethers } from "ethers"
+import React from "react"
+import { useQueryClient } from "react-query"
+import { minimalABI } from "hooks/useERC20Contract"
 import { max256, NumberFromBig } from "utils/helpers"
-import useCalculateFee           from "hooks/useCalculateFee"
-import useForm                   from "hooks/useForm"
-import useGnosisTransaction      from "hooks/useGnosisTransaction"
-import {useLayoutStore}          from 'stores/useLayoutStore'
-import TokenInput                from "./TokenInput"
+import useCalculateFee from "hooks/useCalculateFee"
+import useForm from "hooks/useForm"
+import useGnosisTransaction from "hooks/useGnosisTransaction"
+import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
+import TokenInput from "./TokenInput"
 
 const Send = ({ token }) => {
   const [hasAllowance, setHasAllowance] = React.useState()
-  const queryClient = useQueryClient()
-  const bbyDao = queryClient.getQueryData("expandedDao")
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
   const signer = useLayoutStore(state => state.signer)
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const ref = React.useRef()
@@ -107,27 +107,27 @@ const Send = ({ token }) => {
     const value = ethers.utils.parseUnits(args.value.toFixed(6).toString(), token?.decimals)
     const { recipient } = args
 
-    if(token.symbol === 'ETH') {
+    if (token.symbol === "ETH") {
       const tx = gnosisTransaction(
-          {
-            fn: "sendEth",
-          },
-          recipient,
-          value,
+        {
+          fn: "sendEth",
+        },
+        recipient,
+        value
       )
     } else {
       const tx = gnosisTransaction(
-          {
-            abi: minimalABI,
-            instance: contract.contracts[0],
-            fn: "transfer(address,uint256)",
-            args: {
-              recipient,
-              value,
-            },
+        {
+          abi: minimalABI,
+          instance: contract.contracts[0],
+          fn: "transfer(address,uint256)",
+          args: {
+            recipient,
+            value,
           },
-          contract.contracts[0]?.address,
-          0,
+        },
+        contract.contracts[0]?.address,
+        0
       )
     }
   }
@@ -156,7 +156,7 @@ const Send = ({ token }) => {
       />
       <div className="flex items-center justify-center p-2 text-3xl font-thin">to</div>
       <form>
-        <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 mb-8 hover:border-[#FC8D4D] dark:bg-slate-800">
+        <div className="mb-8 flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
           <div className="flex flex-row">
             <input
               onChange={handleChange}
@@ -164,7 +164,7 @@ const Send = ({ token }) => {
               name="recipient"
               value={state?.recipient || ""}
               className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-sm leading-tight focus:outline-none dark:bg-slate-800"
-              placeholder={'Recipient Address'}
+              placeholder={"Recipient Address"}
             />
           </div>
         </div>

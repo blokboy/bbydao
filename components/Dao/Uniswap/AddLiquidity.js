@@ -8,6 +8,7 @@ import React, { useState } from "react"
 import { useQueryClient } from "react-query"
 import { flatten } from "utils/helpers"
 import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
 import { amount } from "./helpers"
 import PoolInfo from "./PoolInfo"
 import TokenInput from "./TokenInput"
@@ -26,11 +27,8 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
   const [hasAllowance, setHasAllowance] = React.useState()
   const [openSearch, setOpenSearch] = React.useState(false)
   const queryClient = useQueryClient()
-  const safeAddress = React.useMemo(() => {
-    return queryClient.getQueryData("expandedDao")
-  }, [queryClient])
+  const safeAddress = usePlaygroundStore(state => state.expandedDao)
   const signer = useLayoutStore(state => state.signer)
-
 
   const treasury = React.useMemo(() => {
     if (!safeAddress) {

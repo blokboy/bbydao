@@ -8,7 +8,6 @@ import { usePlaygroundStore } from "/stores/usePlaygroundStore"
 
 const DaoCardExpanded = ({ isMember, safe, tokens }) => {
   const expandedPanel = usePlaygroundStore(state => state.expandedPanel)
-  useQuery("expandedDao", () => safe)
 
   const panel = React.useMemo(() => {
     if (expandedPanel === "tokens") {
