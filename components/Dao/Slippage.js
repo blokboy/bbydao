@@ -29,6 +29,7 @@ const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
               onChange={handleChange}
               className="w-full appearance-none bg-slate-100 text-sm leading-tight focus:outline-none dark:bg-slate-700"
               onClick={e => e.stopPropagation()}
+              onBlur={() => setIsOpen(false)}
               step={.01}
             />
             %
