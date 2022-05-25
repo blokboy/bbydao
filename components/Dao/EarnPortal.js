@@ -6,7 +6,9 @@ import DSR from "./Maker/DSR"
 
 const EarnPortal = ({ tokens }) => {
   const { eth, dai } = tokens
+
   const earn = React.useMemo(() => {
+    if (!eth) return
     return {
       icon: "https://130351921-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FC9gDtGR2KNhur3c7qIJR%2Fuploads%2FZvrb3aQws7FtDYKTJaLp%2FBNT%20Token.png?alt=media&token=ada4053a-d1a7-4e79-a071-38985420d463",
       name: "Bancor",
@@ -25,6 +27,8 @@ const EarnPortal = ({ tokens }) => {
     }
   }, [eth])
   const dsr = React.useMemo(() => {
+    if (!dai) return
+
     return {
       icon: "https://cryptologos.cc/logos/maker-mkr-logo.png?v=022",
       name: "Maker",
