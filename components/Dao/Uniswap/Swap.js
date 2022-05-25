@@ -258,12 +258,12 @@ const Swap = ({ token }) => {
     () =>
       hasNoLiquidity === false &&
       hasAllowance?.token0 === false &&
+      tokens?.token0?.fiatBalance > 0 &&
       !!tokens?.token0 &&
       tokens?.token0.symbol !== "ETH" &&
       !!tokens?.token1,
     [hasNoLiquidity, hasAllowance, tokens]
   )
-
   /*
    *
    * Allowance Check:
