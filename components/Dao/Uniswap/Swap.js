@@ -1,5 +1,6 @@
 import { ChainId, Fetcher, Percent, Route, Token } from "@uniswap/sdk"
 import defaultTokens from "@uniswap/default-token-list"
+import axios from "axios"
 import { BigNumber, ethers } from "ethers"
 import React from "react"
 import useForm from "hooks/useForm"
@@ -10,8 +11,8 @@ import { minimalABI } from "hooks/useERC20Contract"
 import useCalculateFee from "hooks/useCalculateFee"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
-import TokenInput             from "../TokenInput"
-import useGnosisTransaction   from "hooks/useGnosisTransaction"
+import TokenInput from "../TokenInput"
+import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import WETHABI from "ABIs/WETH.json"
@@ -34,6 +35,17 @@ const Swap = ({ token }) => {
   const { state, setState, handleChange } = useForm()
   const { calculateFee } = useCalculateFee()
 
+  const [coingeckoTokenList, setCoingeckoTokenList] = React.useState([])
+  React.useMemo(async () => {
+    try {
+      const res = await axios.get("https://tokens.coingecko.com/uniswap/all.json")
+      setCoingeckoTokenList(res.data.tokens)
+      return res.data.tokens
+    } catch (err) {
+      console.log("err", err)
+    }
+  }, [])
+
   const defaultEth = {
     address: WETH,
     chainId: ChainId.MAINNET,
@@ -42,7 +54,8 @@ const Swap = ({ token }) => {
     name: "Ether",
     symbol: "ETH",
   }
-  const defaultTokenList = [...defaultTokens?.["tokens"], defaultEth]
+
+  const defaultTokenList = [...defaultTokens?.["tokens"], ...coingeckoTokenList, defaultEth]
   const slippage = 0.055
   const [tokens, setTokens] = React.useState({
     token0: token,
@@ -90,18 +103,19 @@ const Swap = ({ token }) => {
           symbol: "ETH",
         }
       }
-
       const token1 = {
         ...defaultTokenList[index],
+        address: ethers.utils.getAddress(defaultTokenList[index]?.address),
         balance: !!existingToken ? existingToken?.balance : 0,
         ethValue: !!existingToken ? existingToken?.ethValue : 0,
         fiatBalance: !!existingToken ? existingToken?.fiatBalance : 0,
         fiatCode: !!existingToken ? existingToken?.fiatCode : "USD",
       }
+      console.log('tok', token1)
       setTokens({ ...tokens, token1 })
       setOpenSearch(false)
     },
-    [tokens]
+    [defaultTokenList, tokens]
   )
 
   const switchTokenPlacement = React.useCallback(() => {
@@ -146,6 +160,7 @@ const Swap = ({ token }) => {
 
   const uniswapTokens = React.useMemo(() => {
     if (!!tokens?.token0 && !!tokens?.token1) {
+      console.log('TOKENS', tokens)
       const token0 = tokens?.token0
       const token1 = tokens?.token1
       const uniToken0 = new Token(ChainId.MAINNET, token0?.address, token0?.decimals, token0?.symbol, token0?.name)
@@ -157,6 +172,7 @@ const Swap = ({ token }) => {
   const uniPair = React.useMemo(async () => {
     try {
       if (!!uniswapTokens) {
+        const hasEth = tokens?.token0.symbol === 'ETH' ||  tokens?.token1.symbol === 'ETH'
         const uniPair = await Fetcher.fetchPairData(
           uniswapTokens[tokens.token0.symbol],
           uniswapTokens[tokens.token1.symbol]
@@ -169,7 +185,7 @@ const Swap = ({ token }) => {
         const totalSupply = await pairContract?.totalSupply()
         const hasLiquidity = parseInt((totalSupply.toString() / 10 ** uniPair?.liquidityToken?.decimals).toFixed()) > 0
 
-        if (!hasLiquidity) {
+        if (!hasLiquidity && !hasEth) {
           return await routeThroughWETH(uniswapTokens)
         }
 
@@ -427,10 +443,7 @@ const Swap = ({ token }) => {
 
       if (swapExactTokensForTokens) {
         const amountIn = ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals)
-        const amountOutMin = ethers.utils.parseUnits(
-          outputToken.value.toString(),
-          outputToken?.token?.decimals
-        )
+        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals)
         let path
 
         if (poolExists) {
@@ -464,10 +477,7 @@ const Swap = ({ token }) => {
       }
 
       if (swapExactETHForTokens) {
-        const amountOutMin = ethers.utils.parseUnits(
-          outputToken.value.toString(),
-          outputToken?.token?.decimals
-        )
+        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals)
         const value = ethers.utils.parseUnits(inputToken.value.toString())
         const tx = gnosisTransaction(
           {
@@ -490,10 +500,7 @@ const Swap = ({ token }) => {
 
       if (swapExactTokensForETH) {
         const amountIn = ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals)
-        const amountOutMin = ethers.utils.parseUnits(
-          outputToken.value.toString(),
-          outputToken?.token?.decimals
-        )
+        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals)
 
         const tx = gnosisTransaction(
           {
