@@ -1,6 +1,6 @@
 import React from "react"
 import { useDaoStore } from "../../../../stores/useDaoStore"
-import UniswapLpModal  from "../../../Dao/Uniswap/AddLiquidity"
+import AddLiquidity    from "../../../Dao/Uniswap/AddLiquidity"
 import RemoveLiquidity from "../../../Dao/Uniswap/RemoveLiquidity"
 import DaoUtilityBar   from "./DaoUtilityBar"
 import DaoPfpIcon from "./DaoPfpIcon"

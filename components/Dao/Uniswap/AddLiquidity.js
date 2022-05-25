@@ -17,7 +17,7 @@ import useGnosisTransaction from "hooks/useGnosisTransaction"
 import useCalculateFee from "hooks/useCalculateFee"
 import Slippage from "../Slippage"
 
-const UniswapLpModal = ({ lpToken0, token1 = null }) => {
+const AddLiquidity = ({ lpToken0, token1 = null }) => {
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { state, setState, handleChange } = useForm()
@@ -525,4 +525,4 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
   )
 }
 
-export default UniswapLpModal
+export default AddLiquidity

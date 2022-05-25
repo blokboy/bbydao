@@ -1,16 +1,16 @@
 import { BigNumber, ethers } from "ethers"
-import React, {useEffect}    from "react"
-import useCalculateFee       from "hooks/useCalculateFee"
-import useForm                   from "hooks/useForm"
-import useGnosisTransaction      from "hooks/useGnosisTransaction"
-import dsrABI                    from "ABIs/dsr.json"
-import daiABI                    from "ABIs/dai.json"
-import { minimalABI }            from "hooks/useERC20Contract"
-import { useLayoutStore }        from "stores/useLayoutStore"
-import { usePlaygroundStore }    from "stores/usePlaygroundStore"
+import React, { useEffect } from "react"
+import useCalculateFee from "hooks/useCalculateFee"
+import useForm from "hooks/useForm"
+import useGnosisTransaction from "hooks/useGnosisTransaction"
+import dsrABI from "ABIs/dsr.json"
+import daiABI from "ABIs/dai.json"
+import { minimalABI } from "hooks/useERC20Contract"
+import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
 import { max256, NumberFromBig } from "utils/helpers"
 import TokenInput from "../TokenInput"
-import Slippage   from '../Slippage'
+import Slippage from "../Slippage"
 
 const DSR = ({ token }) => {
   const ref = React.useRef()
@@ -121,7 +121,7 @@ const DSR = ({ token }) => {
     }
   }
 
-  console.log('ds', bbyDao)
+  console.log("ds", bbyDao)
 
   const handleSaveDai = async value => {
     const slippage = state?.slippage / 100 || defaultSlippage
@@ -148,8 +148,9 @@ const DSR = ({ token }) => {
   return (
     <div>
       <div className="my-2 mb-4 rounded-xl bg-[#eda67e24] p-4 font-thin text-[#FC8D4D]">
-        The Dai Savings Rate (DSR) lets you earn interest by putting your Dai in <a href="https://makerdao.com/en/">Maker’s</a> DSR smart contract.
-        The rate is set by the Maker community. They raise or lower it to influence demand for Dai, which in turn helps stabilise its value.
+        The Dai Savings Rate (DSR) lets you earn interest by putting your Dai in{" "}
+        <a href="https://makerdao.com/en/">Maker’s</a> DSR smart contract. The rate is set by the Maker community. They
+        raise or lower it to influence demand for Dai, which in turn helps stabilise its value.
       </div>
       {token && (
         <TokenInput
@@ -179,7 +180,12 @@ const DSR = ({ token }) => {
           Save DAI
         </button>
       )}
-      <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} setState={setState} />
+      <Slippage
+        value={state?.slippage}
+        handleChange={handleChange}
+        defaultSlippage={defaultSlippage * 100}
+        setState={setState}
+      />
     </div>
   )
 }

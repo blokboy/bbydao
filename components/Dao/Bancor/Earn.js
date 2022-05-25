@@ -11,7 +11,7 @@ import { useLayoutStore } from "../../../stores/useLayoutStore"
 import { usePlaygroundStore } from "../../../stores/usePlaygroundStore"
 
 import TokenInput from "../TokenInput"
-import Slippage   from '../Slippage'
+import Slippage from "../Slippage"
 
 const Earn = ({ ethToken }) => {
   const signer = useLayoutStore(state => state.signer)
@@ -160,7 +160,12 @@ const Earn = ({ ethToken }) => {
           Deposit
         </button>
       ) : null}
-      <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} setState={setState} />
+      <Slippage
+        value={state?.slippage}
+        handleChange={handleChange}
+        defaultSlippage={defaultSlippage * 100}
+        setState={setState}
+      />
     </div>
   )
 }
