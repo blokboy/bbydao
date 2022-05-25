@@ -4,8 +4,12 @@ import ToolTip from "../Layout/ToolTip"
 const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
   const [isOpen, setIsOpen] = React.useState(false)
   React.useEffect(() => {
-    if (value < 0.1) {
+    if (value < 0) {
       setState(state => ({ ...state, slippage: NaN }))
+    }
+
+    if (value > 50) {
+      setState(state => ({ ...state, slippage: 50 }))
     }
   }, [value])
   return (
@@ -23,7 +27,7 @@ const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
         {isOpen && (
           <div className="my-2 flex h-8 items-center rounded-lg bg-slate-100 px-2 dark:bg-slate-700">
             <input
-              value={value || ""}
+              value={value || (value < 0 ? 0 : "")}
               type="number"
               name="slippage"
               onChange={handleChange}
@@ -32,6 +36,8 @@ const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
               onBlur={() => setIsOpen(false)}
               step={0.01}
               autoFocus={true}
+              min="0"
+              max="50"
             />
             %
           </div>
