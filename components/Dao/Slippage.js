@@ -5,7 +5,7 @@ const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
   const [isOpen, setIsOpen] = React.useState(false)
   useEffect(() => {
     if (value < 0.1) {
-      setState({ slippage: 0.1 })
+      setState({ slippage: NaN })
     }
   }, [value])
   return (
