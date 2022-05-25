@@ -5,6 +5,7 @@ import { BigNumber, ethers } from "ethers"
 import { formatUnits } from "ethers/lib/utils"
 import useForm from "hooks/useForm"
 import React, { useEffect, useState } from "react"
+import { HiPlus } from "react-icons/hi"
 import { useQueryClient } from "react-query"
 import { flatten } from "utils/helpers"
 import { useLayoutStore } from "stores/useLayoutStore"
@@ -14,7 +15,7 @@ import PoolInfo from "./PoolInfo"
 import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import useCalculateFee from "hooks/useCalculateFee"
-import Slippage        from "../Slippage"
+import Slippage from "../Slippage"
 
 const UniswapLpModal = ({ lpToken0, token1 = null }) => {
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
@@ -442,6 +443,9 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
           state={state}
           logo={token0Logo}
         />
+        <div className="m-auto my-4 flex">
+          <HiPlus size={26} />
+        </div>
         <TokenInput
           tokens={{ token0: lpToken0, token1: lpToken1 }}
           pair={pair}
@@ -510,7 +514,12 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
             </div>
           </button>
         )}
-        <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} setState={setState} />
+        <Slippage
+          value={state?.slippage}
+          handleChange={handleChange}
+          defaultSlippage={defaultSlippage * 100}
+          setState={setState}
+        />
       </form>
     </>
   )
