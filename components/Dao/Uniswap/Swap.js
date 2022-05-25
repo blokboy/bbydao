@@ -5,10 +5,11 @@ import React from "react"
 import useForm from "hooks/useForm"
 import { HiOutlineSwitchVertical, HiArrowSmDown } from "react-icons/hi"
 import { useQueryClient } from "react-query"
-import { flatten, max256, NumberFromBig } from "utils/helpers"
-import { useSigner } from "wagmi"
+import { max256, NumberFromBig } from "utils/helpers"
 import { minimalABI } from "hooks/useERC20Contract"
 import useCalculateFee from "hooks/useCalculateFee"
+import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
 import TokenInput from "./TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
@@ -16,7 +17,6 @@ import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import WETHABI from "ABIs/WETH.json"
 
 const Swap = ({ token }) => {
-  const { data: signer } = useSigner()
   const queryClient = useQueryClient()
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()
@@ -24,7 +24,8 @@ const Swap = ({ token }) => {
   const [poolExists, setPoolExists] = React.useState(true)
   const [hasNoLiquidity, setHasNoLiquidity] = React.useState(false)
   const [isEthOnEth, setIsEthOnEth] = React.useState(false)
-  const bbyDao = queryClient.getQueryData("expandedDao")
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
+  const signer = useLayoutStore(state => state.signer)
   const bbyDaoTokens = queryClient.getQueryData(["daoTokens", bbyDao])
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const [hasAllowance, setHasAllowance] = React.useState()
@@ -43,27 +44,11 @@ const Swap = ({ token }) => {
   }
   const defaultTokenList = [...defaultTokens?.["tokens"], defaultEth]
   const slippage = 0.055
-  const token0 = React.useMemo(() => {
-    if (parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null) {
-      return {
-        ...token,
-        token: {
-          decimals: 18,
-          logoURI: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
-          name: "Ether",
-          symbol: "ETH",
-        },
-        address: WETH,
-        tokenAddress: "",
-      }
-    }
-
-    return { ...token, address: token?.tokenAddress, logoURI: token?.token?.logoUri }
-  }, [token])
   const [tokens, setTokens] = React.useState({
-    token0: flatten(token0),
+    token0: token,
     token1: undefined,
   })
+
   const tokenSymbols = React.useMemo(() => {
     return defaultTokenList?.reduce((acc = [], cv) => {
       if (acc.filter(item => item.symbol === cv.symbol).length < 1) acc.push({ symbol: cv.symbol, uri: cv.logoURI })
@@ -71,15 +56,17 @@ const Swap = ({ token }) => {
       return acc
     }, [])
   }, [defaultTokenList])
+
   const filteredTokensBySymbol = React.useMemo(() => {
     return tokenSymbols.reduce((acc = [], cv) => {
-      if (cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) && cv.symbol !== flatten(token0)?.symbol) {
+      if (cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) && cv.symbol !== token?.symbol) {
         acc.push(cv)
       }
 
       return acc
     }, [])
   }, [state.symbol])
+
   const handlePickToken = React.useCallback(
     picked => {
       const index = defaultTokenList.findIndex(token => token.symbol === picked.symbol)
@@ -116,13 +103,47 @@ const Swap = ({ token }) => {
     },
     [tokens]
   )
+
   const switchTokenPlacement = React.useCallback(() => {
-    setState(state => ({ ...state, [tokens.token0?.symbol]: NaN, [tokens.token1?.symbol]: NaN }))
+    setState(state => ({ ...state, [tokens.token0?.symbol]: "", [tokens.token1?.symbol]: "" }))
     setTokens({ token0: tokens.token1, token1: tokens.token0 })
   }, [tokens])
+
   const WETHToken = React.useMemo(() => {
     return new Token(ChainId.MAINNET, WETH, 18, "WETH", "Wrapped Ether")
   }, [WETH, ChainId, Token])
+
+  const routeThroughWETH = async uniswapTokens => {
+    try {
+      const Token0WETH = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], WETHToken)
+      const WETHToken1 = await Fetcher.fetchPairData(WETHToken, uniswapTokens[tokens.token1.symbol])
+
+      const pair0Contract = new ethers.Contract(
+        ethers.utils.getAddress(Token0WETH?.liquidityToken?.address),
+        IUniswapV2Pair["abi"],
+        signer
+      )
+      const pair1Contract = new ethers.Contract(
+        ethers.utils.getAddress(WETHToken1?.liquidityToken?.address),
+        IUniswapV2Pair["abi"],
+        signer
+      )
+
+      const totalSupply0 = await pair0Contract?.totalSupply()
+      const hasLiquidity0 =
+        parseInt((totalSupply0.toString() / 10 ** Token0WETH?.liquidityToken?.decimals).toFixed()) > 0
+
+      const totalSupply1 = await pair1Contract?.totalSupply()
+      const hasLiquidity1 = parseInt((totalSupply1 / 10 ** Token0WETH?.liquidityToken?.decimals).toFixed()) > 0
+
+      setHasNoLiquidity(!hasLiquidity0 || !hasLiquidity1)
+      setPoolExists(false)
+      return [Token0WETH, WETHToken1]
+    } catch (err) {
+      console.log("err", err)
+    }
+  }
+
   const uniswapTokens = React.useMemo(() => {
     if (!!tokens?.token0 && !!tokens?.token1) {
       const token0 = tokens?.token0
@@ -132,6 +153,7 @@ const Swap = ({ token }) => {
       return { [token0.symbol]: uniToken0, [token1.symbol]: uniToken1 }
     }
   }, [tokens])
+
   const uniPair = React.useMemo(async () => {
     try {
       if (!!uniswapTokens) {
@@ -146,6 +168,10 @@ const Swap = ({ token }) => {
         )
         const totalSupply = await pairContract?.totalSupply()
         const hasLiquidity = parseInt((totalSupply.toString() / 10 ** uniPair?.liquidityToken?.decimals).toFixed()) > 0
+
+        if (!hasLiquidity) {
+          return await routeThroughWETH(uniswapTokens)
+        }
 
         setHasNoLiquidity(!hasLiquidity)
         setPoolExists(true)
@@ -163,46 +189,20 @@ const Swap = ({ token }) => {
 
           return
         }
-
-        const Token0WETH = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], WETHToken)
-        const WETHToken1 = await Fetcher.fetchPairData(WETHToken, uniswapTokens[tokens.token1.symbol])
-
-        const pair0Contract = new ethers.Contract(
-          ethers.utils.getAddress(Token0WETH?.liquidityToken?.address),
-          IUniswapV2Pair["abi"],
-          signer
-        )
-        const pair1Contract = new ethers.Contract(
-          ethers.utils.getAddress(WETHToken1?.liquidityToken?.address),
-          IUniswapV2Pair["abi"],
-          signer
-        )
-
-        const totalSupply0 = await pair0Contract?.totalSupply()
-        const hasLiquidity0 =
-          parseInt((totalSupply0.toString() / 10 ** Token0WETH?.liquidityToken?.decimals).toFixed()) > 0
-
-        const totalSupply1 = await pair1Contract?.totalSupply()
-        const hasLiquidity1 = parseInt((totalSupply1 / 10 ** Token0WETH?.liquidityToken?.decimals).toFixed()) > 0
-
-        setHasNoLiquidity(!hasLiquidity0 || !hasLiquidity1)
-        setPoolExists(false)
-        return [Token0WETH, WETHToken1]
+        return await routeThroughWETH(uniswapTokens)
       }
     }
   }, [uniswapTokens])
-  const showApprove = React.useMemo(() => {
-    if (!hasNoLiquidity || !tokens || !hasAllowance) {
-      return false
-    }
-    return (
+
+  const showApprove = React.useMemo(
+    () =>
       hasNoLiquidity === false &&
       hasAllowance?.token0 === false &&
       !!tokens?.token0 &&
       tokens?.token0.symbol !== "ETH" &&
-      !!tokens?.token1
-    )
-  }, [hasNoLiquidity, hasAllowance, tokens])
+      !!tokens?.token1,
+    [hasNoLiquidity, hasAllowance, tokens]
+  )
 
   /*
    *
@@ -243,6 +243,7 @@ const Swap = ({ token }) => {
   React.useMemo(async () => {
     try {
       const allowed = await tokenContracts
+
       setHasAllowance({ ...hasAllowance, ...allowed?.allowedToSpend })
     } catch (err) {
       console.log("err", err)
@@ -393,7 +394,7 @@ const Swap = ({ token }) => {
 
       if (isEthOnEth) {
         const WETHContract = new ethers.Contract(WETH, WETHABI, signer)
-        const wad = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
+        const wad = ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals)
         if (inputToken.token.symbol === "WETH") {
           const tx = gnosisTransaction(
             {
@@ -425,12 +426,13 @@ const Swap = ({ token }) => {
       }
 
       if (swapExactTokensForTokens) {
-        const amountIn = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
+        const amountIn = ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals)
         const amountOutMin = ethers.utils.parseUnits(
-          outputToken.value.toFixed(6).toString(),
+          outputToken.value.toString(),
           outputToken?.token?.decimals
         )
         let path
+
         if (poolExists) {
           path = [ethers.utils.getAddress(inputToken.token.address), ethers.utils.getAddress(outputToken.token.address)]
         } else {
@@ -463,10 +465,10 @@ const Swap = ({ token }) => {
 
       if (swapExactETHForTokens) {
         const amountOutMin = ethers.utils.parseUnits(
-          outputToken.value.toFixed(6).toString(),
+          outputToken.value.toString(),
           outputToken?.token?.decimals
         )
-        const value = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString())
+        const value = ethers.utils.parseUnits(inputToken.value.toString())
         const tx = gnosisTransaction(
           {
             abi: IUniswapV2Router02["abi"],
@@ -487,11 +489,12 @@ const Swap = ({ token }) => {
       }
 
       if (swapExactTokensForETH) {
-        const amountIn = ethers.utils.parseUnits(inputToken.value.toFixed(6).toString(), inputToken?.token?.decimals)
+        const amountIn = ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals)
         const amountOutMin = ethers.utils.parseUnits(
-          outputToken.value.toFixed(6).toString(),
+          outputToken.value.toString(),
           outputToken?.token?.decimals
         )
+
         const tx = gnosisTransaction(
           {
             abi: IUniswapV2Router02["abi"],
@@ -524,7 +527,7 @@ const Swap = ({ token }) => {
             tokens={tokens}
             pair={uniPair}
             tokenInputRef={token0InputRef}
-            lpToken={tokens?.token0}
+            token={tokens?.token0}
             handleSetTokenValue={handleSetTokenValue}
             handleSetMaxTokenValue={handleSetMaxTokenValue}
             state={state}
@@ -549,7 +552,7 @@ const Swap = ({ token }) => {
           tokens={tokens}
           pair={uniPair}
           tokenInputRef={token1InputRef}
-          lpToken={tokens?.token1}
+          token={tokens?.token1}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
           state={state}
@@ -600,7 +603,7 @@ const Swap = ({ token }) => {
             Approve {tokens?.token0?.symbol}
           </div>
         )}
-        {!!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
+        {!showApprove && !!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
           <button
             type="button"
             disabled={hasNoLiquidity}

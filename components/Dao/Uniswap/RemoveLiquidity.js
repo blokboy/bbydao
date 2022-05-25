@@ -1,37 +1,36 @@
 import React from "react"
 import { ChainId, Fetcher, Token, TokenAmount } from "@uniswap/sdk"
 import { BigNumber, ethers } from "ethers"
-import { useQueryClient } from "react-query"
-import { useSigner } from "wagmi"
 import useForm from "hooks/useForm"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import UniswapV2ERC20 from "@uniswap/v2-core/build/UniswapV2ERC20.json"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 import { max256, NumberFromBig } from "utils/helpers"
 import { minimalABI } from "hooks/useERC20Contract"
+import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
 import { amount } from "./helpers"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import useCalculateFee from "hooks/useCalculateFee"
 
 const RemoveLiquidity = ({ token }) => {
-  const { data: signer } = useSigner()
-  const queryClient = useQueryClient()
-  const bbyDao = queryClient.getQueryData("expandedDao")
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
+  const signer = useLayoutStore(state => state.signer)
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const { calculateFee } = useCalculateFee()
   const [breakDown, setBreakDown] = React.useState(undefined)
   const [toReceive, setToReceive] = React.useState({})
   const { state, setState, handleChange } = useForm()
-  const pairName = token?.token?.name.replace("Uniswap V2", "").replace("Pool", "")
+  const pairName = token?.name.replace("Uniswap V2", "").replace("Pool", "")
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { liquidity } = state
-  const { tokenAddress, token: pairToken } = token
+  const { address } = token
   const slippage = 0.055
 
   /* Contracts */
   const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
-  const pairContract = new ethers.Contract(ethers.utils.getAddress(tokenAddress), IUniswapV2Pair["abi"], signer)
-  const pairERC20Contract = new ethers.Contract(ethers.utils.getAddress(tokenAddress), UniswapV2ERC20["abi"], signer)
+  const pairContract = new ethers.Contract(ethers.utils.getAddress(address), IUniswapV2Pair["abi"], signer)
+  const pairERC20Contract = new ethers.Contract(ethers.utils.getAddress(address), UniswapV2ERC20["abi"], signer)
 
   React.useMemo(async () => {
     if (!!signer) {
@@ -41,7 +40,7 @@ const RemoveLiquidity = ({ token }) => {
         const bbyDaoBalance = await pairERC20Contract?.balanceOf(bbyDao)
 
         const percentageOfPool =
-          NumberFromBig(bbyDaoBalance, pairToken?.decimals) / NumberFromBig(totalSupply, pairToken?.decimals)
+          NumberFromBig(bbyDaoBalance, token?.decimals) / NumberFromBig(totalSupply, token?.decimals)
         const bbyDaoAllowance = await pairERC20Contract?.allowance(bbyDao, UniswapV2Router02)
         const kLast = await pairContract?.kLast()
         const reserves = await pairContract?.getReserves()
@@ -96,16 +95,16 @@ const RemoveLiquidity = ({ token }) => {
         const totalBbyDaoLPTokens = new TokenAmount(uniPair?.liquidityToken, bbyDaoBalance)
         const token0Amount = uniPair
           ?.getLiquidityValue(uniPair.tokenAmounts[0].token, totalTokenSupplyOfLP, totalBbyDaoLPTokens, false, kLast)
-          .toFixed(pairToken.decimals)
+          .toFixed(token.decimals)
         const token1Amount = uniPair
           ?.getLiquidityValue(uniPair.tokenAmounts[1].token, totalTokenSupplyOfLP, totalBbyDaoLPTokens, false, kLast)
-          .toFixed(pairToken.decimals)
+          .toFixed(token.decimals)
 
         setBreakDown({
           WETH,
           bbyDaoBalance,
-          poolTokens: NumberFromBig(bbyDaoBalance, pairToken?.decimals),
-          hasAllowance: parseFloat(amount(bbyDaoAllowance, pairToken?.decimals)) > 0,
+          poolTokens: NumberFromBig(bbyDaoBalance, token?.decimals),
+          hasAllowance: parseFloat(amount(bbyDaoAllowance, token?.decimals)) > 0,
           pairContract,
           percentageOfPool: `${
             // percentageOfPool * 100 < 0.01 ? "< 0.01" : parseFloat((percentageOfPool * 100).toString()).toFixed(6)
@@ -132,7 +131,7 @@ const RemoveLiquidity = ({ token }) => {
         console.log("err", err)
       }
     }
-  }, [tokenAddress, signer, bbyDao, pairToken])
+  }, [address, signer, bbyDao, token])
 
   React.useEffect(() => {
     setToReceive({

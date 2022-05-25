@@ -8,8 +8,8 @@ import { ThemeProvider } from "next-themes"
 import Layout from "../components/Layout"
 import Loading from "../components/Layout/Loading"
 
-import { Provider, chain, defaultChains, createWagmiClient } from 'wagmi'
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+import {Provider, chain, defaultChains, createWagmiClient, useSigner} from 'wagmi'
+import { CoinbaseWalletConnector }                                    from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
@@ -22,6 +22,29 @@ function MyApp({ Component, pageProps, ...appProps }) {
   // Chains for connectors to support
   const chains = defaultChains
   const defaultChain = chain.mainnet
+
+
+  // Set up connectors
+  // const connectors = ({ chainId }) => {
+  //   const rpcUrl =
+  //     chains.find(x => x.id === chainId)?.rpcUrls?.[0] ??
+  //     chain.mainnet.rpcUrls[0]
+  //   return [
+  //     new InjectedConnector({ chains }),
+  //     new WalletConnectConnector({
+  //       options: {
+  //         infuraId,
+  //         qrcode: true,
+  //       },
+  //     }),
+  //     new WalletLinkConnector({
+  //       options: {
+  //         appName: "baby dao",
+  //         jsonRpcUrl: `${rpcUrl}/${infuraId}`,
+  //       },
+  //     }),
+  //   ]
+  // }
 
   const wagmiClient = createWagmiClient({
     autoConnect: true,
@@ -63,7 +86,7 @@ function MyApp({ Component, pageProps, ...appProps }) {
 
   return (
     <ThemeProvider attribute="class">
-      <Provider autoConnect client={wagmiClient}>
+      <Provider client={wagmiClient}>
         <QueryClientProvider client={queryClient}>
           <Layout>
             {loading ? (

@@ -1,8 +1,8 @@
 import React from "react"
 import { BiUserPlus, BiUserCheck, BiUserX } from "react-icons/bi"
-import * as api from "/query"
-import { useMutation, useQueryClient } from "react-query"
-import ClickAwayListener from "react-click-away-listener"
+import * as api                                from "/query"
+import {useMutation, useQuery, useQueryClient} from "react-query"
+import ClickAwayListener                       from "react-click-away-listener"
 
 const FollowUserBtn = ({ user, address, friendStatus }) => {
   // follow logic
