@@ -1,14 +1,14 @@
 import { BigNumber, ethers } from "ethers"
 import React from "react"
-import { useQueryClient }        from "react-query"
-import { minimalABI }            from "hooks/useERC20Contract"
+import { useQueryClient } from "react-query"
+import { minimalABI } from "hooks/useERC20Contract"
 import { max256, NumberFromBig } from "utils/helpers"
-import useCalculateFee           from "hooks/useCalculateFee"
-import useForm                   from "hooks/useForm"
-import useGnosisTransaction      from "hooks/useGnosisTransaction"
-import { useLayoutStore }        from "stores/useLayoutStore"
-import { usePlaygroundStore }    from "stores/usePlaygroundStore"
-import TokenInput                from "./TokenInput"
+import useCalculateFee from "hooks/useCalculateFee"
+import useForm from "hooks/useForm"
+import useGnosisTransaction from "hooks/useGnosisTransaction"
+import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
+import TokenInput from "./TokenInput"
 
 const Send = ({ token }) => {
   const [hasAllowance, setHasAllowance] = React.useState()
@@ -135,6 +135,7 @@ const Send = ({ token }) => {
   const prepare = React.useMemo(() => {
     let show = false
     let args = undefined
+    console.log("s", state)
     if (ethers.utils.isAddress(state.recipient) && parseFloat(state?.[token?.symbol]) > 0) {
       show = true
       args = { recipient: ethers.utils.getAddress(state.recipient), value: parseFloat(state?.[token?.symbol]) }
@@ -169,10 +170,13 @@ const Send = ({ token }) => {
           </div>
         </div>
       </form>
-      {hasAllowance?.token0 === true && prepare?.show === true && !!prepare?.args && (
+      {(hasAllowance?.token0 === true || token?.symbol === "ETH") && prepare?.show === true && !!prepare?.args && (
         <button
           type="button"
-          className={`mt-8 flex w-full items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]`}
+          className={`focus:shadow-outline flex h-16 w-full w-full
+           appearance-none items-center justify-center rounded-full 
+          bg-sky-500 py-2 px-3 text-xl font-normal leading-tight text-white hover:bg-sky-600 
+          focus:outline-none dark:bg-orange-600 dark:hover:bg-orange-700`}
           onClick={() => handleSendTokens(prepare.args)}
         >
           Send Tokens
@@ -180,7 +184,10 @@ const Send = ({ token }) => {
       )}
       {hasAllowance?.token0 === false && token?.symbol !== "ETH" && (
         <div
-          className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+          className={`focus:shadow-outline flex h-16 w-full w-full
+           appearance-none items-center justify-center rounded-full 
+          bg-sky-500 py-2 px-3 text-xl font-normal leading-tight text-white hover:bg-sky-600 
+          focus:outline-none dark:bg-orange-600 dark:hover:bg-orange-700`}
           onClick={() => handleApproveToken(tokenContract, 0)}
         >
           Approve {token?.symbol}
