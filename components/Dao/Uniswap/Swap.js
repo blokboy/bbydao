@@ -2,7 +2,7 @@ import { ChainId, Fetcher, Percent, Route, Token } from "@uniswap/sdk"
 import defaultTokens from "@uniswap/default-token-list"
 import axios from "axios"
 import { BigNumber, ethers } from "ethers"
-import React from "react"
+import React, { useEffect } from "react"
 import useForm from "hooks/useForm"
 import { HiOutlineSwitchVertical, HiArrowSmDown } from "react-icons/hi"
 import { useQueryClient } from "react-query"
@@ -17,6 +17,7 @@ import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import WETHABI from "ABIs/WETH.json"
+import Slippage from "./Slippage"
 
 const Swap = ({ token }) => {
   const queryClient = useQueryClient()
@@ -57,7 +58,7 @@ const Swap = ({ token }) => {
   }
 
   const defaultTokenList = [...defaultTokens?.["tokens"], ...coingeckoTokenList, defaultEth]
-  const slippage = 0.055
+  const defaultSlippage = 0.005
   const [tokens, setTokens] = React.useState({
     token0: token,
     token1: undefined,
@@ -395,6 +396,7 @@ const Swap = ({ token }) => {
   const handleSwapToken = async (token0, token1) => {
     try {
       const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
+      const slippage = state?.slippage / 100 || defaultSlippage
       const inputToken = {
         token: tokens.token0,
         value: parseFloat(token0.toString()),
@@ -403,6 +405,7 @@ const Swap = ({ token }) => {
         token: tokens.token1,
         value: parseFloat(token1.toString()) - parseFloat(token1.toString()) * slippage,
       }
+
       const swapExactTokensForTokens = inputToken.token.symbol !== "ETH" && outputToken.token.symbol !== "ETH"
       const swapExactETHForTokens = !isEthOnEth && inputToken.token.symbol === "ETH"
       const swapExactTokensForETH = !isEthOnEth && outputToken.token.symbol === "ETH"
@@ -525,6 +528,10 @@ const Swap = ({ token }) => {
     }
   }
 
+  useEffect(() => {
+    setState({ slippage: defaultSlippage * 100 })
+  }, [])
+
   return (
     <div>
       <form>
@@ -600,18 +607,7 @@ const Swap = ({ token }) => {
         )}
       </form>
       {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
-      <div>
-        <div className="flex w-44 mt-6 flex-col py-1 text-sm font-thin">
-          <div className="flex pb-4">
-            Slippage Tolerance
-            <ToolTip>Your transaction will revert if the price changes unfavorably more than this percentage.</ToolTip>
-          </div>
-          <div className="flex items-center py-2 px-3 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 w-3/4">
-            <input className="w-full appearance-none  text-sm leading-tight focus:outline-none bg-slate-100 dark:bg-slate-800" />
-            %
-          </div>
-        </div>
-      </div>
+      <Slippage value={state?.slippage} handleChange={handleChange} />
       <div className="my-4 flex w-full justify-center gap-4">
         {showApprove && (
           <div
