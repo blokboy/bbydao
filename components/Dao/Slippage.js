@@ -23,7 +23,7 @@ const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
         {isOpen && (
           <div className="my-2 flex h-8 items-center rounded-lg bg-slate-100 px-2 dark:bg-slate-700">
             <input
-              value={value}
+              value={value || ''}
               type="number"
               name="slippage"
               onChange={handleChange}
