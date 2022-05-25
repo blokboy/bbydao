@@ -160,7 +160,7 @@ const Earn = ({ ethToken }) => {
           Deposit
         </button>
       ) : null}
-      <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} />
+      <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} setState={setState} />
     </div>
   )
 }

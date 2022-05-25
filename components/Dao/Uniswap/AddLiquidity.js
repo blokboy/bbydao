@@ -510,7 +510,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
             </div>
           </button>
         )}
-        <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} />
+        <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} setState={setState} />
       </form>
     </>
   )

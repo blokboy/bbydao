@@ -640,7 +640,7 @@ const Swap = ({ token }) => {
           ))}
         </div>
       )}
-      <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} />
+      <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} setState={setState} />
     </div>
   )
 }

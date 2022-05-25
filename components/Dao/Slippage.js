@@ -1,14 +1,19 @@
-import React   from "react"
+import React, { useEffect } from "react"
 import ToolTip from "../Layout/Tooltip"
 
-const Slippage = ({ value, handleChange, defaultSlippage }) => {
+const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
   const [isOpen, setIsOpen] = React.useState(false)
+  useEffect(() => {
+    if (value < 0.1) {
+      setState({ slippage: 0.1 })
+    }
+  }, [value])
   return (
     <div className="mt-6 flex">
       <div
         onClick={() => setIsOpen(bool => !bool)}
-        className={`flex flex w-48 shadow-lg flex-col items-center rounded-xl p-2 text-sm font-thin hover:cursor-pointer border hover:border-[#FC8D4D] hover:dark:border-[#FC8D4D] dark:border-slate-800 bg-slate-200 dark:bg-slate-800 hover:border ${
-          isOpen && "bg-slate-300  border-slate-600 dark:bg-slate-800 dark:border-slate-400"
+        className={`flex flex w-48 flex-col items-center rounded-xl border bg-slate-200 p-2 text-sm font-thin shadow-lg hover:cursor-pointer hover:border hover:border-[#FC8D4D] dark:border-slate-800 dark:bg-slate-800 hover:dark:border-[#FC8D4D] ${
+          isOpen && "border-slate-600  bg-slate-300 dark:border-slate-400 dark:bg-slate-800"
         }`}
       >
         <div className="flex flex items-center">
