@@ -124,9 +124,7 @@ const Swap = ({ token }) => {
 
   const routeThroughUSDT = async uniswapTokens => {
     try {
-      console.log("aaa", uniswapTokens[tokens.token0.symbol], USDTToken)
       const Token0USDT = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], USDTToken)
-      console.log("TOKE", Token0USDT)
       const USDTToken1 = await Fetcher.fetchPairData(USDTToken, uniswapTokens[tokens.token1.symbol])
 
       const pair0Contract = new ethers.Contract(
@@ -205,7 +203,7 @@ const Swap = ({ token }) => {
   }, [tokens])
 
   const uniPair = React.useMemo(async () => {
-    const hasEth = tokens?.token0.symbol === "ETH" || tokens?.token1.symbol === "ETH"
+    const hasEth = tokens?.token0?.symbol === "ETH" || tokens?.token1?.symbol === "ETH"
     setIsEthOnEth(false)
 
     try {
@@ -621,14 +619,16 @@ const Swap = ({ token }) => {
       {showApprove && (
         <div className="my-4 flex w-full justify-center gap-4">
           <div
-            className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+            className="focus:shadow-outline flex h-16 w-full w-full
+           appearance-none items-center justify-center rounded-full
+          bg-sky-500 py-2 px-3 text-xl font-normal leading-tight text-white hover:bg-sky-600 focus:outline-none dark:bg-orange-600 dark:hover:bg-orange-700"
             onClick={() => handleApproveToken(tokenContracts, 0)}
           >
             Approve {tokens?.token0?.symbol}
           </div>
         </div>
       )}
-      {!showApprove && (
+      {!showApprove && Object.keys(uniswapTokens).length === 2 && (
         <div className="my-4 flex w-full justify-center gap-4">
           <button
             type="button"
@@ -644,7 +644,9 @@ const Swap = ({ token }) => {
                 : () => {}
             }
           >
-            {hasNoLiquidity ? `No Liquidity` : `Swap ${tokens?.token0?.symbol} for ${tokens?.token1?.symbol}`}
+            {hasNoLiquidity
+              ? `Insufficient liquidity for this trade.`
+              : `Swap ${tokens?.token0?.symbol} for ${tokens?.token1?.symbol}`}
           </button>
         </div>
       )}
