@@ -1,15 +1,16 @@
 import { BigNumber, ethers } from "ethers"
-import React from "react"
-import useCalculateFee from "hooks/useCalculateFee"
-import useForm from "hooks/useForm"
-import useGnosisTransaction from "hooks/useGnosisTransaction"
-import dsrABI from "ABIs/dsr.json"
-import daiABI from "ABIs/dai.json"
-import { minimalABI } from "hooks/useERC20Contract"
-import { useLayoutStore } from "stores/useLayoutStore"
-import { usePlaygroundStore } from "stores/usePlaygroundStore"
+import React, {useEffect}    from "react"
+import useCalculateFee       from "hooks/useCalculateFee"
+import useForm                   from "hooks/useForm"
+import useGnosisTransaction      from "hooks/useGnosisTransaction"
+import dsrABI                    from "ABIs/dsr.json"
+import daiABI                    from "ABIs/dai.json"
+import { minimalABI }            from "hooks/useERC20Contract"
+import { useLayoutStore }        from "stores/useLayoutStore"
+import { usePlaygroundStore }    from "stores/usePlaygroundStore"
 import { max256, NumberFromBig } from "utils/helpers"
-import TokenInput from "../TokenInput"
+import TokenInput                from "../TokenInput"
+import Slippage                  from '../Uniswap/Slippage'
 
 const DSR = ({ token }) => {
   const ref = React.useRef()
@@ -22,7 +23,12 @@ const DSR = ({ token }) => {
   const DaiAddress = ethers.utils.getAddress("0x6b175474e89094c44da98b954eedeac495271d0f")
   const { state, setState, handleChange } = useForm()
   const tokenInputRef = React.useRef()
-  const slippage = 0.055
+
+  /* init slippage */
+  const defaultSlippage = 0.005
+  useEffect(() => {
+    setState({ slippage: defaultSlippage * 100 })
+  }, [])
 
   const dsrContract = React.useMemo(() => {
     try {
@@ -118,6 +124,7 @@ const DSR = ({ token }) => {
   console.log('ds', bbyDao)
 
   const handleSaveDai = async value => {
+    const slippage = state?.slippage / 100 || defaultSlippage
     let tokenAmount = parseFloat(value?.toString()) - parseFloat(value.toString()) * slippage
     tokenAmount = ethers.utils.parseUnits(tokenAmount.toString(), token?.decimals)
 
@@ -172,6 +179,7 @@ const DSR = ({ token }) => {
           Save DAI
         </button>
       )}
+      <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} />
     </div>
   )
 }

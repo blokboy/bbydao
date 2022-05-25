@@ -1,5 +1,5 @@
 import { ethers } from "ethers"
-import React from "react"
+import React, { useEffect } from "react"
 import { useQueryClient } from "react-query"
 import { useSigner } from "wagmi"
 import useCalculateFee from "hooks/useCalculateFee"
@@ -11,6 +11,7 @@ import { useLayoutStore } from "../../../stores/useLayoutStore"
 import { usePlaygroundStore } from "../../../stores/usePlaygroundStore"
 
 import TokenInput from "../TokenInput"
+import Slippage   from '../Uniswap/Slippage'
 
 const Earn = ({ ethToken }) => {
   const signer = useLayoutStore(state => state.signer)
@@ -21,7 +22,11 @@ const Earn = ({ ethToken }) => {
   const BancorNetworkSettingsAddress = ethers.utils.getAddress("0x83E1814ba31F7ea95D216204BB45FE75Ce09b14F")
   const { state, setState, handleChange } = useForm()
   const tokenInputRef = React.useRef()
-  const slippage = 0.055
+  /* init slippage */
+  const defaultSlippage = 0.005
+  useEffect(() => {
+    setState({ slippage: defaultSlippage * 100 })
+  }, [])
 
   const rewardContract = React.useMemo(() => {
     try {
@@ -80,6 +85,7 @@ const Earn = ({ ethToken }) => {
 
   const handleDepositAndJoin = async value => {
     console.log("v", value)
+    const slippage = state?.slippage / 100 || defaultSlippage
     let programId = 6
     let tokenAmount = parseFloat(value?.toString()) - parseFloat(value.toString()) * slippage
     tokenAmount = ethers.utils.parseUnits(tokenAmount.toFixed(6).toString(), ethToken?.decimals)
@@ -154,6 +160,7 @@ const Earn = ({ ethToken }) => {
           Deposit
         </button>
       ) : null}
+      <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} />
     </div>
   )
 }
