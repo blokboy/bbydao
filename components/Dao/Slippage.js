@@ -31,6 +31,7 @@ const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
               onClick={e => e.stopPropagation()}
               onBlur={() => setIsOpen(false)}
               step={0.01}
+              autoFocus={true}
             />
             %
           </div>
