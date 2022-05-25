@@ -26,7 +26,7 @@ const DSR = ({ token }) => {
 
   /* init slippage */
   const defaultSlippage = 0.005
-  useEffect(() => {
+  React.useEffect(() => {
     setState({ slippage: defaultSlippage * 100 })
   }, [])
 

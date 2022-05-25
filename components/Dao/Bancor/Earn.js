@@ -1,5 +1,5 @@
 import { ethers } from "ethers"
-import React, { useEffect } from "react"
+import React from "react"
 import { useQueryClient } from "react-query"
 import { useSigner } from "wagmi"
 import useCalculateFee from "hooks/useCalculateFee"
@@ -24,7 +24,7 @@ const Earn = ({ ethToken }) => {
   const tokenInputRef = React.useRef()
   /* init slippage */
   const defaultSlippage = 0.005
-  useEffect(() => {
+  React.useEffect(() => {
     setState({ slippage: defaultSlippage * 100 })
   }, [])
 

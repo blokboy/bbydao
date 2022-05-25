@@ -1,9 +1,9 @@
-import React, { useEffect } from "react"
+import React from "react"
 import ToolTip              from "../Layout/ToolTip"
 
 const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
   const [isOpen, setIsOpen] = React.useState(false)
-  useEffect(() => {
+  React.useEffect(() => {
     if (value < 0.1) {
       setState({ slippage: NaN })
     }

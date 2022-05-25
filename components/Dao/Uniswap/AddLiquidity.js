@@ -34,7 +34,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
 
   /* init slippage */
   const defaultSlippage = 0.005
-  useEffect(() => {
+  React.useEffect(() => {
     setState({ slippage: defaultSlippage * 100 })
   }, [])
 

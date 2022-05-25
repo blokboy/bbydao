@@ -2,7 +2,7 @@ import { ChainId, Fetcher, Percent, Route, Token } from "@uniswap/sdk"
 import defaultTokens from "@uniswap/default-token-list"
 import axios from "axios"
 import { BigNumber, ethers } from "ethers"
-import React, { useEffect } from "react"
+import React from "react"
 import useForm from "hooks/useForm"
 import { HiOutlineSwitchVertical, HiArrowSmDown } from "react-icons/hi"
 import { useQueryClient } from "react-query"
@@ -11,13 +11,13 @@ import { minimalABI } from "hooks/useERC20Contract"
 import useCalculateFee from "hooks/useCalculateFee"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
-import ToolTip                from "../../Layout/ToolTip"
-import TokenInput             from "../TokenInput"
+import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import WETHABI from "ABIs/WETH.json"
 import Slippage from "../Slippage"
+import TokenSearch from "../TokenSearch"
 
 const Swap = ({ token }) => {
   const queryClient = useQueryClient()
@@ -33,6 +33,8 @@ const Swap = ({ token }) => {
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const [hasAllowance, setHasAllowance] = React.useState()
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
+  const USDT = ethers.utils.getAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7")
+
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { state, setState, handleChange } = useForm()
   const { calculateFee } = useCalculateFee()
@@ -61,7 +63,7 @@ const Swap = ({ token }) => {
 
   /* init slippage */
   const defaultSlippage = 0.005
-  useEffect(() => {
+  React.useEffect(() => {
     setState({ slippage: defaultSlippage * 100 })
   }, [])
 
@@ -69,24 +71,6 @@ const Swap = ({ token }) => {
     token0: token,
     token1: undefined,
   })
-
-  const tokenSymbols = React.useMemo(() => {
-    return defaultTokenList?.reduce((acc = [], cv) => {
-      if (acc.filter(item => item.symbol === cv.symbol).length < 1) acc.push({ symbol: cv.symbol, uri: cv.logoURI })
-
-      return acc
-    }, [])
-  }, [defaultTokenList])
-
-  const filteredTokensBySymbol = React.useMemo(() => {
-    return tokenSymbols.reduce((acc = [], cv) => {
-      if (cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) && cv.symbol !== token?.symbol) {
-        acc.push(cv)
-      }
-
-      return acc
-    }, [])
-  }, [state.symbol])
 
   const handlePickToken = React.useCallback(
     picked => {
@@ -134,6 +118,46 @@ const Swap = ({ token }) => {
     return new Token(ChainId.MAINNET, WETH, 18, "WETH", "Wrapped Ether")
   }, [WETH, ChainId, Token])
 
+  const USDTToken = React.useMemo(() => {
+    return new Token(ChainId.MAINNET, WETH, 6, "USDT", "Tether USD")
+  }, [WETH, ChainId, Token])
+
+  const routeThroughUSDT = async uniswapTokens => {
+    try {
+      console.log("aaa", uniswapTokens[tokens.token0.symbol], USDTToken)
+      const Token0USDT = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], USDTToken)
+      console.log("TOKE", Token0USDT)
+      const USDTToken1 = await Fetcher.fetchPairData(USDTToken, uniswapTokens[tokens.token1.symbol])
+
+      const pair0Contract = new ethers.Contract(
+        ethers.utils.getAddress(Token0USDT?.liquidityToken?.address),
+        IUniswapV2Pair["abi"],
+        signer
+      )
+      const pair1Contract = new ethers.Contract(
+        ethers.utils.getAddress(USDTToken1?.liquidityToken?.address),
+        IUniswapV2Pair["abi"],
+        signer
+      )
+
+      const totalSupply0 = await pair0Contract?.totalSupply()
+      const hasLiquidity0 =
+        parseInt((totalSupply0.toString() / 10 ** Token0USDT?.liquidityToken?.decimals).toFixed()) > 0
+
+      const totalSupply1 = await pair1Contract?.totalSupply()
+      const hasLiquidity1 = parseInt((totalSupply1 / 10 ** Token0USDT?.liquidityToken?.decimals).toFixed()) > 0
+
+      setHasNoLiquidity(!hasLiquidity0 || !hasLiquidity1)
+      setPoolExists(false)
+
+      return [Token0USDT, USDTToken1]
+    } catch (err) {
+      setHasNoLiquidity(true)
+      setPoolExists(false)
+      console.log("er2", err)
+    }
+  }
+
   const routeThroughWETH = async uniswapTokens => {
     try {
       const Token0WETH = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], WETHToken)
@@ -159,8 +183,13 @@ const Swap = ({ token }) => {
 
       setHasNoLiquidity(!hasLiquidity0 || !hasLiquidity1)
       setPoolExists(false)
+
       return [Token0WETH, WETHToken1]
     } catch (err) {
+      if (!!uniswapTokens) {
+        setHasNoLiquidity(true)
+        setPoolExists(false)
+      }
       console.log("err", err)
     }
   }
@@ -176,9 +205,11 @@ const Swap = ({ token }) => {
   }, [tokens])
 
   const uniPair = React.useMemo(async () => {
+    const hasEth = tokens?.token0.symbol === "ETH" || tokens?.token1.symbol === "ETH"
+    setIsEthOnEth(false)
+
     try {
       if (!!uniswapTokens) {
-        const hasEth = tokens?.token0.symbol === "ETH" || tokens?.token1.symbol === "ETH"
         const uniPair = await Fetcher.fetchPairData(
           uniswapTokens[tokens.token0.symbol],
           uniswapTokens[tokens.token1.symbol]
@@ -192,7 +223,11 @@ const Swap = ({ token }) => {
         const hasLiquidity = parseInt((totalSupply.toString() / 10 ** uniPair?.liquidityToken?.decimals).toFixed()) > 0
 
         if (!hasLiquidity && !hasEth) {
-          return await routeThroughWETH(uniswapTokens)
+          if (!hasEth) {
+            return await routeThroughWETH(uniswapTokens)
+          } else {
+            return await routeThroughUSDT(uniswapTokens)
+          }
         }
 
         setHasNoLiquidity(!hasLiquidity)
@@ -211,8 +246,13 @@ const Swap = ({ token }) => {
 
           return
         }
-        return await routeThroughWETH(uniswapTokens)
+        if (!hasEth) {
+          return await routeThroughWETH(uniswapTokens)
+        } else {
+          return await routeThroughUSDT(uniswapTokens)
+        }
       }
+      console.log("err", err)
     }
   }, [uniswapTokens])
 
@@ -536,78 +576,47 @@ const Swap = ({ token }) => {
 
   return (
     <div>
-      <form>
-        {tokens?.token0 && (
-          <TokenInput
-            tokens={tokens}
-            pair={uniPair}
-            tokenInputRef={token0InputRef}
-            token={tokens?.token0}
-            handleSetTokenValue={handleSetTokenValue}
-            handleSetMaxTokenValue={handleSetMaxTokenValue}
-            state={state}
-            logo={tokens?.token0?.logoURI}
-            autoComplete="off"
-            setOpenSearch={setOpenSearch}
-            isSwap={true}
-          />
-        )}
-        <button
-          type="button"
-          onClick={() => (tokens?.token0 && tokens?.token1 ? switchTokenPlacement() : () => {})}
-          className="m-auto my-4 flex"
-        >
-          {parseFloat(state[tokens?.token0?.symbol]) > 0 && parseFloat(state[tokens?.token1?.symbol]) > 0 ? (
-            <HiArrowSmDown size={26} />
-          ) : (
-            <HiOutlineSwitchVertical size={26} />
-          )}
-        </button>
+      {tokens?.token0 && (
         <TokenInput
           tokens={tokens}
           pair={uniPair}
-          tokenInputRef={token1InputRef}
-          token={tokens?.token1}
+          tokenInputRef={token0InputRef}
+          token={tokens?.token0}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
           state={state}
-          logo={tokens?.token1?.logoURI}
+          logo={tokens?.token0?.logoURI}
           autoComplete="off"
           setOpenSearch={setOpenSearch}
           isSwap={true}
         />
-        {openSearch && (
-          <input
-            id="symbol"
-            name="symbol"
-            onChange={handleChange}
-            value={state?.symbol || ""}
-            className="mt-8 h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-3xl leading-tight focus:outline-none dark:bg-slate-800"
-            placeholder={"Type to search"}
-            autoComplete="off"
-            autoFocus={true}
-          />
-        )}
-      </form>
-      {openSearch && filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
-        <div className="mt-4 flex max-h-96 flex-wrap gap-1 overflow-y-scroll rounded-lg bg-slate-100 p-4 pt-4 shadow-xl dark:bg-slate-800">
-          {filteredTokensBySymbol.map((token, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => handlePickToken(token)}
-              className="mb-2 inline-flex self-start rounded-full bg-slate-300 p-2 px-4 font-light dark:bg-slate-600 hover:dark:bg-slate-700"
-            >
-              <div className="flex items-center justify-center">
-                <div className="mr-2">{token?.symbol?.toUpperCase()}</div>
-                <div className="flex h-6 w-6 overflow-hidden rounded-full">
-                  <img src={token?.uri} />
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
       )}
+      <button
+        type="button"
+        onClick={() => (tokens?.token0 && tokens?.token1 ? switchTokenPlacement() : () => {})}
+        className="m-auto my-4 flex"
+      >
+        {parseFloat(state[tokens?.token0?.symbol]) > 0 && parseFloat(state[tokens?.token1?.symbol]) > 0 ? (
+          <HiArrowSmDown size={26} />
+        ) : (
+          <HiOutlineSwitchVertical size={26} />
+        )}
+      </button>
+      <TokenInput
+        tokens={tokens}
+        pair={uniPair}
+        tokenInputRef={token1InputRef}
+        token={tokens?.token1}
+        handleSetTokenValue={handleSetTokenValue}
+        handleSetMaxTokenValue={handleSetMaxTokenValue}
+        state={state}
+        logo={tokens?.token1?.logoURI}
+        autoComplete="off"
+        setOpenSearch={setOpenSearch}
+        isSwap={true}
+      />
+      {openSearch && <TokenSearch token={token} tokenList={defaultTokenList} handlePickToken={handlePickToken} />}
+
       {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
       {showApprove && (
         <div className="my-4 flex w-full justify-center gap-4">
@@ -619,7 +628,7 @@ const Swap = ({ token }) => {
           </div>
         </div>
       )}
-      {!showApprove && !!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
+      {!showApprove && (
         <div className="my-4 flex w-full justify-center gap-4">
           <button
             type="button"
