@@ -16,7 +16,7 @@ import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
-import WETHABI  from "ABIs/WETH.json"
+import WETHABI from "ABIs/WETH.json"
 import Slippage from "../Slippage"
 
 const Swap = ({ token }) => {
@@ -36,7 +36,6 @@ const Swap = ({ token }) => {
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { state, setState, handleChange } = useForm()
   const { calculateFee } = useCalculateFee()
-
 
   /* Build Token List */
   const [coingeckoTokenList, setCoingeckoTokenList] = React.useState([])
@@ -607,9 +606,10 @@ const Swap = ({ token }) => {
           <button
             type="button"
             disabled={hasNoLiquidity}
-            className={`flex w-full items-center justify-center rounded-3xl p-4 font-normal text-white ${
-              !hasNoLiquidity ? "bg-[#FC8D4D] hover:bg-[#d57239]" : ""
-            }`}
+            className={`focus:shadow-outline flex h-16 w-full w-full
+           appearance-none items-center justify-center rounded-full 
+          py-2 px-3 text-xl font-normal leading-tight text-white focus:outline-none bg-slate-300 dark:bg-slate-700 ${
+            !hasNoLiquidity ? "bg-sky-500 hover:bg-sky-600 dark:bg-orange-600 dark:hover:bg-orange-700" : ""}`}
             onClick={
               !hasNoLiquidity
                 ? () => handleSwapToken(state[tokens?.token0?.symbol], state[tokens?.token1?.symbol])
@@ -640,7 +640,12 @@ const Swap = ({ token }) => {
           ))}
         </div>
       )}
-      <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} setState={setState} />
+      <Slippage
+        value={state?.slippage}
+        handleChange={handleChange}
+        defaultSlippage={defaultSlippage * 100}
+        setState={setState}
+      />
     </div>
   )
 }
