@@ -1,21 +1,22 @@
 import { ChainId, Fetcher, Percent, Route, Token } from "@uniswap/sdk"
 import defaultTokens from "@uniswap/default-token-list"
-import axios from "axios"
-import { BigNumber, ethers } from "ethers"
-import React from "react"
-import useForm from "hooks/useForm"
+import axios                                      from "axios"
+import { BigNumber, ethers }                      from "ethers"
+import React                                      from "react"
+import useForm                                    from "hooks/useForm"
 import { HiOutlineSwitchVertical, HiArrowSmDown } from "react-icons/hi"
-import { useQueryClient } from "react-query"
-import { max256, NumberFromBig } from "utils/helpers"
-import { minimalABI } from "hooks/useERC20Contract"
-import useCalculateFee from "hooks/useCalculateFee"
-import { useLayoutStore } from "stores/useLayoutStore"
-import { usePlaygroundStore } from "stores/usePlaygroundStore"
-import TokenInput from "../TokenInput"
-import useGnosisTransaction from "hooks/useGnosisTransaction"
-import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
-import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
-import WETHABI from "ABIs/WETH.json"
+import { useQueryClient }                         from "react-query"
+import { max256, NumberFromBig }                  from "utils/helpers"
+import { minimalABI }                             from "hooks/useERC20Contract"
+import useCalculateFee                            from "hooks/useCalculateFee"
+import { useLayoutStore }                         from "stores/useLayoutStore"
+import { usePlaygroundStore }                     from "stores/usePlaygroundStore"
+import ToolTip                                    from '../../Layout/Tooltip'
+import TokenInput                                 from "../TokenInput"
+import useGnosisTransaction                       from "hooks/useGnosisTransaction"
+import IUniswapV2Router02                         from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
+import IUniswapV2Pair                             from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
+import WETHABI                                    from "ABIs/WETH.json"
 
 const Swap = ({ token }) => {
   const queryClient = useQueryClient()
@@ -111,7 +112,6 @@ const Swap = ({ token }) => {
         fiatBalance: !!existingToken ? existingToken?.fiatBalance : 0,
         fiatCode: !!existingToken ? existingToken?.fiatCode : "USD",
       }
-      console.log('tok', token1)
       setTokens({ ...tokens, token1 })
       setOpenSearch(false)
     },
@@ -160,7 +160,6 @@ const Swap = ({ token }) => {
 
   const uniswapTokens = React.useMemo(() => {
     if (!!tokens?.token0 && !!tokens?.token1) {
-      console.log('TOKENS', tokens)
       const token0 = tokens?.token0
       const token1 = tokens?.token1
       const uniToken0 = new Token(ChainId.MAINNET, token0?.address, token0?.decimals, token0?.symbol, token0?.name)
@@ -601,6 +600,14 @@ const Swap = ({ token }) => {
         )}
       </form>
       {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
+      <div>
+        <div className="py-1 text-sm font-thin">
+          Slippage Tolerance
+          <ToolTip>
+            Your transaction will revert if the price changes unfavorably more than this percentage.
+          </ToolTip>
+        </div>
+      </div>
       <div className="my-4 flex w-full justify-center gap-4">
         {showApprove && (
           <div

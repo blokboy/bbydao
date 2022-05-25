@@ -106,7 +106,7 @@ const TokenInput = ({
           {(_token && (
             <>
               {logo && (
-                <div className="mr-2 flex  h-8 w-8 overflow-hidden rounded-full">
+                <div className="mr-2 flex  h-6 w-6 overflow-hidden rounded-full">
                   <img alt={`${_token?.symbol} icon`} src={logo} />
                 </div>
               )}

@@ -1,5 +1,5 @@
-import {isAddress} from "ethers/lib/utils"
-import React       from "react"
+import { isAddress } from "ethers/lib/utils"
+import React from "react"
 
 /**
  * Create snippet of wallet address or
@@ -15,13 +15,18 @@ export const walletSnippet = addr => {
     return null
   }
 
-  return isAddress(addr)
-    ? addr.substring(0, 5) +
-        "..." +
-        addr.substring(addr.length - 5, addr.length)
-    : addr
+  return isAddress(addr) ? addr.substring(0, 5) + "..." + addr.substring(addr.length - 5, addr.length) : addr
 }
 
+export const debounce = (func, timeout = 300) => {
+  let timer
+  return (...args) => {
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      func.apply(this, args)
+    }, timeout)
+  }
+}
 
 /**
  * Determines whether an object is empty or not.
@@ -35,8 +40,6 @@ export const isEmpty = object => {
   }
   return true
 }
-
-
 
 /**
  * Converts HexString to Bytes
@@ -57,7 +60,6 @@ export const hexToBytes = hexString => {
   return byteArray
 }
 
-
 /**
  * Flattens Nested Object
  *
@@ -65,21 +67,14 @@ export const hexToBytes = hexString => {
  * @returns object
  */
 
-export const flatten = (object) => {
+export const flatten = object => {
   return Object.assign(
-      {},
-      ...function _flatten(o) {
-        return [].concat(...Object.keys(o)
-            .map(k =>
-                typeof o[k] === 'object' ?
-                    _flatten(o[k]) :
-                    ({[k]: o[k]})
-            )
-        );
-      }(object)
+    {},
+    ...(function _flatten(o) {
+      return [].concat(...Object.keys(o).map(k => (typeof o[k] === "object" ? _flatten(o[k]) : { [k]: o[k] })))
+    })(object)
   )
 }
-
 
 /**
  * Converts BigInt to Number
@@ -89,14 +84,13 @@ export const flatten = (object) => {
  */
 
 export const NumberFromBig = (balance, decimals) =>
-    Number((balance / 10 ** decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
+  Number((balance / 10 ** decimals).toString().match(/^\d+(?:\.\d{0,3})?/))
 
 /**
  * Max Value of BigInt
  * @returns {BigInt}
  */
-export const max256 = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
-
+export const max256 = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
 
 /******************************************************************
  * Converts e-Notation Numbers to Plain Numbers
@@ -112,20 +106,25 @@ export const max256 = '0xfffffffffffffffffffffffffffffffffffffffffffffffffffffff
  *
  *****************************************************************/
 
-export const eToNumber = (num) => {
-  if(!!num) {
-    let sign = "";
-    (num += "").charAt(0) == "-" && (num = num.substring(1), sign = "-")
-    let arr = num.split(/[e]/ig)
+export const eToNumber = num => {
+  if (!!num) {
+    let sign = ""
+    ;(num += "").charAt(0) == "-" && ((num = num.substring(1)), (sign = "-"))
+    let arr = num.split(/[e]/gi)
     if (arr.length < 2) return sign + num
-    let dot = (.1).toLocaleString().substr(1, 1), n = arr[0], exp = +arr[1],
-        w = (n = n.replace(/^0+/, '')).replace(dot, ''),
-        pos = n.split(dot)[1] ? n.indexOf(dot) + exp : w.length + exp,
-        L   = pos - w.length, s = "" + BigInt(w)
-    w   = exp >= 0 ? (L >= 0 ? s + "0".repeat(L) : r()) : (pos <= 0 ? "0" + dot + "0".repeat(Math.abs(pos)) + s : r())
-    L= w.split(dot); if (L[0]==0 && L[1]==0 || (+w==0 && +s==0) ) w = 0;
-    return sign + w;
-    function r() {return w.replace(new RegExp(`^(.{${pos}})(.)`), `$1${dot}$2`)}
+    let dot = (0.1).toLocaleString().substr(1, 1),
+      n = arr[0],
+      exp = +arr[1],
+      w = (n = n.replace(/^0+/, "")).replace(dot, ""),
+      pos = n.split(dot)[1] ? n.indexOf(dot) + exp : w.length + exp,
+      L = pos - w.length,
+      s = "" + BigInt(w)
+    w = exp >= 0 ? (L >= 0 ? s + "0".repeat(L) : r()) : pos <= 0 ? "0" + dot + "0".repeat(Math.abs(pos)) + s : r()
+    L = w.split(dot)
+    if ((L[0] == 0 && L[1] == 0) || (+w == 0 && +s == 0)) w = 0
+    return sign + w
+    function r() {
+      return w.replace(new RegExp(`^(.{${pos}})(.)`), `$1${dot}$2`)
+    }
   }
-
 }
