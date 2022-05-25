@@ -185,10 +185,11 @@ const Swap = ({ token }) => {
       return [Token0WETH, WETHToken1]
     } catch (err) {
       if (!!uniswapTokens) {
-        setHasNoLiquidity(true)
-        setPoolExists(false)
+        return await routeThroughUSDT(uniswapTokens)
       }
-      console.log("err", err)
+      setHasNoLiquidity(true)
+      setPoolExists(false)
+      console.log('err', err)
     }
   }
 
