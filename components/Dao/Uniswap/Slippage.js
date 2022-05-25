@@ -7,7 +7,7 @@ const Slippage = ({ value, handleChange, defaultSlippage }) => {
     <div className="mt-6 flex">
       <div
         onClick={() => setIsOpen(bool => !bool)}
-        className={`flex flex w-48 shadow-lg flex-col items-center rounded-xl p-2 text-sm font-thin hover:cursor-pointer border hover:border-slate-600 hover:dark:border-slate-400 dark:border-slate-800 bg-slate-200 dark:bg-slate-800 hover:border ${
+        className={`flex flex w-48 shadow-lg flex-col items-center rounded-xl p-2 text-sm font-thin hover:cursor-pointer border hover:border-[#FC8D4D] hover:dark:border-[#FC8D4D] dark:border-slate-800 bg-slate-200 dark:bg-slate-800 hover:border ${
           isOpen && "bg-slate-300  border-slate-600 dark:bg-slate-800 dark:border-slate-400"
         }`}
       >
