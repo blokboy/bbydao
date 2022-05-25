@@ -12,7 +12,7 @@ const Slippage = ({ value, handleChange, defaultSlippage }) => {
         }`}
       >
         <div className="flex flex items-center">
-          <div>Slippage Tolerance</div>
+          <div>Slippage Tolerance:</div>
           <div className="ml-2 text-xs italic">{value || defaultSlippage}%</div>
         </div>
         {isOpen && (
