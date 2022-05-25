@@ -589,38 +589,6 @@ const Swap = ({ token }) => {
           />
         )}
       </form>
-      {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
-
-      {showApprove && (
-        <div className="my-4 flex w-full justify-center gap-4">
-          <div
-            className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
-            onClick={() => handleApproveToken(tokenContracts, 0)}
-          >
-            Approve {tokens?.token0?.symbol}
-          </div>
-        </div>
-      )}
-      {!showApprove && !!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
-        <div className="my-4 flex w-full justify-center gap-4">
-          <button
-            type="button"
-            disabled={hasNoLiquidity}
-            className={`focus:shadow-outline flex h-16 w-full w-full
-           appearance-none items-center justify-center rounded-full 
-          py-2 px-3 text-xl font-normal leading-tight text-white focus:outline-none bg-slate-300 dark:bg-slate-700 ${
-            !hasNoLiquidity ? "bg-sky-500 hover:bg-sky-600 dark:bg-orange-600 dark:hover:bg-orange-700" : ""}`}
-            onClick={
-              !hasNoLiquidity
-                ? () => handleSwapToken(state[tokens?.token0?.symbol], state[tokens?.token1?.symbol])
-                : () => {}
-            }
-          >
-            {hasNoLiquidity ? `No Liquidity` : `Swap ${tokens?.token0?.symbol} for ${tokens?.token1?.symbol}`}
-          </button>
-        </div>
-      )}
-
       {openSearch && filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
         <div className="mt-4 flex max-h-96 flex-wrap gap-1 overflow-y-scroll rounded-lg bg-slate-100 p-4 pt-4 shadow-xl dark:bg-slate-800">
           {filteredTokensBySymbol.map((token, i) => (
@@ -640,6 +608,38 @@ const Swap = ({ token }) => {
           ))}
         </div>
       )}
+      {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
+      {showApprove && (
+        <div className="my-4 flex w-full justify-center gap-4">
+          <div
+            className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+            onClick={() => handleApproveToken(tokenContracts, 0)}
+          >
+            Approve {tokens?.token0?.symbol}
+          </div>
+        </div>
+      )}
+      {!showApprove && !!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
+        <div className="my-4 flex w-full justify-center gap-4">
+          <button
+            type="button"
+            disabled={hasNoLiquidity}
+            className={`focus:shadow-outline flex h-16 w-full w-full
+           appearance-none items-center justify-center rounded-full 
+          bg-slate-300 py-2 px-3 text-xl font-normal leading-tight text-white focus:outline-none dark:bg-slate-700 ${
+            !hasNoLiquidity ? "bg-sky-500 hover:bg-sky-600 dark:bg-orange-600 dark:hover:bg-orange-700" : ""
+          }`}
+            onClick={
+              !hasNoLiquidity
+                ? () => handleSwapToken(state[tokens?.token0?.symbol], state[tokens?.token1?.symbol])
+                : () => {}
+            }
+          >
+            {hasNoLiquidity ? `No Liquidity` : `Swap ${tokens?.token0?.symbol} for ${tokens?.token1?.symbol}`}
+          </button>
+        </div>
+      )}
+
       <Slippage
         value={state?.slippage}
         handleChange={handleChange}
