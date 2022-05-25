@@ -1,11 +1,11 @@
 import React from "react"
-import ToolTip              from "../Layout/ToolTip"
+import ToolTip from "../Layout/ToolTip"
 
 const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
   const [isOpen, setIsOpen] = React.useState(false)
   React.useEffect(() => {
     if (value < 0.1) {
-      setState({ slippage: NaN })
+      setState(state => ({ ...state, slippage: NaN }))
     }
   }, [value])
   return (
@@ -23,14 +23,14 @@ const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
         {isOpen && (
           <div className="my-2 flex h-8 items-center rounded-lg bg-slate-100 px-2 dark:bg-slate-700">
             <input
-              value={value || ''}
+              value={value || ""}
               type="number"
               name="slippage"
               onChange={handleChange}
               className="w-full appearance-none bg-slate-100 text-sm leading-tight focus:outline-none dark:bg-slate-700"
               onClick={e => e.stopPropagation()}
               onBlur={() => setIsOpen(false)}
-              step={.01}
+              step={0.01}
             />
             %
           </div>

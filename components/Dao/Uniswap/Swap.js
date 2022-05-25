@@ -119,7 +119,7 @@ const Swap = ({ token }) => {
   }, [WETH, ChainId, Token])
 
   const USDTToken = React.useMemo(() => {
-    return new Token(ChainId.MAINNET, WETH, 6, "USDT", "Tether USD")
+    return new Token(ChainId.MAINNET, USDT, 6, "USDT", "Tether USD")
   }, [WETH, ChainId, Token])
 
   const routeThroughUSDT = async uniswapTokens => {
@@ -152,7 +152,7 @@ const Swap = ({ token }) => {
     } catch (err) {
       setHasNoLiquidity(true)
       setPoolExists(false)
-      console.log("er2", err)
+      setState(state => ({ ...state, [tokens.token0?.symbol]: true, [tokens.token1?.symbol]: true }))
     }
   }
 
@@ -628,7 +628,7 @@ const Swap = ({ token }) => {
           </div>
         </div>
       )}
-      {!showApprove && Object.keys(uniswapTokens).length === 2 && (
+      {!showApprove && !!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
         <div className="my-4 flex w-full justify-center gap-4">
           <button
             type="button"
