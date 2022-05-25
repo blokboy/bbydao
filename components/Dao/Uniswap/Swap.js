@@ -607,7 +607,7 @@ const Swap = ({ token }) => {
         )}
       </form>
       {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
-      <Slippage value={state?.slippage} handleChange={handleChange} />
+      <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} />
       <div className="my-4 flex w-full justify-center gap-4">
         {showApprove && (
           <div
