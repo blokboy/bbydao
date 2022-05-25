@@ -586,38 +586,21 @@ const Swap = ({ token }) => {
             autoFocus={true}
           />
         )}
-        {openSearch && filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
-          <div className="mt-4 flex max-h-96 flex-wrap gap-1 overflow-y-scroll rounded-lg bg-slate-100 p-4 pt-4 shadow-xl dark:bg-slate-800">
-            {filteredTokensBySymbol.map((token, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => handlePickToken(token)}
-                className="mb-2 inline-flex self-start rounded-full bg-slate-300 p-2 px-4 font-light dark:bg-slate-600 hover:dark:bg-slate-700"
-              >
-                <div className="flex items-center justify-center">
-                  <div className="mr-2">{token?.symbol?.toUpperCase()}</div>
-                  <div className="flex h-6 w-6 overflow-hidden rounded-full">
-                    <img src={token?.uri} />
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
       </form>
       {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
-      <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} />
-      <div className="my-4 flex w-full justify-center gap-4">
-        {showApprove && (
+
+      {showApprove && (
+        <div className="my-4 flex w-full justify-center gap-4">
           <div
             className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
             onClick={() => handleApproveToken(tokenContracts, 0)}
           >
             Approve {tokens?.token0?.symbol}
           </div>
-        )}
-        {!showApprove && !!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
+        </div>
+      )}
+      {!showApprove && !!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
+        <div className="my-4 flex w-full justify-center gap-4">
           <button
             type="button"
             disabled={hasNoLiquidity}
@@ -632,8 +615,29 @@ const Swap = ({ token }) => {
           >
             {hasNoLiquidity ? `No Liquidity` : `Swap ${tokens?.token0?.symbol} for ${tokens?.token1?.symbol}`}
           </button>
-        )}
-      </div>
+        </div>
+      )}
+
+      {openSearch && filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
+        <div className="mt-4 flex max-h-96 flex-wrap gap-1 overflow-y-scroll rounded-lg bg-slate-100 p-4 pt-4 shadow-xl dark:bg-slate-800">
+          {filteredTokensBySymbol.map((token, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => handlePickToken(token)}
+              className="mb-2 inline-flex self-start rounded-full bg-slate-300 p-2 px-4 font-light dark:bg-slate-600 hover:dark:bg-slate-700"
+            >
+              <div className="flex items-center justify-center">
+                <div className="mr-2">{token?.symbol?.toUpperCase()}</div>
+                <div className="flex h-6 w-6 overflow-hidden rounded-full">
+                  <img src={token?.uri} />
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+      <Slippage value={state?.slippage} handleChange={handleChange} defaultSlippage={defaultSlippage * 100} />
     </div>
   )
 }
