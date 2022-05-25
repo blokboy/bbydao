@@ -11,8 +11,8 @@ import { useLayoutStore }        from "stores/useLayoutStore"
 import { usePlaygroundStore }    from "stores/usePlaygroundStore"
 import { amount }                from "./helpers"
 import useGnosisTransaction      from "hooks/useGnosisTransaction"
-import useCalculateFee           from "hooks/useCalculateFee"
-import Slippage                  from './Slippage'
+import useCalculateFee from "hooks/useCalculateFee"
+import Slippage        from '../Slippage'
 
 const RemoveLiquidity = ({ token }) => {
   const bbyDao = usePlaygroundStore(state => state.expandedDao)

@@ -9,8 +9,8 @@ import { minimalABI }            from "hooks/useERC20Contract"
 import { useLayoutStore }        from "stores/useLayoutStore"
 import { usePlaygroundStore }    from "stores/usePlaygroundStore"
 import { max256, NumberFromBig } from "utils/helpers"
-import TokenInput                from "../TokenInput"
-import Slippage                  from '../Uniswap/Slippage'
+import TokenInput from "../TokenInput"
+import Slippage   from '../Slippage'
 
 const DSR = ({ token }) => {
   const ref = React.useRef()

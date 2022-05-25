@@ -14,7 +14,7 @@ import PoolInfo from "./PoolInfo"
 import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import useCalculateFee from "hooks/useCalculateFee"
-import Slippage from "./Slippage"
+import Slippage        from "../Slippage"
 
 const UniswapLpModal = ({ lpToken0, token1 = null }) => {
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")

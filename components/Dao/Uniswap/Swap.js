@@ -16,8 +16,8 @@ import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
-import WETHABI from "ABIs/WETH.json"
-import Slippage from "./Slippage"
+import WETHABI  from "ABIs/WETH.json"
+import Slippage from "../Slippage"
 
 const Swap = ({ token }) => {
   const queryClient = useQueryClient()
@@ -37,6 +37,8 @@ const Swap = ({ token }) => {
   const { state, setState, handleChange } = useForm()
   const { calculateFee } = useCalculateFee()
 
+
+  /* Build Token List */
   const [coingeckoTokenList, setCoingeckoTokenList] = React.useState([])
   React.useMemo(async () => {
     try {
@@ -56,7 +58,6 @@ const Swap = ({ token }) => {
     name: "Ether",
     symbol: "ETH",
   }
-
   const defaultTokenList = [...defaultTokens?.["tokens"], ...coingeckoTokenList, defaultEth]
 
   /* init slippage */
