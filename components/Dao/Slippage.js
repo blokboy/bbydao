@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import ToolTip from "../Layout/Tooltip"
+import ToolTip              from "../Layout/ToolTip"
 
 const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
   const [isOpen, setIsOpen] = React.useState(false)

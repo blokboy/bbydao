@@ -13,7 +13,7 @@ const ToolTip = ({ message, children }) => {
             <div
                 onMouseOver={() => setIsOpen(true)}
                 onMouseOut={() => setIsOpen(false)}
-                className="absolute left-7 -top-8 z-50 w-44 rounded-xl shadow bg-slate-300 dark:bg-slate-600 text-sm font-thin"
+                className="absolute top-6 -ml-32 sm:-top-8 sm:ml-0 left-7 z-50 w-44 rounded-xl shadow bg-slate-300 dark:bg-slate-600 text-sm font-thin"
             >
                 <div className="p-4">{message || children}</div>
             </div>
