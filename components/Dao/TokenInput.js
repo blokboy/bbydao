@@ -98,7 +98,7 @@ const TokenInput = ({
           .query(`{token(id: "${address}"){name symbol decimals derivedETH}}`)
           .toPromise()
         const derivedETH = data?.data?.token?.derivedETH
-        priceUSD = (derivedETH * ethPriceUSD).toFixed(2)
+        priceUSD = (derivedETH * ethPriceUSD)
         setTokenPriceUSD(priceUSD)
       }
     }
@@ -136,7 +136,7 @@ const TokenInput = ({
     <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
       <div className="flex flex-row">
         <input
-          value={state?.[_token?.symbol] || (max < 1 ? 0 : "")}
+          value={state?.[_token?.symbol] || ""}
           onChange={e => handleSetTokenValue(e, _token, tokenInputRef)}
           className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-4xl leading-tight focus:outline-none dark:bg-slate-800"
           id="name"
@@ -169,8 +169,7 @@ const TokenInput = ({
       </div>
       <div className="flex w-full flex-row items-end justify-end space-x-2 font-light">
         <div className="flex w-full justify-between">
-
-          {(isSwap && !!state?.[_token?.symbol]) ? (
+          {(isSwap && !!state?.[_token?.symbol] && (!isNaN(tokenInputPricesUSD.token0) && !isNaN(tokenInputPricesUSD.token1))) ? (
             <div className="flex">
               <div className="text-sm text-slate-600">$</div>
               <div className="text-sm text-slate-600">

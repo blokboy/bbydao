@@ -6,13 +6,11 @@ import React from "react"
 import useForm from "hooks/useForm"
 import { HiOutlineSwitchVertical, HiArrowSmDown } from "react-icons/hi"
 import { useQueryClient } from "react-query"
-import { createClient } from "urql"
 import { max256, NumberFromBig } from "utils/helpers"
 import { minimalABI } from "hooks/useERC20Contract"
 import useCalculateFee from "hooks/useCalculateFee"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
-import { useDaoStore } from "stores/useDaoStore"
 import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
@@ -22,7 +20,6 @@ import Slippage from "../Slippage"
 import TokenSearch from "../TokenSearch"
 
 const Swap = ({ token }) => {
-  const UniGraphAPI = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2"
   const queryClient = useQueryClient()
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()
@@ -32,7 +29,6 @@ const Swap = ({ token }) => {
   const [isEthOnEth, setIsEthOnEth] = React.useState(false)
   const bbyDao = usePlaygroundStore(state => state.expandedDao)
   const signer = useLayoutStore(state => state.signer)
-  const ethPriceUSD = useDaoStore(state => state.ethPriceUSD)
   const bbyDaoTokens = queryClient.getQueryData(["daoTokens", bbyDao])
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const [hasAllowance, setHasAllowance] = React.useState()
@@ -447,7 +443,7 @@ const Swap = ({ token }) => {
           return acc
         }, [])
       )
-      const midPrice = route.midPrice.toSignificant(6)
+      const midPrice = route.midPrice.toSignificant(token.decimals)
       const token1Input = token0Input * midPrice
 
       setState(state => ({ ...state, [token?.symbol]: token0Input }))
@@ -470,11 +466,11 @@ const Swap = ({ token }) => {
       const slippage = state?.slippage / 100 || defaultSlippage
       const inputToken = {
         token: tokens.token0,
-        value: parseFloat(token0.toString()),
+        value: token0.toString(),
       }
       const outputToken = {
         token: tokens.token1,
-        value: parseFloat(token1.toString()) - parseFloat(token1.toString()) * slippage,
+        value: token1.toString() - parseFloat(token1.toString()) * slippage,
       }
 
       const swapExactTokensForTokens = inputToken.token.symbol !== "ETH" && outputToken.token.symbol !== "ETH"
