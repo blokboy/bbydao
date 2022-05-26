@@ -6,11 +6,13 @@ import React from "react"
 import useForm from "hooks/useForm"
 import { HiOutlineSwitchVertical, HiArrowSmDown } from "react-icons/hi"
 import { useQueryClient } from "react-query"
+import { createClient } from "urql"
 import { max256, NumberFromBig } from "utils/helpers"
 import { minimalABI } from "hooks/useERC20Contract"
 import useCalculateFee from "hooks/useCalculateFee"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
+import { useDaoStore } from "stores/useDaoStore"
 import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
@@ -20,6 +22,7 @@ import Slippage from "../Slippage"
 import TokenSearch from "../TokenSearch"
 
 const Swap = ({ token }) => {
+  const UniGraphAPI = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2"
   const queryClient = useQueryClient()
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()
@@ -29,6 +32,7 @@ const Swap = ({ token }) => {
   const [isEthOnEth, setIsEthOnEth] = React.useState(false)
   const bbyDao = usePlaygroundStore(state => state.expandedDao)
   const signer = useLayoutStore(state => state.signer)
+  const ethPriceUSD = useDaoStore(state => state.ethPriceUSD)
   const bbyDaoTokens = queryClient.getQueryData(["daoTokens", bbyDao])
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const [hasAllowance, setHasAllowance] = React.useState()
@@ -397,7 +401,7 @@ const Swap = ({ token }) => {
       )
 
       /*  Set Amount of Pair Token */
-      const midPrice = route.midPrice.toSignificant(6)
+      const midPrice = route.midPrice.toSignificant(token.decimals)
       const token1Input = Number(token0Input * midPrice)
 
       /*  Construct Uniswap Trade for info about trade */
@@ -411,14 +415,6 @@ const Swap = ({ token }) => {
       )
       const executionPrice = trade?.executionPrice.toSignificant(token?.decimals)
       const nextMidPrice = trade?.nextMidPrice.toSignificant(token?.decimals)
-
-      const mmmPrice = trade?.route?.midPrice.toSignificant(token?.decimals)
-      // console.log("mm", mmmPrice)
-      // console.log("tr", trade)
-      // console.log("md", midPrice)
-      // console.log("e", executionPrice)
-      // console.log("nee", nextMidPrice)
-      // console.log("e", executionPrice / midPrice)
 
       if (token0Input > max) {
         handleSetMaxTokenValue(token, tokenRef)

@@ -135,7 +135,6 @@ const Send = ({ token }) => {
   const prepare = React.useMemo(() => {
     let show = false
     let args = undefined
-    console.log("s", state)
     if (ethers.utils.isAddress(state.recipient) && parseFloat(state?.[token?.symbol]) > 0) {
       show = true
       args = { recipient: ethers.utils.getAddress(state.recipient), value: parseFloat(state?.[token?.symbol]) }

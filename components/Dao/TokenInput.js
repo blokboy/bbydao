@@ -1,6 +1,7 @@
 import { BigNumber, ethers } from "ethers"
 import React from "react"
 import { flatten } from "utils/helpers"
+import { useDaoStore } from "stores/useDaoStore"
 
 const TokenInput = ({
   pair,
@@ -16,6 +17,10 @@ const TokenInput = ({
   isSend,
   isEarn,
 }) => {
+  const uniswapV2GraphClient = useDaoStore(state => state.uniswapV2GraphClient)
+  const ethPriceUSD = useDaoStore(state => state.ethPriceUSD)
+  const [tokenPriceUSD, setTokenPriceUSD] = React.useState(null)
+
   const _token = React.useMemo(() => {
     if (!!token) {
       return flatten(token)
@@ -80,6 +85,19 @@ const TokenInput = ({
     }
   }, [_token])
 
+  /* Get USD price of token */
+  React.useMemo(async () => {
+    if (!!token && token.symbol !== "ETH") {
+      const address = ethers.utils.getAddress(token?.address).toLowerCase()
+      const data = await uniswapV2GraphClient
+        .query(`{token(id: "${address}"){name symbol decimals derivedETH}}`)
+        .toPromise()
+      const derivedETH = data.data.token.derivedETH
+      const priceUSD = (derivedETH * ethPriceUSD).toFixed(2)
+      setTokenPriceUSD(priceUSD)
+    }
+  }, [token, uniswapV2GraphClient])
+
   return (
     <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
       <div className="flex flex-row">
@@ -116,14 +134,23 @@ const TokenInput = ({
         </button>
       </div>
       <div className="flex w-full flex-row items-end justify-end space-x-2 font-light">
-        {_token?.balance ? (
-          <>
-            <div className="text-sm text-slate-600">Balance:</div>
-            <div className="text-sm text-slate-600">
-              {ethers.utils.formatUnits(_token?.balance, _token?.decimals).match(/^\d+(?:\.\d{0,5})?/)}
+        <div className="flex w-full justify-between">
+          {tokenPriceUSD ? (
+            <div className="flex">
+              <div className="text-sm text-slate-600">$</div>
+              <div className="text-sm text-slate-600">{(tokenPriceUSD * state?.[_token?.symbol]).toFixed(2)}</div>
             </div>
-          </>
-        ) : null}
+          ) : null}
+          {_token?.balance ? (
+            <div className="flex">
+              <div className="text-sm text-slate-600">Balance:</div>
+              <div className="text-sm text-slate-600">
+                {ethers.utils.formatUnits(_token?.balance, _token?.decimals).match(/^\d+(?:\.\d{0,5})?/)}
+              </div>
+            </div>
+          ) : null}
+        </div>
+
         {showMax && (
           <div
             className={`flex cursor-pointer justify-end rounded-lg bg-[#eda67e24] py-0.5 px-2 text-[.8rem] text-[#FC8D4D] hover:bg-[#f98c4e57] ${

@@ -16,8 +16,10 @@ import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import useCalculateFee from "hooks/useCalculateFee"
 import Slippage from "../Slippage"
+import { createClient } from "urql"
 
 const AddLiquidity = ({ lpToken0, token1 = null }) => {
+  const UniGraphAPI = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2"
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { state, setState, handleChange } = useForm()
@@ -31,6 +33,16 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
   const queryClient = useQueryClient()
   const safeAddress = usePlaygroundStore(state => state.expandedDao)
   const signer = useLayoutStore(state => state.signer)
+
+  const client = createClient({
+    url: UniGraphAPI,
+  })
+
+  React.useMemo(async () => {
+    if (!!client) {
+      const data = await client.query(`{bundle(id: "1" ) {ethPrice}}`).toPromise()
+    }
+  }, [client])
 
   /* init slippage */
   const defaultSlippage = 0.005
