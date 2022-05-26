@@ -219,7 +219,7 @@ const Swap = ({ token }) => {
           signer
         )
         const totalSupply = await pairContract?.totalSupply()
-        const hasLiquidity = parseInt((totalSupply.toString() / 10 ** uniPair?.liquidityToken?.decimals).toFixed()) > 0
+        const hasLiquidity = parseFloat((totalSupply.toString() / 10 ** uniPair?.liquidityToken?.decimals).toFixed()) > 0
 
         if (!hasLiquidity && !hasEth) {
           if (!hasEth) {
