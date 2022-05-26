@@ -9,7 +9,10 @@ export const useDaoStore = create(set => ({
   setETHPriceUSD: price => set({ethPriceUSD: price}),
 
   uniswapV2GraphClient: null,
-  setUniswapV2GraphClient: client => set({uniswapV2GraphClient: client})
+  setUniswapV2GraphClient: client => set({uniswapV2GraphClient: client}),
+
+  tokenInputPriceUSD: {},
+  setTokenInputPriceUSD: state => set({tokenInputPriceUSD: {...state}})
 
 
 

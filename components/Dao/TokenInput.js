@@ -18,6 +18,9 @@ const TokenInput = ({
   isEarn,
 }) => {
   const uniswapV2GraphClient = useDaoStore(state => state.uniswapV2GraphClient)
+  const setTokenInputPriceUSD = useDaoStore(state => state.setTokenInputPriceUSD)
+  const tokenInputPricesUSD = useDaoStore(state => state.tokenInputPriceUSD)
+
   const ethPriceUSD = useDaoStore(state => state.ethPriceUSD)
   const [tokenPriceUSD, setTokenPriceUSD] = React.useState(null)
 
@@ -87,16 +90,47 @@ const TokenInput = ({
 
   /* Get USD price of token */
   React.useMemo(async () => {
-    if (!!token && token.symbol !== "ETH") {
-      const address = ethers.utils.getAddress(token?.address).toLowerCase()
-      const data = await uniswapV2GraphClient
-        .query(`{token(id: "${address}"){name symbol decimals derivedETH}}`)
-        .toPromise()
-      const derivedETH = data.data.token.derivedETH
-      const priceUSD = (derivedETH * ethPriceUSD).toFixed(2)
-      setTokenPriceUSD(priceUSD)
+    if (!!token) {
+      let priceUSD
+      if (token.symbol !== "ETH") {
+        const address = ethers.utils.getAddress(token?.address).toLowerCase()
+        const data = await uniswapV2GraphClient
+          .query(`{token(id: "${address}"){name symbol decimals derivedETH}}`)
+          .toPromise()
+        const derivedETH = data?.data?.token?.derivedETH
+        priceUSD = (derivedETH * ethPriceUSD).toFixed(2)
+        setTokenPriceUSD(priceUSD)
+      }
     }
-  }, [token, uniswapV2GraphClient])
+  }, [token, tokens, uniswapV2GraphClient, ethPriceUSD, state])
+
+  /*  store USD prices of tokens and their input to zustand */
+  React.useMemo(async () => {
+    if (!!ethPriceUSD) {
+      if (tokens.token0.symbol === token?.symbol) {
+        setTokenInputPriceUSD({
+          ...tokenInputPricesUSD,
+          ...{ token0: (token?.symbol === "ETH" ? ethPriceUSD : tokenPriceUSD) * state?.[_token?.symbol] },
+        })
+      } else {
+        setTokenInputPriceUSD({
+          ...tokenInputPricesUSD,
+          ...{ token1: (token?.symbol === "ETH" ? ethPriceUSD : tokenPriceUSD) * state?.[_token?.symbol] },
+        })
+      }
+    }
+  }, [state, tokenPriceUSD])
+
+  /*  Compose percentage display of USD price diff of trade */
+
+  const USDDiff = React.useMemo(() => {
+    if (!!tokenInputPricesUSD.token0 && !!tokenInputPricesUSD.token1) {
+      const diff =
+        (tokenInputPricesUSD.token1 - tokenInputPricesUSD.token0) /
+        ((tokenInputPricesUSD.token1 + tokenInputPricesUSD.token0) / 2)
+      return `(${(diff * 100).toFixed(2)}%)`
+    }
+  }, [tokenInputPricesUSD])
 
   return (
     <div className="flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
@@ -135,14 +169,19 @@ const TokenInput = ({
       </div>
       <div className="flex w-full flex-row items-end justify-end space-x-2 font-light">
         <div className="flex w-full justify-between">
-          {tokenPriceUSD ? (
+          {!!state?.[_token?.symbol] ? (
             <div className="flex">
               <div className="text-sm text-slate-600">$</div>
-              <div className="text-sm text-slate-600">{(tokenPriceUSD * state?.[_token?.symbol]).toFixed(2)}</div>
+              <div className="text-sm text-slate-600">
+                {((token?.symbol === "ETH" ? ethPriceUSD : tokenPriceUSD) * state?.[_token?.symbol]).toFixed(2)}{" "}
+                {!isToken0 && (
+                  <span className={`${USDDiff?.includes("-") ? "text-slate-600" : "text-violet-300"}`}>{USDDiff}</span>
+                )}
+              </div>
             </div>
           ) : null}
-          {_token?.balance ? (
-            <div className="flex">
+          {!!_token?.balance ? (
+            <div className="ml-auto flex">
               <div className="text-sm text-slate-600">Balance:</div>
               <div className="text-sm text-slate-600">
                 {ethers.utils.formatUnits(_token?.balance, _token?.decimals).match(/^\d+(?:\.\d{0,5})?/)}
