@@ -189,7 +189,7 @@ const Swap = ({ token }) => {
       }
       setHasNoLiquidity(true)
       setPoolExists(false)
-      console.log('err', err)
+      console.log("err", err)
     }
   }
 
@@ -631,14 +631,15 @@ const Swap = ({ token }) => {
       )}
       {!showApprove && !!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
         <div className="my-4 flex w-full justify-center gap-4">
+          {console.log("h", !hasNoLiquidity)}
           <button
             type="button"
             disabled={hasNoLiquidity}
-            className={`focus:shadow-outline flex h-16 w-full w-full
-           appearance-none items-center justify-center rounded-full 
-          bg-slate-300 py-2 px-3 text-xl font-normal leading-tight text-white focus:outline-none dark:bg-slate-700 ${
-            !hasNoLiquidity ? "bg-sky-500 hover:bg-sky-600 dark:bg-orange-600 dark:hover:bg-orange-700" : ""
-          }`}
+            className={`focus:shadow-outline flex h-16 w-full w-full appearance-none items-center justify-center rounded-full py-2 px-3 text-xl font-normal leading-tight text-white focus:outline-none  ${
+              !hasNoLiquidity
+                ? "bg-sky-500 hover:bg-sky-600 dark:bg-orange-600 dark:hover:bg-orange-700"
+                : "bg-slate-300 dark:bg-slate-700"
+            }`}
             onClick={
               !hasNoLiquidity
                 ? () => handleSwapToken(state[tokens?.token0?.symbol], state[tokens?.token1?.symbol])
