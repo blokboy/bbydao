@@ -62,7 +62,7 @@ const Swap = ({ token }) => {
   const defaultTokenList = [...defaultTokens?.["tokens"], ...coingeckoTokenList, defaultEth]
 
   /* init slippage */
-  const defaultSlippage = 0.03
+  const defaultSlippage = 0.005
   React.useEffect(() => {
     setState({ slippage: defaultSlippage * 100 })
   }, [])

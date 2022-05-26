@@ -25,7 +25,7 @@ const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
           <div className="ml-2 text-xs italic">{value || defaultSlippage}%</div>
         </div>
         {isOpen && (
-          <div className="my-2 flex h-8 items-center rounded-lg bg-slate-100 px-2 dark:bg-slate-700">
+          <div className="my-2 w-3/4 flex h-8 items-center rounded-lg bg-slate-100 px-2 dark:bg-slate-700">
             <input
               value={value || (value < 0 ? 0 : "")}
               type="number"
