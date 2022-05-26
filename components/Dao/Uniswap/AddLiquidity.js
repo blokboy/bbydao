@@ -432,7 +432,7 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
         position. These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at
         any time.
       </div>
-      <form className="flex w-full flex-col space-y-8 py-4" onSubmit={e => handleSubmit(e, liquidityInfo)}>
+      <form className="flex w-full flex-col py-4" onSubmit={e => handleSubmit(e, liquidityInfo)}>
         <TokenInput
           tokens={{ token0: lpToken0, token1: lpToken1 }}
           pair={pair}

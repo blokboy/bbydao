@@ -6,4 +6,6 @@ export const useDaoStore = create(set => ({
   setTxModalOpen: () => set(state => ({ txModalOpen: !state.txModalOpen })),
 
 
+
+
 }))

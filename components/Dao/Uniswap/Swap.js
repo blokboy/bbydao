@@ -1,4 +1,4 @@
-import { ChainId, Fetcher, Percent, Route, Token } from "@uniswap/sdk"
+import { ChainId, Fetcher, Trade, TokenAmount, TradeType, Route, Token } from "@uniswap/sdk"
 import defaultTokens from "@uniswap/default-token-list"
 import axios from "axios"
 import { BigNumber, ethers } from "ethers"
@@ -59,7 +59,7 @@ const Swap = ({ token }) => {
     name: "Ether",
     symbol: "ETH",
   }
-  const defaultTokenList = [...defaultTokens?.["tokens"], ...coingeckoTokenList, defaultEth]
+  const defaultTokenList = [defaultEth, ...defaultTokens?.["tokens"], ...coingeckoTokenList]
 
   /* init slippage */
   const defaultSlippage = 0.005
@@ -395,8 +395,30 @@ const Swap = ({ token }) => {
           return acc
         }, [])
       )
+
+      /*  Set Amount of Pair Token */
       const midPrice = route.midPrice.toSignificant(6)
       const token1Input = Number(token0Input * midPrice)
+
+      /*  Construct Uniswap Trade for info about trade */
+      const trade = new Trade(
+        route,
+        new TokenAmount(
+          uniswapTokens[token.symbol],
+          ethers.utils.parseUnits(token0Input.toString(), token.decimals).toBigInt()
+        ),
+        TradeType.EXACT_INPUT
+      )
+      const executionPrice = trade?.executionPrice.toSignificant(token?.decimals)
+      const nextMidPrice = trade?.nextMidPrice.toSignificant(token?.decimals)
+
+      const mmmPrice = trade?.route?.midPrice.toSignificant(token?.decimals)
+      // console.log("mm", mmmPrice)
+      // console.log("tr", trade)
+      // console.log("md", midPrice)
+      // console.log("e", executionPrice)
+      // console.log("nee", nextMidPrice)
+      // console.log("e", executionPrice / midPrice)
 
       if (token0Input > max) {
         handleSetMaxTokenValue(token, tokenRef)
@@ -438,6 +460,14 @@ const Swap = ({ token }) => {
       console.log("err", err)
     }
   }
+
+  /*
+   *
+   * Handle Swap Token:
+   *
+   * Determines which RouterV2 method to call
+   *
+   * */
   const handleSwapToken = async (token0, token1) => {
     try {
       const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
@@ -631,7 +661,6 @@ const Swap = ({ token }) => {
       )}
       {!showApprove && !!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
         <div className="my-4 flex w-full justify-center gap-4">
-          {console.log("h", !hasNoLiquidity)}
           <button
             type="button"
             disabled={hasNoLiquidity}

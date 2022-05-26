@@ -15,7 +15,7 @@ const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
   return (
     <div className="mt-6 flex">
       <div
-        onClick={() => setIsOpen(bool => !bool)}
+        onClick={!isOpen ? () => setIsOpen(true) : () => {}}
         className={`flex flex w-48 flex-col items-center rounded-xl border bg-slate-200 p-2 text-sm font-thin shadow-lg hover:cursor-pointer hover:border hover:border-[#FC8D4D] dark:border-slate-800 dark:bg-slate-800 hover:dark:border-[#FC8D4D] ${
           isOpen && "border-slate-600  bg-slate-300 dark:border-slate-400 dark:bg-slate-800"
         }`}
@@ -25,7 +25,7 @@ const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
           <div className="ml-2 text-xs italic">{value || defaultSlippage}%</div>
         </div>
         {isOpen && (
-          <div className="my-2 w-3/4 flex h-8 items-center rounded-lg bg-slate-100 px-2 dark:bg-slate-700">
+          <div className="my-2 flex h-8 w-3/4 items-center rounded-lg bg-slate-100 px-2 dark:bg-slate-700">
             <input
               value={value || (value < 0 ? 0 : "")}
               type="number"
