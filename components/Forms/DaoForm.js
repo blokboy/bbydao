@@ -35,6 +35,9 @@ const DaoForm = () => {
     enabled: !!signer,
   })
 
+  console.log("signer:", signer)
+  console.log(friendData)
+
   const parsedList = React.useMemo(() => {
     let list = []
     if (friendData) {
@@ -125,61 +128,91 @@ const DaoForm = () => {
     invites: Yup.array().min(1, "you need at least one friend!").required("Required"),
   })
 
-  return (
-    <Formik
-      initialErrors={{}}
-      initialValues={{
-        invites: [],
-        name: "",
-        signer,
-      }}
-      onSubmit={values => handleSubmit({ ...values })}
-      validationSchema={validationSchema}
-      enableReinitialize={true}
-    >
-      {({ values, isSubmitting, setFieldValue, errors }) => (
-        <fieldset className="h-full w-full" disabled={isSubmitting}>
-          <Form className="flex flex-col p-4">
-            <div className="w-full">
-              {errors.invites ? <div className="p-2">{errors.invites}</div> : null}
-              <label className="block p-2 text-sm font-bold" htmlFor="invites">
-                invite friends
-              </label>
-              <p className="p-2 text-xs">select from your friends</p>
-              <Select
-                // defaultValue={}
-                styles={customStyles}
-                isMulti
-                name="invites"
-                options={friends}
-                className="basic-multi-select"
-                classNamePrefix="select"
-                onChange={e => {
-                  const selectedAddresses = e.map(option => option.value)
-                  setFieldValue("invites", selectedAddresses)
-                }}
-              />
-            </div>
-            <div className="mb-8">
-              {errors.name ? <div className="p-2">{errors.name}</div> : null}
-              <label className="mb-2 block text-sm font-bold" htmlFor="name">
-                name
-              </label>
-              <Input name={"name"} />
-            </div>
+  const [category, setCategory] = React.useState(1)
 
-            <div className="flex items-center justify-between">
-              <button
-                className="focus:shadow-outline mb-3 w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
-                type="submit"
-              >
-                save
-              </button>
-            </div>
-          </Form>
-        </fieldset>
-      )}
-    </Formik>
+  return (
+    <React.Fragment>
+      <div className="flex w-full space-x-2">
+        <div
+          className={
+            "w-full rounded-lg border p-2" + (category === 1 ? " border-teal-300 bg-slate-800" : " border-white")
+          }
+          onClick={() => setCategory(1)}
+        >
+          <h1>Trusted</h1>
+          <ul className="text-sm">
+            <li>full voting</li>
+            <li>execute at will</li>
+          </ul>
+        </div>
+        <div
+          className={
+            "w-full rounded-lg border p-2" + (category === 2 ? " border-teal-300 bg-slate-800" : " border-white")
+          }
+          onClick={() => setCategory(2)}
+        >
+          <h1>Trustless</h1>
+          <ul className="text-sm">
+            <li>anyone can act</li>
+            <li>time delay execution</li>
+          </ul>
+        </div>
+      </div>
+      <Formik
+        initialErrors={{}}
+        initialValues={{
+          invites: [],
+          name: "",
+          signer,
+        }}
+        onSubmit={values => handleSubmit({ ...values })}
+        validationSchema={validationSchema}
+        enableReinitialize={true}
+      >
+        {({ values, isSubmitting, setFieldValue, errors }) => (
+          <fieldset className="h-full w-full" disabled={isSubmitting}>
+            <Form className="flex flex-col p-4">
+              <div className="w-full">
+                {errors.invites ? <div className="p-2">{errors.invites}</div> : null}
+                <label className="block p-2 text-sm font-bold" htmlFor="invites">
+                  invite friends
+                </label>
+                <p className="p-2 text-xs">select from your friends</p>
+                <Select
+                  // defaultValue={}
+                  styles={customStyles}
+                  isMulti
+                  name="invites"
+                  options={friends}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                  onChange={e => {
+                    const selectedAddresses = e.map(option => option.value)
+                    setFieldValue("invites", selectedAddresses)
+                  }}
+                />
+              </div>
+              <div className="mb-8">
+                {errors.name ? <div className="p-2">{errors.name}</div> : null}
+                <label className="mb-2 block text-sm font-bold" htmlFor="name">
+                  name
+                </label>
+                <Input name={"name"} />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <button
+                  className="focus:shadow-outline mb-3 w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
+                  type="submit"
+                >
+                  save
+                </button>
+              </div>
+            </Form>
+          </fieldset>
+        )}
+      </Formik>
+    </React.Fragment>
   )
 }
 

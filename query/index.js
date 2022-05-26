@@ -114,8 +114,17 @@ export const deleteOffChainTx = async req => {
   return res.data
 }
 
-// create dao
-// { name: string, type: enum, address: string, members:string[] }
+/* 
+  create dao
+  { 
+    name: string, 
+    address: string, 
+    members: string[] 
+    type: enum, (DAO=1, NURSERY=2)
+    category: enum, (TRUSTED=1, TRUSTLESS=2)
+  }
+*/
+
 export const createDao = async req => {
   const res = await api.post("/dao/create", req)
   return res.data
