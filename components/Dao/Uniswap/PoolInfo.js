@@ -200,17 +200,17 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
   }, [hasAllowance, token0, token1, pair])
 
   return (
-    <>
+    <div className="my-8 dark:bg-slate-800 p-6">
       {!isEmpty(info) && (
-        <div className="flex flex-col items-center px-12">
-          <div className="mb-2">
-            <a href={info?.uris?.uniswap} target="_blank" className="underline">
-              {prettyPairName} Uniswap V2 Pool
+        <div className="flex flex-col items-center">
+          <div className="mb-6">
+            <a href={info?.uris?.uniswap} target="_blank" className="text-2xl hover:text-orange-500">
+              {prettyPairName} Pair
             </a>
           </div>
           {!!info.uniswapTokensMinted && (
-            <div className="mb-2 flex w-full flex-col items-center rounded-xl bg-[#e4dfe0] p-3 dark:bg-[#1e293b]">
-              <div>
+            <div className="flex w-full justify-between text-xl font-thin items-center rounded mb-2">
+              <div className="text-sm">
                 <a href={info?.uris?.uniswap} target="_blank">
                   Pool
                 </a>{" "}
@@ -220,8 +220,8 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
             </div>
           )}
           {!!info?.percentageOfPool && (
-            <div className="mb-2 flex w-full flex-col items-center rounded-xl bg-[#e4dfe0] p-3 dark:bg-[#1e293b]">
-              <div>
+            <div className="flex w-full justify-between text-xl font-thin items-center rounded mb-2">
+              <div className="text-sm">
                 Share of{" "}
                 <a href={info?.uris?.uniswap} target="_blank">
                   {prettyPairName} Pool
@@ -231,8 +231,8 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
             </div>
           )}
           {!!info?.total && (
-            <div className="mb-2 flex w-full flex-col items-center rounded-xl bg-[#e4dfe0] p-3 dark:bg-[#1e293b]">
-              <div>
+            <div className="flex w-full justify-between text-xl font-thin items-center rounded mb-2">
+              <div className="text-sm">
                 Total Tokens in{" "}
                 <a href={info?.uris?.uniswap} target="_blank">
                   {prettyPairName} Pool
@@ -241,35 +241,38 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
               <div className="font-thin">~ {prettyTotal(info?.total)}</div>
             </div>
           )}
-          <div className="my-4 flex w-full justify-center gap-4">
-            {showToken0Approval && (
-              <div
-                className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
-                onClick={() => handleApproveToken(tokenContracts, 0)}
-              >
-                Approve {token0?.symbol}
+          {(showToken0Approval || showToken1Approval || showPairTokenApproval) && (
+              <div className="my-4 flex w-full justify-center gap-4">
+                {showToken0Approval && (
+                    <div
+                        className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+                        onClick={() => handleApproveToken(tokenContracts, 0)}
+                    >
+                      Approve {token0?.symbol}
+                    </div>
+                )}
+                {showToken1Approval && (
+                    <div
+                        className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+                        onClick={() => handleApproveToken(tokenContracts, 1)}
+                    >
+                      Approve {token1?.symbol}
+                    </div>
+                )}
+                {showPairTokenApproval && (
+                    <div
+                        className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+                        onClick={() => handleApprovePair(pairContract)}
+                    >
+                      Approve {prettyPairName} UNI-V2 LP Token
+                    </div>
+                )}
               </div>
-            )}
-            {showToken1Approval && (
-              <div
-                className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
-                onClick={() => handleApproveToken(tokenContracts, 1)}
-              >
-                Approve {token1?.symbol}
-              </div>
-            )}
-            {showPairTokenApproval && (
-              <div
-                className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
-                onClick={() => handleApprovePair(pairContract)}
-              >
-                Approve {prettyPairName} UNI-V2 LP Token
-              </div>
-            )}
-          </div>
+          )}
+
         </div>
       )}
-    </>
+    </div>
   )
 }
 

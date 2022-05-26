@@ -514,7 +514,7 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
         )}
         {parseFloat(state[lpToken0?.symbol]) > 0 && parseFloat(state[lpToken1?.symbol]) > 0 && (
           <button
-            className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full 
+            className={`focus:shadow-outline mb-4 h-16 w-full appearance-none rounded-full 
               bg-sky-500 py-2 px-3 text-xl leading-tight hover:bg-sky-600 focus:outline-none ${
                 supplyDisabled ? "border-slate-300" : "dark:bg-orange-600 hover:dark:bg-orange-700"
               }`}

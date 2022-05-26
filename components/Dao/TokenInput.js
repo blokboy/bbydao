@@ -90,7 +90,7 @@ const TokenInput = ({
 
   /* Get USD price of token */
   React.useMemo(async () => {
-    if (!!token) {
+    if (!!token && isSwap) {
       let priceUSD
       if (token.symbol !== "ETH") {
         const address = ethers.utils.getAddress(token?.address).toLowerCase()
@@ -169,7 +169,8 @@ const TokenInput = ({
       </div>
       <div className="flex w-full flex-row items-end justify-end space-x-2 font-light">
         <div className="flex w-full justify-between">
-          {!!state?.[_token?.symbol] ? (
+
+          {(isSwap && !!state?.[_token?.symbol]) ? (
             <div className="flex">
               <div className="text-sm text-slate-600">$</div>
               <div className="text-sm text-slate-600">
@@ -180,6 +181,7 @@ const TokenInput = ({
               </div>
             </div>
           ) : null}
+
           {!!_token?.balance ? (
             <div className="ml-auto flex">
               <div className="text-sm text-slate-600">Balance:</div>
