@@ -107,7 +107,7 @@ const TokenInput = ({
   /*  store USD prices of tokens and their input to zustand */
   React.useMemo(async () => {
     if (!!ethPriceUSD) {
-      if (tokens.token0.symbol === token?.symbol) {
+      if (tokens?.token0?.symbol === token?.symbol) {
         setTokenInputPriceUSD({
           ...tokenInputPricesUSD,
           ...{ token0: (token?.symbol === "ETH" ? ethPriceUSD : tokenPriceUSD) * state?.[_token?.symbol] },
@@ -182,9 +182,9 @@ const TokenInput = ({
           ) : null}
 
           {!!_token?.balance ? (
-            <div className="ml-auto flex">
-              <div className="text-sm text-slate-600">Balance:</div>
-              <div className="text-sm text-slate-600">
+            <div className="ml-auto flex items-center">
+              <div className="text-sm flex text-slate-600 italic text-xs">Balance:</div>
+              <div className="text-sm flex text-slate-600 ml-1">
                 {ethers.utils.formatUnits(_token?.balance, _token?.decimals).match(/^\d+(?:\.\d{0,5})?/)}
               </div>
             </div>

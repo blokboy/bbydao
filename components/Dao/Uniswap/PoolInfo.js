@@ -143,39 +143,39 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
     }
   }, [token0, token1, signer])
 
-//   React.useMemo(async () => {
-//     const address = ethers.utils.getAddress(pair?.address).toLowerCase()
-//     const data = await uniswapV2GraphClient
-//       .query(
-//         `{
-//  pair(id: "${address}"){
-//      token0 {
-//        id
-//        symbol
-//        name
-//        derivedETH
-//      }
-//      token1 {
-//        id
-//        symbol
-//        name
-//        derivedETH
-//      }
-//      reserve0
-//      reserve1
-//      reserveUSD
-//      trackedReserveETH
-//      token0Price
-//      token1Price
-//      volumeUSD
-//      txCount
-//  }
-// }`
-//       )
-//       .toPromise()
-//
-//     console.log('d', parseFloat(data?.data?.pair?.reserveUSD))
-//   }, [uniswapV2GraphClient])
+  //   React.useMemo(async () => {
+  //     const address = ethers.utils.getAddress(pair?.address).toLowerCase()
+  //     const data = await uniswapV2GraphClient
+  //       .query(
+  //         `{
+  //  pair(id: "${address}"){
+  //      token0 {
+  //        id
+  //        symbol
+  //        name
+  //        derivedETH
+  //      }
+  //      token1 {
+  //        id
+  //        symbol
+  //        name
+  //        derivedETH
+  //      }
+  //      reserve0
+  //      reserve1
+  //      reserveUSD
+  //      trackedReserveETH
+  //      token0Price
+  //      token1Price
+  //      volumeUSD
+  //      txCount
+  //  }
+  // }`
+  //       )
+  //       .toPromise()
+  //
+  //     console.log('d', parseFloat(data?.data?.pair?.reserveUSD))
+  //   }, [uniswapV2GraphClient])
 
   /*
    *
@@ -278,9 +278,9 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
                 <div className="font-thin">~ {prettyTotal(info?.total)}</div>
               </div>
             )}
-            {(showToken0Approval || showToken1Approval || showPairTokenApproval) && (
+            {(!!showToken0Approval || !!showToken1Approval || !!showPairTokenApproval) && (
               <div className="my-4 flex w-full justify-center gap-4">
-                {showToken0Approval && (
+                {showToken0Approval === true && (
                   <div
                     className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
                     onClick={() => handleApproveToken(tokenContracts, 0)}
@@ -288,7 +288,7 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
                     Approve {token0?.symbol}
                   </div>
                 )}
-                {showToken1Approval && (
+                {showToken1Approval === true && (
                   <div
                     className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
                     onClick={() => handleApproveToken(tokenContracts, 1)}
@@ -296,7 +296,7 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
                     Approve {token1?.symbol}
                   </div>
                 )}
-                {showPairTokenApproval && (
+                {showPairTokenApproval === true && (
                   <div
                     className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
                     onClick={() => handleApprovePair(pairContract)}
