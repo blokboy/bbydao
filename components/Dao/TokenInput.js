@@ -88,6 +88,7 @@ const TokenInput = ({
     }
   }, [_token])
 
+
   /* Get USD price of token */
   React.useMemo(async () => {
     if (!!token && isSwap) {
