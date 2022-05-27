@@ -11,6 +11,7 @@ import { minimalABI } from "hooks/useERC20Contract"
 import useCalculateFee from "hooks/useCalculateFee"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
+import { useDaoStore } from "../../../stores/useDaoStore"
 import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
@@ -20,6 +21,9 @@ import Slippage from "../Slippage"
 import TokenSearch from "../TokenSearch"
 
 const Swap = ({ token }) => {
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
+  const signer = useLayoutStore(state => state.signer)
+  const uniswapV2GraphClient = useDaoStore(state => state.uniswapV2GraphClient)
   const queryClient = useQueryClient()
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()
@@ -27,17 +31,15 @@ const Swap = ({ token }) => {
   const [poolExists, setPoolExists] = React.useState(true)
   const [hasNoLiquidity, setHasNoLiquidity] = React.useState(false)
   const [isEthOnEth, setIsEthOnEth] = React.useState(false)
-  const bbyDao = usePlaygroundStore(state => state.expandedDao)
-  const signer = useLayoutStore(state => state.signer)
+  const [hasAllowance, setHasAllowance] = React.useState()
   const bbyDaoTokens = queryClient.getQueryData(["daoTokens", bbyDao])
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
-  const [hasAllowance, setHasAllowance] = React.useState()
-  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
-  const USDT = ethers.utils.getAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7")
-
-  const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { state, setState, handleChange } = useForm()
   const { calculateFee } = useCalculateFee()
+  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
+  const USDT = ethers.utils.getAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7")
+  const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
+  const MIN_LIQUIDITY_USD = 10000
 
   /* Build Token List */
   const [coingeckoTokenList, setCoingeckoTokenList] = React.useState([])
@@ -213,15 +215,34 @@ const Swap = ({ token }) => {
           uniswapTokens[tokens.token0.symbol],
           uniswapTokens[tokens.token1.symbol]
         )
-        const pairContract = new ethers.Contract(
-          ethers.utils.getAddress(uniPair?.liquidityToken.address),
-          IUniswapV2Pair["abi"],
-          signer
-        )
-        const totalSupply = await pairContract?.totalSupply()
-        const hasLiquidity = parseFloat((totalSupply.toString() / 10 ** uniPair?.liquidityToken?.decimals).toFixed()) > 0
 
-        if (!hasLiquidity && !hasEth) {
+        const address = ethers.utils.getAddress((await uniPair)?.liquidityToken?.address).toLowerCase()
+        const data = await uniswapV2GraphClient
+          .query(
+            `{pair(id: "${address}"){token0 { id symbol name derivedETH }
+               token1 {
+                 id
+                 symbol
+                 name
+                 derivedETH
+               }
+               reserve0
+               reserve1
+               reserveUSD
+               trackedReserveETH
+               token0Price
+               token1Price
+               volumeUSD
+               txCount
+           }
+          }`
+          )
+          .toPromise()
+
+        const poolReserves = parseFloat(data?.data?.pair?.reserveUSD)
+        const hasLiquidity = poolReserves > MIN_LIQUIDITY_USD //must have at least 10,000 USD of liquidity
+
+        if (!hasLiquidity) {
           if (!hasEth) {
             return await routeThroughWETH(uniswapTokens)
           } else {
@@ -253,7 +274,7 @@ const Swap = ({ token }) => {
       }
       console.log("err", err)
     }
-  }, [uniswapTokens])
+  }, [uniswapTokens, uniswapV2GraphClient])
 
   const showApprove = React.useMemo(
     () =>
@@ -422,6 +443,7 @@ const Swap = ({ token }) => {
       console.log("err", err)
     }
   }
+
   const handleSetMaxTokenValue = async (token, tokenRef) => {
     try {
       const token0Input = tokenRef?.current?.max
