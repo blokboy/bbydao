@@ -57,7 +57,7 @@ const Swap = ({ token }) => {
     address: WETH,
     chainId: ChainId.MAINNET,
     decimals: 18,
-    logoURI: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
+    logoURI: "https://v2.info.uniswap.org/static/media/eth.5fc0c9bd.png",
     name: "Ether",
     symbol: "ETH",
   }
@@ -92,7 +92,7 @@ const Swap = ({ token }) => {
         existingToken = {
           ...bbyDaoTokens[hasTokenIndex],
           decimals: 18,
-          logoURI: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
+          logoURI: "https://v2.info.uniswap.org/static/media/eth.5fc0c9bd.png",
           name: "Ether",
           symbol: "ETH",
         }
@@ -482,7 +482,9 @@ const Swap = ({ token }) => {
    * Determines which RouterV2 method to call
    *
    * */
+  const [isSwapping, setIsSwapping] = React.useState(false)
   const handleSwapToken = async (token0, token1) => {
+    setIsSwapping(true)
     try {
       const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
       const slippage = state?.slippage / 100 || defaultSlippage

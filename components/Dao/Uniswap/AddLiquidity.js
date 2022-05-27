@@ -70,7 +70,7 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
       uri && symbol
         ? acc.push({ uri, symbol })
         : isETH
-        ? acc.push({ uri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png", symbol: "ETH" })
+        ? acc.push({ uri: "https://v2.info.uniswap.org/static/media/eth.5fc0c9bd.png", symbol: "ETH" })
         : null
       return acc
     }, [])
@@ -96,7 +96,7 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
           ...cv,
           token: {
             decimals: 18,
-            logoUri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
+            logoUri: "https://v2.info.uniswap.org/static/media/eth.5fc0c9bd.png",
             name: "Ether",
             symbol: "ETH",
           },
@@ -206,9 +206,7 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
         const total = await contract.totalSupply()
         const totalTokenAmount = await new TokenAmount(pair.liquidityToken, total)
         const token0Amount = await new TokenAmount(token0, amount(token0Input, token0?.decimals))
-        const token0AmountInEth = (token0Input * token0ETHConversion).toString()
         const token1Amount = await new TokenAmount(token1, amount(token1Input, token1?.decimals))
-        const token1AmountInEth = (token1Input * token1ETHConversion).toString()
         const uniswapTokensMinted = pair
           ?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount)
           .toFixed(pair.liquidityToken.decimals)
@@ -220,12 +218,10 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
           {
             token: token0,
             amount: token0Input,
-            amountInWei: ethers.utils.parseUnits(token0AmountInEth, token0.decimals),
           },
           {
             token: token1,
             amount: token1Input,
-            amountInWei: ethers.utils.parseUnits(token1AmountInEth, token1.decimals),
           },
         ]
 
@@ -261,15 +257,15 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
       const tokenA = token0?.address
       const tokenADecimals = token0?.decimals
       const tokenAAmount = token0?.amount
-      const amountADesired = amount(tokenAAmount, tokenADecimals) // wondering if this is correct
-      const amountAMin = amount(tokenAAmount - tokenAAmount * slippage, tokenADecimals)
+      const amountADesired = ethers.utils.parseUnits(tokenAAmount.toString(), tokenADecimals).toString()
+      const amountAMin = ethers.utils.parseUnits((tokenAAmount - tokenAAmount * slippage).toString(), tokenADecimals).toString()
 
       /* token B */
       const tokenB = token1?.address
       const tokenBDecimals = token1?.decimals
       const tokenBAmount = token1?.amount
-      const amountBDesired = amount(tokenBAmount, tokenBDecimals)
-      const amountBMin = amount(tokenBAmount - tokenBAmount * slippage, tokenBDecimals)
+      const amountBDesired = ethers.utils.parseUnits(tokenBAmount.toString(), tokenADecimals).toString()
+      const amountBMin = ethers.utils.parseUnits((tokenBAmount - tokenBAmount * slippage).toString(), tokenBDecimals).toString()
 
       /* addLiquidity or addLiquidityEth  */
       if (pairHasEth.length === 0) {
@@ -511,6 +507,7 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
             hasAllowance={hasAllowance}
             setHasAllowance={setHasAllowance}
             safeAddress={safeAddress}
+            logos={{token0Logo, token1Logo}}
           />
         )}
         {parseFloat(state[lpToken0?.symbol]) > 0 && parseFloat(state[lpToken1?.symbol]) > 0 && (
