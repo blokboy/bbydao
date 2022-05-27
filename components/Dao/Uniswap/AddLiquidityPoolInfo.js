@@ -4,10 +4,8 @@ import { minimalABI } from "hooks/useERC20Contract"
 import { eToNumber, isEmpty, max256, NumberFromBig } from "utils/helpers"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
-import { useDaoStore } from "stores/useDaoStore"
 
-const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, safeAddress, logos }) => {
-  const uniswapV2GraphClient = useDaoStore(state => state.uniswapV2GraphClient)
+const AddLiquidityPoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, safeAddress, logos }) => {
   const { gnosisTransaction } = useGnosisTransaction(safeAddress)
   const token0 = info?.transactionInfo?.[0].token
   const token1 = info?.transactionInfo?.[1].token
@@ -142,40 +140,6 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
       console.log("err", err)
     }
   }, [token0, token1, signer])
-
-  React.useMemo(async () => {
-    if (!!pair) {
-      const address = ethers.utils.getAddress(pair?.address).toLowerCase()
-      const data = await uniswapV2GraphClient
-        .query(
-          `{
-   pair(id: "${address}"){
-       token0 {
-         id
-         symbol
-         name
-         derivedETH
-       }
-       token1 {
-         id
-         symbol
-         name
-         derivedETH
-       }
-       reserve0
-       reserve1
-       reserveUSD
-       trackedReserveETH
-       token0Price
-       token1Price
-       volumeUSD
-       txCount
-   }
-  }`
-        )
-        .toPromise()
-    }
-  }, [pair, uniswapV2GraphClient])
 
   /*
    *
@@ -321,4 +285,4 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
   )
 }
 
-export default PoolInfo
+export default AddLiquidityPoolInfo
