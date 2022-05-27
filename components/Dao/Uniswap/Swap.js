@@ -21,6 +21,8 @@ import Slippage from "../Slippage"
 import TokenSearch from "../TokenSearch"
 
 const Swap = ({ token }) => {
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
+  const signer = useLayoutStore(state => state.signer)
   const uniswapV2GraphClient = useDaoStore(state => state.uniswapV2GraphClient)
   const queryClient = useQueryClient()
   const token0InputRef = React.useRef()
@@ -29,17 +31,15 @@ const Swap = ({ token }) => {
   const [poolExists, setPoolExists] = React.useState(true)
   const [hasNoLiquidity, setHasNoLiquidity] = React.useState(false)
   const [isEthOnEth, setIsEthOnEth] = React.useState(false)
-  const bbyDao = usePlaygroundStore(state => state.expandedDao)
-  const signer = useLayoutStore(state => state.signer)
+  const [hasAllowance, setHasAllowance] = React.useState()
   const bbyDaoTokens = queryClient.getQueryData(["daoTokens", bbyDao])
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
-  const [hasAllowance, setHasAllowance] = React.useState()
-  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
-  const USDT = ethers.utils.getAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7")
-
-  const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { state, setState, handleChange } = useForm()
   const { calculateFee } = useCalculateFee()
+  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
+  const USDT = ethers.utils.getAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7")
+  const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
+  const MIN_LIQUIDITY_USD = 10000
 
   /* Build Token List */
   const [coingeckoTokenList, setCoingeckoTokenList] = React.useState([])
@@ -240,7 +240,7 @@ const Swap = ({ token }) => {
           .toPromise()
 
         const poolReserves = parseFloat(data?.data?.pair?.reserveUSD)
-        const hasLiquidity = poolReserves > 10000 //
+        const hasLiquidity = poolReserves > MIN_LIQUIDITY_USD //must have at least 10,000 USD of liquidity
 
         if (!hasLiquidity) {
           if (!hasEth) {
