@@ -206,25 +206,26 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
         const total = await contract.totalSupply()
         const totalTokenAmount = await new TokenAmount(pair.liquidityToken, total)
         const token0Amount = await new TokenAmount(token0, amount(token0Input, token0?.decimals))
-        const token0AmountInEth = (token0Input * token0ETHConversion).toFixed(token0?.decimals).toString()
+        const token0AmountInEth = (token0Input * token0ETHConversion).toString()
         const token1Amount = await new TokenAmount(token1, amount(token1Input, token1?.decimals))
-        const token1AmountInEth = (token1Input * token1ETHConversion).toFixed(token1?.decimals).toString()
+        const token1AmountInEth = (token1Input * token1ETHConversion).toString()
         const uniswapTokensMinted = pair
           ?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount)
           .toFixed(pair.liquidityToken.decimals)
         const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(pair.liquidityToken.decimals)
         const uniswapPairURI = `https://v2.info.uniswap.org/pair/${pair.liquidityToken.address}`
         const etherscanURI = `https://etherscan.io/address/${pair.liquidityToken.address}`
+
         const transactionInfo = [
           {
             token: token0,
-            amount: Number(token0Input),
-            amountInWei: ethers.utils.parseEther(token0AmountInEth),
+            amount: token0Input,
+            amountInWei: ethers.utils.parseUnits(token0AmountInEth, token0.decimals),
           },
           {
             token: token1,
-            amount: Number(token1Input),
-            amountInWei: ethers.utils.parseEther(token1AmountInEth),
+            amount: token1Input,
+            amountInWei: ethers.utils.parseUnits(token1AmountInEth, token1.decimals),
           },
         ]
 
@@ -333,7 +334,7 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
       const token0 = Object.entries(uniswapTokens).filter(item => item[0] === token?.symbol)[0][1]
       const token0Input = e?.target?.valueAsNumber
       const route = new Route([pair], uniswapTokens[token?.symbol])
-      const midPrice = route.midPrice.toSignificant(6)
+      const midPrice = route.midPrice.toSignificant(token?.decimals)
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token?.symbol)[0][1]
       const token1Input = Number(token0Input * midPrice)
       const pairToken = lpToken0?.symbol === token?.symbol ? lpToken1 : lpToken0
@@ -515,8 +516,10 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
         {parseFloat(state[lpToken0?.symbol]) > 0 && parseFloat(state[lpToken1?.symbol]) > 0 && (
           <button
             className={`focus:shadow-outline mb-4 h-16 w-full appearance-none rounded-full 
-              bg-sky-500 py-2 px-3 text-xl leading-tight hover:bg-sky-600 focus:outline-none ${
-                supplyDisabled ? "border-slate-300" : "dark:bg-orange-600 hover:dark:bg-orange-700"
+              py-2 px-3 text-xl leading-tight focus:outline-none ${
+                supplyDisabled
+                  ? "border-slate-300 bg-sky-500 hover:bg-sky-600"
+                  : "dark:bg-orange-600 hover:dark:bg-orange-700"
               }`}
             type="submit"
             disabled={supplyDisabled}
