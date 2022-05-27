@@ -47,28 +47,28 @@ const DaoTokensTab = ({ isMember, tokens }) => {
     <div className="flex flex-col">
       <div className="flex items-center py-2 pt-4 text-xl font-thin">
         Treasury
-        {/*{eth || dai ? (*/}
-        {/*  <Modal*/}
-        {/*    heading={*/}
-        {/*      <button type="button" className="flex items-center">*/}
-        {/*        <div className="mr-4 h-8 w-8 overflow-hidden rounded-full" title="Bancor EarnPortal">*/}
-        {/*          <img src={"/babydao.png"} />*/}
-        {/*        </div>*/}
-        {/*        <div className="flex items-center text-xl font-normal">Deposit & Earn</div>*/}
-        {/*      </button>*/}
-        {/*    }*/}
-        {/*    trigger={*/}
-        {/*      <button*/}
-        {/*        type="button"*/}
-        {/*        className="ml-2 rounded-full bg-orange-600 p-2 px-4 text-sm text-white hover:bg-orange-700"*/}
-        {/*      >*/}
-        {/*        Earn*/}
-        {/*      </button>*/}
-        {/*    }*/}
-        {/*  >*/}
-        {/*    <EarnPortal tokens={{ eth, dai }} />*/}
-        {/*  </Modal>*/}
-        {/*) : null}*/}
+        {eth || dai ? (
+          <Modal
+            heading={
+              <button type="button" className="flex items-center">
+                <div className="mr-4 h-8 w-8 overflow-hidden rounded-full" title="Bancor EarnPortal">
+                  <img src={"/babydao.png"} />
+                </div>
+                <div className="flex items-center text-xl font-normal">Deposit & Earn</div>
+              </button>
+            }
+            trigger={
+              <button
+                type="button"
+                className="ml-2 rounded-full bg-orange-600 p-2 px-4 text-sm text-white hover:bg-orange-700"
+              >
+                Earn
+              </button>
+            }
+          >
+            <EarnPortal tokens={{ eth, dai }} />
+          </Modal>
+        ) : null}
       </div>
       <div className="grid grid-cols-1 gap-2 py-2 xl:grid-cols-2">
         {filteredTokens?.map((token, i) => (
