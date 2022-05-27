@@ -4,22 +4,19 @@ import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.j
 import { BigNumber, ethers } from "ethers"
 import { formatUnits } from "ethers/lib/utils"
 import useForm from "hooks/useForm"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { HiPlus } from "react-icons/hi"
 import { useQueryClient } from "react-query"
 import { flatten } from "utils/helpers"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
-import { amount } from "./helpers"
-import PoolInfo from "./PoolInfo"
+import AddLiquidityPoolInfo from "./AddLiquidityPoolInfo"
 import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import useCalculateFee from "hooks/useCalculateFee"
 import Slippage from "../Slippage"
-import { createClient } from "urql"
 
 const AddLiquidity = ({ lpToken0, token1 = null }) => {
-  const UniGraphAPI = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2"
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { state, setState, handleChange } = useForm()
@@ -33,16 +30,6 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
   const queryClient = useQueryClient()
   const safeAddress = usePlaygroundStore(state => state.expandedDao)
   const signer = useLayoutStore(state => state.signer)
-
-  const client = createClient({
-    url: UniGraphAPI,
-  })
-
-  React.useMemo(async () => {
-    if (!!client) {
-      const data = await client.query(`{bundle(id: "1" ) {ethPrice}}`).toPromise()
-    }
-  }, [client])
 
   /* init slippage */
   const defaultSlippage = 0.005
@@ -189,24 +176,22 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
   }, [lpToken0, lpToken1, ChainId])
 
   /* Handle interaction with Uniswap to get LP information  */
-  const getLiquidityPairInfo = async ({
-    pair,
-    token0,
-    token0Input,
-    token0ETHConversion,
-    token1,
-    token1Input,
-    token1ETHConversion,
-    abi,
-  }) => {
+  const getLiquidityPairInfo = async ({ pair, token0, token0Input, token1, token1Input, abi }) => {
     try {
       if (!!pair && !!signer) {
         /* Get Total Supply of LP pair on-chain  */
         const contract = new ethers.Contract(pair.liquidityToken.address, abi, signer)
         const total = await contract.totalSupply()
         const totalTokenAmount = await new TokenAmount(pair.liquidityToken, total)
-        const token0Amount = await new TokenAmount(token0, amount(token0Input, token0?.decimals))
-        const token1Amount = await new TokenAmount(token1, amount(token1Input, token1?.decimals))
+        const token0Amount = await new TokenAmount(
+          token0,
+          ethers.utils.parseUnits(token0Input.toString(), token0?.decimals).toString()
+        )
+        const token1Amount = await new TokenAmount(
+          token1,
+          ethers.utils.parseUnits(token1Input.toString(), token1?.decimals).toString()
+        )
+
         const uniswapTokensMinted = pair
           ?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount)
           .toFixed(pair.liquidityToken.decimals)
@@ -258,14 +243,18 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
       const tokenADecimals = token0?.decimals
       const tokenAAmount = token0?.amount
       const amountADesired = ethers.utils.parseUnits(tokenAAmount.toString(), tokenADecimals).toString()
-      const amountAMin = ethers.utils.parseUnits((tokenAAmount - tokenAAmount * slippage).toString(), tokenADecimals).toString()
+      const amountAMin = ethers.utils
+        .parseUnits((tokenAAmount - tokenAAmount * slippage).toString(), tokenADecimals)
+        .toString()
 
       /* token B */
       const tokenB = token1?.address
       const tokenBDecimals = token1?.decimals
       const tokenBAmount = token1?.amount
       const amountBDesired = ethers.utils.parseUnits(tokenBAmount.toString(), tokenADecimals).toString()
-      const amountBMin = ethers.utils.parseUnits((tokenBAmount - tokenBAmount * slippage).toString(), tokenBDecimals).toString()
+      const amountBMin = ethers.utils
+        .parseUnits((tokenBAmount - tokenBAmount * slippage).toString(), tokenBDecimals)
+        .toString()
 
       /* addLiquidity or addLiquidityEth  */
       if (pairHasEth.length === 0) {
@@ -499,7 +488,7 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
         )}
 
         {liquidityInfo && (
-          <PoolInfo
+          <AddLiquidityPoolInfo
             spender={UniswapV2Router02}
             pair={pair?.liquidityToken}
             info={liquidityInfo}
@@ -507,7 +496,7 @@ const AddLiquidity = ({ lpToken0, token1 = null }) => {
             hasAllowance={hasAllowance}
             setHasAllowance={setHasAllowance}
             safeAddress={safeAddress}
-            logos={{token0Logo, token1Logo}}
+            logos={{ token0Logo, token1Logo }}
           />
         )}
         {parseFloat(state[lpToken0?.symbol]) > 0 && parseFloat(state[lpToken1?.symbol]) > 0 && (

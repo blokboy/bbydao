@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { ChainId, Fetcher, Token, TokenAmount } from "@uniswap/sdk"
 import { BigNumber, ethers } from "ethers"
 import useForm from "hooks/useForm"
@@ -9,7 +9,6 @@ import { max256, NumberFromBig } from "utils/helpers"
 import { minimalABI } from "hooks/useERC20Contract"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
-import { amount } from "./helpers"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import useCalculateFee from "hooks/useCalculateFee"
 import Slippage from "../Slippage"
@@ -110,7 +109,7 @@ const RemoveLiquidity = ({ token }) => {
           WETH,
           bbyDaoBalance,
           poolTokens: NumberFromBig(bbyDaoBalance, token?.decimals),
-          hasAllowance: parseFloat(amount(bbyDaoAllowance, token?.decimals)) > 0,
+          hasAllowance: Number(ethers.utils.parseUnits(bbyDaoAllowance.toString(), token?.decimals).toString()) > 0,
           pairContract,
           percentageOfPool: `${
             // percentageOfPool * 100 < 0.01 ? "< 0.01" : parseFloat((percentageOfPool * 100).toString()).toFixed(6)

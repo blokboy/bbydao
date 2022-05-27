@@ -5,7 +5,6 @@ import GnosisSafeSol from "@gnosis.pm/safe-contracts/build/artifacts/contracts/G
 const safeService = new SafeServiceClient("https://safe-transaction.gnosis.io")
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 const CALL = 0
-import { amount } from "components/Dao/Uniswap/helpers"
 import { useLayoutStore } from "stores/useLayoutStore"
 import useSafeSdk from "./useSafeSdk"
 
@@ -54,7 +53,7 @@ export default function useGnosisTransaction(safeAddress) {
         const safeTx = [
           {
             to: ethers.utils.getAddress(to),
-            value: amount(parseFloat(ethers.utils.formatEther(value))), //
+            value: value.toString(),
             data,
             operation: CALL,
             safeTxGas: 0,
