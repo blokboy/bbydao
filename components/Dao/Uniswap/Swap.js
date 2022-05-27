@@ -11,6 +11,7 @@ import { minimalABI } from "hooks/useERC20Contract"
 import useCalculateFee from "hooks/useCalculateFee"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
+import { useDaoStore } from "../../../stores/useDaoStore"
 import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
@@ -20,6 +21,7 @@ import Slippage from "../Slippage"
 import TokenSearch from "../TokenSearch"
 
 const Swap = ({ token }) => {
+  const uniswapV2GraphClient = useDaoStore(state => state.uniswapV2GraphClient)
   const queryClient = useQueryClient()
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()
@@ -213,15 +215,34 @@ const Swap = ({ token }) => {
           uniswapTokens[tokens.token0.symbol],
           uniswapTokens[tokens.token1.symbol]
         )
-        const pairContract = new ethers.Contract(
-          ethers.utils.getAddress(uniPair?.liquidityToken.address),
-          IUniswapV2Pair["abi"],
-          signer
-        )
-        const totalSupply = await pairContract?.totalSupply()
-        const hasLiquidity = parseFloat((totalSupply.toString() / 10 ** uniPair?.liquidityToken?.decimals).toFixed()) > 0
 
-        if (!hasLiquidity && !hasEth) {
+        const address = ethers.utils.getAddress((await uniPair)?.liquidityToken?.address).toLowerCase()
+        const data = await uniswapV2GraphClient
+          .query(
+            `{pair(id: "${address}"){token0 { id symbol name derivedETH }
+               token1 {
+                 id
+                 symbol
+                 name
+                 derivedETH
+               }
+               reserve0
+               reserve1
+               reserveUSD
+               trackedReserveETH
+               token0Price
+               token1Price
+               volumeUSD
+               txCount
+           }
+          }`
+          )
+          .toPromise()
+
+        const poolReserves = parseFloat(data?.data?.pair?.reserveUSD)
+        const hasLiquidity = poolReserves > 10000 //
+
+        if (!hasLiquidity) {
           if (!hasEth) {
             return await routeThroughWETH(uniswapTokens)
           } else {
@@ -253,7 +274,7 @@ const Swap = ({ token }) => {
       }
       console.log("err", err)
     }
-  }, [uniswapTokens])
+  }, [uniswapTokens, uniswapV2GraphClient])
 
   const showApprove = React.useMemo(
     () =>
@@ -422,6 +443,7 @@ const Swap = ({ token }) => {
       console.log("err", err)
     }
   }
+
   const handleSetMaxTokenValue = async (token, tokenRef) => {
     try {
       const token0Input = tokenRef?.current?.max
