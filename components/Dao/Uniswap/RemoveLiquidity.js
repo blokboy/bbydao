@@ -9,9 +9,9 @@ import { max256, NumberFromBig } from "utils/helpers"
 import { minimalABI } from "hooks/useERC20Contract"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
-import { amount } from "./helpers"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import useCalculateFee from "hooks/useCalculateFee"
+import Slippage from "../Slippage"
 
 const RemoveLiquidity = ({ token }) => {
   const bbyDao = usePlaygroundStore(state => state.expandedDao)
@@ -25,7 +25,12 @@ const RemoveLiquidity = ({ token }) => {
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { liquidity } = state
   const { address } = token
-  const slippage = 0.055
+
+  /* init slippage */
+  const defaultSlippage = 0.005
+  React.useEffect(() => {
+    setState({ slippage: defaultSlippage * 100 })
+  }, [])
 
   /* Contracts */
   const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
@@ -104,7 +109,7 @@ const RemoveLiquidity = ({ token }) => {
           WETH,
           bbyDaoBalance,
           poolTokens: NumberFromBig(bbyDaoBalance, token?.decimals),
-          hasAllowance: parseFloat(amount(bbyDaoAllowance, token?.decimals)) > 0,
+          hasAllowance: Number(ethers.utils.parseUnits(bbyDaoAllowance.toString(), token?.decimals).toString()) > 0,
           pairContract,
           percentageOfPool: `${
             // percentageOfPool * 100 < 0.01 ? "< 0.01" : parseFloat((percentageOfPool * 100).toString()).toFixed(6)
@@ -169,6 +174,7 @@ const RemoveLiquidity = ({ token }) => {
 
   const handleRemoveLiquidity = async () => {
     //undeflow issue because of slippage calculation, toFixed(6) feels a bit arbitrary, can find better solution
+    const slippage = state?.slippage / 100 || defaultSlippage
     const amountAMin = ethers.utils.parseUnits(
       (toReceive.token0 - toReceive.token0 * slippage).toFixed(6).toString(),
       toReceive?.token0?.decimals
@@ -373,6 +379,12 @@ const RemoveLiquidity = ({ token }) => {
           </button>
         )}
       </div>
+      <Slippage
+        value={state?.slippage}
+        handleChange={handleChange}
+        defaultSlippage={defaultSlippage * 100}
+        setState={setState}
+      />
     </div>
   )
 }

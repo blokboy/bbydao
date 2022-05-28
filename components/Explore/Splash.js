@@ -1,6 +1,6 @@
 import ConnectButton from "components/Layout/Nav/ConnectButton"
 import { useRouter } from "next/router"
-import React, { useEffect } from "react"
+import React from "react"
 import { useConnect, useAccount } from "wagmi"
 
 const Splash = () => {

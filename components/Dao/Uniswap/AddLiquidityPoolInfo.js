@@ -5,7 +5,7 @@ import { eToNumber, isEmpty, max256, NumberFromBig } from "utils/helpers"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 
-const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, safeAddress }) => {
+const AddLiquidityPoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, safeAddress, logos }) => {
   const { gnosisTransaction } = useGnosisTransaction(safeAddress)
   const token0 = info?.transactionInfo?.[0].token
   const token1 = info?.transactionInfo?.[1].token
@@ -190,11 +190,11 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
     }
 
     return (
-      (hasAllowance.token0 === true) &&
+      hasAllowance.token0 === true &&
       !!token0 &&
-      (hasAllowance.token1 === true) &&
+      hasAllowance.token1 === true &&
       !!token1 &&
-      (hasAllowance.pair === false) &&
+      hasAllowance.pair === false &&
       !!pair
     )
   }, [hasAllowance, token0, token1, pair])
@@ -202,68 +202,80 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
   return (
     <>
       {!isEmpty(info) && (
-        <div className="flex flex-col items-center px-12">
-          <div className="mb-2">
-            <a href={info?.uris?.uniswap} target="_blank" className="underline">
-              {prettyPairName} Uniswap V2 Pool
-            </a>
-          </div>
-          {!!info.uniswapTokensMinted && (
-            <div className="mb-2 flex w-full flex-col items-center rounded-xl bg-[#e4dfe0] p-3 dark:bg-[#1e293b]">
-              <div>
-                <a href={info?.uris?.uniswap} target="_blank">
-                  Pool
-                </a>{" "}
-                Tokens Received
+        <div className="my-8 p-6 dark:bg-slate-800">
+          <div className="flex flex-col items-center">
+            <div className="mb-6 flex items-center">
+              <div className="mr-4 flex">
+                <div className="-mr-2 h-8 w-8 overflow-hidden rounded-full">
+                  <img src={logos.token0Logo} />
+                </div>
+                <div className="h-8 w-8 overflow-hidden rounded-full">
+                  <img src={logos.token1Logo} />
+                </div>
               </div>
-              <div className="font-thin">~ {prettyMinted(info?.uniswapTokensMinted)}</div>
+              <a href={info?.uris?.uniswap} target="_blank" className="text-2xl hover:text-orange-500">
+                {prettyPairName} Pair
+              </a>
             </div>
-          )}
-          {!!info?.percentageOfPool && (
-            <div className="mb-2 flex w-full flex-col items-center rounded-xl bg-[#e4dfe0] p-3 dark:bg-[#1e293b]">
-              <div>
-                Share of{" "}
-                <a href={info?.uris?.uniswap} target="_blank">
-                  {prettyPairName} Pool
-                </a>
-              </div>
-              <div className="font-thin">{prettyPercentage(eToNumber(info?.percentageOfPool))}</div>
-            </div>
-          )}
-          {!!info?.total && (
-            <div className="mb-2 flex w-full flex-col items-center rounded-xl bg-[#e4dfe0] p-3 dark:bg-[#1e293b]">
-              <div>
-                Total Tokens in{" "}
-                <a href={info?.uris?.uniswap} target="_blank">
-                  {prettyPairName} Pool
-                </a>
-              </div>
-              <div className="font-thin">~ {prettyTotal(info?.total)}</div>
-            </div>
-          )}
-          <div className="my-4 flex w-full justify-center gap-4">
-            {showToken0Approval && (
-              <div
-                className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
-                onClick={() => handleApproveToken(tokenContracts, 0)}
-              >
-                Approve {token0?.symbol}
+            {!!info.uniswapTokensMinted && (
+              <div className="mb-2 flex w-full items-center justify-between rounded text-xl font-thin">
+                <div className="text-sm">
+                  <a href={info?.uris?.uniswap} target="_blank">
+                    Pool
+                  </a>{" "}
+                  Tokens Received
+                </div>
+                <div className="font-thin">~ {prettyMinted(info?.uniswapTokensMinted)}</div>
               </div>
             )}
-            {showToken1Approval && (
-              <div
-                className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
-                onClick={() => handleApproveToken(tokenContracts, 1)}
-              >
-                Approve {token1?.symbol}
+            {!!info?.percentageOfPool && (
+              <div className="mb-2 flex w-full items-center justify-between rounded text-xl font-thin">
+                <div className="text-sm">
+                  Share of{" "}
+                  <a href={info?.uris?.uniswap} target="_blank">
+                    {prettyPairName} Pool
+                  </a>
+                </div>
+                <div className="font-thin">{prettyPercentage(eToNumber(info?.percentageOfPool))}</div>
               </div>
             )}
-            {showPairTokenApproval && (
-              <div
-                className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
-                onClick={() => handleApprovePair(pairContract)}
-              >
-                Approve {prettyPairName} UNI-V2 LP Token
+            {!!info?.total && (
+              <div className="mb-2 flex w-full items-center justify-between rounded text-xl font-thin">
+                <div className="text-sm">
+                  Total Tokens in{" "}
+                  <a href={info?.uris?.uniswap} target="_blank">
+                    {prettyPairName} Pool
+                  </a>
+                </div>
+                <div className="font-thin">~ {prettyTotal(info?.total)}</div>
+              </div>
+            )}
+            {(!!showToken0Approval || !!showToken1Approval || !!showPairTokenApproval) && (
+              <div className="my-4 flex w-full justify-center gap-4">
+                {showToken0Approval === true && (
+                  <div
+                    className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+                    onClick={() => handleApproveToken(tokenContracts, 0)}
+                  >
+                    Approve {token0?.symbol}
+                  </div>
+                )}
+                {showToken1Approval === true && (
+                  <div
+                    className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+                    onClick={() => handleApproveToken(tokenContracts, 1)}
+                  >
+                    Approve {token1?.symbol}
+                  </div>
+                )}
+                {showPairTokenApproval === true && (
+                  <div
+                    className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+                    onClick={() => handleApprovePair(pairContract)}
+                  >
+                    Approve {prettyPairName} UNI-V2 LP Token
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -273,4 +285,4 @@ const PoolInfo = ({ spender, pair, info, signer, hasAllowance, setHasAllowance, 
   )
 }
 
-export default PoolInfo
+export default AddLiquidityPoolInfo

@@ -5,17 +5,18 @@ import { BigNumber, ethers } from "ethers"
 import { formatUnits } from "ethers/lib/utils"
 import useForm from "hooks/useForm"
 import React, { useState } from "react"
+import { HiPlus } from "react-icons/hi"
 import { useQueryClient } from "react-query"
 import { flatten } from "utils/helpers"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
-import { amount } from "./helpers"
-import PoolInfo from "./PoolInfo"
-import TokenInput from "./TokenInput"
+import AddLiquidityPoolInfo from "./AddLiquidityPoolInfo"
+import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import useCalculateFee from "hooks/useCalculateFee"
+import Slippage from "../Slippage"
 
-const UniswapLpModal = ({ lpToken0, token1 = null }) => {
+const AddLiquidity = ({ lpToken0, token1 = null }) => {
   const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
   const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { state, setState, handleChange } = useForm()
@@ -29,6 +30,12 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
   const queryClient = useQueryClient()
   const safeAddress = usePlaygroundStore(state => state.expandedDao)
   const signer = useLayoutStore(state => state.signer)
+
+  /* init slippage */
+  const defaultSlippage = 0.005
+  React.useEffect(() => {
+    setState({ slippage: defaultSlippage * 100 })
+  }, [])
 
   const treasury = React.useMemo(() => {
     if (!safeAddress) {
@@ -50,7 +57,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
       uri && symbol
         ? acc.push({ uri, symbol })
         : isETH
-        ? acc.push({ uri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png", symbol: "ETH" })
+        ? acc.push({ uri: "https://v2.info.uniswap.org/static/media/eth.5fc0c9bd.png", symbol: "ETH" })
         : null
       return acc
     }, [])
@@ -76,7 +83,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
           ...cv,
           token: {
             decimals: 18,
-            logoUri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
+            logoUri: "https://v2.info.uniswap.org/static/media/eth.5fc0c9bd.png",
             name: "Ether",
             symbol: "ETH",
           },
@@ -169,42 +176,37 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
   }, [lpToken0, lpToken1, ChainId])
 
   /* Handle interaction with Uniswap to get LP information  */
-  const getLiquidityPairInfo = async ({
-    pair,
-    token0,
-    token0Input,
-    token0ETHConversion,
-    token1,
-    token1Input,
-    token1ETHConversion,
-    abi,
-  }) => {
+  const getLiquidityPairInfo = async ({ pair, token0, token0Input, token1, token1Input, abi }) => {
     try {
       if (!!pair && !!signer) {
         /* Get Total Supply of LP pair on-chain  */
         const contract = new ethers.Contract(pair.liquidityToken.address, abi, signer)
         const total = await contract.totalSupply()
         const totalTokenAmount = await new TokenAmount(pair.liquidityToken, total)
-        const token0Amount = await new TokenAmount(token0, amount(token0Input, token0?.decimals))
-        const token0AmountInEth = (token0Input * token0ETHConversion).toFixed(token0?.decimals).toString()
-        const token1Amount = await new TokenAmount(token1, amount(token1Input, token1?.decimals))
-        const token1AmountInEth = (token1Input * token1ETHConversion).toFixed(token1?.decimals).toString()
+        const token0Amount = await new TokenAmount(
+          token0,
+          ethers.utils.parseUnits(token0Input.toString(), token0?.decimals).toString()
+        )
+        const token1Amount = await new TokenAmount(
+          token1,
+          ethers.utils.parseUnits(token1Input.toString(), token1?.decimals).toString()
+        )
+
         const uniswapTokensMinted = pair
           ?.getLiquidityMinted(totalTokenAmount, token0Amount, token1Amount)
           .toFixed(pair.liquidityToken.decimals)
         const percentageOfPool = uniswapTokensMinted / totalTokenAmount.toFixed(pair.liquidityToken.decimals)
         const uniswapPairURI = `https://v2.info.uniswap.org/pair/${pair.liquidityToken.address}`
         const etherscanURI = `https://etherscan.io/address/${pair.liquidityToken.address}`
+
         const transactionInfo = [
           {
             token: token0,
-            amount: Number(token0Input),
-            amountInWei: ethers.utils.parseEther(token0AmountInEth),
+            amount: token0Input,
           },
           {
             token: token1,
-            amount: Number(token1Input),
-            amountInWei: ethers.utils.parseEther(token1AmountInEth),
+            amount: token1Input,
           },
         ]
 
@@ -231,7 +233,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
 
       const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
       const pairHasEth = liquidityInfo.transactionInfo.filter(token => flatten(token)?.symbol === "ETH")
-      const slippage = 0.055 // default 5.5% slippage
+      const slippage = state?.slippage / 100 || defaultSlippage
 
       const token0 = flatten(liquidityInfo.transactionInfo[0])
       const token1 = flatten(liquidityInfo.transactionInfo[1])
@@ -240,15 +242,19 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
       const tokenA = token0?.address
       const tokenADecimals = token0?.decimals
       const tokenAAmount = token0?.amount
-      const amountADesired = amount(tokenAAmount, tokenADecimals) // wondering if this is correct
-      const amountAMin = amount(tokenAAmount - tokenAAmount * slippage, tokenADecimals)
+      const amountADesired = ethers.utils.parseUnits(tokenAAmount.toString(), tokenADecimals).toString()
+      const amountAMin = ethers.utils
+        .parseUnits((tokenAAmount - tokenAAmount * slippage).toString(), tokenADecimals)
+        .toString()
 
       /* token B */
       const tokenB = token1?.address
       const tokenBDecimals = token1?.decimals
       const tokenBAmount = token1?.amount
-      const amountBDesired = amount(tokenBAmount, tokenBDecimals)
-      const amountBMin = amount(tokenBAmount - tokenBAmount * slippage, tokenBDecimals)
+      const amountBDesired = ethers.utils.parseUnits(tokenBAmount.toString(), tokenADecimals).toString()
+      const amountBMin = ethers.utils
+        .parseUnits((tokenBAmount - tokenBAmount * slippage).toString(), tokenBDecimals)
+        .toString()
 
       /* addLiquidity or addLiquidityEth  */
       if (pairHasEth.length === 0) {
@@ -313,7 +319,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
       const token0 = Object.entries(uniswapTokens).filter(item => item[0] === token?.symbol)[0][1]
       const token0Input = e?.target?.valueAsNumber
       const route = new Route([pair], uniswapTokens[token?.symbol])
-      const midPrice = route.midPrice.toSignificant(6)
+      const midPrice = route.midPrice.toSignificant(token?.decimals)
       const token1 = Object.entries(uniswapTokens).filter(item => item[0] !== token?.symbol)[0][1]
       const token1Input = Number(token0Input * midPrice)
       const pairToken = lpToken0?.symbol === token?.symbol ? lpToken1 : lpToken0
@@ -424,7 +430,7 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
         position. These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at
         any time.
       </div>
-      <form className="flex w-full flex-col space-y-8 py-4" onSubmit={e => handleSubmit(e, liquidityInfo)}>
+      <form className="flex w-full flex-col py-4" onSubmit={e => handleSubmit(e, liquidityInfo)}>
         <TokenInput
           tokens={{ token0: lpToken0, token1: lpToken1 }}
           pair={pair}
@@ -435,6 +441,9 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
           state={state}
           logo={token0Logo}
         />
+        <div className="m-auto my-4 flex">
+          <HiPlus size={26} />
+        </div>
         <TokenInput
           tokens={{ token0: lpToken0, token1: lpToken1 }}
           pair={pair}
@@ -477,36 +486,44 @@ const UniswapLpModal = ({ lpToken0, token1 = null }) => {
             ))}
           </div>
         )}
-        <div className="mb-8 w-full">
-          {liquidityInfo && (
-            <PoolInfo
-              spender={UniswapV2Router02}
-              pair={pair?.liquidityToken}
-              info={liquidityInfo}
-              signer={signer}
-              hasAllowance={hasAllowance}
-              setHasAllowance={setHasAllowance}
-              safeAddress={safeAddress}
-            />
-          )}
-          {parseFloat(state[lpToken0?.symbol]) > 0 && parseFloat(state[lpToken1?.symbol]) > 0 && (
-            <button
-              className={`focus:shadow-outline mt-4 h-16 w-full appearance-none rounded-full 
-              bg-sky-500 py-2 px-3 text-xl leading-tight hover:bg-sky-600 focus:outline-none ${
-                supplyDisabled ? "border-slate-300" : "dark:bg-orange-600 hover:dark:bg-orange-700"
+
+        {liquidityInfo && (
+          <AddLiquidityPoolInfo
+            spender={UniswapV2Router02}
+            pair={pair?.liquidityToken}
+            info={liquidityInfo}
+            signer={signer}
+            hasAllowance={hasAllowance}
+            setHasAllowance={setHasAllowance}
+            safeAddress={safeAddress}
+            logos={{ token0Logo, token1Logo }}
+          />
+        )}
+        {parseFloat(state[lpToken0?.symbol]) > 0 && parseFloat(state[lpToken1?.symbol]) > 0 && (
+          <button
+            className={`focus:shadow-outline mb-4 h-16 w-full appearance-none rounded-full 
+              py-2 px-3 text-xl leading-tight focus:outline-none ${
+                supplyDisabled
+                  ? "border-slate-300 bg-sky-500 hover:bg-sky-600"
+                  : "dark:bg-orange-600 hover:dark:bg-orange-700"
               }`}
-              type="submit"
-              disabled={supplyDisabled}
-            >
-              <div className={`${supplyDisabled ? "text-[#b9b9b9]" : "text-white"}`}>
-                {maxError.length > 0 ? maxError : supplyDisabled ? "Token Approval Needed" : "Supply"}
-              </div>
-            </button>
-          )}
-        </div>
+            type="submit"
+            disabled={supplyDisabled}
+          >
+            <div className={`${supplyDisabled ? "text-[#b9b9b9]" : "text-white"}`}>
+              {maxError.length > 0 ? maxError : supplyDisabled ? "Token Approval Needed" : "Supply"}
+            </div>
+          </button>
+        )}
+        <Slippage
+          value={state?.slippage}
+          handleChange={handleChange}
+          defaultSlippage={defaultSlippage * 100}
+          setState={setState}
+        />
       </form>
     </>
   )
 }
 
-export default UniswapLpModal
+export default AddLiquidity

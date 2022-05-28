@@ -1,5 +1,6 @@
-import { ChainId, Fetcher, Percent, Route, Token } from "@uniswap/sdk"
+import { ChainId, Fetcher, Trade, TokenAmount, TradeType, Route, Token } from "@uniswap/sdk"
 import defaultTokens from "@uniswap/default-token-list"
+import axios from "axios"
 import { BigNumber, ethers } from "ethers"
 import React from "react"
 import useForm from "hooks/useForm"
@@ -10,13 +11,19 @@ import { minimalABI } from "hooks/useERC20Contract"
 import useCalculateFee from "hooks/useCalculateFee"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
-import TokenInput from "./TokenInput"
+import { useDaoStore } from "stores/useDaoStore"
+import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import WETHABI from "ABIs/WETH.json"
+import Slippage from "../Slippage"
+import TokenSearch from "../TokenSearch"
 
 const Swap = ({ token }) => {
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
+  const signer = useLayoutStore(state => state.signer)
+  const uniswapV2GraphClient = useDaoStore(state => state.uniswapV2GraphClient)
   const queryClient = useQueryClient()
   const token0InputRef = React.useRef()
   const token1InputRef = React.useRef()
@@ -24,48 +31,48 @@ const Swap = ({ token }) => {
   const [poolExists, setPoolExists] = React.useState(true)
   const [hasNoLiquidity, setHasNoLiquidity] = React.useState(false)
   const [isEthOnEth, setIsEthOnEth] = React.useState(false)
-  const bbyDao = usePlaygroundStore(state => state.expandedDao)
-  const signer = useLayoutStore(state => state.signer)
+  const [hasAllowance, setHasAllowance] = React.useState()
   const bbyDaoTokens = queryClient.getQueryData(["daoTokens", bbyDao])
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
-  const [hasAllowance, setHasAllowance] = React.useState()
-  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
-  const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
   const { state, setState, handleChange } = useForm()
   const { calculateFee } = useCalculateFee()
+  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
+  const USDT = ethers.utils.getAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7")
+  const UniswapV2Router02 = ethers.utils.getAddress("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
+  const MIN_LIQUIDITY_USD = 10000
+
+  /* Build Token List */
+  const [coingeckoTokenList, setCoingeckoTokenList] = React.useState([])
+  React.useMemo(async () => {
+    try {
+      const res = await axios.get("https://tokens.coingecko.com/uniswap/all.json")
+      setCoingeckoTokenList(res.data.tokens)
+      return res.data.tokens
+    } catch (err) {
+      console.log("err", err)
+    }
+  }, [])
 
   const defaultEth = {
     address: WETH,
     chainId: ChainId.MAINNET,
     decimals: 18,
-    logoURI: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
+    logoURI: "https://v2.info.uniswap.org/static/media/eth.5fc0c9bd.png",
     name: "Ether",
     symbol: "ETH",
   }
-  const defaultTokenList = [...defaultTokens?.["tokens"], defaultEth]
-  const slippage = 0.055
+  const defaultTokenList = [defaultEth, ...defaultTokens?.["tokens"], ...coingeckoTokenList]
+
+  /* init slippage */
+  const defaultSlippage = 0.005
+  React.useEffect(() => {
+    setState({ slippage: defaultSlippage * 100 })
+  }, [])
+
   const [tokens, setTokens] = React.useState({
     token0: token,
     token1: undefined,
   })
-
-  const tokenSymbols = React.useMemo(() => {
-    return defaultTokenList?.reduce((acc = [], cv) => {
-      if (acc.filter(item => item.symbol === cv.symbol).length < 1) acc.push({ symbol: cv.symbol, uri: cv.logoURI })
-
-      return acc
-    }, [])
-  }, [defaultTokenList])
-
-  const filteredTokensBySymbol = React.useMemo(() => {
-    return tokenSymbols.reduce((acc = [], cv) => {
-      if (cv?.symbol?.toUpperCase().includes(state?.symbol?.toUpperCase()) && cv.symbol !== token?.symbol) {
-        acc.push(cv)
-      }
-
-      return acc
-    }, [])
-  }, [state.symbol])
 
   const handlePickToken = React.useCallback(
     picked => {
@@ -85,14 +92,14 @@ const Swap = ({ token }) => {
         existingToken = {
           ...bbyDaoTokens[hasTokenIndex],
           decimals: 18,
-          logoURI: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
+          logoURI: "https://v2.info.uniswap.org/static/media/eth.5fc0c9bd.png",
           name: "Ether",
           symbol: "ETH",
         }
       }
-
       const token1 = {
         ...defaultTokenList[index],
+        address: ethers.utils.getAddress(defaultTokenList[index]?.address),
         balance: !!existingToken ? existingToken?.balance : 0,
         ethValue: !!existingToken ? existingToken?.ethValue : 0,
         fiatBalance: !!existingToken ? existingToken?.fiatBalance : 0,
@@ -101,7 +108,7 @@ const Swap = ({ token }) => {
       setTokens({ ...tokens, token1 })
       setOpenSearch(false)
     },
-    [tokens]
+    [defaultTokenList, tokens]
   )
 
   const switchTokenPlacement = React.useCallback(() => {
@@ -112,6 +119,44 @@ const Swap = ({ token }) => {
   const WETHToken = React.useMemo(() => {
     return new Token(ChainId.MAINNET, WETH, 18, "WETH", "Wrapped Ether")
   }, [WETH, ChainId, Token])
+
+  const USDTToken = React.useMemo(() => {
+    return new Token(ChainId.MAINNET, USDT, 6, "USDT", "Tether USD")
+  }, [WETH, ChainId, Token])
+
+  const routeThroughUSDT = async uniswapTokens => {
+    try {
+      const Token0USDT = await Fetcher.fetchPairData(uniswapTokens[tokens.token0.symbol], USDTToken)
+      const USDTToken1 = await Fetcher.fetchPairData(USDTToken, uniswapTokens[tokens.token1.symbol])
+
+      const pair0Contract = new ethers.Contract(
+        ethers.utils.getAddress(Token0USDT?.liquidityToken?.address),
+        IUniswapV2Pair["abi"],
+        signer
+      )
+      const pair1Contract = new ethers.Contract(
+        ethers.utils.getAddress(USDTToken1?.liquidityToken?.address),
+        IUniswapV2Pair["abi"],
+        signer
+      )
+
+      const totalSupply0 = await pair0Contract?.totalSupply()
+      const hasLiquidity0 =
+        parseInt((totalSupply0.toString() / 10 ** Token0USDT?.liquidityToken?.decimals).toFixed()) > 0
+
+      const totalSupply1 = await pair1Contract?.totalSupply()
+      const hasLiquidity1 = parseInt((totalSupply1 / 10 ** Token0USDT?.liquidityToken?.decimals).toFixed()) > 0
+
+      setHasNoLiquidity(!hasLiquidity0 || !hasLiquidity1)
+      setPoolExists(false)
+
+      return [Token0USDT, USDTToken1]
+    } catch (err) {
+      setHasNoLiquidity(true)
+      setPoolExists(false)
+      setState(state => ({ ...state, [tokens.token0?.symbol]: true, [tokens.token1?.symbol]: true }))
+    }
+  }
 
   const routeThroughWETH = async uniswapTokens => {
     try {
@@ -138,8 +183,14 @@ const Swap = ({ token }) => {
 
       setHasNoLiquidity(!hasLiquidity0 || !hasLiquidity1)
       setPoolExists(false)
+
       return [Token0WETH, WETHToken1]
     } catch (err) {
+      if (!!uniswapTokens) {
+        return await routeThroughUSDT(uniswapTokens)
+      }
+      setHasNoLiquidity(true)
+      setPoolExists(false)
       console.log("err", err)
     }
   }
@@ -155,22 +206,48 @@ const Swap = ({ token }) => {
   }, [tokens])
 
   const uniPair = React.useMemo(async () => {
+    const hasEth = tokens?.token0?.symbol === "ETH" || tokens?.token1?.symbol === "ETH"
+    setIsEthOnEth(false)
+
     try {
       if (!!uniswapTokens) {
         const uniPair = await Fetcher.fetchPairData(
           uniswapTokens[tokens.token0.symbol],
           uniswapTokens[tokens.token1.symbol]
         )
-        const pairContract = new ethers.Contract(
-          ethers.utils.getAddress(uniPair?.liquidityToken.address),
-          IUniswapV2Pair["abi"],
-          signer
-        )
-        const totalSupply = await pairContract?.totalSupply()
-        const hasLiquidity = parseInt((totalSupply.toString() / 10 ** uniPair?.liquidityToken?.decimals).toFixed()) > 0
+
+        const address = ethers.utils.getAddress((await uniPair)?.liquidityToken?.address).toLowerCase()
+        const data = await uniswapV2GraphClient
+          .query(
+            `{pair(id: "${address}"){token0 { id symbol name derivedETH }
+               token1 {
+                 id
+                 symbol
+                 name
+                 derivedETH
+               }
+               reserve0
+               reserve1
+               reserveUSD
+               trackedReserveETH
+               token0Price
+               token1Price
+               volumeUSD
+               txCount
+           }
+          }`
+          )
+          .toPromise()
+
+        const poolReserves = parseFloat(data?.data?.pair?.reserveUSD)
+        const hasLiquidity = poolReserves > MIN_LIQUIDITY_USD //must have at least 10,000 USD of liquidity
 
         if (!hasLiquidity) {
-          return await routeThroughWETH(uniswapTokens)
+          if (!hasEth) {
+            return await routeThroughWETH(uniswapTokens)
+          } else {
+            return await routeThroughUSDT(uniswapTokens)
+          }
         }
 
         setHasNoLiquidity(!hasLiquidity)
@@ -189,21 +266,26 @@ const Swap = ({ token }) => {
 
           return
         }
-        return await routeThroughWETH(uniswapTokens)
+        if (!hasEth) {
+          return await routeThroughWETH(uniswapTokens)
+        } else {
+          return await routeThroughUSDT(uniswapTokens)
+        }
       }
+      console.log("err", err)
     }
-  }, [uniswapTokens])
+  }, [uniswapTokens, uniswapV2GraphClient])
 
   const showApprove = React.useMemo(
     () =>
       hasNoLiquidity === false &&
       hasAllowance?.token0 === false &&
+      tokens?.token0?.fiatBalance > 0 &&
       !!tokens?.token0 &&
       tokens?.token0.symbol !== "ETH" &&
       !!tokens?.token1,
     [hasNoLiquidity, hasAllowance, tokens]
   )
-
   /*
    *
    * Allowance Check:
@@ -334,8 +416,22 @@ const Swap = ({ token }) => {
           return acc
         }, [])
       )
-      const midPrice = route.midPrice.toSignificant(6)
+
+      /*  Set Amount of Pair Token */
+      const midPrice = route.midPrice.toSignificant(token.decimals)
       const token1Input = Number(token0Input * midPrice)
+
+      /*  Construct Uniswap Trade for info about trade */
+      const trade = new Trade(
+        route,
+        new TokenAmount(
+          uniswapTokens[token.symbol],
+          ethers.utils.parseUnits(token0Input.toString(), token.decimals).toBigInt()
+        ),
+        TradeType.EXACT_INPUT
+      )
+      const executionPrice = trade?.executionPrice.toSignificant(token?.decimals)
+      const nextMidPrice = trade?.nextMidPrice.toSignificant(token?.decimals)
 
       if (token0Input > max) {
         handleSetMaxTokenValue(token, tokenRef)
@@ -347,6 +443,7 @@ const Swap = ({ token }) => {
       console.log("err", err)
     }
   }
+
   const handleSetMaxTokenValue = async (token, tokenRef) => {
     try {
       const token0Input = tokenRef?.current?.max
@@ -368,7 +465,7 @@ const Swap = ({ token }) => {
           return acc
         }, [])
       )
-      const midPrice = route.midPrice.toSignificant(6)
+      const midPrice = route.midPrice.toSignificant(token.decimals)
       const token1Input = token0Input * midPrice
 
       setState(state => ({ ...state, [token?.symbol]: token0Input }))
@@ -377,17 +474,29 @@ const Swap = ({ token }) => {
       console.log("err", err)
     }
   }
+
+  /*
+   *
+   * Handle Swap Token:
+   *
+   * Determines which RouterV2 method to call
+   *
+   * */
+  const [isSwapping, setIsSwapping] = React.useState(false)
   const handleSwapToken = async (token0, token1) => {
+    setIsSwapping(true)
     try {
       const uniswapV2RouterContract02 = new ethers.Contract(UniswapV2Router02, IUniswapV2Router02["abi"], signer)
+      const slippage = state?.slippage / 100 || defaultSlippage
       const inputToken = {
         token: tokens.token0,
-        value: parseFloat(token0.toString()),
+        value: token0.toString(),
       }
       const outputToken = {
         token: tokens.token1,
-        value: parseFloat(token1.toString()) - parseFloat(token1.toString()) * slippage,
+        value: token1.toString() - parseFloat(token1.toString()) * slippage,
       }
+
       const swapExactTokensForTokens = inputToken.token.symbol !== "ETH" && outputToken.token.symbol !== "ETH"
       const swapExactETHForTokens = !isEthOnEth && inputToken.token.symbol === "ETH"
       const swapExactTokensForETH = !isEthOnEth && outputToken.token.symbol === "ETH"
@@ -427,10 +536,7 @@ const Swap = ({ token }) => {
 
       if (swapExactTokensForTokens) {
         const amountIn = ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals)
-        const amountOutMin = ethers.utils.parseUnits(
-          outputToken.value.toString(),
-          outputToken?.token?.decimals
-        )
+        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals)
         let path
 
         if (poolExists) {
@@ -464,10 +570,7 @@ const Swap = ({ token }) => {
       }
 
       if (swapExactETHForTokens) {
-        const amountOutMin = ethers.utils.parseUnits(
-          outputToken.value.toString(),
-          outputToken?.token?.decimals
-        )
+        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals)
         const value = ethers.utils.parseUnits(inputToken.value.toString())
         const tx = gnosisTransaction(
           {
@@ -490,10 +593,7 @@ const Swap = ({ token }) => {
 
       if (swapExactTokensForETH) {
         const amountIn = ethers.utils.parseUnits(inputToken.value.toString(), inputToken?.token?.decimals)
-        const amountOutMin = ethers.utils.parseUnits(
-          outputToken.value.toString(),
-          outputToken?.token?.decimals
-        )
+        const amountOutMin = ethers.utils.parseUnits(outputToken.value.toString(), outputToken?.token?.decimals)
 
         const tx = gnosisTransaction(
           {
@@ -521,94 +621,69 @@ const Swap = ({ token }) => {
 
   return (
     <div>
-      <form>
-        {tokens?.token0 && (
-          <TokenInput
-            tokens={tokens}
-            pair={uniPair}
-            tokenInputRef={token0InputRef}
-            token={tokens?.token0}
-            handleSetTokenValue={handleSetTokenValue}
-            handleSetMaxTokenValue={handleSetMaxTokenValue}
-            state={state}
-            logo={tokens?.token0?.logoURI}
-            autoComplete="off"
-            setOpenSearch={setOpenSearch}
-            isSwap={true}
-          />
-        )}
-        <button
-          type="button"
-          onClick={() => (tokens?.token0 && tokens?.token1 ? switchTokenPlacement() : () => {})}
-          className="m-auto my-4 flex"
-        >
-          {parseFloat(state[tokens?.token0?.symbol]) > 0 && parseFloat(state[tokens?.token1?.symbol]) > 0 ? (
-            <HiArrowSmDown size={26} />
-          ) : (
-            <HiOutlineSwitchVertical size={26} />
-          )}
-        </button>
+      {tokens?.token0 && (
         <TokenInput
           tokens={tokens}
           pair={uniPair}
-          tokenInputRef={token1InputRef}
-          token={tokens?.token1}
+          tokenInputRef={token0InputRef}
+          token={tokens?.token0}
           handleSetTokenValue={handleSetTokenValue}
           handleSetMaxTokenValue={handleSetMaxTokenValue}
           state={state}
-          logo={tokens?.token1?.logoURI}
+          logo={tokens?.token0?.logoURI}
           autoComplete="off"
           setOpenSearch={setOpenSearch}
           isSwap={true}
         />
-        {openSearch && (
-          <input
-            id="symbol"
-            name="symbol"
-            onChange={handleChange}
-            value={state?.symbol || ""}
-            className="mt-8 h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-3xl leading-tight focus:outline-none dark:bg-slate-800"
-            placeholder={"Type to search"}
-            autoComplete="off"
-            autoFocus={true}
-          />
+      )}
+      <button
+        type="button"
+        onClick={() => (tokens?.token0 && tokens?.token1 ? switchTokenPlacement() : () => {})}
+        className="m-auto my-4 flex"
+      >
+        {parseFloat(state[tokens?.token0?.symbol]) > 0 && parseFloat(state[tokens?.token1?.symbol]) > 0 ? (
+          <HiArrowSmDown size={26} />
+        ) : (
+          <HiOutlineSwitchVertical size={26} />
         )}
-        {openSearch && filteredTokensBySymbol && filteredTokensBySymbol?.length > 0 && (
-          <div className="mt-4 flex max-h-96 flex-wrap gap-1 overflow-y-scroll rounded-lg bg-slate-100 p-4 pt-4 shadow-xl dark:bg-slate-800">
-            {filteredTokensBySymbol.map((token, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => handlePickToken(token)}
-                className="mb-2 inline-flex self-start rounded-full bg-slate-300 p-2 px-4 font-light dark:bg-slate-600 hover:dark:bg-slate-700"
-              >
-                <div className="flex items-center justify-center">
-                  <div className="mr-2">{token?.symbol?.toUpperCase()}</div>
-                  <div className="flex h-6 w-6 overflow-hidden rounded-full">
-                    <img src={token?.uri} />
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-      </form>
+      </button>
+      <TokenInput
+        tokens={tokens}
+        pair={uniPair}
+        tokenInputRef={token1InputRef}
+        token={tokens?.token1}
+        handleSetTokenValue={handleSetTokenValue}
+        handleSetMaxTokenValue={handleSetMaxTokenValue}
+        state={state}
+        logo={tokens?.token1?.logoURI}
+        autoComplete="off"
+        setOpenSearch={setOpenSearch}
+        isSwap={true}
+      />
+      {openSearch && <TokenSearch token={token} tokenList={defaultTokenList} handlePickToken={handlePickToken} />}
+
       {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
-      <div className="my-4 flex w-full justify-center gap-4">
-        {showApprove && (
+      {showApprove && (
+        <div className="my-4 flex w-full justify-center gap-4">
           <div
-            className="flex cursor-pointer items-center justify-center rounded-3xl bg-[#FC8D4D] p-4 font-normal text-white hover:bg-[#d57239]"
+            className="focus:shadow-outline flex h-16 w-full w-full
+           appearance-none items-center justify-center rounded-full
+          bg-sky-500 py-2 px-3 text-xl font-normal leading-tight text-white hover:bg-sky-600 focus:outline-none dark:bg-orange-600 dark:hover:bg-orange-700"
             onClick={() => handleApproveToken(tokenContracts, 0)}
           >
             Approve {tokens?.token0?.symbol}
           </div>
-        )}
-        {!showApprove && !!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
+        </div>
+      )}
+      {!showApprove && !!state[tokens?.token0?.symbol] && !!state[tokens?.token1?.symbol] && (
+        <div className="my-4 flex w-full justify-center gap-4">
           <button
             type="button"
             disabled={hasNoLiquidity}
-            className={`flex w-full items-center justify-center rounded-3xl p-4 font-normal text-white ${
-              !hasNoLiquidity ? "bg-[#FC8D4D] hover:bg-[#d57239]" : ""
+            className={`focus:shadow-outline flex h-16 w-full w-full appearance-none items-center justify-center rounded-full py-2 px-3 text-xl font-normal leading-tight text-white focus:outline-none  ${
+              !hasNoLiquidity
+                ? "bg-sky-500 hover:bg-sky-600 dark:bg-orange-600 dark:hover:bg-orange-700"
+                : "bg-slate-300 dark:bg-slate-700"
             }`}
             onClick={
               !hasNoLiquidity
@@ -616,10 +691,19 @@ const Swap = ({ token }) => {
                 : () => {}
             }
           >
-            {hasNoLiquidity ? `No Liquidity` : `Swap ${tokens?.token0?.symbol} for ${tokens?.token1?.symbol}`}
+            {hasNoLiquidity
+              ? `Insufficient liquidity for this trade.`
+              : `Swap ${tokens?.token0?.symbol} for ${tokens?.token1?.symbol}`}
           </button>
-        )}
-      </div>
+        </div>
+      )}
+
+      <Slippage
+        value={state?.slippage}
+        handleChange={handleChange}
+        defaultSlippage={defaultSlippage * 100}
+        setState={setState}
+      />
     </div>
   )
 }

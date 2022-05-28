@@ -30,7 +30,7 @@ const TokenCard = ({ token, isMember }) => {
         ...token,
         token: {
           decimals: 18,
-          logoURI: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
+          logoURI: "https://v2.info.uniswap.org/static/media/eth.5fc0c9bd.png",
           name: "Ether",
           symbol: "ETH",
         },
@@ -47,7 +47,7 @@ const TokenCard = ({ token, isMember }) => {
     tokenAddress: WETH,
     chainId: ChainId.MAINNET,
     decimals: 18,
-    logoURI: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
+    logoURI: "https://v2.info.uniswap.org/static/media/eth.5fc0c9bd.png",
     name: "Ether",
     symbol: "ETH",
   }
