@@ -37,11 +37,10 @@ const TokenInput = ({
   }, [_token, tokens])
 
   const isUniV2 = React.useMemo(() => {
-    return _token.symbol === 'UNI-V2'
-
+    return _token?.symbol === "UNI-V2"
   }, [_token])
 
-  const uniV2Logo = 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Uniswap_Logo.svg'
+  const uniV2Logo = "https://upload.wikimedia.org/wikipedia/commons/e/e7/Uniswap_Logo.svg"
 
   const bbyDaoHasLessOf = React.useMemo(() => {
     if (
@@ -84,7 +83,7 @@ const TokenInput = ({
       the gas would be coming from the bbydao -- this is why we get err Error: Not enough Ether funds,
       if we don't account for gas
       */
-      if (_token.symbol === "ETH") {
+      if (_token?.symbol === "ETH") {
         const max = ethers.utils.formatUnits(BigNumber.from(_token?.balance), _token?.decimals)
         const uniFee = parseFloat(max) * 0.01 * 0.3
         const gasForSwap = 0.0099 // should use API for this value -- i.e for LP ETH this value is likely too small
@@ -95,18 +94,17 @@ const TokenInput = ({
     }
   }, [_token])
 
-
   /* Get USD price of token */
   React.useMemo(async () => {
     if (!!token && isSwap) {
       let priceUSD
-      if (token.symbol !== "ETH") {
+      if (token?.symbol !== "ETH") {
         const address = ethers.utils.getAddress(token?.address).toLowerCase()
         const data = await uniswapV2GraphClient
           .query(`{token(id: "${address}"){name symbol decimals derivedETH}}`)
           .toPromise()
         const derivedETH = data?.data?.token?.derivedETH
-        priceUSD = (derivedETH * ethPriceUSD)
+        priceUSD = derivedETH * ethPriceUSD
         setTokenPriceUSD(priceUSD)
       }
     }
@@ -177,7 +175,10 @@ const TokenInput = ({
       </div>
       <div className="flex w-full flex-row items-end justify-end space-x-2 font-light">
         <div className="flex w-full justify-between">
-          {(isSwap && !!state?.[_token?.symbol] && (!isNaN(tokenInputPricesUSD.token0) && !isNaN(tokenInputPricesUSD.token1))) ? (
+          {isSwap &&
+          !!state?.[_token?.symbol] &&
+          !isNaN(tokenInputPricesUSD.token0) &&
+          !isNaN(tokenInputPricesUSD.token1) ? (
             <div className="flex">
               <div className="text-sm text-slate-600">$</div>
               <div className="text-sm text-slate-600">
@@ -191,8 +192,8 @@ const TokenInput = ({
 
           {!!_token?.balance ? (
             <div className="ml-auto flex items-center">
-              <div className="text-sm flex text-slate-600 italic text-xs">Balance:</div>
-              <div className="text-sm flex text-slate-600 ml-1">
+              <div className="flex text-sm text-xs italic text-slate-600">Balance:</div>
+              <div className="ml-1 flex text-sm text-slate-600">
                 {ethers.utils.formatUnits(_token?.balance, _token?.decimals).match(/^\d+(?:\.\d{0,5})?/)}
               </div>
             </div>
