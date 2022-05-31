@@ -34,6 +34,7 @@ const DaoCard = ({ user, safe, address }) => {
       createDao({
         name: safe,
         type: 1,
+        category: 1,
         address: safe,
         members: daoMembersData,
       })

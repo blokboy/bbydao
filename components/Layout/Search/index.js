@@ -100,8 +100,8 @@ const Search = () => {
           </>
         ) : isLoading && query.length ? (
           <ResultsLoading />
-        ) : hits?.Profiles?.length && query.length ? (
-          <UserResults hits={hits.Profiles} />
+        ) : hits?.profiles?.length && query.length ? (
+          <UserResults hits={hits.profiles} />
         ) : null}
       </div>
     </div>

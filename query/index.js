@@ -5,7 +5,7 @@ const api = axios.create({
 })
 
 // get user
-// { address: 0x... , ens: string || null, ensAvatar: string || null }
+// { address: 0x... , ens: string }
 export const getUser = async req => {
   const res = await api.post("/accounts/account", req)
   return res.data
@@ -124,13 +124,12 @@ export const deleteOffChainTx = async req => {
     category: enum, (TRUSTED=1, TRUSTLESS=2)
   }
 */
-
 export const createDao = async req => {
   const res = await api.post("/dao/create", req)
   return res.data
 }
 
-//get dao
+// get dao
 // { address: string }
 export const getDao = async req => {
   const res = await api.post("/dao/dao", req)

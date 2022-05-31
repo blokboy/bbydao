@@ -19,7 +19,7 @@ const Playground = ({ address, data }) => {
   const { mutateAsync: getUser } = useMutation(api.getUser, {
     // working out how to access this, how we can treat it the same as the data from a useQuery
     mutationKey: ["getUserData", address],
-    // staleTime: 180000,
+    staleTime: 180000,
     // refetchOnWindowFocus: false,
   })
   
