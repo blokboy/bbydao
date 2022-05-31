@@ -36,6 +36,13 @@ const TokenInput = ({
     }
   }, [_token, tokens])
 
+  const isUniV2 = React.useMemo(() => {
+    return _token.symbol === 'UNI-V2'
+
+  }, [_token])
+
+  const uniV2Logo = 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Uniswap_Logo.svg'
+
   const bbyDaoHasLessOf = React.useMemo(() => {
     if (
       !tokens?.token0 ||
@@ -160,12 +167,12 @@ const TokenInput = ({
             <>
               {logo && (
                 <div className="mr-2 flex  h-6 w-6 overflow-hidden rounded-full">
-                  <img alt={`${_token?.symbol} icon`} src={logo} />
+                  <img alt={`${_token?.symbol} icon`} src={!isUniV2 ? logo : uniV2Logo} />
                 </div>
               )}
             </>
           )) || <div className="flex h-8 w-8 min-w-fit items-center">Select</div>}
-          {_token?.symbol ? _token?.symbol : ""}
+          <div className="whitespace-nowrap">{_token?.symbol ? _token?.symbol : ""}</div>
         </button>
       </div>
       <div className="flex w-full flex-row items-end justify-end space-x-2 font-light">
