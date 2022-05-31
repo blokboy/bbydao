@@ -13,19 +13,38 @@ const Fee = () => {
 
   return (
     <div className="ml-auto flex items-center justify-center rounded-xl bg-slate-200 p-2 font-thin dark:bg-slate-800">
-      <img src="/babydao.png" alt="bbydao" height={25} width={25} className={`${!bbyDaoFee ? "grayscale" : ""}`} />
-      <div
-        className={`flex h-4 w-4 items-center justify-center border hover:cursor-pointer ${
-          bbyDaoFee ? "" : "hover:bg-white"
-        }`}
+      <img
         onClick={toggleBbyDaoFee}
-      >
-        {bbyDaoFee && <div className="flex h-2 w-2 bg-white p-1" />}
-      </div>
+        src="/babydao.png"
+        alt="bbydao"
+        height={25}
+        width={25}
+        className={`${!bbyDaoFee ? "grayscale" : ""} hover:cursor-pointer`}
+      />
       {bbyDaoFee ? (
-        <ToolTip>Unchecking this box will waive the 1% bbyDAO transaction fee.</ToolTip>
+        <ToolTip>
+          Click the bbyDAO logo (
+          <img
+            src="/babydao.png"
+            alt="bbydao"
+            height={15}
+            width={15}
+            className={`inline ${!bbyDaoFee ? "grayscale" : ""} hover:cursor-pointer`}
+          />
+          ) to waive the 1% bbyDAO transaction fee.
+        </ToolTip>
       ) : (
-        <ToolTip>Checking this box will add the 1% bbyDAO transaction fee.</ToolTip>
+        <ToolTip>
+          The 1% bbyDAO fee has been waived. <em>Click the bbyDAO logo (
+          <img
+            src="/babydao.png"
+            alt="bbydao"
+            height={15}
+            width={15}
+            className={`inline ${!bbyDaoFee ? "grayscale" : ""} hover:cursor-pointer`}
+          />
+          ) to add this fee.{" "}</em>
+        </ToolTip>
       )}
     </div>
   )
