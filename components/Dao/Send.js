@@ -1,6 +1,5 @@
 import { BigNumber, ethers } from "ethers"
 import React from "react"
-import { useQueryClient } from "react-query"
 import { minimalABI } from "hooks/useERC20Contract"
 import { max256, NumberFromBig } from "utils/helpers"
 import useCalculateFee from "hooks/useCalculateFee"

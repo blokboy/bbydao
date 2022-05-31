@@ -20,7 +20,6 @@ const TokenInput = ({
   const uniswapV2GraphClient = useDaoStore(state => state.uniswapV2GraphClient)
   const setTokenInputPriceUSD = useDaoStore(state => state.setTokenInputPriceUSD)
   const tokenInputPricesUSD = useDaoStore(state => state.tokenInputPriceUSD)
-
   const ethPriceUSD = useDaoStore(state => state.ethPriceUSD)
   const [tokenPriceUSD, setTokenPriceUSD] = React.useState(null)
 
@@ -105,7 +104,7 @@ const TokenInput = ({
     }
   }, [token, tokens, uniswapV2GraphClient, ethPriceUSD, state])
 
-  /*  store USD prices of tokens and their input to zustand */
+  /*  Store USD prices of tokens and their input to zustand */
   React.useMemo(async () => {
     if (!!ethPriceUSD) {
       if (tokens?.token0?.symbol === token?.symbol) {
@@ -123,7 +122,6 @@ const TokenInput = ({
   }, [state, tokenPriceUSD])
 
   /*  Compose percentage display of USD price diff of trade */
-
   const USDDiff = React.useMemo(() => {
     if (!!tokenInputPricesUSD.token0 && !!tokenInputPricesUSD.token1) {
       const diff =

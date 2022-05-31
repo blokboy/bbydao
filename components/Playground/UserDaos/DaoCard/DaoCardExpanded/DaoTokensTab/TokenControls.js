@@ -4,7 +4,6 @@ import RemoveLiquidity from "components/Dao/Uniswap/RemoveLiquidity"
 import Swap from "components/Dao/Uniswap/Swap"
 import Modal from "components/Layout/Modal"
 import { HiChevronDown, HiChevronUp } from "react-icons/hi"
-import Earn from "components/Dao/Bancor/Earn"
 import Send from "components/Dao/Send"
 
 const TokenControls = ({ liquidityPair, token, isUniV2, treasury }) => {
@@ -38,7 +37,7 @@ const TokenControls = ({ liquidityPair, token, isUniV2, treasury }) => {
                 <div className="flex items-center">
                   <div className="flex items-center text-xl font-normal">
                     Send {token?.symbol}
-                    <div className="h-6 w-6 overflow-hidden rounded-full">
+                    <div className="h-6 w-6 ml-2 overflow-hidden rounded-full">
                       <img src={token?.logoURI || token?.logoURI} />
                     </div>
                   </div>

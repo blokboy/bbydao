@@ -13,7 +13,7 @@ const Slippage = ({ value, handleChange, setState, defaultSlippage }) => {
     }
   }, [value])
   return (
-    <div className="mt-6 flex">
+    <div className="flex">
       <div
         onClick={!isOpen ? () => setIsOpen(true) : () => {}}
         className={`flex flex w-48 flex-col items-center rounded-xl border bg-slate-200 p-2 text-sm font-thin shadow-lg hover:cursor-pointer hover:border hover:border-[#FC8D4D] dark:border-slate-800 dark:bg-slate-800 hover:dark:border-[#FC8D4D] ${

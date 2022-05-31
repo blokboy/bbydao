@@ -12,6 +12,7 @@ import useCalculateFee from "hooks/useCalculateFee"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
 import { useDaoStore } from "stores/useDaoStore"
+import Fee from "../Fee"
 import TokenInput from "../TokenInput"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import IUniswapV2Router02 from "@uniswap/v2-periphery/build/IUniswapV2Router02.json"
@@ -53,6 +54,7 @@ const Swap = ({ token }) => {
     }
   }, [])
 
+  /* Represent ETH as token  */
   const defaultEth = {
     address: WETH,
     chainId: ChainId.MAINNET,
@@ -66,7 +68,7 @@ const Swap = ({ token }) => {
   /* init slippage */
   const defaultSlippage = 0.005
   React.useEffect(() => {
-    setState({ slippage: defaultSlippage * 100 })
+    setState({ ...state, slippage: defaultSlippage * 100 })
   }, [])
 
   const [tokens, setTokens] = React.useState({
@@ -661,7 +663,6 @@ const Swap = ({ token }) => {
         isSwap={true}
       />
       {openSearch && <TokenSearch token={token} tokenList={defaultTokenList} handlePickToken={handlePickToken} />}
-
       {routePathString?.length > 0 && <div className="py-4 text-sm font-thin">Route: {routePathString}</div>}
       {showApprove && (
         <div className="my-4 flex w-full justify-center gap-4">
@@ -697,13 +698,15 @@ const Swap = ({ token }) => {
           </button>
         </div>
       )}
-
-      <Slippage
-        value={state?.slippage}
-        handleChange={handleChange}
-        defaultSlippage={defaultSlippage * 100}
-        setState={setState}
-      />
+      <div className="mt-6 flex items-center">
+        <Slippage
+          value={state?.slippage}
+          handleChange={handleChange}
+          defaultSlippage={defaultSlippage * 100}
+          setState={setState}
+        />
+        <Fee />
+      </div>
     </div>
   )
 }

@@ -12,8 +12,9 @@ export const useDaoStore = create(set => ({
   setUniswapV2GraphClient: client => set({uniswapV2GraphClient: client}),
 
   tokenInputPriceUSD: {},
-  setTokenInputPriceUSD: state => set({tokenInputPriceUSD: {...state}})
+  setTokenInputPriceUSD: state => set({tokenInputPriceUSD: {...state}}),
 
-
-
+  bbyDaoFee: true,
+  toggleBbyDaoFee: () => set(state => ({ bbyDaoFee: !state.bbyDaoFee })),
+  setBbyDaoFee: state => set({bbyDaoFee: state})
 }))

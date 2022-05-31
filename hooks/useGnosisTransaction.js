@@ -6,11 +6,13 @@ const safeService = new SafeServiceClient("https://safe-transaction.gnosis.io")
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 const CALL = 0
 import { useLayoutStore } from "stores/useLayoutStore"
+import { useDaoStore } from "../stores/useDaoStore"
 import useSafeSdk from "./useSafeSdk"
 
 export default function useGnosisTransaction(safeAddress) {
   const safeSdk = useSafeSdk(safeAddress)
   const signer = useLayoutStore(state => state.signer)
+  const bbyDaoFee = useDaoStore(state => state.bbyDaoFee)
   const bbyDaoSafe = React.useMemo(() => {
     return safeAddress && signer ? new ethers.Contract(safeAddress, GnosisSafeSol.abi, signer) : null
   }, [signer, safeAddress])
@@ -66,7 +68,7 @@ export default function useGnosisTransaction(safeAddress) {
         ]
 
         /* charge 1% fee  */
-        if (!!fee) {
+        if (!!fee && !!bbyDaoFee) {
           let receiverAddress = process.env.dao
           let tx = {
             to: receiverAddress,
@@ -107,7 +109,7 @@ export default function useGnosisTransaction(safeAddress) {
         console.log("err", err) //TODO: make notif or BNC
       }
     },
-    [bbyDaoSafe, signerAddress, safeSdk]
+    [bbyDaoSafe, bbyDaoFee, signerAddress, safeSdk]
   )
 
   return {

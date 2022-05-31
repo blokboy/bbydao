@@ -1,19 +1,21 @@
-import { ChainId } from "@uniswap/sdk"
-import { ethers } from "ethers"
-import React from "react"
-import { useQueryClient } from "react-query"
-import { flatten } from "utils/helpers"
-import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
-import { useLayoutStore } from "stores/useLayoutStore"
+import { ChainId }            from "@uniswap/sdk"
+import { ethers }             from "ethers"
+import React                  from "react"
+import { useQueryClient }     from "react-query"
+import { flatten }            from "utils/helpers"
+import IUniswapV2Pair         from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
+import { useLayoutStore }     from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
-import TokenBalance from "./TokenBalance"
-import TokenControls from "./TokenControls"
-import TokenImg from "./TokenImg"
-import TokenName from "./TokenName"
+import {useDaoStore}          from '../../../../../../stores/useDaoStore'
+import TokenBalance           from "./TokenBalance"
+import TokenControls          from "./TokenControls"
+import TokenImg               from "./TokenImg"
+import TokenName              from "./TokenName"
 
 const TokenCard = ({ token, isMember }) => {
   const signer = useLayoutStore(state => state.signer)
   const bbyDao = usePlaygroundStore(state => state.expandedDao)
+  const uniswapV2GraphClient = useDaoStore(state => state.uniswapV2GraphClient)
   const queryClient = useQueryClient()
   const treasury = React.useMemo(() => {
     if (!!bbyDao) {
@@ -93,6 +95,43 @@ const TokenCard = ({ token, isMember }) => {
       }
     }
   }, [_token, signer, treasury])
+
+  React.useMemo(async() => {
+    if(isUniV2) {
+      const address = ethers.utils.getAddress(bbyDao).toLowerCase()
+
+      console.log('u', uniswapV2GraphClient)
+//       const data = await uniswapV2GraphClient
+//           .query(`{
+//   user(id: "${address}") {
+//     exchangeBalances {
+//       userAddress
+//       exchangeAddress
+//
+//       ethDeposited
+//       tokensDeposited
+//       ethWithdrawn
+//       tokensWithdrawn
+//       uniTokensMinted
+//       uniTokensBurned
+//
+//       ethBought
+//       ethSold
+//       tokensBought
+//       tokensSold
+//       ethFeesPaid
+//       tokenFeesPaid
+//       ethFeesInUSD
+//       tokenFeesInUSD
+//     }
+//   }
+// }`)
+//           .toPromise()
+
+      // console.log('data', data)
+    }
+
+  }, [isUniV2, bbyDao])
 
   return (
     <div className="flex w-full flex-col rounded-xl bg-slate-100 p-2 shadow-xl dark:bg-slate-900">
