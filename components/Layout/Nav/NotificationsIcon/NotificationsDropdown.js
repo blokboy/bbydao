@@ -4,13 +4,15 @@ import NotificationCard from "./NotificationCard"
 const NotificationsDropdown = ({ ...props }) => {
   const { data, notificationCount, notificationsOpen } = props
 
+  console.log('notifications dropdown data', data)
+
   const notifications = React.useMemo(() => {
     if (!data) {
       return []
     }
 
     return [
-      ...data?.parsedNotifs.FRIEND_REQUESTS,
+      // ...data?.parsedNotifs.FRIEND_REQUESTS,
       ...data?.parsedNotifs.FRIEND_REQUESTS_ACCEPTED,
       ...data?.parsedNotifs.PROPOSAL_REQUEST,
       ...data?.parsedNotifs.PROPOSAL_RESULT,

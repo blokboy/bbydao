@@ -9,12 +9,14 @@ export default function useFriendData(address) {
 
   const { data: friendData, refetch } = useQuery(
     ["friends", address],
-    () => api.getFriends({ initiator: address }),
+    () => api.getFollowers({ initiator: address }),
     {
       refetchOnWindowFocus: false,
       staleTime: 180000,
     }
   )
+
+  console.log(friendData)
 
   const friendStatus = React.useMemo(() => {
     const initFriendStatus = {

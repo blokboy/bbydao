@@ -57,11 +57,11 @@ const NotificationsIcon = ({ address }) => {
         </button>
         {notifNumberDisplay}
 
-        <NotificationsDropdown
+        {/* <NotificationsDropdown
           data={data}
           notificationsOpen={notificationsOpen}
           notificationCount={notificationCount}
-        />
+        /> */}
       </div>
     </ClickAwayListener>
   )

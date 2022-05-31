@@ -9,6 +9,7 @@ import useFriendData from "hooks/useFriendData"
 const UserFollow = ({ user, address }) => {
   // determine relationship of user to address
   const [friendData, { friendStatus }] = useFriendData(address)
+  console.log('user followers:',friendData)
 
   const parsedList = React.useMemo(() => {
     let list = []

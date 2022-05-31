@@ -57,7 +57,7 @@ const DaoToDaoFollowModal = ({ user, targetDao }) => {
   const [friendData] = useFriendData(targetDao)
   const currentRelationships = friendData?.map(friend => friend.initiator)
   // const currentRelationships = friendData?.filter(friend => friend.status === 5).map(friend => friend.initiator)
-  console.log(currentRelationships)
+  console.log(friendData)
 
   const { data: userDaos, isLoading: userDaosLoading } = useQuery(
     ["userDaos", user],

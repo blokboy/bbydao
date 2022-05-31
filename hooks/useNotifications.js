@@ -8,18 +8,13 @@ export default function useNotifications(address = "") {
     staleTime: 180000,
   })
 
+  console.log("useNotifications data", data)
+
   return React.useMemo(() => {
     if (!data || !address) {
       return []
     }
 
-    return [
-      ...data?.parsedNotifs.FRIEND_REQUESTS,
-      ...data?.parsedNotifs.FRIEND_REQUESTS_ACCEPTED,
-      ...data?.parsedNotifs.PROPOSAL_REQUEST,
-      ...data?.parsedNotifs.PROPOSAL_RESULT,
-      ...data?.parsedNotifs.TRANSACTION_EXECUTION,
-      ...data?.parsedNotifs.DAO_INVITE,
-    ]
+    return data
   }, [data, address])
 }

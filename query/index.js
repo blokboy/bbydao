@@ -11,11 +11,11 @@ export const getUser = async req => {
   return res.data
 }
 
-// get user friends
-// "/relationship/user"
+// get followers
+// "/followers"
 // POST { initiator: address }
-export const getFriends = async req => {
-  const res = await api.post("/relationship/user", req)
+export const getFollowers = async req => {
+  const res = await api.post("/relationship/followers", req)
   return res.data
 }
 
