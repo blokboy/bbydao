@@ -3,10 +3,10 @@ import { BsPeople } from "react-icons/bs"
 import dynamic from "next/dynamic"
 const Modal = dynamic(() => import("components/Layout/Modal"), { ssr: false })
 import { useQueryClient } from "react-query"
-import { walletSnippet } from "../../../../utils/helpers"
+import { walletSnippet } from "utils/helpers"
 import FollowerModal from "./FollowerModal"
 
-const UserFollowers = ({ address, numFollowers, followers, friendStatus }) => {
+const UserFollowers = ({ address, numFollowers, followers, isFollowing }) => {
   const queryClient = useQueryClient()
   const target = queryClient.getQueryData("targetAddress")
   const userName = target?.ens || walletSnippet(address)

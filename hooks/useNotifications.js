@@ -8,8 +8,6 @@ export default function useNotifications(address = "") {
     staleTime: 180000,
   })
 
-  console.log("useNotifications data", data)
-
   return React.useMemo(() => {
     if (!data || !address) {
       return []

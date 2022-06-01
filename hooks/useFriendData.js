@@ -16,8 +16,6 @@ export default function useFriendData(address) {
     }
   )
 
-  console.log('useFriendData friendData:', friendData)
-
   const friendStatus = React.useMemo(() => {
     const initFriendStatus = {
       data: null,

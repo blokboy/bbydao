@@ -4,15 +4,14 @@ import * as api                                from "/query"
 import {useMutation, useQuery, useQueryClient} from "react-query"
 import ClickAwayListener                       from "react-click-away-listener"
 
-const FollowUserBtn = ({ user, address, friendStatus }) => {
-  // follow logic
+const FollowUserBtn = ({ user, address, isFollowing }) => {
   // request follow relationship with reqRelationship
-  // follow enum is 4
-  // once request is sent (onSuccess), invalidate cached data and refetch
+  // user to user follow status is 2
+  // onSuccess, invalidate cached data and refetch
   const queryClient = useQueryClient()
   const { status, mutateAsync: follow } = useMutation(api.reqRelationship, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries(["friends", address], {
+      await queryClient.invalidateQueries(["userFollowers", address], {
         refetchActive: true,
       })
     },
@@ -25,7 +24,7 @@ const FollowUserBtn = ({ user, address, friendStatus }) => {
       initiator: signedUser?.address || user,
       initiatorEns: signedUser?.ens,
       target: address,
-      status: 4,
+      status: 2,
     }
     console.log('follow req', req)
     follow(req)
@@ -35,7 +34,7 @@ const FollowUserBtn = ({ user, address, friendStatus }) => {
   // onSuccess, invalidate cached data and refetch
   const { mutateAsync: unfollow } = useMutation(api.deleteRelationship, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries(["friends", address], {
+      await queryClient.invalidateQueries(["userFollowers", address], {
         refetchActive: true,
       })
     },
@@ -75,7 +74,7 @@ const FollowUserBtn = ({ user, address, friendStatus }) => {
     ) : null
   }, [unfollowDisplay])
 
-  if (friendStatus?.isFollowing) {
+  if (isFollowing) {
     return (
       <ClickAwayListener onClickAway={handleClickAway}>
         <div>

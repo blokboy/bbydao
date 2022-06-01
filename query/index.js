@@ -12,7 +12,7 @@ export const getUser = async req => {
 }
 
 // get followers
-// "/followers"
+// "/relationship/followers"
 // POST { initiator: address }
 export const getFollowers = async req => {
   const res = await api.post("/relationship/followers", req)
@@ -133,6 +133,19 @@ export const createDao = async req => {
 // { address: string }
 export const getDao = async req => {
   const res = await api.post("/dao/dao", req)
+  return res.data
+}
+
+// getUserDaos
+/* 
+[
+{ address: "..." },
+{ address: "..." },
+...
+]
+*/
+export const getUserDaos = async req => {
+  const res = await api.post("/dao/user", req)
   return res.data
 }
 
