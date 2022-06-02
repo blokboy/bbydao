@@ -1,135 +1,110 @@
+import { ChainId } from "@uniswap/sdk"
 import { ethers } from "ethers"
-import React, { useEffect } from "react"
-import { FaEthereum } from "react-icons/fa"
-import { useDaoStore } from "stores/useDaoStore"
-import { isEmpty }     from "utils/helpers"
-import RemoveLiquidity from "components/Dao/Uniswap/RemoveLiquidity"
-import Modal           from "components/Layout/Modal"
-import Swap            from "components/Dao/Uniswap/Swap"
+import React from "react"
+import { useQueryClient } from "react-query"
+import { flatten } from "utils/helpers"
+import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
+import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
+import TokenBalance from "./TokenBalance"
+import TokenControls from "./TokenControls"
+import TokenImg from "./TokenImg"
+import TokenName from "./TokenName"
 
-const TokenCard = ({ token }) => {
-  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
-  const setUniswapSwapModalOpen = useDaoStore(state => state.setUniswapSwapModalOpen)
-  const setUniswapLpModalOpen = useDaoStore(state => state.setUniswapLpModalOpen)
-  const setUniswapRemoveLpModalOpen = useDaoStore(state => state.setUniswapRemoveLpModalOpen)
-
-  const lpToken0 = useDaoStore(state => state.lpToken0)
-  const setLpToken0 = useDaoStore(state => state.setLpToken0)
-  const lpToken1 = useDaoStore(state => state.lpToken1)
-  const setLpToken1 = useDaoStore(state => state.setLpToken1)
-  const isActive =
-    lpToken0?.tokenAddress === token?.tokenAddress ||
-    lpToken1?.tokenAddress === token?.tokenAddress ||
-    (token?.tokenAddress === null && lpToken0?.tokenAddress === WETH) ||
-    (token?.tokenAddress === null && lpToken1?.tokenAddress === WETH)
-  const isETH = token => parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null
-  const isUniV2 = token?.token?.symbol === "UNI-V2"
-
-  const setLpToken = () => {
-    if (!isActive) {
-      if (Object.keys(lpToken0).length === 0) {
-        if (isETH(token)) {
-          setLpToken0({
-            ...token,
-            token: {
-              decimals: 18,
-              logoUri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
-              name: "Ether",
-              symbol: "ETH",
-            },
-            tokenAddress: WETH,
-          })
-        } else {
-          setLpToken0(token)
-        }
-      }
-      if (
-        Object.keys(lpToken1).length === 0 &&
-        Object.keys(lpToken0).length !== 0 &&
-        token.tokenAddress !== lpToken0.tokenAddress
-      ) {
-        if (isETH(token)) {
-          setLpToken1({
-            ...token,
-            token: {
-              decimals: 18,
-              logoUri: "https://safe-transaction-assets.gnosis-safe.io/chains/1/currency_logo.png",
-              name: "Ether",
-              symbol: "ETH",
-            },
-            tokenAddress: WETH,
-          })
-        } else {
-          setLpToken1(token)
-        }
-        setUniswapLpModalOpen(true)
-      }
-    } else {
-      setLpToken0({})
+const TokenCard = ({ token, isMember }) => {
+  const signer = useLayoutStore(state => state.signer)
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
+  const queryClient = useQueryClient()
+  const treasury = React.useMemo(() => {
+    if (!!bbyDao) {
+      return queryClient.getQueryData(["daoTokens", bbyDao])
     }
+  }, [bbyDao])
+  const WETH = ethers.utils.getAddress("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2")
+  const isEth = React.useMemo(() => {
+    return parseInt(token?.ethValue) === 1 && token?.token === null && token?.tokenAddress === null
+  }, [token])
+  const _token = React.useMemo(() => {
+    if (isEth) {
+      return flatten({
+        ...token,
+        token: {
+          decimals: 18,
+          logoURI: "https://v2.info.uniswap.org/static/media/eth.5fc0c9bd.png",
+          name: "Ether",
+          symbol: "ETH",
+        },
+        address: WETH,
+        tokenAddress: "",
+      })
+    }
+
+    return flatten({ ...token, address: token?.tokenAddress, logoURI: token?.token?.logoUri })
+  }, [token])
+  const isUniV2 = _token?.symbol === "UNI-V2"
+  const defaultEth = {
+    address: WETH,
+    tokenAddress: WETH,
+    chainId: ChainId.MAINNET,
+    decimals: 18,
+    logoURI: "https://v2.info.uniswap.org/static/media/eth.5fc0c9bd.png",
+    name: "Ether",
+    symbol: "ETH",
   }
 
+  /* If bbyDao has LP, check to see if they have both pair tokens in their treasury  */
+  const [liquidityPair, setLiquidityPair] = React.useState()
+  React.useMemo(async () => {
+    if (_token.symbol === "UNI-V2" && !!signer) {
+      const pairContract = new ethers.Contract(
+        ethers.utils.getAddress(_token?.tokenAddress),
+        IUniswapV2Pair["abi"],
+        signer
+      )
+      const address0 = ethers.utils.getAddress(await pairContract?.token0())
+      const address1 = ethers.utils.getAddress(await pairContract?.token1())
+      let lpToken0 = treasury?.filter(token =>
+        token?.tokenAddress === null ? WETH === address0 : token?.tokenAddress === address0
+      )?.[0]
+      let lpToken1 = treasury?.filter(token =>
+        token?.tokenAddress === null ? WETH === address1 : token?.tokenAddress === address1
+      )?.[0]
+
+      if (!!lpToken0 && lpToken0.token === null && lpToken0.tokenAddress === null) {
+        lpToken0 = {
+          ...defaultEth,
+          balance: lpToken0?.balance,
+          ethValue: lpToken0?.ethValue,
+          fiatBalance: lpToken0?.fiatBalance,
+        }
+      }
+
+      if (!!lpToken1 && lpToken1.token === null && lpToken1.tokenAddress === null) {
+        lpToken1 = {
+          ...defaultEth,
+          balance: lpToken1?.balance,
+          ethValue: lpToken1?.ethValue,
+          fiatBalance: lpToken1?.fiatBalance,
+        }
+      }
+
+      if (!!lpToken0 && !!lpToken1) {
+        setLiquidityPair({ lpToken0: flatten(lpToken0), lpToken1: flatten(lpToken1) })
+      }
+    }
+  }, [_token, signer, treasury])
+
   return (
-    <div className="flex w-full flex-row justify-between rounded-xl bg-slate-100 p-2 dark:bg-slate-700 xl:flex-col">
-      <div className="flex w-full flex-row space-x-2">
-        <div className="flex h-10 w-10 items-center justify-center overflow-clip rounded-full border border-white">
-          {token?.token?.logoUri ? <img src={token?.token?.logoUri} alt={""} /> : <FaEthereum size={30} />}
+    <div className="flex w-full flex-col rounded-xl bg-slate-100 p-2 shadow-xl dark:bg-slate-900">
+      <div className="mb-2 flex w-full flex-col">
+        <div className="flex items-center">
+          <TokenImg token={_token} isUniV2={isUniV2} />
+          <TokenName token={_token} isUniV2={isUniV2} />
         </div>
-        <div className="flex h-full w-auto flex-col rounded-xl bg-slate-200 p-1 text-xs dark:bg-slate-600">
-          <span>{token.token?.name ? token.token.name : "Ethereum"}</span>
-          <span>
-            {(token?.balance / 10 ** 18).toFixed(3)} {token.token?.symbol ? token.token.symbol : "ETH"}
-          </span>
-          <span className="text-teal-600 dark:text-teal-400">${Number(token?.fiatBalance).toFixed(2)}</span>
-        </div>
+        <TokenBalance token={_token} />
       </div>
 
-        <>
-          {(!isUniV2 && (
-            <div className="flex flex-row space-x-2 p-1 xl:justify-center">
-              {isEmpty(lpToken0) && (
-                <>
-                  <button
-                    className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500"
-                    onClick={() => console.log("hii")}
-                  >
-                    send
-                  </button>
-                  <Modal
-                    heading={"Swap"}
-                    trigger={
-                      <button
-                        className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500"
-                      >
-                        swap
-                      </button>
-                    }
-                  >
-                    <Swap token={token} />
-                  </Modal>
-                </>
-              )}
-              <button className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-blue-500" onClick={setLpToken}>
-                {isEmpty(lpToken0) && isEmpty(lpToken1) ? "LP" : isActive ? "Selected" : "Pair"}
-              </button>
-            </div>
-          )) || (
-            <div className="flex flex-row space-x-2 p-1 xl:justify-center">
-              <Modal
-                heading={"Remove Liquidity"}
-                trigger={
-                  <button
-                    className="w-16 rounded-lg bg-blue-400 p-1 text-sm hover:bg-slate-500"
-                  >
-                    Manage
-                  </button>
-                }
-              >
-                <RemoveLiquidity token={token} />
-              </Modal>
-            </div>
-          )}
-        </>
+      {isMember && <TokenControls liquidityPair={liquidityPair} token={_token} isUniV2={isUniV2} treasury={treasury} />}
     </div>
   )
 }

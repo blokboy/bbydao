@@ -2,10 +2,10 @@ import { ChainId, Fetcher, Token } from "@uniswap/sdk"
 import IUniswapV2Pair from "@uniswap/v2-periphery/build/IUniswapV2Pair.json"
 import { ethers } from "ethers"
 import React from "react"
-import { useSigner } from "wagmi"
+import { useLayoutStore } from "stores/useLayoutStore"
 
 export default function useCalculateFee() {
-  const { data: signer } = useSigner()
+  const signer = useLayoutStore(state => state.signer)
   const signerAddress = React.useMemo(() => {
     return signer ? signer._address : null
   }, [signer])
@@ -31,7 +31,6 @@ export default function useCalculateFee() {
             //to prevent underflow, feels arbitrary can find better fix that toFixed(6)
             fee = (parseFloat(ethers.utils.formatEther(value)) * percentage).toFixed(6)
             totalFee += parseFloat(fee.toString())
-
           } else {
             const token0 = new Token(ChainId.MAINNET, WETH, 18, "WETH", "Wrapped Ether")
             const token1 = new Token(ChainId.MAINNET, token?.address, token?.decimals, token?.symbol, token?.name)
@@ -42,10 +41,11 @@ export default function useCalculateFee() {
               signer
             )
             const reserves = await pairContract?.getReserves()
-            const WETHReserve = uniPair?.tokenAmounts[0]?.token?.symbol === 'WETH' ? reserves[0] : reserves[1]
-            const PairReserve =  uniPair?.tokenAmounts[0]?.token?.symbol !== 'WETH' ? reserves[0] : reserves[1]
+            const WETHReserve = uniPair?.tokenAmounts[0]?.token?.symbol === "WETH" ? reserves[0] : reserves[1]
+            const PairReserve = uniPair?.tokenAmounts[0]?.token?.symbol !== "WETH" ? reserves[0] : reserves[1]
             const priceOfWETHInToken = (
-              parseFloat(ethers.utils.formatUnits(PairReserve, token1?.decimals)) / parseFloat(ethers.utils.formatEther(WETHReserve))
+              parseFloat(ethers.utils.formatUnits(PairReserve, token1?.decimals)) /
+              parseFloat(ethers.utils.formatEther(WETHReserve))
             ).toFixed(6) //to prevent underflow, feels arbitrary can find better fix that toFixed(6)
 
             const valueInEth = parseFloat(ethers.utils.formatEther(value)) / priceOfWETHInToken
