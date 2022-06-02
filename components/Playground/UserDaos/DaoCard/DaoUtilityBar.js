@@ -19,7 +19,7 @@ const DaoUtilityBar = ({ user, safe, isMember }) => {
 
   const { status, mutateAsync: followDao } = useMutation(api.reqRelationship, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries(["friends", safe], {
+      await queryClient.invalidateQueries(["daoFollowers", safe], {
         refetchActive: true,
       })
     },
@@ -27,7 +27,7 @@ const DaoUtilityBar = ({ user, safe, isMember }) => {
 
   const { mutateAsync: unfollowDao } = useMutation(api.deleteRelationship, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries(["friends", safe], {
+      await queryClient.invalidateQueries(["daoFollowers", safe], {
         refetchActive: true,
       })
     },
@@ -37,6 +37,7 @@ const DaoUtilityBar = ({ user, safe, isMember }) => {
     if (!safe || !user) return
     if (isFollowing) {
       try {
+        // need to get relationship id in here somehow
         const req = {
           initiator: user,
           target: safe,
@@ -52,7 +53,7 @@ const DaoUtilityBar = ({ user, safe, isMember }) => {
         const req = {
           initiator: user,
           target: safe,
-          status: 4,
+          status: 2,
         }
         followDao(req)
         return

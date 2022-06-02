@@ -42,8 +42,7 @@ const FollowUserBtn = ({ user, address, isFollowing }) => {
   const handleUnfollow = () => {
     if (!address || !user) return
     const req = {
-      initiator: signedUser?.address || user,
-      target: address,
+      id: isFollowing
     }
     unfollow(req)
   }
