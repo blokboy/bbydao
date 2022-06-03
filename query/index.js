@@ -61,6 +61,13 @@ export const deleteRelationship = async req => {
   return res.data
 }
 
+// get relationship by
+// { initiator: address, target: address }
+export const getRelationship = async req => {
+  const res = await api.post("/relationship/by", req)
+  return res.data
+}
+
 // get users notifications
 // { target: address }
 export const userNotifications = async req => {

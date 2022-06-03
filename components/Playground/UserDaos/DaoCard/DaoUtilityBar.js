@@ -5,7 +5,7 @@ import CreateNurseryBtn from "./CreateNurseryBtn"
 
 import useFriendData from "hooks/useFriendData"
 import * as api from "/query"
-import { useMutation, useQueryClient } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 
 import dynamic from "next/dynamic"
 const Modal = dynamic(() => import("components/Layout/Modal"), { ssr: false })
