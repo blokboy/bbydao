@@ -12,6 +12,7 @@ import OfferModal from "../Collection/OfferModal"
 import BuyModal from "../Collection/BuyModal"
 import NetworkWarning from "./Nav/NetworkWarning"
 import MobileNotificationsModal from "./MobileNotificationsModal"
+const Notifications = dynamic(() => import("./Notifications"), { ssr: false })
 
 const Layout = ({ children }) => {
   const UniGraphAPI = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2"
@@ -50,6 +51,7 @@ const Layout = ({ children }) => {
 
   return (
     <main className="w-full">
+      <Notifications />
       <Nav />
       <NetworkWarning />
       {searchOpen ? <Search /> : children}
