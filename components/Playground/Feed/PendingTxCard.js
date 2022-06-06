@@ -20,7 +20,7 @@ const PendingTxCard = ({ tx }) => {
   }, [transaction])
 
   const isMissingSigner = React.useMemo(() => {
-    return transaction?.executionInfo?.missingSigners.filter(s => s.value === signer?._address).length > 0
+    return transaction?.executionInfo?.missingSigners?.filter(s => s.value === signer?._address).length > 0
   }, [signer, transaction])
 
   return (
