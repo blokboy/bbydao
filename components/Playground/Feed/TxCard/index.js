@@ -9,7 +9,7 @@ import { useRelativeTime } from "../../../../hooks/useRelativeTime.ts"
 // i think TxCards should be expandable in some way
 // multi_sig txs in particular, an expanded view would be useful to display more info / actions on that tx
 const TxCard = ({ tx }) => {
-  console.log("TxCard tx:", tx)
+  // console.log("TxCard tx:", tx)
   const { formattedDate, timeFromNow } = useRelativeTime()
 
   const [isExpanded, setExpanded] = React.useState(false)
@@ -31,7 +31,7 @@ const TxCard = ({ tx }) => {
   }, [tx.executionDate, tx.submissionDate, timeFromNow])
 
   const txType = React.useMemo(() => {
-    return tx ? tx.txType.toLowerCase().replace("_", " ").replace("ethereum", "personal") : null
+    return tx ? tx?.txType?.toLowerCase().replace("_", " ").replace("ethereum", "personal") : null
   }, [tx])
 
   const txToFrom = React.useMemo(() => {
