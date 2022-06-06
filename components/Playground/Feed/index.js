@@ -104,13 +104,13 @@ const Feed = () => {
       <div className="flex items-center justify-center gap-4 text-sm font-thin">
         <button
           onClick={() => setCurrentFeed("pending")}
-          className={`rounded py-2 px-4 dark:bg-slate-700 hover:dark:bg-slate-600 ${currentFeed === 'pending' ? 'dark:bg-slate-600' : '' }`}
+          className={`rounded py-2 px-4 bg-slate-200 hover:bg-slate-100 dark:bg-slate-700 hover:dark:bg-slate-600 ${currentFeed === 'pending' ? 'dark:bg-slate-600' : '' }`}
         >
           Pending
         </button>
         <button
           onClick={() => setCurrentFeed("history")}
-          className={`rounded py-2 px-4 dark:bg-slate-700 hover:dark:bg-slate-600 ${currentFeed === 'history' ? 'dark:bg-slate-600' : '' }`}
+          className={`rounded py-2 px-4 bg-slate-200 hover:bg-slate-100 dark:bg-slate-700 hover:dark:bg-slate-600 ${currentFeed === 'history' ? 'dark:bg-slate-600' : '' }`}
         >
           History
         </button>
