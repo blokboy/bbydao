@@ -1,14 +1,17 @@
-import Link from "next/link"
-import React from "react"
-import { useRelativeTime } from "hooks/useRelativeTime.ts"
-import { HiCheckCircle } from "react-icons/hi"
-import { useLayoutStore } from "../../../stores/useLayoutStore"
+import SafeServiceClient    from '@gnosis.pm/safe-service-client'
+import Link                 from "next/link"
+import React                from "react"
+import { useRelativeTime }  from "hooks/useRelativeTime.ts"
+import { HiCheckCircle }    from "react-icons/hi"
+import { useLayoutStore }   from "../../../stores/useLayoutStore"
+import {usePlaygroundStore} from '../../../stores/usePlaygroundStore'
 
 const PendingTxCard = ({ tx }) => {
   console.log("tx", tx)
   const { formattedDate, timeFromNow } = useRelativeTime()
   const { transaction } = tx
   const { to } = transaction?.txInfo
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
   const signer = useLayoutStore(state => state.signer)
 
   const txTimeFromNow = React.useMemo(() => {
@@ -23,10 +26,27 @@ const PendingTxCard = ({ tx }) => {
     return transaction?.executionInfo?.missingSigners?.filter(s => s.value === signer?._address).length > 0
   }, [signer, transaction])
 
+  const safeTxHash = React.useMemo(() => {
+    return transaction?.id?.replace(`multisig_${bbyDao}_`, "")
+  }, [bbyDao, transaction])
+
+  const safeService = new SafeServiceClient("https://safe-transaction.gnosis.io")
+  const [pendingTx, setPendingTx] = React.useState(undefined)
+  const bbyDaoTransaction = React.useMemo(async () => {
+    if(!!safeTxHash) {
+      const transaction = await safeService.getTransaction(safeTxHash)
+      setPendingTx(transaction)
+    }
+
+  }, [safeTxHash, setPendingTx])
+
+
+
   return (
     <div className="mb-4 flex flex-col space-x-2 rounded-xl bg-slate-200 p-3 dark:bg-slate-800">
       <div className="ml-auto text-xs font-thin">{txTimeFromNow}</div>
       <div className="text-xs font-thin">Nonce: {transaction?.executionInfo?.nonce}</div>
+      <div className="text-xs font-thin">Safe Tx: {safeTxHash.substring(safeTxHash.length - 6, safeTxHash.length)}</div>
       <div>{transaction?.txInfo?.methodName || transaction?.txInfo?.dataDecoded?.method}</div>
       <div className="flex flex-col">
         <div className="flex">

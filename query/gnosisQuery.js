@@ -39,7 +39,7 @@ export const daoTxHistory = async safeAddress => {
 }
 
 export const daoTxQueued = async (safeAddress, page) => {
-  const { data } = await clientApi.get(!!page ? page : `/safes/${safeAddress}/transactions/queued`)
+  const { data } = await clientApi.get(!!page ? page : `/safes/${safeAddress}/transactions/queued?&timezone_offset=0&trusted=true`)
   return data
 }
 
