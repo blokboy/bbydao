@@ -52,11 +52,10 @@ const DaoCard = ({ user, safe, address }) => {
     staleTime: 200000,
     refetchOnWindowFocus: false,
   })
+
   // check if user is in daoMembersData
   const isMember = daoMembersData?.includes(user)
   useQuery(['isMember', user], () => isMember)
-
-
 
   // daoBalance data from gnosisApi
   const {
@@ -81,7 +80,7 @@ const DaoCard = ({ user, safe, address }) => {
 
   return (
     <div className="m-3 flex flex-col rounded-xl bg-slate-200 p-3 dark:bg-slate-800">
-      <DaoUtilityBar user={user} safe={safe} isMember={isMember} />
+      <DaoUtilityBar safe={safe} isMember={isMember} />
       {/* Pfp and Members Section */}
       <div className="flex w-full flex-col lg:flex-row">
         <DaoPfpIcon safe={safe} />

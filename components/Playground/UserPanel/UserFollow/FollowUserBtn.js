@@ -9,6 +9,7 @@ const FollowUserBtn = ({ user, address, isFollowing }) => {
   // user to user follow status is 2
   // onSuccess, invalidate cached data and refetch
   const queryClient = useQueryClient()
+
   const { status, mutateAsync: follow } = useMutation(api.reqRelationship, {
     onSuccess: async () => {
       await queryClient.invalidateQueries(["userFollowers", address], {
@@ -16,8 +17,10 @@ const FollowUserBtn = ({ user, address, isFollowing }) => {
       })
     },
   })
+
   // getting signed in user data from react-query cache in order to pass the initiatorEns to the mutation
   const signedUser = queryClient.getQueryData(["signedUser", user])
+
   const handleFollow = () => {
     if (!address || !user) return
     const req = {
@@ -39,6 +42,7 @@ const FollowUserBtn = ({ user, address, isFollowing }) => {
       })
     },
   })
+
   const handleUnfollow = () => {
     if (!address || !user) return
     const req = {

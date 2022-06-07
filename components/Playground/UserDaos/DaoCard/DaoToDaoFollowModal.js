@@ -2,7 +2,6 @@ import React from "react"
 import * as api from "/query"
 import * as gnosisApi from "query/gnosisQuery"
 import { useQuery, useMutation, useQueryClient } from "react-query"
-import useFriendData from "hooks/useFriendData"
 
 export const DaoCard = ({ address, targetDao, isFollowing }) => {
   const { data: daoData, isLoading: daoIsLoading } = useQuery(
@@ -14,10 +13,20 @@ export const DaoCard = ({ address, targetDao, isFollowing }) => {
     }
   )
 
+  const { data: daoDaoRel } = useQuery(["daoDaoRel", [address, targetDao]], () => api.getRelationshipBy({ initiator: address, target: targetDao }), {
+    enabled: !!isFollowing,
+    refetchOnWindowFocus: false,
+    staleTime: 180000,
+  })
+  console.log("daoDaoRel", daoDaoRel)
+
   const queryClient = useQueryClient()
   const { status, mutateAsync: followDao } = useMutation(api.reqRelationship, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries(["friends", targetDao], {
+      await queryClient.invalidateQueries(["daoFollowers", targetDao], {
+        refetchActive: true,
+      })
+      await queryClient.invalidateQueries(["daoDaoRel", [address, targetDao]], {
         refetchActive: true,
       })
     },
@@ -25,7 +34,10 @@ export const DaoCard = ({ address, targetDao, isFollowing }) => {
 
   const { mutateAsync: unfollowDao } = useMutation(api.deleteRelationship, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries(["friends", targetDao], {
+      await queryClient.invalidateQueries(["daoFollowers", targetDao], {
+        refetchActive: true,
+      })
+      await queryClient.invalidateQueries(["daoDaoRel", [address, targetDao]], {
         refetchActive: true,
       })
     },
@@ -33,9 +45,9 @@ export const DaoCard = ({ address, targetDao, isFollowing }) => {
 
   const handleFollow = () => {
     if (isFollowing) {
-      unfollowDao({ initiator: address, target: targetDao })
+      unfollowDao({ id: daoDaoRel?.id })
     } else {
-      followDao({ initiator: address, target: targetDao, status: 4 })
+      followDao({ initiator: address, target: targetDao, status: 1 })
     }
   }
 
@@ -54,10 +66,8 @@ export const DaoCard = ({ address, targetDao, isFollowing }) => {
 }
 
 const DaoToDaoFollowModal = ({ user, targetDao }) => {
-  const [friendData] = useFriendData(targetDao)
-  const currentRelationships = friendData?.map(friend => friend.initiator)
-  // const currentRelationships = friendData?.filter(friend => friend.status === 5).map(friend => friend.initiator)
-  console.log('friendData', friendData)
+  const {data: followers} = useQuery(["daoFollowers", targetDao], () => api.getFollowers({ target: targetDao }))
+  const currentRelationships = followers?.filter(rel => rel.status === 1).map(rel => rel.initiator)
 
   const { data: userDaos, isLoading: userDaosLoading } = useQuery(
     ["userDaos", user],

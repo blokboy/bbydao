@@ -31,7 +31,6 @@ const DaoFollowers = ({ address }) => {
     refetchOnWindowFocus: false,
     staleTime: 180000,
   })
-  console.log('daoFollowers', followers)
 
   return (
     <div>

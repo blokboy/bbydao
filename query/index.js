@@ -63,7 +63,7 @@ export const deleteRelationship = async req => {
 
 // get relationship by
 // { initiator: address, target: address }
-export const getRelationship = async req => {
+export const getRelationshipBy = async req => {
   const res = await api.post("/relationship/by", req)
   return res.data
 }
