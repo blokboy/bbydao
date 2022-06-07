@@ -1,9 +1,9 @@
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
 import { useRelativeTime } from "hooks/useRelativeTime.ts"
 import React from "react"
-import { HiCheckCircle } from "react-icons/hi"
+import { HiCheckCircle, HiOutlinePencilAlt } from "react-icons/hi"
 import useSafeSdk from "hooks/useSafeSdk"
-import { useQueryClient } from "react-query"
+import { useQuery, useQueryClient } from "react-query"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
 
@@ -15,6 +15,7 @@ const PendingTxCard = ({ tx }) => {
   const { to } = transaction?.txInfo
   const bbyDao = usePlaygroundStore(state => state.expandedDao)
   const signer = useLayoutStore(state => state.signer)
+  const safeSdk = useSafeSdk(bbyDao)
 
   const txTimeFromNow = React.useMemo(() => {
     return timeFromNow(tx?.timestamp || tx?.transaction?.timestamp)
@@ -55,13 +56,38 @@ const PendingTxCard = ({ tx }) => {
     return transaction?.executionInfo?.confirmationsSubmitted === transaction?.executionInfo?.confirmationsRequired
   }, [])
 
-  const safeSdk = useSafeSdk(bbyDao)
+  const hasPendingRejection = React.useMemo(() => {
+    if (tx.conflictType === "HasNext") {
+      const results = queryClient.getQueryData(["txsQueued", bbyDao])?.results
+      const filter = results.filter(
+        item => item?.transaction?.executionInfo?.nonce === transaction?.executionInfo?.nonce
+      )
+      const end = filter.filter(item => item.conflictType === "End")?.[0]
+      if (end.transaction?.txInfo.isCancellation === true) {
+        return true
+      }
+    }
+  }, [transaction])
 
   const handleExecution = async () => {
     try {
       const transaction = await pendingTx
-      const executeTxResponse = await safeSdk.executeTransaction(transaction)
+      const safeTransactionData = {
+        to: transaction.to,
+        value: transaction.value,
+        data: transaction.data ?? "0x",
+        operation: transaction.operation,
+        safeTxGas: transaction.safeTxGas,
+        baseGas: transaction.baseGas,
+        gasPrice: transaction.gasPrice,
+        gasToken: transaction.gasToken,
+        refundReceiver: transaction.refundReceiver,
+        nonce: transaction.nonce,
+      }
+      const safeTransaction = await safeSdk.createTransaction(safeTransactionData)
+      const executeTxResponse = await safeSdk.executeTransaction(safeTransaction)
       return executeTxResponse?.transactionResponse && (await executeTxResponse.transactionResponse.wait())
+      //TODO: notify
     } catch (err) {
       console.log("error", err)
     }
@@ -91,18 +117,19 @@ const PendingTxCard = ({ tx }) => {
     }
   }
 
-  const hasPendingRejection = React.useMemo(() => {
-    if (tx.conflictType === "HasNext") {
-      const results = queryClient.getQueryData(["txsQueued", bbyDao])?.results
-      const filter = results.filter(
-        item => item?.transaction?.executionInfo?.nonce === transaction?.executionInfo?.nonce
-      )
-      const end = filter.filter(item => item.conflictType === "End")?.[0]
-      if (end.transaction?.txInfo.isCancellation === true) {
-        return true
-      }
+  const handleSign = async () => {
+    try {
+      const sig = await safeSdk.signTransactionHash(safeTxHash)
+      await safeService.confirmTransaction(safeTxHash, sig?.data)
+      //TODO: notify
+    } catch (error) {
+      console.log("err", error)
     }
-  }, [transaction])
+  }
+
+  const isMember = React.useMemo(() => {
+    return queryClient.getQueryData(["isMember", signer._address])
+  }, [queryClient, signer])
 
   return (
     <div className="mb-2 flex flex-col rounded-xl bg-slate-200 p-3 dark:bg-slate-800">
@@ -135,12 +162,13 @@ const PendingTxCard = ({ tx }) => {
           )}
         </a>
       )}
-
       <div className="mt-2 flex flex-col rounded-xl bg-slate-300 p-4 dark:bg-slate-900">
         {transaction?.txInfo?.isCancellation && (
           <div className="mb-2 text-sm font-thin">Cancel Transaction: {transaction?.executionInfo?.nonce}</div>
         )}
-        <div className="mb-2 text-xs font-thin">Status: {status}</div>
+        <div className="mb-2 text-xs font-thin">
+          Status: {status} {hasPendingRejection ? <span className="text-red-600">- pending cancellation</span> : null}
+        </div>
         <div className="flex gap-1 text-sm font-thin">
           <div>{transaction?.executionInfo?.confirmationsSubmitted}</div>
           <div>out of</div>
@@ -148,40 +176,43 @@ const PendingTxCard = ({ tx }) => {
           <div>required signatures.</div>
         </div>
       </div>
-
-      {/*<div className="text-xs font-thin">Safe Tx: {safeTxHash}</div>*/}
-
-      <div className="mt-2 flex gap-2">
-        {isMissingSigner ? (
-          <button className="mt-4 inline-flex items-center self-start rounded px-4 py-2 font-thin dark:bg-orange-600 dark:hover:bg-orange-700">
-            Sign
-          </button>
-        ) : (
-          <div className="inline-flex items-center gap-2 self-start rounded bg-slate-300 px-4 py-2 font-thin dark:bg-slate-900">
-            Signed
-            <HiCheckCircle />
-          </div>
-        )}
-        {!transaction?.txInfo?.isCancellation && !hasPendingRejection && (
+      {isMember ? (
+        <div className="mt-2 flex gap-2">
+          {isMissingSigner ? (
+            <button
+              onClick={() => handleSign()}
+              className="inline-flex items-center self-start rounded px-4 py-2 font-thin dark:bg-orange-600 dark:hover:bg-orange-700"
+            >
+              <span className="mr-2">Sign</span>
+              <HiOutlinePencilAlt />
+            </button>
+          ) : (
+            <div className="inline-flex items-center gap-2 self-start rounded bg-slate-300 px-4 py-2 font-thin dark:bg-slate-900">
+              Signed
+              <HiCheckCircle />
+            </div>
+          )}
+          {!transaction?.txInfo?.isCancellation && !hasPendingRejection && (
+            <button
+              type="button"
+              className="inline-flex items-center self-start rounded bg-red-600 px-4 py-2 font-thin text-white hover:bg-red-700 dark:bg-rose-700 dark:hover:bg-rose-600"
+              onClick={() => handleRejection()}
+            >
+              Reject
+            </button>
+          )}
           <button
+            className={`inline-flex items-center self-start rounded bg-green-600 px-4 py-2 font-thin text-white dark:bg-green-700 ${
+              canExecute ? "hover:bg-green-700 dark:hover:bg-green-600" : "opacity-50"
+            }`}
             type="button"
-            className="inline-flex items-center self-start rounded bg-red-600 px-4 py-2 font-thin text-white hover:bg-red-700 dark:bg-rose-700 dark:hover:bg-rose-600"
-            onClick={() => handleRejection()}
+            disabled={!canExecute}
+            onClick={canExecute ? () => handleExecution() : () => {}}
           >
-            Reject
+            Execute
           </button>
-        )}
-        <button
-          className={`inline-flex items-center self-start rounded bg-green-600 px-4 py-2 font-thin text-white dark:bg-green-700 ${
-            canExecute ? "hover:bg-green-700 dark:hover:bg-green-600" : "opacity-50"
-          }`}
-          type="button"
-          disabled={!canExecute}
-          onClick={canExecute ? () => handleExecution() : () => {}}
-        >
-          Execute
-        </button>
-      </div>
+        </div>
+      ) : null}
     </div>
   )
 }

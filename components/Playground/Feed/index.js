@@ -53,7 +53,6 @@ const Feed = () => {
 
   const daoPendingTxs = React.useMemo(() => {
     const txsToMap = txsQueued && txsQueued?.results ? txsQueued?.results?.filter(tx => tx.type === 'TRANSACTION') : []
-    console.log('txQ', txsQueued)
 
     return txsToMap ? txsToMap.map((tx, i) => <PendingTxCard tx={tx} key={i} />) : null
   }, [txsQueued])
