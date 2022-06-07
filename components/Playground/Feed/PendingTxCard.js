@@ -1,14 +1,14 @@
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
-import { ethers } from "ethers"
 import { useRelativeTime } from "hooks/useRelativeTime.ts"
 import React from "react"
 import { HiCheckCircle } from "react-icons/hi"
 import useSafeSdk from "hooks/useSafeSdk"
+import { useQueryClient } from "react-query"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { usePlaygroundStore } from "stores/usePlaygroundStore"
 
 const PendingTxCard = ({ tx }) => {
-  console.log("tx", tx)
+  const queryClient = useQueryClient()
   const safeService = new SafeServiceClient("https://safe-transaction.gnosis.io")
   const { timeFromNow } = useRelativeTime()
   const { transaction } = tx
@@ -21,10 +21,16 @@ const PendingTxCard = ({ tx }) => {
   }, [tx.timestamp, tx?.transaction?.timestamp, timeFromNow])
 
   const status = React.useMemo(() => {
-    //SUCCESS
-    //AWAITING_EXECUTION
-    //AWAITING_CONFIRMATIONS
-    return transaction?.txStatus === "SUCCESS" ? <HiCheckCircle size={28} /> : null
+    switch (transaction?.txStatus) {
+      case "SUCCESS":
+        return <HiCheckCircle size={28} />
+      case "AWAITING_EXECUTION":
+        return "Ready to Execute!"
+      case "AWAITING_CONFIRMATIONS":
+        return "Additional Signatures Needed."
+      default:
+        return ""
+    }
   }, [transaction])
 
   const isMissingSigner = React.useMemo(() => {
@@ -64,7 +70,7 @@ const PendingTxCard = ({ tx }) => {
   const handleRejection = async () => {
     try {
       const transaction = await pendingTx
-      const rejectTxResponse = await safeSdk.createRejectionTransaction(transaction.nonce)
+      const rejectTxResponse = await safeSdk.createRejectionTransaction(transaction?.nonce)
       const safeTxHash = await safeSdk.getTransactionHash(rejectTxResponse)
       await safeService.proposeTransaction({
         safeAddress: bbyDao,
@@ -74,17 +80,29 @@ const PendingTxCard = ({ tx }) => {
       })
       const sig = await safeSdk.signTransactionHash(safeTxHash)
       await safeService.confirmTransaction(safeTxHash, sig?.data)
-      if(canExecute) {
+      if (canExecute) {
         const executeTxResponse = await safeSdk.executeTransaction(rejectTxResponse)
         return executeTxResponse?.transactionResponse && (await executeTxResponse.transactionResponse.wait())
       }
-
 
       //TODO: notify
     } catch (err) {
       console.log("error", err)
     }
   }
+
+  const hasPendingRejection = React.useMemo(() => {
+    if (tx.conflictType === "HasNext") {
+      const results = queryClient.getQueryData(["txsQueued", bbyDao])?.results
+      const filter = results.filter(
+        item => item?.transaction?.executionInfo?.nonce === transaction?.executionInfo?.nonce
+      )
+      const end = filter.filter(item => item.conflictType === "End")?.[0]
+      if (end.transaction?.txInfo.isCancellation === true) {
+        return true
+      }
+    }
+  }, [transaction])
 
   return (
     <div className="mb-2 flex flex-col rounded-xl bg-slate-200 p-3 dark:bg-slate-800">
@@ -119,14 +137,16 @@ const PendingTxCard = ({ tx }) => {
       )}
 
       <div className="mt-2 flex flex-col rounded-xl bg-slate-300 p-4 dark:bg-slate-900">
-        <div className="mb-2 text-xs font-thin">Status: {transaction?.txStatus}</div>
+        {transaction?.txInfo?.isCancellation && (
+          <div className="mb-2 text-sm font-thin">Cancel Transaction: {transaction?.executionInfo?.nonce}</div>
+        )}
+        <div className="mb-2 text-xs font-thin">Status: {status}</div>
         <div className="flex gap-1 text-sm font-thin">
           <div>{transaction?.executionInfo?.confirmationsSubmitted}</div>
           <div>out of</div>
           <div>{transaction?.executionInfo?.confirmationsRequired}</div>
           <div>required signatures.</div>
         </div>
-        <div></div>
       </div>
 
       {/*<div className="text-xs font-thin">Safe Tx: {safeTxHash}</div>*/}
@@ -142,11 +162,11 @@ const PendingTxCard = ({ tx }) => {
             <HiCheckCircle />
           </div>
         )}
-        {!transaction?.txInfo?.isCancellation && (
+        {!transaction?.txInfo?.isCancellation && !hasPendingRejection && (
           <button
             type="button"
             className="inline-flex items-center self-start rounded bg-red-600 px-4 py-2 font-thin text-white hover:bg-red-700 dark:bg-rose-700 dark:hover:bg-rose-600"
-            onClick={canExecute ? () => handleRejection() : () => {}}
+            onClick={() => handleRejection()}
           >
             Reject
           </button>
