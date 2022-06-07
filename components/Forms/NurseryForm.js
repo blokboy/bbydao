@@ -1,6 +1,6 @@
 import React from "react"
 import * as api from "query"
-import { useMutation, useQuery, useQueryClient } from "react-query"
+import { useMutation, useQuery, useQueries, useQueryClient } from "react-query"
 import { EthersAdapter, SafeFactory } from "@gnosis.pm/safe-core-sdk"
 import { ethers } from "ethers"
 import { Field, Form, Formik } from "formik"
@@ -32,9 +32,8 @@ const NurseryForm = ({ daoAddress }) => {
   const { data: followers } = useQuery(["daoFollowers", daoAddress], () => api.getFollowers({ target: daoAddress }), {
     refetchOnWindowFocus: false,
     staleTime: 180000,
-    // enabled: !!signer,
+    enabled: !!signer,
   })
-  console.log("signer:", signer)
 
   const parsedList = React.useMemo(() => {
     let list = []
@@ -51,11 +50,19 @@ const NurseryForm = ({ daoAddress }) => {
     return list
   }, [followers])
 
-  // need to get bby dao names for label here
-  const friends = parsedList?.map(friend => {
+  const daoQueries = parsedList?.map(friend => {
     return {
-      value: friend.initiator === daoAddress ? friend.target : friend.initiator,
-      label: friend.initiator === daoAddress ? friend.target : friend.initiator
+      queryKey: ["dao", friend.initiator === daoAddress ? friend.target : friend.initiator],
+      queryFn: () => api.getDao({ address: friend.initiator === daoAddress ? friend.target : friend.initiator }),
+    }
+  })
+
+  const results = useQueries(daoQueries)
+
+  const parsedDaos = results?.map(dao => {
+    return {
+      value: dao.data.address,
+      label: dao.data.name
     }
   })
 
@@ -92,13 +99,13 @@ const NurseryForm = ({ daoAddress }) => {
       try {
         const ownerList = [address, ...invites]
         setTxWaiting(true)
-        const bbyDao = await createBabyDao(ownerList, signer)
-        const bbyDaoAddress = await bbyDao.getAddress()
+        const nursery = await createBabyDao(ownerList, signer)
+        const nurseryAddress = await nursery.getAddress()
         // request to backend with dao info
         const req = {
           name,
-          type: 1,
-          address: bbyDaoAddress,
+          type: 2,
+          address: nurseryAddress,
           members: ownerList,
         }
         await createDao(req)
@@ -181,7 +188,7 @@ const NurseryForm = ({ daoAddress }) => {
                   styles={customStyles}
                   isMulti
                   name="invites"
-                  options={friends}
+                  options={parsedDaos}
                   className="basic-multi-select"
                   classNamePrefix="select"
                   onChange={e => {
