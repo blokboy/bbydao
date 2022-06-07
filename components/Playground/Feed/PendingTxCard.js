@@ -34,24 +34,43 @@ const PendingTxCard = ({ tx }) => {
   }, [bbyDao, transaction])
 
   const safeService = new SafeServiceClient("https://safe-transaction.gnosis.io")
-  const [pendingTx, setPendingTx] = React.useState(undefined)
-  React.useMemo(async () => {
+  const pendingTx = React.useMemo(async () => {
     try {
       if (!!safeTxHash) {
         const transaction = await safeService.getTransaction(safeTxHash)
-        setPendingTx(transaction)
+        return transaction
       }
     } catch (err) {
       console.log("err", err)
     }
-  }, [safeTxHash, setPendingTx])
+  }, [safeTxHash])
 
-  const camelToSpaceUpper = React.useCallback(camel => {
-    let result = camel?.replace(/([A-Z])/g, " $1").trim()
-    return result.charAt(0).toUpperCase() + result.slice(1)
+  const canExecute = React.useMemo(() => {
+    return transaction?.executionInfo?.confirmationsSubmitted === transaction?.executionInfo?.confirmationsRequired
   }, [])
 
   const safeSdk = useSafeSdk(bbyDao)
+
+  const handleExecution = async () => {
+    try {
+      const transaction = await pendingTx
+      const executeTxResponse = await safeSdk.executeTransaction(transaction)
+      return executeTxResponse?.transactionResponse && (await executeTxResponse.transactionResponse.wait())
+    } catch (err) {
+      console.log("error", err)
+    }
+  }
+
+  const handleRejection = async () => {
+    try {
+      const transaction = await pendingTx
+      const rejectTxResponse = await safeSdk.createRejectionTransaction(transaction.nonce)
+      console.log('r', rejectTxResponse)
+      // return executeTxResponse?.transactionResponse && (await executeTxResponse.transactionResponse.wait())
+    } catch (err) {
+      console.log("error", err)
+    }
+  }
 
   return (
     <div className="mb-2 flex flex-col rounded-xl bg-slate-200 p-3 dark:bg-slate-800">
@@ -110,10 +129,24 @@ const PendingTxCard = ({ tx }) => {
           </div>
         )}
         {!transaction?.txInfo?.isCancellation && (
-          <button className="inline-flex items-center self-start rounded bg-red-600 px-4 py-2 font-thin text-white hover:bg-red-700 dark:bg-rose-700 dark:hover:bg-rose-600">
+          <button
+            type="button"
+            className="inline-flex items-center self-start rounded bg-red-600 px-4 py-2 font-thin text-white hover:bg-red-700 dark:bg-rose-700 dark:hover:bg-rose-600"
+            onClick={canExecute ? () => handleRejection() : () => {}}
+          >
             Reject
           </button>
         )}
+        <button
+          className={`inline-flex items-center self-start rounded bg-green-600 px-4 py-2 font-thin text-white dark:bg-green-700 ${
+            canExecute ? "hover:bg-green-700 dark:hover:bg-green-600" : "opacity-50"
+          }`}
+          type="button"
+          disabled={!canExecute}
+          onClick={canExecute ? () => handleExecution() : () => {}}
+        >
+          Execute
+        </button>
       </div>
     </div>
   )
