@@ -1,13 +1,15 @@
 import SafeServiceClient from "@gnosis.pm/safe-service-client"
-import React from "react"
+import { ethers } from "ethers"
 import { useRelativeTime } from "hooks/useRelativeTime.ts"
+import React from "react"
 import { HiCheckCircle } from "react-icons/hi"
-import useSafeSdk from "../../../hooks/useSafeSdk"
-import { useLayoutStore } from "../../../stores/useLayoutStore"
-import { usePlaygroundStore } from "../../../stores/usePlaygroundStore"
+import useSafeSdk from "hooks/useSafeSdk"
+import { useLayoutStore } from "stores/useLayoutStore"
+import { usePlaygroundStore } from "stores/usePlaygroundStore"
 
 const PendingTxCard = ({ tx }) => {
   console.log("tx", tx)
+  const safeService = new SafeServiceClient("https://safe-transaction.gnosis.io")
   const { timeFromNow } = useRelativeTime()
   const { transaction } = tx
   const { to } = transaction?.txInfo
@@ -33,12 +35,10 @@ const PendingTxCard = ({ tx }) => {
     return transaction?.id?.replace(`multisig_${bbyDao}_`, "")
   }, [bbyDao, transaction])
 
-  const safeService = new SafeServiceClient("https://safe-transaction.gnosis.io")
   const pendingTx = React.useMemo(async () => {
     try {
       if (!!safeTxHash) {
-        const transaction = await safeService.getTransaction(safeTxHash)
-        return transaction
+        return await safeService.getTransaction(safeTxHash)
       }
     } catch (err) {
       console.log("err", err)
@@ -65,8 +65,22 @@ const PendingTxCard = ({ tx }) => {
     try {
       const transaction = await pendingTx
       const rejectTxResponse = await safeSdk.createRejectionTransaction(transaction.nonce)
-      console.log('r', rejectTxResponse)
-      // return executeTxResponse?.transactionResponse && (await executeTxResponse.transactionResponse.wait())
+      const safeTxHash = await safeSdk.getTransactionHash(rejectTxResponse)
+      await safeService.proposeTransaction({
+        safeAddress: bbyDao,
+        safeTransaction: rejectTxResponse,
+        safeTxHash,
+        senderAddress: signer._address,
+      })
+      const sig = await safeSdk.signTransactionHash(safeTxHash)
+      await safeService.confirmTransaction(safeTxHash, sig?.data)
+      if(canExecute) {
+        const executeTxResponse = await safeSdk.executeTransaction(rejectTxResponse)
+        return executeTxResponse?.transactionResponse && (await executeTxResponse.transactionResponse.wait())
+      }
+
+
+      //TODO: notify
     } catch (err) {
       console.log("error", err)
     }
