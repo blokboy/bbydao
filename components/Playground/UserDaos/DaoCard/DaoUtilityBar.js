@@ -117,7 +117,7 @@ const DaoUtilityBar = ({ safe, isMember }) => {
   return (
     <div className="flex h-0 w-full flex-row items-end justify-end space-x-1">
       {isMember ? (
-        <CreateNurseryBtn />
+        <CreateNurseryBtn daoAddress={safe} />
       ) : (
         <React.Fragment>
           {daoToDaoFollowBtn}

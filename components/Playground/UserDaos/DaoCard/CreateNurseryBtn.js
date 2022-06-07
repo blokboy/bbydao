@@ -3,7 +3,7 @@ import dynamic from "next/dynamic"
 const Modal = dynamic(() => import("components/Layout/Modal"), { ssr: false })
 import NurseryForm from 'components/Forms/NurseryForm'
 
-const CreateNurseryBtn = () => {
+const CreateNurseryBtn = ({ daoAddress }) => {
   return (
       <Modal
         heading={"create your nursery"}
@@ -13,7 +13,7 @@ const CreateNurseryBtn = () => {
         </button>
         }
       >
-        <NurseryForm />
+        <NurseryForm daoAddress={daoAddress} />
       </Modal>
   )
 }

@@ -1,6 +1,6 @@
 import React from "react"
 import * as api from "query"
-import { useMutation, useQuery } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 import { EthersAdapter, SafeFactory } from "@gnosis.pm/safe-core-sdk"
 import { ethers } from "ethers"
 import { Field, Form, Formik } from "formik"
@@ -20,7 +20,7 @@ const Input = ({ name }) => {
   )
 }
 
-const NurseryForm = () => {
+const NurseryForm = ({ daoAddress }) => {
   const signer = useLayoutStore(state => state.signer)
   const address = React.useMemo(() => {
     if (!signer) {
@@ -29,35 +29,33 @@ const NurseryForm = () => {
     return signer?._address
   }, [signer])
 
-  const { data: friendData } = useQuery(["friends", address], () => api.getFriends({ initiator: address }), {
+  const { data: followers } = useQuery(["daoFollowers", daoAddress], () => api.getFollowers({ target: daoAddress }), {
     refetchOnWindowFocus: false,
     staleTime: 180000,
-    enabled: !!signer,
+    // enabled: !!signer,
   })
-
   console.log("signer:", signer)
-  console.log(friendData)
 
   const parsedList = React.useMemo(() => {
     let list = []
-    if (friendData) {
-      for (const friend of friendData) {
-        // relationship status = 4 (follower)
-        // & the address of the profile being viewed is not the initiator of the relationship
-        if (friend.status === 4 && friend.initiator !== address) {
-          list.push(friend)
+    if (followers) {
+      for (const rel of followers) {
+        // relationship status = 1 (dao follower)
+        if (rel.status === 1) {
+          list.push(rel)
         } else {
           null
         }
       }
     }
     return list
-  }, [friendData])
+  }, [followers])
 
+  // need to get bby dao names for label here
   const friends = parsedList?.map(friend => {
     return {
-      value: friend.initiator === address ? friend.target : friend.initiator,
-      label: friend.initiator === address ? friend.targetEns || friend.target : friend.initiatorEns,
+      value: friend.initiator === daoAddress ? friend.target : friend.initiator,
+      label: friend.initiator === daoAddress ? friend.target : friend.initiator
     }
   })
 
