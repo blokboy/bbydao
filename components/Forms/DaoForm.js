@@ -8,7 +8,6 @@ import * as Yup from "yup"
 import Select from "react-select"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { customStyles } from "./customStyles"
-
 import { walletSnippet } from "utils/helpers"
 
 const Input = ({ name }) => {

@@ -29,13 +29,21 @@ const FollowerModal = ({ followers }) => {
       </form>
 
       <div className="flex flex-col py-4">
-        {(filter.length === 0 && !state.name && !!followers ? followers : filter)?.map(f => (
-          <Link href={`/playground/${f.initiator}`} key={f.id}>
-            <div className="mb-2 rounded-lg bg-slate-300 p-4 hover:cursor-pointer hover:bg-slate-400 hover:text-white dark:bg-slate-800 dark:hover:bg-slate-700">
-              {f.initiatorEns || walletSnippet(f.initiator)}
+        {(filter.length === 0 && !state.name && !!followers ? followers : filter)?.map(f =>
+          f.status === 2 ? (
+            // user followers - link to profile
+            <Link href={`/playground/${f.initiator}`} key={f.id}>
+              <div className="mb-2 rounded-lg bg-slate-300 p-4 hover:cursor-pointer hover:bg-slate-400 hover:text-white dark:bg-slate-800 dark:hover:bg-slate-700">
+                {f.initiatorEns || walletSnippet(f.initiator)}
+              </div>
+            </Link>
+          ) : (
+            // bbyDAO followers - find solution to "link" to these
+            <div className="mb-2 rounded-lg bg-slate-200 p-4 dark:bg-slate-700">
+              bbyDAO: {f.initiatorEns || walletSnippet(f.initiator)}
             </div>
-          </Link>
-        ))}
+          )
+        )}
         {((filter?.length === 0 && state?.name?.length > 0) || followers.length === 0) && <div>No Results</div>}
       </div>
     </div>
