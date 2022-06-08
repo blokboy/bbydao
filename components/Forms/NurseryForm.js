@@ -39,7 +39,7 @@ const NurseryForm = ({ daoAddress }) => {
     let list = []
     if (followers) {
       for (const rel of followers) {
-        // relationship status = 1 (dao follower)
+        // relationship status = 1 (follower is a bbyDAO)
         if (rel.status === 1) {
           list.push(rel)
         } else {
@@ -50,10 +50,11 @@ const NurseryForm = ({ daoAddress }) => {
     return list
   }, [followers])
 
-  const daoQueries = parsedList?.map(friend => {
+  const daoQueries = parsedList?.map(rel => {
+    const address = rel.initiator === daoAddress ? rel.target : rel.initiator
     return {
-      queryKey: ["dao", friend.initiator === daoAddress ? friend.target : friend.initiator],
-      queryFn: () => api.getDao({ address: friend.initiator === daoAddress ? friend.target : friend.initiator }),
+      queryKey: ["dao", address],
+      queryFn: () => api.getDao({ address }),
     }
   })
 
@@ -61,60 +62,64 @@ const NurseryForm = ({ daoAddress }) => {
 
   const parsedDaos = results?.map(dao => {
     return {
-      value: dao.data.address,
-      label: dao.data.name
+      value: dao.data?.address,
+      label: dao.data?.name,
     }
   })
 
-  const { status, mutateAsync: createDao } = useMutation(api.createDao)
+  const { status, mutateAsync: createNursery } = useMutation(api.createDao)
   const [txWaiting, setTxWaiting] = React.useState(false)
 
-  // const createBabyDao = React.useCallback(
-  //   async (ownerList, signer) => {
-  //     if (!signer) {
-  //       return
-  //     }
-  //     try {
-  //       const ethAdapter = new EthersAdapter({
-  //         ethers,
-  //         signer,
-  //       })
-  //       const safeFactory = await SafeFactory.create({ ethAdapter })
-  //       const owners = ownerList
-  //       const threshold = ownerList.length === 2 ? 2 : Math.ceil(ownerList.length / 2)
-  //       const safeAccountConfig = {
-  //         owners,
-  //         threshold,
-  //       }
-  //       return await safeFactory.deploySafe(safeAccountConfig)
-  //     } catch (err) {
-  //       console.log("err", err)
-  //     }
-  //   },
-  //   [signer]
-  // )
+  const createNurseryDao = React.useCallback(
+    async (ownerList, signer) => {
+      if (!signer) {
+        return
+      }
+      try {
+        const ethAdapter = new EthersAdapter({
+          ethers,
+          signer,
+        })
+        const safeFactory = await SafeFactory.create({ ethAdapter })
+        const owners = ownerList
+        // trusted or trustless will determine initial threshold
+        const threshold = ownerList.length === 2 ? 2 : Math.ceil(ownerList.length / 2)
+        const safeAccountConfig = {
+          owners,
+          threshold,
+        }
+        return await safeFactory.deploySafe(safeAccountConfig)
+      } catch (err) {
+        console.log("err", err)
+      }
+    },
+    [signer]
+  )
 
   const handleSubmit = React.useCallback(
     async ({ invites, name, signer }) => {
       try {
-        const ownerList = [address, ...invites]
+        const ownerList = [daoAddress, ...invites]
+
         setTxWaiting(true)
-        const nursery = await createBabyDao(ownerList, signer)
-        const nurseryAddress = await nursery.getAddress()
-        // request to backend with dao info
+
+        const nursery = await createNurseryDao(ownerList, signer)
+        const nurseryAddress = nursery.getAddress()
+
         const req = {
           name,
           type: 2,
           address: nurseryAddress,
           members: ownerList,
         }
-        await createDao(req)
+        await createNursery(req)
+
         setTxWaiting(false)
       } catch (err) {
         console.log(err)
       }
     },
-    [createDao, address]
+    [createNursery, category, address]
   )
 
   if (txWaiting) {

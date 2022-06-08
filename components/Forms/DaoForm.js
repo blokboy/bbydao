@@ -9,6 +9,8 @@ import Select from "react-select"
 import { useLayoutStore } from "stores/useLayoutStore"
 import { customStyles } from "./customStyles"
 
+import { walletSnippet } from "utils/helpers"
+
 const Input = ({ name }) => {
   return (
     <Field
@@ -29,35 +31,35 @@ const DaoForm = () => {
     return signer?._address
   }, [signer])
 
-  const { data: friendData } = useQuery(["friends", address], () => api.getFriends({ initiator: address }), {
+  const { data: followers } = useQuery(["userFollowers", address], () => api.getFollowers({ target: address }), {
     refetchOnWindowFocus: false,
     staleTime: 180000,
     enabled: !!signer,
   })
 
-  console.log("signer:", signer)
-  console.log(friendData)
-
   const parsedList = React.useMemo(() => {
     let list = []
-    if (friendData) {
-      for (const friend of friendData) {
-        // relationship status = 4 (follower)
+    if (followers) {
+      for (const rel of followers) {
+        // relationship status = 2 (follower is a user)
         // & the address of the profile being viewed is not the initiator of the relationship
-        if (friend.status === 4 && friend.initiator !== address) {
-          list.push(friend)
+        if (rel.status === 2 && rel.initiator !== address) {
+          list.push(rel)
         } else {
           null
         }
       }
     }
     return list
-  }, [friendData])
+  }, [followers])
 
-  const friends = parsedList?.map(friend => {
+  const parsedFollowers = parsedList?.map(rel => {
     return {
-      value: friend.initiator === address ? friend.target : friend.initiator,
-      label: friend.initiator === address ? friend.targetEns || friend.target : friend.initiatorEns,
+      value: rel.initiator === address ? rel.target : rel.initiator,
+      label:
+        rel.initiator === address
+          ? rel.targetEns || walletSnippet(rel.target)
+          : rel.initiatorEns || walletSnippet(rel.initiator),
     }
   })
 
@@ -76,6 +78,7 @@ const DaoForm = () => {
         })
         const safeFactory = await SafeFactory.create({ ethAdapter })
         const owners = ownerList
+        // trusted or trustless will determine initial threshold
         const threshold = ownerList.length === 2 ? 2 : Math.ceil(ownerList.length / 2)
         const safeAccountConfig = {
           owners,
@@ -183,7 +186,7 @@ const DaoForm = () => {
                   styles={customStyles}
                   isMulti
                   name="invites"
-                  options={friends}
+                  options={parsedFollowers}
                   className="basic-multi-select"
                   classNamePrefix="select"
                   onChange={e => {

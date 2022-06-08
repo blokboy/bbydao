@@ -18,7 +18,6 @@ export const DaoCard = ({ address, targetDao, isFollowing }) => {
     refetchOnWindowFocus: false,
     staleTime: 180000,
   })
-  console.log("daoDaoRel", daoDaoRel)
 
   const queryClient = useQueryClient()
   const { status, mutateAsync: followDao } = useMutation(api.reqRelationship, {
