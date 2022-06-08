@@ -51,10 +51,10 @@ const NurseryForm = ({ daoAddress }) => {
   }, [followers])
 
   const daoQueries = parsedList?.map(rel => {
-    const address = rel.initiator === daoAddress ? rel.target : rel.initiator
+    const add = rel.initiator === daoAddress ? rel.target : rel.initiator
     return {
-      queryKey: ["dao", address],
-      queryFn: () => api.getDao({ address }),
+      queryKey: ["dao", add],
+      queryFn: () => api.getDao({ address: add }),
     }
   })
 
@@ -86,7 +86,8 @@ const NurseryForm = ({ daoAddress }) => {
         const safeFactory = await SafeFactory.create({ ethAdapter })
         const owners = ownerList
         // trusted or trustless will determine initial threshold
-        const threshold = ownerList.length === 2 ? 2 : Math.ceil(ownerList.length / 2)
+        // category 1: trusted, category 2: trustless
+        const threshold = category === 1 ? (ownerList.length === 2 ? 2 : Math.ceil(ownerList.length / 2)) : 1
         const safeAccountConfig = {
           owners,
           threshold,
@@ -118,6 +119,7 @@ const NurseryForm = ({ daoAddress }) => {
           type: 2,
           address: nurseryAddress,
           members: ownerList,
+          category: category,
         }
 
         await createNursery(req)
@@ -125,7 +127,7 @@ const NurseryForm = ({ daoAddress }) => {
       } catch (err) {
         setTxWaiting(false)
         setTxError(err)
-        console.log('handleSubmit NurseryForm Error:', err)
+        console.log("handleSubmit NurseryForm Error:", err)
       }
     },
     [createNursery, category, address]
@@ -201,9 +203,9 @@ const NurseryForm = ({ daoAddress }) => {
               <div className="w-full">
                 {errors.invites ? <div className="p-2">{errors.invites}</div> : null}
                 <label className="block p-2 text-sm font-bold" htmlFor="invites">
-                  invite friends
+                  invite followers
                 </label>
-                <p className="p-2 text-xs">select from your friends</p>
+                <p className="p-2 text-xs">select from your followers</p>
                 <Select
                   // defaultValue={}
                   styles={customStyles}
@@ -219,7 +221,7 @@ const NurseryForm = ({ daoAddress }) => {
                 />
               </div>
               <div className="mb-8">
-                {errors.name ? <div className="p-2">{errors.name}</div> : null}
+                {errors.name ? <div className="p-2 text-orange-400">{errors.name}</div> : null}
                 <label className="mb-2 block text-sm font-bold" htmlFor="name">
                   name
                 </label>

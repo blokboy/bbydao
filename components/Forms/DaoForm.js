@@ -63,7 +63,7 @@ const DaoForm = () => {
   })
 
   const { status, mutateAsync: createDao } = useMutation(api.createDao)
-const [category, setCategory] = React.useState(1)
+  const [category, setCategory] = React.useState(1)
   const [txWaiting, setTxWaiting] = React.useState(false)
   const [txError, setTxError] = React.useState(null)
 
@@ -80,7 +80,8 @@ const [category, setCategory] = React.useState(1)
         const safeFactory = await SafeFactory.create({ ethAdapter })
         const owners = ownerList
         // trusted or trustless will determine initial threshold
-        const threshold = ownerList.length === 2 ? 2 : Math.ceil(ownerList.length / 2)
+        // category 1: trusted, category 2: trustless
+        const threshold = category === 1 ? (ownerList.length === 2 ? 2 : Math.ceil(ownerList.length / 2)) : 1
         const safeAccountConfig = {
           owners,
           threshold,
@@ -111,6 +112,7 @@ const [category, setCategory] = React.useState(1)
           type: 1,
           address: bbyDaoAddress,
           members: ownerList,
+          category: category,
         }
 
         await createDao(req)
@@ -118,7 +120,7 @@ const [category, setCategory] = React.useState(1)
       } catch (err) {
         setTxWaiting(false)
         setTxError(err)
-        console.log('handleSubmit DaoForm Error:', err)
+        console.log("handleSubmit DaoForm Error:", err)
       }
     },
     [createDao, category, address]
@@ -194,9 +196,9 @@ const [category, setCategory] = React.useState(1)
               <div className="w-full">
                 {errors.invites ? <div className="p-2">{errors.invites}</div> : null}
                 <label className="block p-2 text-sm font-bold" htmlFor="invites">
-                  invite friends
+                  invite followers
                 </label>
-                <p className="p-2 text-xs">select from your friends</p>
+                <p className="p-2 text-xs">select from your followers</p>
                 <Select
                   // defaultValue={}
                   styles={customStyles}
@@ -212,7 +214,7 @@ const [category, setCategory] = React.useState(1)
                 />
               </div>
               <div className="mb-8">
-                {errors.name ? <div className="p-2">{errors.name}</div> : null}
+                {errors.name ? <div className="p-2 text-orange-400">{errors.name}</div> : null}
                 <label className="mb-2 block text-sm font-bold" htmlFor="name">
                   name
                 </label>
