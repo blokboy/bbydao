@@ -39,7 +39,7 @@ const FollowerModal = ({ followers }) => {
             </Link>
           ) : (
             // bbyDAO followers - find solution to "link" to these
-            <div className="mb-2 rounded-lg bg-slate-200 p-4 dark:bg-slate-700">
+            <div className="mb-2 rounded-lg bg-slate-200 p-4 dark:bg-slate-700"  key={f.id}>
               bbyDAO: {f.initiatorEns || walletSnippet(f.initiator)}
             </div>
           )

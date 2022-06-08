@@ -63,7 +63,9 @@ const DaoForm = () => {
   })
 
   const { status, mutateAsync: createDao } = useMutation(api.createDao)
+const [category, setCategory] = React.useState(1)
   const [txWaiting, setTxWaiting] = React.useState(false)
+  const [txError, setTxError] = React.useState(null)
 
   const createBabyDao = React.useCallback(
     async (ownerList, signer) => {
@@ -85,7 +87,8 @@ const DaoForm = () => {
         }
         return await safeFactory.deploySafe(safeAccountConfig)
       } catch (err) {
-        console.log("err", err)
+        console.log("createBabyDao Error:", err)
+        setTxError(err)
       }
     },
     [signer]
@@ -95,23 +98,30 @@ const DaoForm = () => {
     async ({ invites, name, signer }) => {
       try {
         const ownerList = [address, ...invites]
+
+        console.log("handleSubmit bbyDAO:", { ownerList: ownerList, name: name, signer: signer, category: category })
+
         setTxWaiting(true)
         const bbyDao = await createBabyDao(ownerList, signer)
         const bbyDaoAddress = await bbyDao.getAddress()
-        // request to backend with dao info
+
+        // construct request to backend with dao info
         const req = {
           name,
           type: 1,
           address: bbyDaoAddress,
           members: ownerList,
         }
+
         await createDao(req)
         setTxWaiting(false)
       } catch (err) {
-        console.log(err)
+        setTxWaiting(false)
+        setTxError(err)
+        console.log('handleSubmit DaoForm Error:', err)
       }
     },
-    [createDao, address]
+    [createDao, category, address]
   )
 
   if (txWaiting) {
@@ -125,12 +135,19 @@ const DaoForm = () => {
     )
   }
 
+  if (txError) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <div className="text-xl text-red-500">Error:</div>
+        <div className="text-lg">{txError?.message}</div>
+      </div>
+    )
+  }
+
   const validationSchema = Yup.object().shape({
     name: Yup.string().min(1, "Name is too short!").required("Required"),
     invites: Yup.array().min(1, "you need at least one friend!").required("Required"),
   })
-
-  const [category, setCategory] = React.useState(1)
 
   return (
     <React.Fragment>

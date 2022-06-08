@@ -68,7 +68,10 @@ const NurseryForm = ({ daoAddress }) => {
   })
 
   const { status, mutateAsync: createNursery } = useMutation(api.createDao)
+
+  const [category, setCategory] = React.useState(1)
   const [txWaiting, setTxWaiting] = React.useState(false)
+  const [txError, setTxError] = React.useState(null)
 
   const createNurseryDao = React.useCallback(
     async (ownerList, signer) => {
@@ -90,7 +93,8 @@ const NurseryForm = ({ daoAddress }) => {
         }
         return await safeFactory.deploySafe(safeAccountConfig)
       } catch (err) {
-        console.log("err", err)
+        console.log("createNurseryDao Error:", err)
+        setTxError(err)
       }
     },
     [signer]
@@ -101,22 +105,27 @@ const NurseryForm = ({ daoAddress }) => {
       try {
         const ownerList = [daoAddress, ...invites]
 
+        console.log("handleSubmit nursery:", { ownerList: ownerList, name: name, signer: signer, category: category })
+
         setTxWaiting(true)
 
         const nursery = await createNurseryDao(ownerList, signer)
-        const nurseryAddress = nursery.getAddress()
+        const nurseryAddress = await nursery.getAddress()
 
+        // construct request to backend with nursery info
         const req = {
           name,
           type: 2,
           address: nurseryAddress,
           members: ownerList,
         }
-        await createNursery(req)
 
+        await createNursery(req)
         setTxWaiting(false)
       } catch (err) {
-        console.log(err)
+        setTxWaiting(false)
+        setTxError(err)
+        console.log('handleSubmit NurseryForm Error:', err)
       }
     },
     [createNursery, category, address]
@@ -133,12 +142,19 @@ const NurseryForm = ({ daoAddress }) => {
     )
   }
 
+  if (txError) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <div className="text-xl text-red-500">Error:</div>
+        <div className="text-lg">{txError?.message}</div>
+      </div>
+    )
+  }
+
   const validationSchema = Yup.object().shape({
     name: Yup.string().min(1, "Name is too short!").required("Required"),
     invites: Yup.array().min(1, "you need at least one friend!").required("Required"),
   })
-
-  const [category, setCategory] = React.useState(1)
 
   return (
     <React.Fragment>
