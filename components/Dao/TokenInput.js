@@ -149,6 +149,7 @@ const TokenInput = ({
           name={_token?.symbol}
           type="number"
           step={0.00001}
+          min="0"
           placeholder="0.0"
           required
           max={max || ""}

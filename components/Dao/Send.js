@@ -94,6 +94,7 @@ const Send = ({ token }) => {
     const max = bal / 10 ** dec
 
     if (token0Input > max) {
+      console.log('hi')
       await handleSetMaxTokenValue(token, tokenRef)
     } else {
       setState(state => ({ ...state, [token.symbol]: token0Input }))

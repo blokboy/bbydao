@@ -78,11 +78,6 @@ export default function useGnosisTransaction(safeAddress) {
         }
 
         const threshold = await bbyDaoSafe?.getThreshold()
-        if (threshold.toNumber() > 1) {
-          /*  Reject or ask for approvals */
-          throw new Error("Multiple approvals needed")
-        }
-
         const safeTransaction = await safeSdk.createTransaction(safeTx)
         const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
         await safeService.proposeTransaction({
@@ -95,13 +90,16 @@ export default function useGnosisTransaction(safeAddress) {
         const hash = transaction?.safeTxHash
         const sig = await safeSdk.signTransactionHash(hash)
         await safeService.confirmTransaction(hash, sig?.data)
+
+        if (threshold.toNumber() > 1) {
+          /*  Reject or ask for approvals */
+          console.log('hiii')
+         // throw new Error("Multiple approvals needed")
+          return
+        }
+
         // indicate when execute has started and close panel
         const executeTxResponse = await safeSdk.executeTransaction(safeTransaction)
-        console.log(
-          "ex",
-          executeTxResponse?.transactionResponse && (await executeTxResponse.transactionResponse.wait())
-        )
-
         return executeTxResponse?.transactionResponse && (await executeTxResponse.transactionResponse.wait())
       } catch (err) {
         console.log("err", err) //TODO: make notif or BNC
