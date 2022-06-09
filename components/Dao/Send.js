@@ -145,7 +145,7 @@ const Send = ({ token }) => {
   }, [state])
 
   return (
-    <div>
+    <>
       <TokenInput
         token={token}
         isSend={true}
@@ -193,7 +193,7 @@ const Send = ({ token }) => {
           Approve {token?.symbol}
         </div>
       )}
-    </div>
+    </>
   )
 }
 
