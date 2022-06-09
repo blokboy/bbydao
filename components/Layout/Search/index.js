@@ -61,14 +61,13 @@ const Search = () => {
   const {
     data: zoraResults,
     status,
-    refetch: refetchZora,
+    isLoading: zoraLoading,
+    refetch: refetchZoraResults,
   } = useQuery(["zoraResults"], () => zoraApi.searchZoraCollections(query), {
-    enabled: query !== "",
+    enabled: !!query,
     staleTime: 200000,
     refetchOnWindowFocus: false,
   })
-
-  console.log("zoraResults", zoraResults)
 
   React.useEffect(() => {
     const { cancel, token } = axios.CancelToken.source()
@@ -76,7 +75,7 @@ const Search = () => {
       fetchHits(query, dispatch, token)
 
       // zora query
-      refetchZora(query)
+      refetchZoraResults(query)
     }, 500)
     return () => cancel("No longer latest query") || clearTimeout(timeOutId)
   }, [query])
@@ -108,13 +107,13 @@ const Search = () => {
       {/* RESULTS */}
       {/* if there are hits in the search, pass them to Results */}
       <div className="flex w-full flex-col lg:w-1/2">
-        {!query.length ? (
+        {!query?.length ? (
           <>
             <div className="flex h-24 w-full items-center justify-center">
               <h1 className="font-semibold">start typing...</h1>
             </div>
           </>
-        ) : isLoading && query.length ? (
+        ) : isLoading || zoraLoading && query.length ? (
           <ResultsLoading />
         ) : (hits?.profiles?.length && query.length) || (zoraResults?.length && query.length) ? (
           <>

@@ -7,7 +7,8 @@ import AssetList from "./AssetList"
 
 import useERC721Contract from "hooks/useERC721Contract"
 
-const Collection = ({ data, slug }) => {
+const Collection = ({ data }) => {
+  console.log('Collection.js', data)
   const [ticker, setTicker] = React.useState(null)
 
   const collection = React.useMemo(() => {
@@ -52,7 +53,8 @@ const Collection = ({ data, slug }) => {
 
   return (
     <>
-      {head}
+    <h1>collection</h1>
+      {/* {head}
       <div className="flex w-full flex-col pt-4">
         <CollectionBanner banner={collection.banner_image_url} />
         <div className="flex flex-col p-4 md:flex-row">
@@ -78,7 +80,7 @@ const Collection = ({ data, slug }) => {
             />
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   )
 }
