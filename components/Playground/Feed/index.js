@@ -82,7 +82,7 @@ const Feed = () => {
   }, [currentFeed, daoPendingTxs, daoTxHistory])
 
   return (
-    <div className="mt-6 flex w-full flex-col space-y-6 md:mt-0 lg:w-2/5">
+    <div className="pt-6 mt-6 flex w-full flex-col space-y-6 md:mt-0 lg:w-2/5">
       <div className="flex items-center justify-center gap-4 text-sm font-thin">
         <button
           onClick={() => setCurrentFeed("pending")}
