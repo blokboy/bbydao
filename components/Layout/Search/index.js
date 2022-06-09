@@ -1,10 +1,15 @@
 import React from "react"
 import ResultsLoading from "./ResultsLoading"
 import UserResults from "./UserResults"
+import CollectionResults from "./CollectionResults"
 import axios from "axios"
 import { GoSearch } from "react-icons/go"
 import { MdClose } from "react-icons/md"
 import { useLayoutStore } from "/stores/useLayoutStore"
+
+// brought in for zora query
+import * as zoraApi from "query/zoraQuery"
+import { useQuery } from "react-query"
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -53,24 +58,35 @@ const Search = () => {
   })
   const [query, setQuery] = React.useState("")
 
-  React.useEffect(() => {
-    const { cancel, token } = axios.CancelToken.source()
-    const timeOutId = setTimeout(() => fetchHits(query, dispatch, token), 500)
-    return () => cancel("No longer latest query") || clearTimeout(timeOutId)
-  }, [query])
+  const {
+    data: zoraResults,
+    status,
+    refetch: refetchZora,
+  } = useQuery(["zoraResults"], () => zoraApi.searchZoraCollections(query), {
+    enabled: query !== "",
+    staleTime: 200000,
+    refetchOnWindowFocus: false,
+  })
+
+  console.log("zoraResults", zoraResults)
 
   React.useEffect(() => {
-    if (hits.length) {
-      console.log(hits)
-    }
-  }, [hits])
+    const { cancel, token } = axios.CancelToken.source()
+    const timeOutId = setTimeout(() => {
+      fetchHits(query, dispatch, token)
+
+      // zora query
+      refetchZora(query)
+    }, 500)
+    return () => cancel("No longer latest query") || clearTimeout(timeOutId)
+  }, [query])
 
   const setSearchOpen = useLayoutStore(state => state.setSearchOpen)
 
   return (
-    <div className="flex flex-col w-full justify-center items-center px-3">
+    <div className="flex w-full flex-col items-center justify-center px-3">
       {/* Search bar displays 1/2 width md breakpoint and full width on mobile*/}
-      <div className="relative md:w-1/2 w-full border-b-2 border-slate-200 py-3 text-slate-600 focus-within:text-slate-400 dark:focus-within:text-slate-100">
+      <div className="relative w-full border-b-2 border-slate-200 py-3 text-slate-600 focus-within:text-slate-400 dark:focus-within:text-slate-100 md:w-1/2">
         <span className="absolute left-0 top-4 flex items-center pl-2">
           <GoSearch size={24} />
         </span>
@@ -83,7 +99,7 @@ const Search = () => {
           value={query}
         />
         <button
-          className="absolute right-2 top-3 rounded-full border p-1 hover:dark:bg-slate-800 hover:bg-slate-100 dark:text-white"
+          className="absolute right-2 top-3 rounded-full border p-1 hover:bg-slate-100 dark:text-white hover:dark:bg-slate-800"
           onClick={setSearchOpen}
         >
           <MdClose size={24} />
@@ -91,7 +107,7 @@ const Search = () => {
       </div>
       {/* RESULTS */}
       {/* if there are hits in the search, pass them to Results */}
-      <div className="flex lg:w-1/2 w-full">
+      <div className="flex w-full flex-col lg:w-1/2">
         {!query.length ? (
           <>
             <div className="flex h-24 w-full items-center justify-center">
@@ -100,8 +116,11 @@ const Search = () => {
           </>
         ) : isLoading && query.length ? (
           <ResultsLoading />
-        ) : hits?.profiles?.length && query.length ? (
-          <UserResults hits={hits.profiles} />
+        ) : (hits?.profiles?.length && query.length) || (zoraResults?.length && query.length) ? (
+          <>
+            {hits?.profiles?.length ? <UserResults hits={hits.profiles} /> : null}
+            {zoraResults?.length && query.length ? <CollectionResults zoraResults={zoraResults} /> : null}
+          </>
         ) : null}
       </div>
     </div>
