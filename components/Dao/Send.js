@@ -94,7 +94,6 @@ const Send = ({ token }) => {
     const max = bal / 10 ** dec
 
     if (token0Input > max) {
-      console.log('hi')
       await handleSetMaxTokenValue(token, tokenRef)
     } else {
       setState(state => ({ ...state, [token.symbol]: token0Input }))
@@ -145,7 +144,7 @@ const Send = ({ token }) => {
   }, [state])
 
   return (
-    <div>
+    <div className="flex flex-col w-full">
       <TokenInput
         token={token}
         isSend={true}
