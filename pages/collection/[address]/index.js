@@ -4,8 +4,8 @@ import { request, gql } from "graphql-request"
 
 const endpoint = "https://api.zora.co/graphql"
 
-const CollectionPage = ({ data,  }) => {
-  return <Collection data={data} />
+const CollectionPage = ({ data, address }) => {
+  return <Collection data={data} address={address} />
 }
 
 export default CollectionPage
@@ -51,5 +51,5 @@ export const getServerSideProps = async ({ query }) => {
     variables,
   )
 
-  return {props: {data}}
+  return {props: {data, address}}
 }

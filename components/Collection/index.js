@@ -6,9 +6,24 @@ import CollectionInfo from "./CollectionInfo"
 import AssetList from "./AssetList"
 
 import useERC721Contract from "hooks/useERC721Contract"
+import * as zoraApi from 'query/zoraQuery'
+import { useQuery } from "react-query"
 
-const Collection = ({ data }) => {
+const Collection = ({ data, address }) => {
   console.log('Collection.js', data)
+
+  const {
+    data: firstMintResult,
+    status,
+    isLoading: firstMintLoading,
+  } = useQuery(["firstMint", address], () => zoraApi.firstMint(address), {
+    enabled: !!address,
+    staleTime: 200000,
+    refetchOnWindowFocus: false,
+  })
+  console.log('firstMintResult', firstMintResult)
+
+
   const [ticker, setTicker] = React.useState(null)
 
   const collection = React.useMemo(() => {

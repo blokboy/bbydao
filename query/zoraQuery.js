@@ -29,3 +29,39 @@ export const searchZoraCollections = async query => {
 
   return data?.search?.nodes
 }
+
+export const firstMint = async query => {
+  if (!query) return 
+
+  const req = gql`
+  query FirstMintedToken ($collectionAddresses: [String!]!){
+    tokens(where: {collectionAddresses: $collectionAddresses}, sort: {sortKey: MINTED, sortDirection: DESC}, pagination: {limit: 1}) {
+      nodes {
+        token {
+          collectionName
+          description
+          image {
+            mediaEncoding {
+              ... on ImageEncodingTypes {
+                thumbnail
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  `
+
+  const variables = {
+    collectionAddresses: query
+  }
+
+  const data = await request(
+    endpoint,
+    req,
+    variables,
+  )
+
+  return data
+}
