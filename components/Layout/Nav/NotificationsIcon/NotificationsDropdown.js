@@ -23,8 +23,8 @@ const NotificationsDropdown = ({ ...props }) => {
   const notificationsList = React.useMemo(() => {
     return !notifications.length ? (
       <li>
-        <p className="text-center">¯\_(ツ)_/¯</p>
-        <p className="text-center">No notifications</p>
+        <div className="text-center">¯\_(ツ)_/¯</div>
+        <div className="text-center">No notifications</div>
       </li>
     ) : (
       <>

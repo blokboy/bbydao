@@ -18,8 +18,8 @@ const CreateThreadForm = ({ closeModal }) => {
   const channelAddress = useMessageStore(state => state.channelAddress)
 
   const { data: friendData } = useQuery(
-    ["friends", accountData?.address],
-    () => api.getFriends({ initiator: accountData?.address }),
+    ["userFollowers", accountData?.address],
+    () => api.getFollowers({ target: accountData?.address }),
     {
       refetchOnWindowFocus: false,
       staleTime: 180000,
