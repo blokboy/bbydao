@@ -43,7 +43,7 @@ export const firstMint = async query => {
           image {
             mediaEncoding {
               ... on ImageEncodingTypes {
-                thumbnail
+                original
               }
             }
           }
@@ -63,5 +63,5 @@ export const firstMint = async query => {
     variables,
   )
 
-  return data
+  return data?.tokens?.nodes
 }

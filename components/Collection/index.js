@@ -1,16 +1,20 @@
 import React from "react"
 import Head from "next/head"
-
-import CollectionBanner from "./CollectionBanner"
 import CollectionInfo from "./CollectionInfo"
 import AssetList from "./AssetList"
-
 import useERC721Contract from "hooks/useERC721Contract"
-import * as zoraApi from 'query/zoraQuery'
+import * as zoraApi from "query/zoraQuery"
 import { useQuery } from "react-query"
+import CanvasPfp from "../Playground/CanvasPfp"
 
 const Collection = ({ data, address }) => {
-  console.log('Collection.js', data)
+  const collection = React.useMemo(() => {
+    if (!data) {
+      return null
+    }
+
+    return data?.collections?.nodes?.[0]
+  }, [data])
 
   const {
     data: firstMintResult,
@@ -18,21 +22,11 @@ const Collection = ({ data, address }) => {
     isLoading: firstMintLoading,
   } = useQuery(["firstMint", address], () => zoraApi.firstMint(address), {
     enabled: !!address,
-    staleTime: 200000,
+    staleTime: 20 * 60 * 1000,
     refetchOnWindowFocus: false,
   })
-  console.log('firstMintResult', firstMintResult)
-
 
   const [ticker, setTicker] = React.useState(null)
-
-  const collection = React.useMemo(() => {
-    if (!data || !data.collection) {
-      return null
-    }
-
-    return data.collection
-  }, [data])
 
   const contract = useERC721Contract(collection?.address)
 
@@ -58,7 +52,7 @@ const Collection = ({ data, address }) => {
   const head = React.useMemo(() => {
     return collection ? (
       <Head>
-        <title>bbyDAO | {collection.name} NFT Collection</title>
+        <title>bbyDAO | {collection.name} - NFT Collection</title>
         <meta name="description" content={collection.description} />
       </Head>
     ) : null
@@ -68,13 +62,26 @@ const Collection = ({ data, address }) => {
 
   return (
     <>
-    <h1>collection</h1>
-      {/* {head}
+      {head}
       <div className="flex w-full flex-col pt-4">
-        <CollectionBanner banner={collection.banner_image_url} />
+        <div className="flex w-full flex-col items-center justify-center space-y-3">
+          {firstMintResult?.[0]?.token?.image?.mediaEncoding?.original ? (
+            <img
+              src={firstMintResult?.[0]?.token?.image?.mediaEncoding?.original}
+              alt={firstMintResult?.[0]?.token?.collectionName}
+              className="rounded-full"
+              width={160}
+              height={160}
+            />
+          ) : (
+            <CanvasPfp />
+          )}
+          <h1 className="text-6xl">{collection.name}</h1>
+        </div>
+
         <div className="flex flex-col p-4 md:flex-row">
           <div className="flex w-full flex-col items-center md:w-1/3">
-            <CollectionInfo
+            {/* <CollectionInfo
               address={collection.address}
               name={collection.name}
               description={collection.description}
@@ -85,17 +92,18 @@ const Collection = ({ data, address }) => {
               avg={collection.average_price}
               volume={collection.total_volume}
               ticker={ticker}
-            />
+            /> */}
           </div>
-          <div className="w-full md:w-2/3">
+
+          {/* <div className="w-full md:w-2/3">
             <AssetList
               assets={data.assets}
               address={data?.collection?.address}
               slug={slug}
             />
-          </div>
+          </div> */}
         </div>
-      </div> */}
+      </div>
     </>
   )
 }

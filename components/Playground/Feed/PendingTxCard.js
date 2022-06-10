@@ -128,7 +128,7 @@ const PendingTxCard = ({ tx }) => {
   }
 
   const isMember = React.useMemo(() => {
-    return queryClient.getQueryData(["isMember", signer._address])
+    return queryClient.getQueryData(["isMember", signer?._address])
   }, [queryClient, signer])
 
   return (
