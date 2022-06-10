@@ -1,10 +1,12 @@
-import React, { useMemo } from "react"
-import { useMutation, useQuery } from "react-query"
+import {ethers}                   from 'ethers'
+import React, { useMemo }         from "react"
+import { useMutation, useQuery }  from "react-query"
 import { useAccount, useEnsName } from "wagmi"
-import * as api from "query"
-import Feed from "./Feed"
-import UserDaos from "./UserDaos"
-import UserPanel from "./UserPanel"
+import * as api                   from "query"
+import {usePlaygroundStore}       from '../../stores/usePlaygroundStore'
+import Feed                       from "./Feed"
+import UserDaos                   from "./UserDaos"
+import UserPanel                  from "./UserPanel"
 
 const Playground = ({ address, data }) => {
   // data is the res from querying gnosis for the user's daos
@@ -12,7 +14,7 @@ const Playground = ({ address, data }) => {
   // data: userData is the data of the signed-in user
   const { data: accountData, isError: accountErr, isLoading: accountLoading } = useAccount()
   const { data: ensName, isError: ensErr, isLoading: ensLoading } = useEnsName({ address: address })
-  
+
   // getUser sends a POST req to our api with the address of the profile being viewed
   // if that address does not exist in our backend, it creates a new user record
   const { mutateAsync: updateUser } = useMutation(api.updateUser, { refetchOnWindowFocus: false })
@@ -22,7 +24,7 @@ const Playground = ({ address, data }) => {
     staleTime: 180000,
     // refetchOnWindowFocus: false,
   })
-  
+
   // this useEffect is intended to fire when ensLoading from wagmi is false (to see if an ens lookup was successful)
   // if the ens lookup was successful, and the user ens on our backend does not match the ens lookup from wagmi,
   // we update the user's ens on our backend to match the ens lookup from wagmi
@@ -54,12 +56,18 @@ const Playground = ({ address, data }) => {
   // and exploration of the app - making each column or section modular could provide unique
   // user paths and experiences - bbyDAO and user discovery/connection'
 
+  /* Only show Feed if bbyDao is Expanded */
+  const bbyDao = usePlaygroundStore(state => state.expandedDao)
+  const isExpanded = React.useMemo(() => {
+    return ethers.utils.isAddress(bbyDao)
+  }, [bbyDao])
+
   return (
-    <div className="flex w-full flex-col lg:flex-row">
-      <UserPanel user={accountData?.address} address={address} />
-      <UserDaos user={accountData?.address} data={data} address={address} />
-      <Feed />
-    </div>
+      <div className="flex w-full flex-col lg:flex-row">
+        <UserPanel user={accountData?.address} address={address} />
+        <UserDaos user={accountData?.address} data={data} address={address} />
+        {isExpanded ? <Feed /> : null}
+      </div>
   )
 }
 

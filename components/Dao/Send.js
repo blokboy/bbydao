@@ -1,9 +1,8 @@
 import { BigNumber, ethers } from "ethers"
 import React from "react"
-import { useQueryClient } from "react-query"
+import { HiCheckCircle } from "react-icons/hi"
 import { minimalABI } from "hooks/useERC20Contract"
 import { max256, NumberFromBig } from "utils/helpers"
-import useCalculateFee from "hooks/useCalculateFee"
 import useForm from "hooks/useForm"
 import useGnosisTransaction from "hooks/useGnosisTransaction"
 import { useLayoutStore } from "stores/useLayoutStore"
@@ -17,7 +16,6 @@ const Send = ({ token }) => {
   const { gnosisTransaction } = useGnosisTransaction(bbyDao)
   const ref = React.useRef()
   const { state, setState, handleChange } = useForm()
-  const { calculateFee } = useCalculateFee()
 
   /*
    * Approve Token:
@@ -135,16 +133,18 @@ const Send = ({ token }) => {
   const prepare = React.useMemo(() => {
     let show = false
     let args = undefined
-    if (ethers.utils.isAddress(state.recipient) && parseFloat(state?.[token?.symbol]) > 0) {
+    let validAddress = ethers.utils.isAddress(state.recipient)
+    let hasBalance = parseFloat(state?.[token?.symbol]) > 0
+    if (validAddress && hasBalance) {
       show = true
       args = { recipient: ethers.utils.getAddress(state.recipient), value: parseFloat(state?.[token?.symbol]) }
     }
 
-    return { show, args }
+    return { show, args, validAddress }
   }, [state])
 
   return (
-    <div>
+    <div className="flex flex-col w-full">
       <TokenInput
         token={token}
         isSend={true}
@@ -157,7 +157,7 @@ const Send = ({ token }) => {
       <div className="flex items-center justify-center p-2 text-3xl font-thin">to</div>
       <form>
         <div className="mb-8 flex w-full flex-col rounded-xl border bg-slate-100 p-4 hover:border-[#FC8D4D] dark:bg-slate-800">
-          <div className="flex flex-row">
+          <div className="flex flex-row items-center">
             <input
               onChange={handleChange}
               id="name"
@@ -166,6 +166,7 @@ const Send = ({ token }) => {
               className="h-16 w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 text-sm leading-tight focus:outline-none dark:bg-slate-800"
               placeholder={"Recipient Address"}
             />
+            {prepare?.validAddress && <HiCheckCircle size={32} />}
           </div>
         </div>
       </form>
@@ -182,7 +183,8 @@ const Send = ({ token }) => {
         </button>
       )}
       {hasAllowance?.token0 === false && token?.symbol !== "ETH" && (
-        <div
+        <button
+          type="button"
           className={`focus:shadow-outline flex h-16 w-full w-full
            appearance-none items-center justify-center rounded-full 
           bg-sky-500 py-2 px-3 text-xl font-normal leading-tight text-white hover:bg-sky-600 
@@ -190,7 +192,7 @@ const Send = ({ token }) => {
           onClick={() => handleApproveToken(tokenContract, 0)}
         >
           Approve {token?.symbol}
-        </div>
+        </button>
       )}
     </div>
   )
