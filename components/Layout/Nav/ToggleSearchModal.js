@@ -1,12 +1,8 @@
 import React from "react"
 import { GoSearch } from "react-icons/go"
-import { useUiStore } from "stores/useUiStore"
 import { useLayoutStore } from "/stores/useLayoutStore"
 
 const ToggleSearchModal = () => {
-  // const appModalOpen = useUiStore(state => state.appModalOpen)
-  // const setAppModalOpen = useUiStore(state => state.setAppModalOpen)
-
   const searchOpen = useLayoutStore(state => state.searchOpen)
   const setSearchOpen = useLayoutStore(state => state.setSearchOpen)
 

@@ -11,7 +11,11 @@ const NotificationsIcon = ({ address }) => {
   const notificationCount = useUiStore(state => state.notificationCount)
   const setNotificationCount = useUiStore(state => state.setNotificationCount)
 
-  const { data } = useQuery(["notifications"], () => api.userNotifications({ target: address }), { staleTime: 180000, refetchOnWindowFocus: false, })
+  const { data } = useQuery(["notifications", address], () => api.userNotifications({ target: address }), {
+    staleTime: 180000,
+    refetchOnWindowFocus: false,
+  })
+  console.log("notifications", data)
 
   const handleNotificationData = React.useCallback(() => {
     if (!data) {

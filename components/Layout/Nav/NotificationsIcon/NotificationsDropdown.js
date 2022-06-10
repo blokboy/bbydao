@@ -3,7 +3,6 @@ import NotificationCard from "./NotificationCard"
 
 const NotificationsDropdown = ({ ...props }) => {
   const { data, notificationCount, notificationsOpen } = props
-
   console.log('notifications dropdown data', data)
 
   const notifications = React.useMemo(() => {

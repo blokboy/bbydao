@@ -1,8 +1,7 @@
-import { useRouter }        from "next/router"
+import { useRouter } from "next/router"
 import React from "react"
-import ClickAwayListener    from "react-click-away-listener"
-import { useConnect }       from "wagmi"
-
+import ClickAwayListener from "react-click-away-listener"
+import { useConnect } from "wagmi"
 import NetworkDropdown from "./NetworkDropdown"
 import { FaEthereum } from "react-icons/fa"
 
@@ -20,7 +19,6 @@ const ConnectButton = () => {
     setDropdownOpen(true)
   }, [])
 
-
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
       <div className="relative">
@@ -32,10 +30,7 @@ const ConnectButton = () => {
             connect
           </span>
         </button>
-        <NetworkDropdown
-          isOpen={isDropdownOpen}
-          onClick={() => setDropdownOpen(false)}
-        />
+        <NetworkDropdown isOpen={isDropdownOpen} onClick={() => setDropdownOpen(false)} />
       </div>
     </ClickAwayListener>
   )
