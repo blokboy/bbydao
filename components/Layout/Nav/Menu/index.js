@@ -8,13 +8,13 @@ import MintLink from "./MintLink"
 import MenuThemeToggle from "./MenuThemeToggle"
 import MessagesLink from "./MessagesLink"
 import AboutLink from "./AboutLink"
-import NotificationsLink from "./NotificationsLink"
-import useNotifications from "hooks/useNotifications"
+// import NotificationsLink from "./NotificationsLink"
+// import useNotifications from "hooks/useNotifications"
 
 const Menu = ({ address }) => {
   const [menuOpen, setMenuOpen] = React.useState(false)
   const { data: accountData } = useAccount()
-  const notifications = useNotifications(address)
+  // const notifications = useNotifications(address)
 
   const clickAway = React.useCallback(() => {
     if (menuOpen) {
@@ -28,11 +28,11 @@ const Menu = ({ address }) => {
     }
   }, [menuOpen])
 
-  const notificationIndicator = React.useMemo(() => {
-    return notifications.length ? (
-      <div className="animate absolute top-[7px] right-[10px] z-10 h-4 w-4 rounded-full border bg-red-600 shadow" />
-    ) : null
-  }, [notifications])
+  // const notificationIndicator = React.useMemo(() => {
+  //   return notifications.length ? (
+  //     <div className="animate absolute top-[7px] right-[10px] z-10 h-4 w-4 rounded-full border bg-red-600 shadow" />
+  //   ) : null
+  // }, [notifications])
 
   const dropdown = React.useMemo(() => {
     return menuOpen ? (
@@ -43,7 +43,7 @@ const Menu = ({ address }) => {
               <DashboardLink />
               <MintLink />
               <MessagesLink />
-              <NotificationsLink notifications={notifications} />
+              {/* <NotificationsLink notifications={notifications} /> */}
             </>
           ) : null}
           <AboutLink />
@@ -62,7 +62,7 @@ const Menu = ({ address }) => {
         >
           <HiDotsHorizontal />
         </button>
-        {notificationIndicator}
+        {/* {notificationIndicator} */}
         {dropdown}
       </div>
     </ClickAwayListener>

@@ -3,6 +3,7 @@ import Pfp from "./Pfp"
 import AddressEns from "./AddressEns"
 import UserFollow from "./UserFollow"
 import CreateBbyDaoBtn from "./CreateBbyDaoBtn"
+import CreateNurseryBtn from "../UserDaos/DaoCard/CreateNurseryBtn"
 
 const UserPanel = ({ user, address }) => {
   return (
@@ -11,6 +12,7 @@ const UserPanel = ({ user, address }) => {
       <AddressEns address={address} />
       <UserFollow user={user} address={address} />
       {user === address ? <CreateBbyDaoBtn /> : null}
+      {user === address ? <CreateNurseryBtn /> :null}
     </div>
   )
 }

@@ -40,7 +40,7 @@ const Playground = ({ address, data }) => {
         }
       },
     })
-  }, [ensLoading])
+  }, [])
 
   /*  Set currently viewed profile in React Query cache -- accessible with queryKey "targetAddress" */
   useQuery("targetAddress", () => api.getUser({ address }), {

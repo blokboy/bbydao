@@ -7,15 +7,17 @@ import { Field, Form, Formik } from "formik"
 import * as Yup from "yup"
 import Select from "react-select"
 import { useLayoutStore } from "stores/useLayoutStore"
-import { customStyles } from "./customStyles"
+import { customStyles } from "../customStyles"
+import { clsx } from "clsx"
+
+import styles from "./DaoForm.module.css"
 
 const Input = ({ name }) => {
   return (
     <Field
-      className="focus:shadow-outline w-full appearance-none rounded border bg-slate-100 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-slate-800"
+      className="focus:shadow-outline w-full appearance-none rounded-lg bg-slate-100 py-2 px-3 leading-tight shadow focus:outline-none dark:bg-gray-700"
       id="name"
       name={name}
-      placeholder={name}
     />
   )
 }
@@ -140,12 +142,18 @@ const DaoForm = () => {
       {({ values, isSubmitting, setFieldValue, errors }) => (
         <fieldset className="h-full w-full" disabled={isSubmitting}>
           <Form className="flex flex-col p-4">
+            <div className="mb-8">
+              {errors.name ? <div className="p-2">{errors.name}</div> : null}
+              <label className="mb-2 block text-sm font-bold" htmlFor="name">
+                Name
+              </label>
+              <Input name={"name"} />
+            </div>
             <div className="w-full">
               {errors.invites ? <div className="p-2">{errors.invites}</div> : null}
               <label className="block p-2 text-sm font-bold" htmlFor="invites">
-                invite friends
+                Invite friends
               </label>
-              <p className="p-2 text-xs">select from your friends</p>
               <Select
                 // defaultValue={}
                 styles={customStyles}
@@ -160,20 +168,16 @@ const DaoForm = () => {
                 }}
               />
             </div>
-            <div className="mb-8">
-              {errors.name ? <div className="p-2">{errors.name}</div> : null}
-              <label className="mb-2 block text-sm font-bold" htmlFor="name">
-                name
-              </label>
-              <Input name={"name"} />
-            </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center mt-8">
               <button
-                className="focus:shadow-outline mb-3 w-full rounded-xl bg-slate-200 py-3 px-4 font-bold shadow-xl focus:outline-none dark:bg-slate-800"
+                className={clsx(
+                  "focus:shadow-outline mb-3 rounded-full dark:bg-slate-200 py-3 px-4 shadow-xl focus:outline-none bg-slate-800 text-black",
+                  styles.save_button
+                )}
                 type="submit"
               >
-                save
+                Create
               </button>
             </div>
           </Form>

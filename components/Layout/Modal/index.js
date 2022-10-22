@@ -38,7 +38,7 @@ const Modal = ({ onClose = () => {}, children, trigger, triggerText, heading }) 
             >
               <div className="modal-container fade-in-up" role="dialog" aria-modal={true}>
                 <div className="flex w-full justify-end py-4">
-                  <div className="w-full text-center text-xl font-medium">{heading}</div>
+                  <div className="w-full text-center text-2xl font-bold">{heading}</div>
                   <button className="modal-close-btn" onClick={() => handleClose(closePortal)}>
                     <HiX />
                   </button>
