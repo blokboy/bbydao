@@ -22,11 +22,9 @@ const MessagesDropdown = ({ ...props }) => {
           <h1>Messages</h1>
           <div className="flex flex-row">
             <Link href={"/messages"}>
-              <a onClick={clickAway}>
-                <button className="nav-btn mx-1">
+                <button onClick={clickAway} className="nav-btn mx-1">
                   <HiOutlineArrowCircleRight />
                 </button>
-              </a>
             </Link>
             <button className="nav-btn mx-1" onClick={handleStartConversation}>
               <HiOutlineChat />

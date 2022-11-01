@@ -165,7 +165,7 @@ const TxCard = ({ tx }) => {
             <div className="w-full text-right">{txTimeFromNow}</div>
           </div>
           {tx?.txHash ? (
-            <Link href={`https://etherscan.io/tx/${tx?.txHash}`} passHref>
+            <Link legacyBehavior href={`https://etherscan.io/tx/${tx?.txHash}`} passHref>
               <a target="_blank" rel="noopener noreferrer" className="text-xs text-sky-400">
                 view on etherscan
               </a>

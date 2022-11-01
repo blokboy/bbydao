@@ -5,7 +5,7 @@ import { BiCubeAlt } from "react-icons/bi"
 const MintLink = () => {
   return (
     <li>
-      <Link href={"/mint"}>
+      <Link legacyBehavior href={"/mint"}>
         <a className="menu-link flex justify-start">
           <span className="self-center mr-4">
             <BiCubeAlt />
