@@ -1,9 +1,7 @@
 import React from "react"
 import Link from "next/link"
 import { useAccount } from "wagmi"
-import NotificationsIcon from "./NotificationsIcon"
 import SearchIcon from "./SearchIcon"
-import MessagesIcon from "./MessagesIcon"
 import Menu from "./Menu"
 import ThemeToggle from "./ThemeToggle"
 import AccountDisplay from "./AccountDisplay"
@@ -34,8 +32,6 @@ const Nav = () => {
           {accountData ? (
             <>
               <NetworkIconDropdown />
-              <MessagesIcon address={accountData?.address} />
-              <NotificationsIcon address={accountData?.address} />
               <AccountDisplay />
             </>
           ) : null}
