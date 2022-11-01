@@ -5,7 +5,7 @@ import { BsGrid } from "react-icons/bs"
 const ExploreLink = () => {
   return (
     <li>
-      <Link href={"/"}>
+      <Link legacyBehavior href={"/"}>
         <a className="menu-link flex justify-start">
           <span className="self-center mr-4">
             <BsGrid />

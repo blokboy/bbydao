@@ -5,7 +5,7 @@ import { HiInformationCircle } from "react-icons/hi"
 const AboutLink = () => {
   return (
     <li>
-      <Link href={"/"}>
+      <Link legacyBehavior href={"/"}>
         <a className="menu-link flex justify-start">
           <span className="self-center mr-4">
             <HiInformationCircle />

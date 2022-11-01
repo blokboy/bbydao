@@ -8,7 +8,7 @@ const DashboardLink = () => {
 
   return (
     <li className="w-full">
-      <Link href={data?.address ? `/playground/${data.address}` : "/"}>
+      <Link legacyBehavior href={data?.address ? `/playground/${data.address}` : "/"}>
         <a className="menu-link justify-start">
           <span className="mr-3 self-center">
             <BsPersonCircle />

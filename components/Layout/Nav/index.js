@@ -18,7 +18,7 @@ const Nav = () => {
     return (
       <nav className="sticky top-0 z-50 flex h-16 w-full items-center justify-between bg-slate-300 p-2 dark:bg-slate-900 md:p-3">
         <div className="flex md:w-full">
-          <Link href={accountData ? `/playground/${accountData?.address}` : `/`}>
+          <Link legacyBehavior href={accountData ? `/playground/${accountData?.address}` : `/`}>
             <a className="flex w-10 transform transition duration-500 ease-in-out hover:-translate-y-0.5 md:w-auto">
               <img src="/babydao.png" alt="bbydao" height={60} width={60} />
             </a>
